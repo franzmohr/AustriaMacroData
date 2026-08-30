@@ -1,0 +1,18 @@
+# R
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user
+
+# RStudio
+.Rproj
+.Rhistory
+.RData
+.Ruserdata
+
+data/landing/
+data/bronze/
+
+# renv -- .Rprofile is tracked (needed to auto-activate renv on clone);
+# renv/ has its own .gitignore for the local library/cache
+output/

@@ -1,0 +1,509 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{pdflscape}
+\usepackage{hyperref}
+
+\title{FRED-QD Variable Documentation}
+\author{Austria Macro Data Project}
+\date{\today}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\begin{document}
+
+\maketitle
+
+\section*{Overview}
+
+This document describes the variables contained in \texttt{FRED-Data.csv}, a
+quarterly panel of U.S. macroeconomic series following the \emph{FRED-QD}
+format designed by McCracken and Ng (2020), ``FRED-QD: A Quarterly Database
+for Macroeconomic Research,'' Federal Reserve Bank of St.\ Louis \emph{Review}.
+FRED-QD is the quarterly companion to FRED-MD and is designed to emulate the
+dataset used in Stock and Watson (2012), ``Disentangling the Channels of the
+2007--2009 Recession,'' NBER Working Paper No.\ 18094.
+
+For each series the file's first three rows encode metadata read directly by
+this dataset's construction scripts:
+\begin{itemize}
+  \item \textbf{Row 1} -- the FRED mnemonic (column header).
+  \item \textbf{Row 2 (``factors'')} -- a 0/1 flag indicating whether Stock
+    and Watson (2012) used the series when estimating their factor model
+    (1 = yes, 0 = no).
+  \item \textbf{Row 3 (``transform'')} -- the recommended transformation
+    code for the series $x_t$:
+    \begin{itemize}
+      \item 1: no transformation
+      \item 2: $\Delta x_t$ (first difference)
+      \item 3: $\Delta^2 x_t$ (second difference)
+      \item 4: $\log(x_t)$
+      \item 5: $\Delta \log(x_t)$ (log first difference, i.e.\ approximate growth rate)
+      \item 6: $\Delta^2 \log(x_t)$ (log second difference)
+      \item 7: $\Delta(x_t/x_{t-1} - 1.0)$
+    \end{itemize}
+\end{itemize}
+
+If the FRED mnemonic does not end in ``x'' the series comes directly from the
+FRED database (e.g.\ \texttt{PCECC96}, real PCE). Otherwise the series is a
+modified variant of a FRED series -- most commonly a nominal series manually
+deflated by the PCE or core-PCE price index (e.g.\ \texttt{PCDGx}, nominal PCE
+durables deflated by the PCE price index). The exception is the S\&P 500
+data, which is taken from public sources rather than FRED. Monthly-frequency
+source series are aggregated to quarterly frequency by averaging over the
+three months of the quarter.
+
+The series below are grouped into fourteen economic categories, following
+the original FRED-QD appendix. Within each group, the table reports the
+FRED mnemonic, a brief description, the transformation code used in this
+dataset (\texttt{FRED-Data.csv}, row 3), and whether the series was among
+those used by Stock and Watson (2012) for factor estimation
+(\checkmark = yes). These tables, and the source-mapping table that follows
+them, are set in landscape orientation for readability.
+
+\begin{landscape}
+\section*{Group: Output and Income}
+
+\begin{longtable}{L{4.5cm} L{14.5cm} c c}
+\toprule
+\textbf{Mnemonic} & \textbf{Description} & \textbf{Tcode} & \textbf{SW} \\
+\midrule
+\endhead
+\texttt{GDPC1} & Real Gross Domestic Product, 3 Decimal (Billions of Chained 2012 Dollars) & 5 &  \\
+\texttt{PCECC96} & Real Personal Consumption Expenditures (Billions of Chained 2012 Dollars) & 5 &  \\
+\texttt{PCDGx} & Real Personal Consumption Expenditures: Durable Goods (Billions of Chained 2012 Dollars), deflated using PCE & 5 & \checkmark \\
+\texttt{PCESVx} & Real Personal Consumption Expenditures: Services (Billions of 2012 Dollars), deflated using PCE & 5 & \checkmark \\
+\texttt{PCNDx} & Real Personal Consumption Expenditures: Nondurable Goods (Billions of 2012 Dollars), deflated using PCE & 5 & \checkmark \\
+\texttt{GPDIC1} & Real Gross Private Domestic Investment, 3 Decimal (Billions of Chained 2012 Dollars) & 5 &  \\
+\texttt{FPIx} & Real Private Fixed Investment (Billions of Chained 2012 Dollars), deflated using PCE & 5 &  \\
+\texttt{Y033RC1Q027SBEAx} & Real Gross Private Domestic Investment: Fixed Investment: Nonresidential: Equipment (Billions of Chained 2012 Dollars), deflated using PCE & 5 & \checkmark \\
+\texttt{PNFIx} & Real Private Fixed Investment: Nonresidential (Billions of Chained 2012 Dollars), deflated using PCE & 5 & \checkmark \\
+\texttt{PRFIx} & Real Private Fixed Investment: Residential (Billions of Chained 2012 Dollars), deflated using PCE & 5 & \checkmark \\
+\texttt{A014RE1Q156NBEA} & Shares of Gross Domestic Product: Gross Private Domestic Investment: Change in Private Inventories (Percent) & 1 & \checkmark \\
+\texttt{GCEC1} & Real Government Consumption Expenditures \& Gross Investment (Billions of Chained 2012 Dollars) & 5 &  \\
+\texttt{A823RL1Q225SBEA} & Real Government Consumption Expenditures and Gross Investment: Federal (Percent Change from Preceding Period) & 1 & \checkmark \\
+\texttt{FGRECPTx} & Real Federal Government Current Receipts (Billions of Chained 2012 Dollars), deflated using PCE & 5 & \checkmark \\
+\texttt{SLCEx} & Real Government State and Local Consumption Expenditures (Billions of Chained 2012 Dollars), deflated using PCE & 5 & \checkmark \\
+\texttt{EXPGSC1} & Real Exports of Goods \& Services, 3 Decimal (Billions of Chained 2012 Dollars) & 5 & \checkmark \\
+\texttt{IMPGSC1} & Real Imports of Goods \& Services, 3 Decimal (Billions of Chained 2012 Dollars) & 5 & \checkmark \\
+\texttt{DPIC96} & Real Disposable Personal Income (Billions of Chained 2012 Dollars) & 5 &  \\
+\texttt{OUTNFB} & Nonfarm Business Sector: Real Output (Index 2012=100) & 5 &  \\
+\texttt{OUTBS} & Business Sector: Real Output (Index 2012=100) & 5 &  \\
+\texttt{OUTMS} & Manufacturing Sector: Real Output (Index 2012=100) & 5 &  \\
+\texttt{B020RE1Q156NBEA} & Shares of Gross Domestic Product: Exports of Goods and Services (Percent) & 2 &  \\
+\texttt{B021RE1Q156NBEA} & Shares of Gross Domestic Product: Imports of Goods and Services (Percent) & 2 &  \\
+\bottomrule
+\end{longtable}
+
+\section*{Group: Industrial Production}
+
+\begin{longtable}{L{4.5cm} L{14.5cm} c c}
+\toprule
+\textbf{Mnemonic} & \textbf{Description} & \textbf{Tcode} & \textbf{SW} \\
+\midrule
+\endhead
+\texttt{INDPRO} & Industrial Production Index (Index 2012=100) & 5 &  \\
+\texttt{IPFINAL} & Industrial Production: Final Products (Market Group) (Index 2012=100) & 5 &  \\
+\texttt{IPCONGD} & Industrial Production: Consumer Goods (Index 2012=100) & 5 &  \\
+\texttt{IPMAT} & Industrial Production: Materials (Index 2012=100) & 5 &  \\
+\texttt{IPDMAT} & Industrial Production: Durable Materials (Index 2012=100) & 5 & \checkmark \\
+\texttt{IPNMAT} & Industrial Production: Nondurable Materials (Index 2012=100) & 5 & \checkmark \\
+\texttt{IPDCONGD} & Industrial Production: Durable Consumer Goods (Index 2012=100) & 5 & \checkmark \\
+\texttt{IPB51110SQ} & Industrial Production: Durable Goods: Automotive Products (Index 2012=100) & 5 & \checkmark \\
+\texttt{IPNCONGD} & Industrial Production: Nondurable Consumer Goods (Index 2012=100) & 5 & \checkmark \\
+\texttt{IPBUSEQ} & Industrial Production: Business Equipment (Index 2012=100) & 5 & \checkmark \\
+\texttt{IPB51220SQ} & Industrial Production: Consumer Energy Products (Index 2012=100) & 5 & \checkmark \\
+\texttt{TCU} & Capacity Utilization: Total Industry (Percent of Capacity) & 1 & \checkmark \\
+\texttt{CUMFNS} & Capacity Utilization: Manufacturing (SIC) (Percent of Capacity) & 1 & \checkmark \\
+\texttt{IPMANSICS} & Industrial Production: Manufacturing (SIC) (Index 2012=100) & 5 &  \\
+\texttt{IPB51222S} & Industrial Production: Residential Utilities (Index 2012=100) & 5 &  \\
+\texttt{IPFUELS} & Industrial Production: Fuels (Index 2012=100) & 5 &  \\
+\bottomrule
+\end{longtable}
+
+\section*{Group: Employment and Unemployment}
+
+\begin{longtable}{L{4.5cm} L{14.5cm} c c}
+\toprule
+\textbf{Mnemonic} & \textbf{Description} & \textbf{Tcode} & \textbf{SW} \\
+\midrule
+\endhead
+\texttt{PAYEMS} & All Employees: Total Nonfarm (Thousands of Persons) & 5 &  \\
+\texttt{USPRIV} & All Employees: Total Private Industries (Thousands of Persons) & 5 &  \\
+\texttt{MANEMP} & All Employees: Manufacturing (Thousands of Persons) & 5 &  \\
+\texttt{SRVPRD} & All Employees: Service-Providing Industries (Thousands of Persons) & 5 &  \\
+\texttt{USGOOD} & All Employees: Goods-Producing Industries (Thousands of Persons) & 5 &  \\
+\texttt{DMANEMP} & All Employees: Durable Goods (Thousands of Persons) & 5 & \checkmark \\
+\texttt{NDMANEMP} & All Employees: Nondurable Goods (Thousands of Persons) & 5 &  \\
+\texttt{USCONS} & All Employees: Construction (Thousands of Persons) & 5 & \checkmark \\
+\texttt{USEHS} & All Employees: Education \& Health Services (Thousands of Persons) & 5 & \checkmark \\
+\texttt{USFIRE} & All Employees: Financial Activities (Thousands of Persons) & 5 & \checkmark \\
+\texttt{USINFO} & All Employees: Information Services (Thousands of Persons) & 5 & \checkmark \\
+\texttt{USPBS} & All Employees: Professional \& Business Services (Thousands of Persons) & 5 & \checkmark \\
+\texttt{USLAH} & All Employees: Leisure \& Hospitality (Thousands of Persons) & 5 & \checkmark \\
+\texttt{USSERV} & All Employees: Other Services (Thousands of Persons) & 5 & \checkmark \\
+\texttt{USMINE} & All Employees: Mining and Logging (Thousands of Persons) & 5 & \checkmark \\
+\texttt{USTPU} & All Employees: Trade, Transportation \& Utilities (Thousands of Persons) & 5 & \checkmark \\
+\texttt{USGOVT} & All Employees: Government (Thousands of Persons) & 5 &  \\
+\texttt{USTRADE} & All Employees: Retail Trade (Thousands of Persons) & 5 & \checkmark \\
+\texttt{USWTRADE} & All Employees: Wholesale Trade (Thousands of Persons) & 5 & \checkmark \\
+\texttt{CES9091000001} & All Employees: Government: Federal (Thousands of Persons) & 5 & \checkmark \\
+\texttt{CES9092000001} & All Employees: Government: State Government (Thousands of Persons) & 5 & \checkmark \\
+\texttt{CES9093000001} & All Employees: Government: Local Government (Thousands of Persons) & 5 & \checkmark \\
+\texttt{CE16OV} & Civilian Employment (Thousands of Persons) & 5 &  \\
+\texttt{CIVPART} & Civilian Labor Force Participation Rate (Percent) & 2 &  \\
+\texttt{UNRATE} & Civilian Unemployment Rate (Percent) & 2 &  \\
+\texttt{UNRATESTx} & Unemployment Rate: Less than 27 Weeks (Percent) & 2 &  \\
+\texttt{UNRATELTx} & Unemployment Rate: More than 27 Weeks (Percent) & 2 &  \\
+\texttt{LNS14000012} & Unemployment Rate: 16 to 19 Years (Percent) & 2 & \checkmark \\
+\texttt{LNS14000025} & Unemployment Rate: 20 Years and Over, Men (Percent) & 2 & \checkmark \\
+\texttt{LNS14000026} & Unemployment Rate: 20 Years and Over, Women (Percent) & 2 & \checkmark \\
+\texttt{UEMPLT5} & Number of Civilians Unemployed: Less than 5 Weeks (Thousands of Persons) & 5 & \checkmark \\
+\texttt{UEMP5TO14} & Number of Civilians Unemployed for 5 to 14 Weeks (Thousands of Persons) & 5 & \checkmark \\
+\texttt{UEMP15T26} & Number of Civilians Unemployed for 15 to 26 Weeks (Thousands of Persons) & 5 & \checkmark \\
+\texttt{UEMP27OV} & Number of Civilians Unemployed for 27 Weeks and Over (Thousands of Persons) & 5 & \checkmark \\
+\texttt{LNS13023621} & Unemployment Level: Job Losers (Thousands of Persons) & 5 & \checkmark \\
+\texttt{LNS13023557} & Unemployment Level: Reentrants to Labor Force (Thousands of Persons) & 5 & \checkmark \\
+\texttt{LNS13023705} & Unemployment Level: Job Leavers (Thousands of Persons) & 5 & \checkmark \\
+\texttt{LNS13023569} & Unemployment Level: New Entrants (Thousands of Persons) & 5 & \checkmark \\
+\texttt{LNS12032194} & Employment Level: Part-Time for Economic Reasons, All Industries (Thousands of Persons) & 5 & \checkmark \\
+\texttt{HOABS} & Business Sector: Hours of All Persons (Index 2012=100) & 5 &  \\
+\texttt{HOAMS} & Manufacturing Sector: Hours of All Persons (Index 2012=100) & 5 &  \\
+\texttt{HOANBS} & Nonfarm Business Sector: Hours of All Persons (Index 2012=100) & 5 &  \\
+\texttt{AWHMAN} & Average Weekly Hours of Production and Nonsupervisory Employees: Manufacturing (Hours) & 1 & \checkmark \\
+\texttt{AWHNONAG} & Average Weekly Hours of Production and Nonsupervisory Employees: Total Private (Hours) & 2 & \checkmark \\
+\texttt{AWOTMAN} & Average Weekly Overtime Hours of Production and Nonsupervisory Employees: Manufacturing (Hours) & 2 & \checkmark \\
+\texttt{HWIx} & Help-Wanted Index & 1 &  \\
+\texttt{UEMPMEAN} & Average (Mean) Duration of Unemployment (Weeks) & 2 &  \\
+\texttt{CES0600000007} & Average Weekly Hours of Production and Nonsupervisory Employees: Goods-Producing (Hours) & 2 &  \\
+\texttt{HWIURATIOx} & Ratio of Help Wanted to Number Unemployed & 2 &  \\
+\texttt{CLAIMSx} & Initial Claims & 5 &  \\
+\bottomrule
+\end{longtable}
+
+\section*{Group: Housing}
+
+\begin{longtable}{L{4.5cm} L{14.5cm} c c}
+\toprule
+\textbf{Mnemonic} & \textbf{Description} & \textbf{Tcode} & \textbf{SW} \\
+\midrule
+\endhead
+\texttt{HOUST} & Housing Starts: Total: New Privately Owned Housing Units Started (Thousands of Units) & 5 &  \\
+\texttt{HOUST5F} & Privately Owned Housing Starts: 5-Unit Structures or More (Thousands of Units) & 5 &  \\
+\texttt{PERMIT} & New Private Housing Units Authorized by Building Permits (Thousands of Units) & 5 & \checkmark \\
+\texttt{HOUSTMW} & Housing Starts in Midwest Census Region (Thousands of Units) & 5 & \checkmark \\
+\texttt{HOUSTNE} & Housing Starts in Northeast Census Region (Thousands of Units) & 5 & \checkmark \\
+\texttt{HOUSTS} & Housing Starts in South Census Region (Thousands of Units) & 5 & \checkmark \\
+\texttt{HOUSTW} & Housing Starts in West Census Region (Thousands of Units) & 5 & \checkmark \\
+\texttt{USSTHPI} & All-Transactions House Price Index for the United States (Index 1980 Q1=100) & 5 & \checkmark \\
+\texttt{SPCS10RSA} & S\&P/Case-Shiller 10-City Composite Home Price Index (Index January 2000=100) & 5 & \checkmark \\
+\texttt{SPCS20RSA} & S\&P/Case-Shiller 20-City Composite Home Price Index (Index January 2000=100) & 5 & \checkmark \\
+\texttt{PERMITNE} & New Private Housing Units Authorized by Building Permits: Northeast Census Region (Thousands, SAAR) & 5 &  \\
+\texttt{PERMITMW} & New Private Housing Units Authorized by Building Permits: Midwest Census Region (Thousands, SAAR) & 5 &  \\
+\texttt{PERMITS} & New Private Housing Units Authorized by Building Permits: South Census Region (Thousands, SAAR) & 5 &  \\
+\texttt{PERMITW} & New Private Housing Units Authorized by Building Permits: West Census Region (Thousands, SAAR) & 5 &  \\
+\bottomrule
+\end{longtable}
+
+\section*{Group: Inventories, Orders, and Sales}
+
+\begin{longtable}{L{4.5cm} L{14.5cm} c c}
+\toprule
+\textbf{Mnemonic} & \textbf{Description} & \textbf{Tcode} & \textbf{SW} \\
+\midrule
+\endhead
+\texttt{CMRMTSPLx} & Real Manufacturing and Trade Industries Sales (Millions of Chained 2012 Dollars) & 5 &  \\
+\texttt{RSAFSx} & Real Retail and Food Services Sales (Millions of Chained 2012 Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{AMDMNOx} & Real Manufacturers' New Orders: Durable Goods (Millions of 2012 Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{ACOGNOx} & Real Value of Manufacturers' New Orders for Consumer Goods Industries (Millions of 2012 Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{AMDMUOx} & Real Value of Manufacturers' Unfilled Orders for Durable Goods Industries (Millions of 2012 Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{ANDENOx} & Real Value of Manufacturers' New Orders for Capital Goods: Nondefense Capital Goods Industries (Millions of 2012 Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{INVCQRMTSPL} & Real Manufacturing and Trade Inventories (Millions of 2012 Dollars) & 5 & \checkmark \\
+\texttt{BUSINVx} & Total Business Inventories (Millions of Dollars) & 5 &  \\
+\texttt{ISRATIOx} & Total Business: Inventories to Sales Ratio & 2 &  \\
+\bottomrule
+\end{longtable}
+
+\section*{Group: Prices}
+
+\begin{longtable}{L{4.5cm} L{14.5cm} c c}
+\toprule
+\textbf{Mnemonic} & \textbf{Description} & \textbf{Tcode} & \textbf{SW} \\
+\midrule
+\endhead
+\texttt{PCECTPI} & Personal Consumption Expenditures: Chain-type Price Index (Index 2012=100) & 6 &  \\
+\texttt{PCEPILFE} & Personal Consumption Expenditures Excluding Food and Energy: Chain-type Price Index (Index 2012=100) & 6 &  \\
+\texttt{GDPCTPI} & Gross Domestic Product: Chain-type Price Index (Index 2012=100) & 6 &  \\
+\texttt{GPDICTPI} & Gross Private Domestic Investment: Chain-type Price Index (Index 2012=100) & 6 & \checkmark \\
+\texttt{IPDBS} & Business Sector: Implicit Price Deflator (Index 2012=100) & 6 & \checkmark \\
+\texttt{DGDSRG3Q086SBEA} & Personal Consumption Expenditures: Goods (Chain-type Price Index) & 6 &  \\
+\texttt{DDURRG3Q086SBEA} & Personal Consumption Expenditures: Durable Goods (Chain-type Price Index) & 6 &  \\
+\texttt{DSERRG3Q086SBEA} & Personal Consumption Expenditures: Services (Chain-type Price Index) & 6 &  \\
+\texttt{DNDGRG3Q086SBEA} & Personal Consumption Expenditures: Nondurable Goods (Chain-type Price Index) & 6 &  \\
+\texttt{DHCERG3Q086SBEA} & Personal Consumption Expenditures: Services: Household Consumption Expenditures (Chain-type Price Index) & 6 &  \\
+\texttt{DMOTRG3Q086SBEA} & Personal Consumption Expenditures: Durable Goods: Motor Vehicles and Parts (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{DFDHRG3Q086SBEA} & Personal Consumption Expenditures: Durable Goods: Furnishings and Durable Household Equipment (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{DREQRG3Q086SBEA} & Personal Consumption Expenditures: Durable Goods: Recreational Goods and Vehicles (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{DODGRG3Q086SBEA} & Personal Consumption Expenditures: Durable Goods: Other Durable Goods (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{DFXARG3Q086SBEA} & Personal Consumption Expenditures: Nondurable Goods: Food and Beverages Purchased for Off-Premises Consumption (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{DCLORG3Q086SBEA} & Personal Consumption Expenditures: Nondurable Goods: Clothing and Footwear (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{DGOERG3Q086SBEA} & Personal Consumption Expenditures: Nondurable Goods: Gasoline and Other Energy Goods (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{DONGRG3Q086SBEA} & Personal Consumption Expenditures: Nondurable Goods: Other Nondurable Goods (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{DHUTRG3Q086SBEA} & Personal Consumption Expenditures: Services: Housing and Utilities (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{DHLCRG3Q086SBEA} & Personal Consumption Expenditures: Services: Health Care (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{DTRSRG3Q086SBEA} & Personal Consumption Expenditures: Transportation Services (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{DRCARG3Q086SBEA} & Personal Consumption Expenditures: Recreation Services (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{DFSARG3Q086SBEA} & Personal Consumption Expenditures: Services: Food Services and Accommodations (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{DIFSRG3Q086SBEA} & Personal Consumption Expenditures: Financial Services and Insurance (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{DOTSRG3Q086SBEA} & Personal Consumption Expenditures: Other Services (Chain-type Price Index) & 6 & \checkmark \\
+\texttt{CPIAUCSL} & Consumer Price Index for All Urban Consumers: All Items (Index 1982-84=100) & 6 &  \\
+\texttt{CPILFESL} & Consumer Price Index for All Urban Consumers: All Items Less Food \& Energy (Index 1982-84=100) & 6 &  \\
+\texttt{WPSFD49207} & Producer Price Index by Commodity for Finished Goods (Index 1982=100) & 6 &  \\
+\texttt{PPIACO} & Producer Price Index for All Commodities (Index 1982=100) & 6 &  \\
+\texttt{WPSFD49502} & Producer Price Index by Commodity for Finished Consumer Goods (Index 1982=100) & 6 & \checkmark \\
+\texttt{WPSFD4111} & Producer Price Index by Commodity for Finished Consumer Foods (Index 1982=100) & 6 & \checkmark \\
+\texttt{PPIIDC} & Producer Price Index by Commodity: Industrial Commodities (Index 1982=100) & 6 & \checkmark \\
+\texttt{WPSID61} & Producer Price Index by Commodity: Intermediate Materials, Supplies \& Components (Index 1982=100) & 6 & \checkmark \\
+\texttt{WPU0531} & Producer Price Index by Commodity for Fuels and Related Products and Power: Natural Gas (Index 1982=100) & 5 & \checkmark \\
+\texttt{WPU0561} & Producer Price Index by Commodity for Fuels and Related Products and Power: Crude Petroleum, Domestic Production (Index 1982=100) & 5 & \checkmark \\
+\texttt{OILPRICEx} & Real Crude Oil Prices: West Texas Intermediate (WTI), Cushing, Oklahoma (2012 Dollars per Barrel), deflated by Core PCE & 5 &  \\
+\texttt{WPSID62} & Producer Price Index: Crude Materials for Further Processing (Index 1982=100) & 6 &  \\
+\texttt{PPICMM} & Producer Price Index: Commodities: Metals and Metal Products: Primary Nonferrous Metals (Index 1982=100) & 6 &  \\
+\texttt{CPIAPPSL} & Consumer Price Index for All Urban Consumers: Apparel (Index 1982-84=100) & 6 &  \\
+\texttt{CPITRNSL} & Consumer Price Index for All Urban Consumers: Transportation (Index 1982-84=100) & 6 &  \\
+\texttt{CPIMEDSL} & Consumer Price Index for All Urban Consumers: Medical Care (Index 1982-84=100) & 6 &  \\
+\texttt{CUSR0000SAC} & Consumer Price Index for All Urban Consumers: Commodities (Index 1982-84=100) & 6 &  \\
+\texttt{CUSR0000SAD} & Consumer Price Index for All Urban Consumers: Durables (Index 1982-84=100) & 6 &  \\
+\texttt{CUSR0000SAS} & Consumer Price Index for All Urban Consumers: Services (Index 1982-84=100) & 6 &  \\
+\texttt{CPIULFSL} & Consumer Price Index for All Urban Consumers: All Items Less Food (Index 1982-84=100) & 6 &  \\
+\texttt{CUSR0000SA0L2} & Consumer Price Index for All Urban Consumers: All Items Less Shelter (Index 1982-84=100) & 6 &  \\
+\texttt{CUSR0000SA0L5} & Consumer Price Index for All Urban Consumers: All Items Less Medical Care (Index 1982-84=100) & 6 &  \\
+\texttt{CUSR0000SEHC} & Consumer Price Index for All Urban Consumers: Owners' Equivalent Rent of Residences (Index Dec 1982=100) & 6 &  \\
+\bottomrule
+\end{longtable}
+
+\section*{Group: Earnings and Productivity}
+
+\begin{longtable}{L{4.5cm} L{14.5cm} c c}
+\toprule
+\textbf{Mnemonic} & \textbf{Description} & \textbf{Tcode} & \textbf{SW} \\
+\midrule
+\endhead
+\texttt{AHETPIx} & Real Average Hourly Earnings of Production and Nonsupervisory Employees: Total Private (2012 Dollars per Hour), deflated by Core PCE & 5 &  \\
+\texttt{CES2000000008x} & Real Average Hourly Earnings of Production and Nonsupervisory Employees: Construction (2012 Dollars per Hour), deflated by Core PCE & 5 &  \\
+\texttt{CES3000000008x} & Real Average Hourly Earnings of Production and Nonsupervisory Employees: Manufacturing (2012 Dollars per Hour), deflated by Core PCE & 5 &  \\
+\texttt{COMPRMS} & Manufacturing Sector: Real Compensation Per Hour (Index 2012=100) & 5 & \checkmark \\
+\texttt{COMPRNFB} & Nonfarm Business Sector: Real Compensation Per Hour (Index 2012=100) & 5 & \checkmark \\
+\texttt{RCPHBS} & Business Sector: Real Compensation Per Hour (Index 2012=100) & 5 & \checkmark \\
+\texttt{OPHMFG} & Manufacturing Sector: Real Output Per Hour of All Persons (Index 2012=100) & 5 & \checkmark \\
+\texttt{OPHNFB} & Nonfarm Business Sector: Real Output Per Hour of All Persons (Index 2012=100) & 5 & \checkmark \\
+\texttt{OPHPBS} & Business Sector: Real Output Per Hour of All Persons (Index 2012=100) & 5 &  \\
+\texttt{ULCBS} & Business Sector: Unit Labor Cost (Index 2012=100) & 5 &  \\
+\texttt{ULCMFG} & Manufacturing Sector: Unit Labor Cost (Index 2012=100) & 5 & \checkmark \\
+\texttt{ULCNFB} & Nonfarm Business Sector: Unit Labor Cost (Index 2012=100) & 5 & \checkmark \\
+\texttt{UNLPNBS} & Nonfarm Business Sector: Unit Nonlabor Payments (Index 2012=100) & 5 & \checkmark \\
+\texttt{CES0600000008} & Average Hourly Earnings of Production and Nonsupervisory Employees: Goods-Producing (Dollars per Hour) & 6 &  \\
+\bottomrule
+\end{longtable}
+
+\section*{Group: Interest Rates}
+
+\begin{longtable}{L{4.5cm} L{14.5cm} c c}
+\toprule
+\textbf{Mnemonic} & \textbf{Description} & \textbf{Tcode} & \textbf{SW} \\
+\midrule
+\endhead
+\texttt{FEDFUNDS} & Effective Federal Funds Rate (Percent) & 2 & \checkmark \\
+\texttt{TB3MS} & 3-Month Treasury Bill: Secondary Market Rate (Percent) & 2 & \checkmark \\
+\texttt{TB6MS} & 6-Month Treasury Bill: Secondary Market Rate (Percent) & 2 &  \\
+\texttt{GS1} & 1-Year Treasury Constant Maturity Rate (Percent) & 2 &  \\
+\texttt{GS10} & 10-Year Treasury Constant Maturity Rate (Percent) & 2 &  \\
+\texttt{MORTGAGE30US} & 30-Year Conventional Mortgage Rate (Percent) & 2 &  \\
+\texttt{AAA} & Moody's Seasoned Aaa Corporate Bond Yield (Percent) & 2 &  \\
+\texttt{BAA} & Moody's Seasoned Baa Corporate Bond Yield (Percent) & 2 &  \\
+\texttt{BAA10YM} & Moody's Seasoned Baa Corporate Bond Yield Relative to Yield on 10-Year Treasury Constant Maturity (Percent) & 1 & \checkmark \\
+\texttt{MORTG10YRx} & 30-Year Conventional Mortgage Rate Relative to 10-Year Treasury Constant Maturity (Percent) & 1 & \checkmark \\
+\texttt{TB6M3Mx} & 6-Month Treasury Bill Minus 3-Month Treasury Bill, Secondary Market (Percent) & 1 & \checkmark \\
+\texttt{GS1TB3Mx} & 1-Year Treasury Constant Maturity Minus 3-Month Treasury Bill, Secondary Market (Percent) & 1 & \checkmark \\
+\texttt{GS10TB3Mx} & 10-Year Treasury Constant Maturity Minus 3-Month Treasury Bill, Secondary Market (Percent) & 1 & \checkmark \\
+\texttt{CPF3MTB3Mx} & 3-Month Commercial Paper Minus 3-Month Treasury Bill, Secondary Market (Percent) & 1 & \checkmark \\
+\texttt{GS5} & 5-Year Treasury Constant Maturity Rate (Percent) & 2 &  \\
+\texttt{TB3SMFFM} & 3-Month Treasury Constant Maturity Minus Federal Funds Rate (Percent) & 1 &  \\
+\texttt{T5YFFM} & 5-Year Treasury Constant Maturity Minus Federal Funds Rate (Percent) & 1 &  \\
+\texttt{AAAFFM} & Moody's Seasoned Aaa Corporate Bond Minus Federal Funds Rate (Percent) & 1 &  \\
+\texttt{CP3M} & 3-Month AA Financial Commercial Paper Rate (Percent) & 2 &  \\
+\texttt{COMPAPFF} & 3-Month Commercial Paper Minus Federal Funds Rate (Percent) & 1 &  \\
+\bottomrule
+\end{longtable}
+
+\section*{Group: Money and Credit}
+
+\begin{longtable}{L{4.5cm} L{14.5cm} c c}
+\toprule
+\textbf{Mnemonic} & \textbf{Description} & \textbf{Tcode} & \textbf{SW} \\
+\midrule
+\endhead
+\texttt{BOGMBASEREALx} & Real St. Louis Adjusted Monetary Base (Billions of 1982-84 Dollars), deflated by CPI & 5 &  \\
+\texttt{M1REAL} & Real M1 Money Stock (Billions of 1982-84 Dollars), deflated by CPI & 5 &  \\
+\texttt{M2REAL} & Real M2 Money Stock (Billions of 1982-84 Dollars), deflated by CPI & 5 &  \\
+\texttt{BUSLOANSx} & Real Commercial and Industrial Loans, All Commercial Banks (Billions of 2012 U.S. Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{CONSUMERx} & Real Consumer Loans at All Commercial Banks (Billions of 2012 U.S. Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{NONREVSLx} & Total Real Nonrevolving Credit Owned and Securitized, Outstanding (Billions of 2012 Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{REALLNx} & Real Real Estate Loans, All Commercial Banks (Billions of 2012 U.S. Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{REVOLSLx} & Total Real Revolving Credit Owned and Securitized, Outstanding (Billions of 2012 Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{TOTALSLx} & Total Consumer Credit Outstanding (Billions of 2012 Dollars), deflated by Core PCE & 5 &  \\
+\texttt{DRIWCIL} & Net Percentage of Domestic Banks Reporting Increased Willingness to Make Consumer Installment Loans (FRB Senior Loan Officer Opinion Survey) & 1 & \checkmark \\
+\texttt{TOTRESNS} & Total Reserves of Depository Institutions (Billions of Dollars) & 6 &  \\
+\texttt{NONBORRES} & Reserves of Depository Institutions, Nonborrowed (Millions of Dollars) & 7 &  \\
+\texttt{DTCOLNVHFNM} & Consumer Motor Vehicle Loans Outstanding Owned by Finance Companies (Millions of Dollars) & 6 &  \\
+\texttt{DTCTHFNM} & Total Consumer Loans and Leases Outstanding Owned and Securitized by Finance Companies (Millions of Dollars) & 6 &  \\
+\texttt{INVEST} & Securities in Bank Credit at All Commercial Banks (Billions of Dollars) & 6 &  \\
+\bottomrule
+\end{longtable}
+
+\section*{Group: Household Balance Sheets}
+
+\begin{longtable}{L{4.5cm} L{14.5cm} c c}
+\toprule
+\textbf{Mnemonic} & \textbf{Description} & \textbf{Tcode} & \textbf{SW} \\
+\midrule
+\endhead
+\texttt{TABSHNOx} & Real Total Assets of Households and Nonprofit Organizations (Billions of 2012 Dollars), deflated by Core PCE & 5 &  \\
+\texttt{TLBSHNOx} & Real Total Liabilities of Households and Nonprofit Organizations (Billions of 2012 Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{LIABPIx} & Liabilities of Households and Nonprofit Organizations Relative to Personal Disposable Income (Percent) & 5 &  \\
+\texttt{TNWBSHNOx} & Real Net Worth of Households and Nonprofit Organizations (Billions of 2012 Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{NWPIx} & Net Worth of Households and Nonprofit Organizations Relative to Disposable Personal Income (Percent) & 1 &  \\
+\texttt{TARESAx} & Real Assets of Households and Nonprofit Organizations Excluding Real Estate Assets (Billions of 2012 Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{HNOREMQ027Sx} & Real Real Estate Assets of Households and Nonprofit Organizations (Billions of 2012 Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{TFAABSHNOx} & Real Total Financial Assets of Households and Nonprofit Organizations (Billions of 2012 Dollars), deflated by Core PCE & 5 & \checkmark \\
+\texttt{CONSPIx} & Nonrevolving Consumer Credit to Personal Income (Percent) & 2 &  \\
+\bottomrule
+\end{longtable}
+
+\section*{Group: Exchange Rates}
+
+\begin{longtable}{L{4.5cm} L{14.5cm} c c}
+\toprule
+\textbf{Mnemonic} & \textbf{Description} & \textbf{Tcode} & \textbf{SW} \\
+\midrule
+\endhead
+\texttt{TWEXAFEGSMTHx} & Nominal Trade Weighted U.S. Dollar Index: Advanced Foreign Economies, Goods and Services (Index 2006=100) & 5 & \checkmark \\
+\texttt{EXUSEU} & U.S. / Euro Foreign Exchange Rate (U.S. Dollars to One Euro) & 5 & \checkmark \\
+\texttt{EXSZUSx} & Switzerland / U.S. Foreign Exchange Rate (Swiss Francs to One U.S. Dollar) & 5 & \checkmark \\
+\texttt{EXJPUSx} & Japan / U.S. Foreign Exchange Rate (Japanese Yen to One U.S. Dollar) & 5 & \checkmark \\
+\texttt{EXUSUKx} & U.S. / U.K. Foreign Exchange Rate (U.S. Dollars to One British Pound) & 5 & \checkmark \\
+\texttt{EXCAUSx} & Canada / U.S. Foreign Exchange Rate (Canadian Dollars to One U.S. Dollar) & 5 & \checkmark \\
+\bottomrule
+\end{longtable}
+
+\section*{Group: Other}
+
+\begin{longtable}{L{4.5cm} L{14.5cm} c c}
+\toprule
+\textbf{Mnemonic} & \textbf{Description} & \textbf{Tcode} & \textbf{SW} \\
+\midrule
+\endhead
+\texttt{UMCSENTx} & University of Michigan: Consumer Sentiment (Index 1st Quarter 1966=100) & 1 & \checkmark \\
+\texttt{USEPUINDXM} & Economic Policy Uncertainty Index for United States & 2 & \checkmark \\
+\bottomrule
+\end{longtable}
+
+\section*{Group: Stock Markets}
+
+\begin{longtable}{L{4.5cm} L{14.5cm} c c}
+\toprule
+\textbf{Mnemonic} & \textbf{Description} & \textbf{Tcode} & \textbf{SW} \\
+\midrule
+\endhead
+\texttt{VIXCLSx} & CBOE S\&P 100 Volatility Index: VXO & 1 & \checkmark \\
+\texttt{NIKKEI225} & Nikkei Stock Average (Index) & 5 &  \\
+\texttt{NASDAQCOM} & NASDAQ Composite Index (Index Feb 5, 1971=100) & 5 &  \\
+\texttt{S\&P 500} & S\&P's Common Stock Price Index: Composite & 5 & \checkmark \\
+\texttt{S\&P div yield} & S\&P's Composite Common Stock: Dividend Yield (Percent) & 2 &  \\
+\texttt{S\&P PE ratio} & S\&P's Composite Common Stock: Price-Earnings Ratio & 5 &  \\
+\bottomrule
+\end{longtable}
+
+\section*{Group: Non-Household Balance Sheets}
+
+\begin{longtable}{L{4.5cm} L{14.5cm} c c}
+\toprule
+\textbf{Mnemonic} & \textbf{Description} & \textbf{Tcode} & \textbf{SW} \\
+\midrule
+\endhead
+\texttt{GFDEGDQ188S} & Federal Debt: Total Public Debt as Percent of GDP (Percent) & 2 &  \\
+\texttt{GFDEBTNx} & Real Federal Debt: Total Public Debt (Millions of 2012 Dollars), deflated by PCE & 2 &  \\
+\texttt{TLBSNNCBx} & Real Nonfinancial Corporate Business Sector Liabilities (Billions of 2012 Dollars), deflated by Implicit Price Deflator for Business Sector (IPDBS) & 5 &  \\
+\texttt{TLBSNNCBBDIx} & Nonfinancial Corporate Business Sector Liabilities to Disposable Business Income (Percent) & 1 &  \\
+\texttt{TTAABSNNCBx} & Real Nonfinancial Corporate Business Sector Assets (Billions of 2012 Dollars), deflated by Implicit Price Deflator for Business Sector (IPDBS) & 5 &  \\
+\texttt{TNWMVBSNNCBx} & Real Nonfinancial Corporate Business Sector Net Worth (Billions of 2012 Dollars), deflated by Implicit Price Deflator for Business Sector (IPDBS) & 5 &  \\
+\texttt{TNWMVBSNNCBBDIx} & Nonfinancial Corporate Business Sector Net Worth to Disposable Business Income (Percent) & 2 &  \\
+\texttt{TLBSNNBx} & Real Nonfinancial Noncorporate Business Sector Liabilities (Billions of 2012 Dollars), deflated by Implicit Price Deflator for Business Sector (IPDBS) & 5 &  \\
+\texttt{TLBSNNBBDIx} & Nonfinancial Noncorporate Business Sector Liabilities to Disposable Business Income (Percent) & 1 &  \\
+\texttt{TABSNNBx} & Real Nonfinancial Noncorporate Business Sector Assets (Billions of 2012 Dollars), deflated by Implicit Price Deflator for Business Sector (IPDBS) & 5 &  \\
+\texttt{TNWBSNNBx} & Real Nonfinancial Noncorporate Business Sector Net Worth (Billions of 2012 Dollars), deflated by Implicit Price Deflator for Business Sector (IPDBS) & 5 &  \\
+\texttt{TNWBSNNBBDIx} & Nonfinancial Noncorporate Business Sector Net Worth to Disposable Business Income (Percent) & 2 &  \\
+\texttt{CNCFx} & Real Disposable Business Income (Billions of 2012 Dollars); corporate cash flow with IVA minus taxes on corporate income, deflated by Implicit Price Deflator for Business Sector (IPDBS) & 5 &  \\
+\bottomrule
+\end{longtable}
+
+\section*{Mapping to Austrian Data Sources}
+
+The Austrian counterpart dataset is built by \texttt{build\_\allowbreak{}country\_\allowbreak{}nipa\_\allowbreak{}dataset.\allowbreak{}R} (generic OECD/BIS/ECB puller, parameterised by country) together with the Austria-specific \texttt{scripts/\allowbreak{}01-OECD-Codes.\allowbreak{}R} and \texttt{scripts/\allowbreak{}01-ECB-Codes.\allowbreak{}R}. Because FRED-QD's 245 series are built almost entirely from U.S.-specific micro sources (Census Bureau, BLS establishment surveys, BEA detailed NIPA tables, \ldots) that have no direct cross-country equivalent, the table below maps FRED-QD \emph{groups} to representative concepts and their Austrian source, rather than attempting a one-to-one mnemonic match. ``Status'' distinguishes series already downloaded into \texttt{data/bronze}, series for which fetch code exists but has not been run/verified, and genuine gaps with no cross-country source.
+
+\begin{longtable}{L{3cm} L{4.3cm} L{3.2cm} L{3.8cm} L{6.2cm}}
+\toprule
+\textbf{FRED-QD Group} & \textbf{FRED-QD Series (concept)} & \textbf{Austrian Source} & \textbf{Austrian Code / Key} & \textbf{Status} \\
+\midrule
+\endhead
+Output and Income & \texttt{GDPC1} (Real GDP) & OECD QNA (SDMX) & Q.\allowbreak{}AUT.\allowbreak{}S1.\allowbreak{}.\allowbreak{}B1GQ.\allowbreak{}.\allowbreak{}LR & Downloaded (\texttt{data/\allowbreak{}bronze/\allowbreak{}GDP.\allowbreak{}csv}) \\
+Output and Income & \texttt{PCECC96} (Real consumption expenditure) & OECD QNA (SDMX) & Q.\allowbreak{}AUT.\allowbreak{}S1M.\allowbreak{}.\allowbreak{}P3.\allowbreak{}.\allowbreak{}LR & Downloaded (\texttt{data/\allowbreak{}bronze/\allowbreak{}Consumption.\allowbreak{}csv}); OECD sector S1M (total economy) is broader than FRED-QD's household-only PCE \\
+Output and Income & \texttt{GPDIC1 / FPIx} (Real gross fixed capital formation) & OECD QNA (SDMX) & Q.\allowbreak{}AUT.\allowbreak{}.\allowbreak{}.\allowbreak{}P51G.\allowbreak{}.\allowbreak{}.\allowbreak{}LR & Downloaded (\texttt{data/\allowbreak{}bronze/\allowbreak{}FixedInv.\allowbreak{}csv}); all-sector total, not restricted to the private sector like FRED-QD's series \\
+Output and Income & \texttt{GCEC1} (Real government consumption \& investment) & OECD QNA (SDMX) & P3, sector S13 & Coded (\texttt{build\_\allowbreak{}country\_\allowbreak{}nipa\_\allowbreak{}dataset.\allowbreak{}R}, anchor concepts); not yet downloaded for Austria \\
+Output and Income & \texttt{EXPGSC1} (Real exports of goods \& services) & OECD QNA (SDMX) & P6, sector S1 & Coded (anchor concepts); not yet downloaded \\
+Output and Income & \texttt{IMPGSC1} (Real imports of goods \& services) & OECD QNA (SDMX) & P7, sector S1 & Coded (anchor concepts); not yet downloaded \\
+Output and Income & \texttt{DPIC96} (Real household disposable income) & OECD QNA (SDMX) & B6G, sector S14 & Coded (anchor concepts); not yet downloaded \\
+Industrial Production & \texttt{INDPRO} (Industrial production index) & OECD MEI (via FRED mirror) & \texttt{PRINTO01ATQ661S} & Coded (\texttt{other\_\allowbreak{}groups} table); not yet downloaded \\
+Employment and Unemployment & \texttt{UNRATE} (Unemployment rate) & OECD STES/KEI (SDMX); alt.\ OECD MEI & \texttt{AUT.\allowbreak{}Q.\allowbreak{}.\allowbreak{}PT\_\allowbreak{}LF} (\texttt{scripts/\allowbreak{}OECD-Codes.\allowbreak{}csv}); alt.\allowbreak{}\ \texttt{LRHUTTTTATQ156S} & Coded and attempted (\texttt{01-OECD-Codes.\allowbreak{}R}); not present in \texttt{data/\allowbreak{}bronze} yet \\
+Housing & \texttt{USSTHPI / SPCS10RSA / SPCS20RSA} (Real house price index) & BIS Residential Property Prices (SDMX) & \texttt{QATR628BIS} & Coded (\texttt{other\_\allowbreak{}groups} table); not yet downloaded \\
+Inventories, Orders, and Sales & \texttt{RSAFSx} (Real retail sales (proxy)) & OECD MEI (via FRED mirror) & \texttt{SLRTTO01ATQ189S} & Coded as a proxy; manufacturers' new orders/\allowbreak{}inventories (\texttt{AMDMNOx}, \texttt{ACOGNOx}, \ldots) have no cross-country equivalent and are not attempted \\
+Prices & \texttt{CPIAUCSL} (Consumer price index) & OECD MEI (via FRED mirror) & \texttt{CPALTT01ATQ661S} & Coded; not yet downloaded \\
+Earnings and Productivity & \texttt{AHETPIx / OPHNFB / ULCNFB, \ldots} (Hourly earnings, productivity, unit labor cost) & \emph{None implemented} & -- & Gap: OECD Productivity Database could supply GDP-per-hour and unit-labor-cost concepts, but the dataflow/\allowbreak{}dimension structure has not been verified (see script comments) \\
+Interest Rates & \texttt{GS10} (10-year government bond yield) & OECD MEI (via FRED mirror) & \texttt{IRLTLT01ATQ156N} & Coded; not yet downloaded \\
+Money and Credit & \texttt{TOTALSLx / BUSLOANSx / \ldots} (Credit to the private non-financial sector) & BIS Credit Statistics (SDMX) & \texttt{WS\_\allowbreak{}TC}, key \texttt{Q.\allowbreak{}AUT.\allowbreak{}P.\allowbreak{}N.\allowbreak{}770.\allowbreak{}M.\allowbreak{}N.\allowbreak{}A} & Coded (single aggregate proxy for the several US credit-by-purpose series); not yet downloaded \\
+Household Balance Sheets & \texttt{TNWBSHNOx} (Household net worth) & ECB Quarterly Sector Accounts (SDW) & \texttt{QSA.\allowbreak{}Q.\allowbreak{}N.\allowbreak{}AUT.\allowbreak{}W0.\allowbreak{}S1M.\allowbreak{}S1.\allowbreak{}N.\allowbreak{}B90.\allowbreak{}A.\allowbreak{}F.\allowbreak{}\_\allowbreak{}Z.\allowbreak{}\_\allowbreak{}Z.\allowbreak{}\_\allowbreak{}Z.\allowbreak{}XDC.\allowbreak{}\_\allowbreak{}T.\allowbreak{}S.\allowbreak{}V.\allowbreak{}N.\allowbreak{}\_\allowbreak{}T} & Coded, euro-area countries only (Austria qualifies); key structure explicitly marked low-confidence/\allowbreak{}unverified \\
+Exchange Rates & \texttt{EXUSEU / TWEXAFEGSMTHx} (USD exchange rate) & OECD MEI (via FRED mirror) & \texttt{CCUSMA02ATQ618N} & Coded; for a euro-area country this collapses to the EUR/\allowbreak{}USD rate itself.\allowbreak{} A trade-weighted dollar index (\texttt{TWEXAFEGSMTHx}) has no single-country equivalent and is not attempted \\
+Other & \texttt{UMCSENTx} (Consumer sentiment/confidence) & OECD MEI (via FRED mirror) & \texttt{CSCICP03ATQ460S} & Coded; not yet downloaded \\
+Stock Markets & \texttt{S\&P 500} (Broad equity price index) & OECD MEI (via FRED mirror) & \texttt{SPASTT01ATQ661N} & Coded as a generic all-share proxy (would reflect Austria's ATX in practice); not yet downloaded \\
+Non-Household Balance Sheets & \texttt{TLBSNNCBx / TNWMVBSNNCBx / \ldots} (Nonfinancial corporate balance sheets) & \emph{None implemented} & -- & Gap: BIS publishes some corporate credit statistics, but a clean nonfinancial-corporate balance sheet series needs the same manual key verification as the household case and has not been attempted \\
+\bottomrule
+\end{longtable}
+
+\end{landscape}
+
+\section*{Notes}
+
+\begin{itemize}
+  \item Descriptions and group assignments are adapted from the FRED-QD
+    appendix (McCracken and Ng, 2020), cross-checked against the mnemonics
+    actually present in \texttt{FRED-Data.csv}.
+  \item A small number of series in this vintage of the dataset use FRED
+    mnemonics that superseded the ones documented in the original appendix
+    (the underlying concept is unchanged): \texttt{BOGMBASEREALx} succeeded
+    \texttt{AMBSLREALx} (St.\ Louis Adjusted Monetary Base), \texttt{M1REAL}
+    and \texttt{M2REAL} succeeded \texttt{M1REALx}/\texttt{M2REALx}, and
+    \texttt{TWEXAFEGSMTHx} (Trade Weighted U.S. Dollar Index: Advanced
+    Foreign Economies) succeeded \texttt{TWEXMMTH} following the Federal
+    Reserve Board's 2020 revision of its dollar index series.
+  \item Transformation codes (Tcode) and factor-model flags (SW) shown here
+    are read directly from rows 2--3 of \texttt{FRED-Data.csv} and may differ
+    slightly from the original 2018 appendix vintage as FRED-QD's own
+    recommended transformations are occasionally revised.
+\end{itemize}
+
+\end{document}

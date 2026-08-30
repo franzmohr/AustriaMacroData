@@ -1,0 +1,5 @@
+Code,Link
+GDP,"https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NAMAIN1@DF_QNA,/Q.Y.AUT.S1..B1GQ._Z._Z..XDC.LR..T0102"
+Consumption,"https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NAMAIN1@DF_QNA,/Q.Y.AUT.S1M..P3._Z._Z..XDC.LR..T0102"
+FixedInv,"https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NAMAIN1@DF_QNA,/Q.Y.AUT...P51G....XDC.LR..T0102"
+UnempRate,"https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_KEI@DF_KEI,/AUT.Q..PT_LF._T.Y._Z"
