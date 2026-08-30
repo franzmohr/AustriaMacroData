@@ -3,7 +3,7 @@
 generate_candidate_indicators.py -- run from the repository root:
     python docs/generate_candidate_indicators.py
 
-Parses docs/FRED-QD_variables.tex to get the authoritative 245-series
+Parses docs/Mohr_AUSTRIA-QD.tex (Appendix A) to get the authoritative 245-series
 catalog (mnemonic, group, description), then joins it against a
 hand-built annotation table proposing an Austrian-equivalent candidate
 source for each series. Output: docs/candidate_indicators_austria.csv
@@ -27,7 +27,7 @@ import csv
 import os
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
-tex_path = os.path.join(script_dir, "FRED-QD_variables.tex")
+tex_path = os.path.join(script_dir, "Mohr_AUSTRIA-QD.tex")
 with open(tex_path, encoding="utf-8") as f:
     tex = f.read()
 

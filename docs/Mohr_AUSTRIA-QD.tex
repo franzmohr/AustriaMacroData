@@ -8,65 +8,406 @@
 \usepackage{amssymb}
 \usepackage{pdflscape}
 \usepackage{hyperref}
-
-\title{FRED-QD Variable Documentation}
-\author{Austria Macro Data Project}
-\date{\today}
+\usepackage{natbib}
+\usepackage{orcidlink}
 
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\title{AUSTRIA-QD: A Quarterly Database for Macroeconomic Research in Austria}
+\author{Franz X.\ Mohr \orcidlink{0009-0003-8890-7781}}
+\date{\today}
 
 \begin{document}
 
 \maketitle
 
-\section*{Overview}
+\begin{abstract}
+\noindent This report's contribution is a \emph{methodology}, not a
+dataset: a documented, live-verified, and fully reproducible procedure for
+building a FRED-QD-style \citep{mccracken2020fred} quarterly macroeconomic
+panel for a single country from public international statistical APIs, and
+its reference implementation for Austria. Larger academic releases already
+cover Austria as part of a multi-country panel -- notably EA-MD-QD
+\citep{barigozzi2024eamdqd}, with 1,136 series for the euro area and its
+ten largest members -- so this report does not compete on coverage.
+Instead it demonstrates, and documents in enough detail to be repeated for
+any other country, a construction discipline that a periodically-released
+static file cannot easily expose: every source (Eurostat, the OECD, the
+IMF, the ECB, the BIS, and, for two country-specific overrides, the
+European Commission's Business and Consumer Survey and Yahoo Finance) is
+confirmed against its live API -- structure query, then a real data pull
+returning current, plausible values -- rather than assumed correct from
+documentation, with the exact identifier and any conceptual caveat
+recorded in a public, machine-readable registry rather than left implicit
+in code or spreadsheet formulas. The reference implementation itself
+covers 25 concepts, identical in column structure for every country the
+underlying open-source tool has been run for, and the report catalogs,
+series by series, which of FRED-QD's remaining 220 concepts have a
+plausible but as yet unverified Austrian counterpart, which are directly
+computable from concepts already implemented, and which have no
+cross-country equivalent at all -- itself a template for scoping the same
+exercise elsewhere.
+\end{abstract}
 
-This document describes the variables contained in \texttt{FRED-Data.csv}, a
-quarterly panel of U.S. macroeconomic series following the \emph{FRED-QD}
-format designed by McCracken and Ng (2020), ``FRED-QD: A Quarterly Database
-for Macroeconomic Research,'' Federal Reserve Bank of St.\ Louis \emph{Review}.
-FRED-QD is the quarterly companion to FRED-MD and is designed to emulate the
-dataset used in Stock and Watson (2012), ``Disentangling the Channels of the
-2007--2009 Recession,'' NBER Working Paper No.\ 18094.
+\noindent\textbf{JEL Classification:} C82, C33, E01
 
-For each series the file's first three rows encode metadata read directly by
-this dataset's construction scripts:
-\begin{itemize}
-  \item \textbf{Row 1} -- the FRED mnemonic (column header).
-  \item \textbf{Row 2 (``factors'')} -- a 0/1 flag indicating whether Stock
-    and Watson (2012) used the series when estimating their factor model
-    (1 = yes, 0 = no).
-  \item \textbf{Row 3 (``transform'')} -- the recommended transformation
-    code for the series $x_t$:
-    \begin{itemize}
-      \item 1: no transformation
-      \item 2: $\Delta x_t$ (first difference)
-      \item 3: $\Delta^2 x_t$ (second difference)
-      \item 4: $\log(x_t)$
-      \item 5: $\Delta \log(x_t)$ (log first difference, i.e.\ approximate growth rate)
-      \item 6: $\Delta^2 \log(x_t)$ (log second difference)
-      \item 7: $\Delta(x_t/x_{t-1} - 1.0)$
-    \end{itemize}
-\end{itemize}
+\noindent\textbf{Keywords:} quarterly database, Austria, FRED-QD, macroeconomic data, open data, reproducibility
 
-If the FRED mnemonic does not end in ``x'' the series comes directly from the
-FRED database (e.g.\ \texttt{PCECC96}, real PCE). Otherwise the series is a
-modified variant of a FRED series -- most commonly a nominal series manually
-deflated by the PCE or core-PCE price index (e.g.\ \texttt{PCDGx}, nominal PCE
-durables deflated by the PCE price index). The exception is the S\&P 500
-data, which is taken from public sources rather than FRED. Monthly-frequency
-source series are aggregated to quarterly frequency by averaging over the
-three months of the quarter.
+\section{Introduction}
 
-The series below are grouped into fourteen economic categories, following
-the original FRED-QD appendix. Within each group, the table reports the
-FRED mnemonic, a brief description, the transformation code used in this
-dataset (\texttt{FRED-Data.csv}, row 3), and whether the series was among
-those used by Stock and Watson (2012) for factor estimation
-(\checkmark = yes). These tables, and the source-mapping table that follows
-them, are set in landscape orientation for readability.
+\citet{mccracken2020fred} introduced FRED-QD as the quarterly companion to
+FRED-MD \citep{mccracken2016fred}, itself designed to emulate the
+macroeconomic panel used by \citet{stockwatson2012disentangling}. Their
+stated goal was narrow but consequential: relieve researchers working with
+macroeconomic ``big data'' methods of the burden of assembling, revising,
+and documenting a large panel themselves, by providing one standardized,
+continuously updated, publicly available file. FRED-QD has since become a
+standard input to factor models, large Bayesian VARs, and a range of other
+data-rich empirical methods -- and has itself inspired country- and
+region-specific analogs, most notably a Canadian version
+\citep{fortingagnon2018fred} and, for the euro area,
+\citet{barigozzi2024eamdqd}'s EA-MD-QD, which provides 1,136 monthly and
+quarterly series for the euro area as a whole and its ten largest member
+states, Austria included, drawn from Eurostat, the ECB, the OECD, and FRED.
+
+FRED-QD is, however, a U.S. database. Its 245 series are drawn from FRED,
+which in turn mirrors U.S. statistical agencies (the Bureau of Economic
+Analysis, the Bureau of Labor Statistics, the Census Bureau, the Federal
+Reserve). A researcher wanting the same kind of standardized, quarterly,
+factor-model-ready panel for a single country other than the United
+States has, since \citeyear{barigozzi2024eamdqd}, had EA-MD-QD to draw an
+Austrian sub-panel from -- but only as a byproduct of a euro-area-wide
+construction, at a scale (1,136 series, distributed as spreadsheets plus
+MATLAB code) oriented toward cross-country panel analysis rather than a
+single country's own use.
+
+This report's contribution is accordingly framed as a \emph{methodology}
+rather than a competing dataset: a construction and verification procedure
+that, applied to Austria as a reference case, produces a panel
+parameterized by country rather than hard-coded (the underlying tool
+already has built-in country-code support for 38 OECD member states), and
+that trades EA-MD-QD's scale for two properties a country-first, code-based
+construction makes easier to guarantee. First, every series' exact source
+and any conceptual caveat is recorded in a public, machine-readable
+registry rather than left to spreadsheet documentation
+(Section~\ref{sec:registry}). Second, the fetch pipeline itself is open and
+re-runnable rather than a periodically-refreshed static release, so a
+researcher can audit, correct, or extend any single series' provenance
+directly, and repeat the same procedure for a country neither FRED-QD nor
+EA-MD-QD covers. Rather than replicate FRED-QD's exact 245 series -- most
+of which, as documented in Section~\ref{sec:coverage}, have no
+cross-country equivalent at all -- it reproduces FRED-QD's \emph{design}:
+one representative concept per group, sourced from the most authoritative
+and freshest agency available, with every source verified against its live
+API rather than assumed correct from documentation alone.
+
+The remainder of this report is organized as follows. Section~\ref{sec:construction}
+describes how the panel is constructed: the concept taxonomy, the source
+hierarchy and the country-specific overrides that take precedence over it,
+the verification methodology, and the update cadence. Section~\ref{sec:registry}
+describes the data-sources registry itself. Section~\ref{sec:coverage}
+situates the 25 implemented concepts against FRED-QD's full 245-series
+catalog. Section~\ref{sec:limitations} documents known data-quality issues
+and gaps, following FRED-QD's own convention of disclosing rather than
+papering over them. Section~\ref{sec:future} outlines concrete extensions.
+Section~\ref{sec:conclusion} concludes. Appendix~\ref{app:catalog} reproduces
+the full FRED-QD variable catalog; Appendix~\ref{app:mapping} gives the
+current Austria-specific source mapping.
+
+\section{Data Construction}
+\label{sec:construction}
+
+\subsection{Concept taxonomy and canonical schema}
+
+Every country the underlying tool (\texttt{scripts/build\_country\_panel.R})
+is run for produces a panel with exactly the same 25 columns, in the same
+order, regardless of which concepts actually resolved for that country: a
+concept with no available source for a given country is still present as
+an all-\texttt{NA} column rather than silently missing. This mirrors, in
+spirit, FRED-QD's own commitment to a fixed, documented series list -- and
+is a deliberate design choice separate from mirroring FRED-QD's specific
+series: the point of routing every country through the same 25
+FRED-QD-style concept labels is that switching the country argument should
+be the \emph{only} thing that changes between two runs, so that downstream
+code can load any country's file with identical column-handling logic.
+Table~\ref{tab:groups} lists the 25 concepts and the FRED-QD group each
+belongs to; Appendix~\ref{app:mapping} gives the exact source and any
+conceptual caveat for Austria specifically.
+
+\begin{longtable}{L{4.5cm} L{5cm} L{3cm}}
+\toprule
+\textbf{FRED-QD Group} & \textbf{Concept} & \textbf{FRED-QD mnemonic} \\
+\midrule
+\endhead
+Output and Income & \texttt{real\_\allowbreak{}gdp} & \texttt{GDPC1} \\
+Output and Income & \texttt{real\_\allowbreak{}household\_\allowbreak{}consumption} & \texttt{PCECC96} \\
+Output and Income & \texttt{real\_\allowbreak{}govt\_\allowbreak{}consumption} & \texttt{GCEC1} \\
+Output and Income & \texttt{real\_\allowbreak{}gfcf\_\allowbreak{}total} & \texttt{FPIx} \\
+Output and Income & \texttt{real\_\allowbreak{}exports} & \texttt{EXPGSC1} \\
+Output and Income & \texttt{real\_\allowbreak{}imports} & \texttt{IMPGSC1} \\
+Output and Income & \texttt{real\_\allowbreak{}household\_\allowbreak{}disposable\_\allowbreak{}income} & \texttt{DPIC96} \\
+Industrial Production & \texttt{industrial\_\allowbreak{}production} & \texttt{INDPRO} \\
+Employment and Unemployment & \texttt{unemployment\_\allowbreak{}rate} & \texttt{UNRATE} \\
+Employment and Unemployment & \texttt{employment\_\allowbreak{}rate} & \emph{none} \\
+Housing & \texttt{house\_\allowbreak{}price\_\allowbreak{}real} & \texttt{USSTHPI} \\
+Inventories, Orders, and Sales & \texttt{retail\_\allowbreak{}sales\_\allowbreak{}volume} & \texttt{RSAFSx} \\
+Prices & \texttt{cpi\_\allowbreak{}index} & \texttt{CPIAUCSL} \\
+Earnings and Productivity & \texttt{unit\_\allowbreak{}labor\_\allowbreak{}cost} & \texttt{ULCNFB} \\
+Interest Rates & \texttt{long\_\allowbreak{}term\_\allowbreak{}rate} & \texttt{GS10} \\
+Interest Rates & \texttt{short\_\allowbreak{}term\_\allowbreak{}rate} & \texttt{TB3MS} \\
+Interest Rates & \texttt{mortgage\_\allowbreak{}rate} & \texttt{MORTGAGE30US} \\
+Money and Credit & \texttt{credit\_\allowbreak{}to\_\allowbreak{}private\_\allowbreak{}nonfin\_\allowbreak{}sector} & \emph{none} \\
+Household Balance Sheets & \texttt{euro\_\allowbreak{}area\_\allowbreak{}household\_\allowbreak{}net\_\allowbreak{}worth\_\allowbreak{}growth} & \texttt{TNWBSHNOx} \\
+Household Balance Sheets & \texttt{household\_\allowbreak{}credit\_\allowbreak{}to\_\allowbreak{}gdp} & \emph{none} \\
+Non-Household Balance Sheets & \texttt{corporate\_\allowbreak{}credit\_\allowbreak{}to\_\allowbreak{}gdp} & \emph{none} \\
+Exchange Rates & \texttt{fx\_\allowbreak{}rate\_\allowbreak{}to\_\allowbreak{}usd} & \emph{none} \\
+Exchange Rates & \texttt{real\_\allowbreak{}effective\_\allowbreak{}exchange\_\allowbreak{}rate} & \texttt{TWEXAFEGSMTHx} \\
+Other & \texttt{consumer\_\allowbreak{}confidence} & \texttt{UMCSENTx} \\
+Stock Markets & \texttt{share\_\allowbreak{}price\_\allowbreak{}index} & \texttt{S\&P 500} \\
+\bottomrule
+\caption{The 25 implemented concepts and their FRED-QD group. Four concepts
+(employment rate, mortgage rate, and two credit-to-GDP ratios) have no
+direct FRED-QD mnemonic; they are standard cross-country indicators
+included because they are well-supported by the sources in this project.}
+\label{tab:groups}
+\end{longtable}
+
+\subsection{Source hierarchy and country-specific overrides}
+
+For the seven ``anchor'' national-accounts concepts (real GDP, household
+consumption, government consumption, gross fixed capital formation,
+exports, imports, and household disposable income), the tool tries
+Eurostat's Quarterly National Accounts (\texttt{namq\_10\_gdp}) first for
+EU member states, then the OECD's Quarterly National Accounts
+(\texttt{DF\_QNA}) for whatever Eurostat did not resolve, then the IMF's
+National Economic Accounts (\texttt{QNEA}) for whatever is still missing.
+Eurostat is preferred for EU members not merely because it is the more
+``local'' source, but because in at least one case it is conceptually
+closer to FRED-QD's own definition: Eurostat's household-consumption
+transaction (\texttt{P31\_S14}) covers households only, while the
+equivalent OECD sector (\texttt{S1M}) also includes non-profit institutions
+serving households, making it broader than FRED-QD's household-only
+personal consumption expenditure.
+
+For credit and balance-sheet concepts, the BIS's Credit to the
+Non-Financial Sector dataflow (\texttt{WS\_TC}) is queried once per
+borrower sector (private non-financial sector, households, non-financial
+corporations) for \emph{all} countries at once -- a wildcarded
+\texttt{BORROWERS\_CTY} dimension was confirmed live to return every
+country BIS covers in a single request -- and the result cached locally so
+that building panels for multiple countries in one session does not
+re-download the same data. The ECB's Quarterly Sector Accounts supply
+household net worth, but only as a euro-area \emph{aggregate}: the
+dataflow was confirmed, by enumerating its actual published series keys
+rather than assuming per-country availability, to have observations only
+for the fixed-composition euro-area total, not for individual member
+states. The ECB's MFI Interest Rate Statistics, by contrast, are genuinely
+country-specific, and supply a mortgage rate (new-business loans to
+households for house purchase) for any euro-area member.
+
+For the remaining concepts (industrial production, unemployment, house
+prices, consumer sentiment, share prices, and several others), the default
+source is FRED's own public mirror of OECD Main Economic Indicators and
+BIS series -- reached via the same \texttt{fredgraph.csv} export used
+throughout FRED-QD's own construction, requiring no API key. Two
+deliberate exceptions take precedence over this default: for EU member
+states, consumer confidence is sourced from the European Commission's own
+Business and Consumer Survey, which publishes current data, in place of
+the FRED-mirrored OECD series, which was found to have been frozen since
+2024; and for Austria specifically, the share-price-index concept is
+sourced from the ATX (Austria's own benchmark index) via Yahoo Finance, in
+place of a generic OECD ``all shares'' proxy.
+
+\subsection{Verification methodology}
+
+Every source used in this project was confirmed against its live API --
+structure and codelist queries where relevant, then a real data pull
+returning current, plausible values for at least two countries -- before
+being wired into the panel-construction tool. This project's predecessor
+script guessed several dataflow identifiers and dimension orderings that
+later verification found to be wrong (documented in each module's header
+comments, e.g.\ \texttt{R/oecd.R}, \texttt{R/bis.R}, \texttt{R/ecb.R}); the
+verification pass this report describes was undertaken specifically to
+replace those guesses with confirmed keys, correcting several outright
+errors along the way. Series accepted as ``verified'' report a real
+non-empty response with plausible values, not merely an HTTP~200 status,
+since several sources return a syntactically valid but semantically empty
+or stale response for an unsupported query -- for example, an unpublished
+monthly archive redirecting to a generic landing page rather than
+returning a 404.
+
+\subsection{Update cadence}
+
+Following FRED-QD's own practice of publishing a new vintage on the last
+business day of each month, a scheduled job rebuilds the Austrian (and two
+comparison, German and U.S.) panels on the first of each month and
+archives a dated copy of both the data and its coverage report into
+\texttt{output/vintages/}, so that a given month's release remains
+reproducible even after later revisions are folded into the ``current''
+file -- the same rationale FRED-QD gives for retaining its own historical
+vintages.
+
+\subsection{Transformation codes}
+
+Where a concept corresponds to an actual FRED-QD series, this project
+reuses that series' published transformation code (Appendix~\ref{app:catalog})
+rather than re-deriving one, for the same reason FRED-QD itself reuses
+\citet{stockwatson2012disentangling}'s original codes where available:
+consistency with the literature that already uses these codes, rather than
+introducing an independent judgment call about each series' order of
+integration.
+
+\section{The Data-Sources Registry}
+\label{sec:registry}
+
+\texttt{docs/data\_sources.csv} is a long-format table -- one row per
+(country, concept) pair -- with columns \texttt{country}, \texttt{variable},
+\texttt{provider}, \texttt{key}, and \texttt{comment}. It is the single
+documentation surface for ``what source backs this number, and how does it
+conceptually differ from the US/FRED-QD definition,'' replacing what would
+otherwise be prose comments scattered across each source-specific module.
+The \texttt{USA} rows are the deliberate exception: they always hold the
+actual FRED-QD mnemonic for each concept, since FRED-QD itself is the
+ground truth every other country's row approximates, and are not
+overwritten by a live run through the international sources for the United
+States. Appendix~\ref{app:mapping} reproduces the current Austria rows.
+
+\section{Coverage Relative to FRED-QD}
+\label{sec:coverage}
+
+Of FRED-QD's 245 series, 25 concepts are currently implemented for Austria
+(21 correspond directly to a specific FRED-QD mnemonic; the remaining four
+-- employment rate, mortgage rate, and two credit-to-GDP ratios -- are
+standard cross-country indicators with no FRED-QD equivalent, included
+because they are otherwise well-supported by the sources above). A
+companion file, \texttt{docs/candidate\_indicators\_austria.csv}, goes
+through every one of the remaining 220 FRED-QD series individually and
+classifies each as a \textsc{candidate} (a proposed but unverified
+Eurostat/ECB/OECD source, with a confidence rating), \textsc{derivable}
+(computable from concepts already implemented, e.g.\ export and import
+shares of GDP), or \textsc{no\_equivalent} (a genuinely U.S.-specific
+construct, with the reason stated -- for example, the federal/state/local
+government employment split has no counterpart in European labour-market
+statistics). Unlike the registry described in Section~\ref{sec:registry},
+that file is an explicitly unverified research proposal, intended as a
+prioritized starting point for future verification passes rather than a
+claim that any given source is confirmed to work.
+
+\section{Known Limitations}
+\label{sec:limitations}
+
+Following FRED-QD's own convention of documenting data-quality issues
+rather than silently working around them, several are noted here explicitly.
+First, the OECD-mirrored consumer price index has no primary-source
+override yet and was found, on live inspection, to have stopped updating
+around 2024 -- the same underlying FRED-mirror family that was fixed for
+consumer confidence via the EC survey override, but not yet for CPI.
+Second, OECD's own data API was found to rate-limit under the moderate
+request volume of building three countries' panels back-to-back; the IMF
+fallback absorbs this in practice; but it means a much larger cross-country
+loop should expect to encounter it. Third, household net worth is
+available only as a euro-area aggregate, not per country, a genuine data
+availability limit rather than an implementation gap. Fourth, several
+concepts (mortgage rate, the EC survey override) are structurally
+unavailable outside the euro area or the EU respectively, so a non-EU
+country's panel will show these as \texttt{NA} by construction, not by
+omission. Finally, quarterly household disposable income was not found for
+Austria, Germany, or the United States themselves through either OECD or
+Eurostat, consistent with McCracken and Ng's own observation that FRED-QD's
+income-side detail is harder to source than its expenditure side.
+
+\section{Future Work}
+\label{sec:future}
+
+The candidate list in Section~\ref{sec:coverage} identifies several
+concrete, high-confidence extensions: Eurostat's Harmonised Index of
+Consumer Prices, whose dataflow was confirmed to exist live, would both
+fix the stale CPI series above and, via its COICOP breakdown, supply
+Austrian counterparts to most of FRED-QD's twenty PCE/CPI sub-category
+price indices; Eurostat's labour productivity and unit-labour-cost dataflow
+(\texttt{namq\_10\_lp\_ulc}) is a direct quarterly source for a concept
+currently approximated via an OECD-mirror proxy; the ECB's MFI Balance
+Sheet Items appear to be the same country-specific statistical family as
+the already-implemented mortgage rate, and may supply loans-by-purpose
+series analogous to several Money and Credit concepts; and Eurostat's
+quarterly government debt series is a well-established candidate for the
+two federal-debt concepts. The European Commission's AMECO database was
+evaluated and deliberately not integrated into the quarterly panel, since
+it is annual only; it remains a candidate for a separate annual companion
+file covering fiscal concepts absent from both FRED-QD and this project's
+current scope. Finally, in the spirit of \citet{mccracken2020fred}'s own
+empirical validation of FRED-QD via factor estimation and forecasting
+exercises, a natural extension once coverage and country count grow
+further is to assess whether factors extracted from this panel behave
+comparably to those extracted from FRED-QD itself over the sample period
+they overlap.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+This report's contribution is the construction and verification
+methodology it describes, not the size of the panel it happens to produce:
+a fixed concept taxonomy, a source hierarchy with explicit
+country-specific overrides, every source confirmed against its live API
+rather than assumed correct, a public registry of exactly what was used
+and why, and an explicit accounting of what remains uncovered and why.
+Austria serves here as the reference case precisely because a
+larger-scale alternative already exists for it (EA-MD-QD,
+\citealp{barigozzi2024eamdqd}) -- so the value on offer is not a bigger
+panel, but a smaller, fully transparent, and openly re-runnable one that
+the same procedure can reproduce for any other country, together with a
+concrete, prioritized, and honestly-labeled path to extending its
+coverage further.
+
+\bibliographystyle{apalike}
+\begin{thebibliography}{9}
+
+\bibitem[Barigozzi and Lissona, 2024]{barigozzi2024eamdqd}
+Barigozzi, M. and Lissona, C. (2024).
+EA-MD-QD: Large Euro Area and Euro Member Countries Datasets for Macroeconomic Research.
+\textit{arXiv preprint}, arXiv:2410.05082.
+
+\bibitem[Fortin-Gagnon et al., 2018]{fortingagnon2018fred}
+Fortin-Gagnon, O., Leroux, M., Stevanovic, D., and Surprenant, S. (2018).
+A Large Canadian Database for Macroeconomic Analysis.
+\textit{CIRANO Working Papers}, 2018s-25.
+
+\bibitem[McCracken and Ng, 2016]{mccracken2016fred}
+McCracken, M.~W. and Ng, S. (2016).
+FRED-MD: A Monthly Database for Macroeconomic Research.
+\textit{Journal of Business \& Economic Statistics}, 34(4):574--589.
+
+\bibitem[McCracken and Ng, 2020]{mccracken2020fred}
+McCracken, M.~W. and Ng, S. (2020).
+FRED-QD: A Quarterly Database for Macroeconomic Research.
+\textit{Federal Reserve Bank of St.\ Louis Working Paper}, 2020-005.
+\url{https://doi.org/10.20955/wp.2020.005}.
+
+\bibitem[Stock and Watson, 2012]{stockwatson2012disentangling}
+Stock, J.~H. and Watson, M.~W. (2012).
+Disentangling the Channels of the 2007--2009 Recession.
+\textit{NBER Working Paper}, 18094.
+
+\end{thebibliography}
+
+\appendix
 
 \begin{landscape}
+\section{FRED-QD Variable Catalog}
+\label{app:catalog}
+
+For reference, Table~\ref{tab:groups} lists this project's 25 implemented
+concepts and their FRED-QD group; the tables that follow reproduce
+FRED-QD's complete 245-series catalog (McCracken and Ng, 2020), grouped
+into the original fourteen categories, with each series' recommended
+transformation code and whether Stock and Watson (2012) used it when
+estimating factors (\checkmark~= yes). If the FRED mnemonic does not end
+in ``x'' the series comes directly from the FRED database; otherwise it is
+a modified variant, most commonly a nominal series manually deflated by
+the PCE or core-PCE price index. Monthly-frequency source series are
+aggregated to quarterly frequency by averaging over the three months of
+the quarter.
+
 \section*{Group: Output and Income}
 
 \begin{longtable}{L{4.5cm} L{14.5cm} c c}
@@ -452,58 +793,58 @@ them, are set in landscape orientation for readability.
 \bottomrule
 \end{longtable}
 
-\section*{Mapping to Austrian Data Sources}
+\section{Austrian Data-Source Mapping}
+\label{app:mapping}
 
-The Austrian counterpart dataset is built by \texttt{build\_\allowbreak{}country\_\allowbreak{}nipa\_\allowbreak{}dataset.\allowbreak{}R} (generic OECD/BIS/ECB puller, parameterised by country) together with the Austria-specific \texttt{scripts/\allowbreak{}01-OECD-Codes.\allowbreak{}R} and \texttt{scripts/\allowbreak{}01-ECB-Codes.\allowbreak{}R}. Because FRED-QD's 245 series are built almost entirely from U.S.-specific micro sources (Census Bureau, BLS establishment surveys, BEA detailed NIPA tables, \ldots) that have no direct cross-country equivalent, the table below maps FRED-QD \emph{groups} to representative concepts and their Austrian source, rather than attempting a one-to-one mnemonic match. ``Status'' distinguishes series already downloaded into \texttt{data/bronze}, series for which fetch code exists but has not been run/verified, and genuine gaps with no cross-country source.
+Table~\ref{tab:austria} reproduces the current Austria rows of
+\texttt{docs/data\_sources.csv} (Section~\ref{sec:registry}) -- regenerated
+directly from that file every time this report is rebuilt, so it cannot
+drift out of sync with what \texttt{scripts/build\_country\_panel.R}
+actually resolved. 24 of 25 concepts were
+resolved as of the most recent run; an empty Provider/Key cell means the
+concept was attempted but no source returned data for Austria, with the
+reason given in the Comment column.
 
-\begin{longtable}{L{3cm} L{4.3cm} L{3.2cm} L{3.8cm} L{6.2cm}}
+\begin{longtable}{L{3cm} L{4cm} L{2.6cm} L{3.2cm} L{7.5cm}}
+\caption{Austria source mapping, regenerated from \texttt{docs/data\_sources.csv}.}
+\label{tab:austria} \\
 \toprule
-\textbf{FRED-QD Group} & \textbf{FRED-QD Series (concept)} & \textbf{Austrian Source} & \textbf{Austrian Code / Key} & \textbf{Status} \\
+\textbf{FRED-QD Group} & \textbf{Concept} & \textbf{Provider} & \textbf{Key} & \textbf{Comment} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{l}{\textit{Table \ref{tab:austria} continued}} \\
+\toprule
+\textbf{FRED-QD Group} & \textbf{Concept} & \textbf{Provider} & \textbf{Key} & \textbf{Comment} \\
 \midrule
 \endhead
-Output and Income & \texttt{GDPC1} (Real GDP) & OECD QNA (SDMX) & Q.\allowbreak{}AUT.\allowbreak{}S1.\allowbreak{}.\allowbreak{}B1GQ.\allowbreak{}.\allowbreak{}LR & Downloaded (\texttt{data/\allowbreak{}bronze/\allowbreak{}GDP.\allowbreak{}csv}) \\
-Output and Income & \texttt{PCECC96} (Real consumption expenditure) & OECD QNA (SDMX) & Q.\allowbreak{}AUT.\allowbreak{}S1M.\allowbreak{}.\allowbreak{}P3.\allowbreak{}.\allowbreak{}LR & Downloaded (\texttt{data/\allowbreak{}bronze/\allowbreak{}Consumption.\allowbreak{}csv}); OECD sector S1M (total economy) is broader than FRED-QD's household-only PCE \\
-Output and Income & \texttt{GPDIC1 / FPIx} (Real gross fixed capital formation) & OECD QNA (SDMX) & Q.\allowbreak{}AUT.\allowbreak{}.\allowbreak{}.\allowbreak{}P51G.\allowbreak{}.\allowbreak{}.\allowbreak{}LR & Downloaded (\texttt{data/\allowbreak{}bronze/\allowbreak{}FixedInv.\allowbreak{}csv}); all-sector total, not restricted to the private sector like FRED-QD's series \\
-Output and Income & \texttt{GCEC1} (Real government consumption \& investment) & OECD QNA (SDMX) & P3, sector S13 & Coded (\texttt{build\_\allowbreak{}country\_\allowbreak{}nipa\_\allowbreak{}dataset.\allowbreak{}R}, anchor concepts); not yet downloaded for Austria \\
-Output and Income & \texttt{EXPGSC1} (Real exports of goods \& services) & OECD QNA (SDMX) & P6, sector S1 & Coded (anchor concepts); not yet downloaded \\
-Output and Income & \texttt{IMPGSC1} (Real imports of goods \& services) & OECD QNA (SDMX) & P7, sector S1 & Coded (anchor concepts); not yet downloaded \\
-Output and Income & \texttt{DPIC96} (Real household disposable income) & OECD QNA (SDMX) & B6G, sector S14 & Coded (anchor concepts); not yet downloaded \\
-Industrial Production & \texttt{INDPRO} (Industrial production index) & OECD MEI (via FRED mirror) & \texttt{PRINTO01ATQ661S} & Coded (\texttt{other\_\allowbreak{}groups} table); not yet downloaded \\
-Employment and Unemployment & \texttt{UNRATE} (Unemployment rate) & OECD STES/KEI (SDMX); alt.\ OECD MEI & \texttt{AUT.\allowbreak{}Q.\allowbreak{}.\allowbreak{}PT\_\allowbreak{}LF} (\texttt{scripts/\allowbreak{}OECD-Codes.\allowbreak{}csv}); alt.\allowbreak{}\ \texttt{LRHUTTTTATQ156S} & Coded and attempted (\texttt{01-OECD-Codes.\allowbreak{}R}); not present in \texttt{data/\allowbreak{}bronze} yet \\
-Housing & \texttt{USSTHPI / SPCS10RSA / SPCS20RSA} (Real house price index) & BIS Residential Property Prices (SDMX) & \texttt{QATR628BIS} & Coded (\texttt{other\_\allowbreak{}groups} table); not yet downloaded \\
-Inventories, Orders, and Sales & \texttt{RSAFSx} (Real retail sales (proxy)) & OECD MEI (via FRED mirror) & \texttt{SLRTTO01ATQ189S} & Coded as a proxy; manufacturers' new orders/\allowbreak{}inventories (\texttt{AMDMNOx}, \texttt{ACOGNOx}, \ldots) have no cross-country equivalent and are not attempted \\
-Prices & \texttt{CPIAUCSL} (Consumer price index) & OECD MEI (via FRED mirror) & \texttt{CPALTT01ATQ661S} & Coded; not yet downloaded \\
-Earnings and Productivity & \texttt{AHETPIx / OPHNFB / ULCNFB, \ldots} (Hourly earnings, productivity, unit labor cost) & \emph{None implemented} & -- & Gap: OECD Productivity Database could supply GDP-per-hour and unit-labor-cost concepts, but the dataflow/\allowbreak{}dimension structure has not been verified (see script comments) \\
-Interest Rates & \texttt{GS10} (10-year government bond yield) & OECD MEI (via FRED mirror) & \texttt{IRLTLT01ATQ156N} & Coded; not yet downloaded \\
-Money and Credit & \texttt{TOTALSLx / BUSLOANSx / \ldots} (Credit to the private non-financial sector) & BIS Credit Statistics (SDMX) & \texttt{WS\_\allowbreak{}TC}, key \texttt{Q.\allowbreak{}AUT.\allowbreak{}P.\allowbreak{}N.\allowbreak{}770.\allowbreak{}M.\allowbreak{}N.\allowbreak{}A} & Coded (single aggregate proxy for the several US credit-by-purpose series); not yet downloaded \\
-Household Balance Sheets & \texttt{TNWBSHNOx} (Household net worth) & ECB Quarterly Sector Accounts (SDW) & \texttt{QSA.\allowbreak{}Q.\allowbreak{}N.\allowbreak{}AUT.\allowbreak{}W0.\allowbreak{}S1M.\allowbreak{}S1.\allowbreak{}N.\allowbreak{}B90.\allowbreak{}A.\allowbreak{}F.\allowbreak{}\_\allowbreak{}Z.\allowbreak{}\_\allowbreak{}Z.\allowbreak{}\_\allowbreak{}Z.\allowbreak{}XDC.\allowbreak{}\_\allowbreak{}T.\allowbreak{}S.\allowbreak{}V.\allowbreak{}N.\allowbreak{}\_\allowbreak{}T} & Coded, euro-area countries only (Austria qualifies); key structure explicitly marked low-confidence/\allowbreak{}unverified \\
-Exchange Rates & \texttt{EXUSEU / TWEXAFEGSMTHx} (USD exchange rate) & OECD MEI (via FRED mirror) & \texttt{CCUSMA02ATQ618N} & Coded; for a euro-area country this collapses to the EUR/\allowbreak{}USD rate itself.\allowbreak{} A trade-weighted dollar index (\texttt{TWEXAFEGSMTHx}) has no single-country equivalent and is not attempted \\
-Other & \texttt{UMCSENTx} (Consumer sentiment/confidence) & OECD MEI (via FRED mirror) & \texttt{CSCICP03ATQ460S} & Coded; not yet downloaded \\
-Stock Markets & \texttt{S\&P 500} (Broad equity price index) & OECD MEI (via FRED mirror) & \texttt{SPASTT01ATQ661N} & Coded as a generic all-share proxy (would reflect Austria's ATX in practice); not yet downloaded \\
-Non-Household Balance Sheets & \texttt{TLBSNNCBx / TNWMVBSNNCBx / \ldots} (Nonfinancial corporate balance sheets) & \emph{None implemented} & -- & Gap: BIS publishes some corporate credit statistics, but a clean nonfinancial-corporate balance sheet series needs the same manual key verification as the household case and has not been attempted \\
+Output and Income & \texttt{real\_\allowbreak{}gdp} & Eurostat & \texttt{namq\_\allowbreak{}10\_\allowbreak{}gdp:\allowbreak{}B1GQ} &  \\
+Output and Income & \texttt{real\_\allowbreak{}household\_\allowbreak{}consumption} & Eurostat & \texttt{namq\_\allowbreak{}10\_\allowbreak{}gdp:\allowbreak{}P31\_\allowbreak{}S14} & Source-dependent: for EU members (Eurostat NA\_ITEM=P31\_S14) this is household-only consumption, a close match to FRED-QD's household-only PCE; where OECD QNA is used instead (sector S1M), it is total-economy final consumption expenditure INCLUDING NPISHs, broader than FRED-QD's definition. \\
+Output and Income & \texttt{real\_\allowbreak{}govt\_\allowbreak{}consumption} & Eurostat & \texttt{namq\_\allowbreak{}10\_\allowbreak{}gdp:\allowbreak{}P3\_\allowbreak{}S13} & SNA/ESA transaction P3, sector S13 (general government) is government consumption expenditure only, whether sourced from OECD or Eurostat; FRED-QD's GCEC1 also includes government gross investment. \\
+Output and Income & \texttt{real\_\allowbreak{}gfcf\_\allowbreak{}total} & Eurostat & \texttt{namq\_\allowbreak{}10\_\allowbreak{}gdp:\allowbreak{}P51G} & SNA/ESA transaction P51G (gross fixed capital formation) is for ALL sectors (incl. government), whether sourced from OECD or Eurostat; FRED-QD's FPIx is private-sector fixed investment only. \\
+Output and Income & \texttt{real\_\allowbreak{}exports} & Eurostat & \texttt{namq\_\allowbreak{}10\_\allowbreak{}gdp:\allowbreak{}P6} &  \\
+Output and Income & \texttt{real\_\allowbreak{}imports} & Eurostat & \texttt{namq\_\allowbreak{}10\_\allowbreak{}gdp:\allowbreak{}P7} &  \\
+Output and Income & \texttt{real\_\allowbreak{}household\_\allowbreak{}disposable\_\allowbreak{}income} & \emph{unresolved} & \texttt{} & Not resolved for AUT. OECD's quarterly household disposable income (DF\_QNA\_INC\_SAV) is published for only 11 countries (AUS, BRA, CAN, CHL, EST, GRC, HUN, LTU, LUX, LVA, ZAF); absent for most others, confirmed absent for DEU/AUT/USA/FRA/GBR. \\
+Industrial Production & \texttt{industrial\_\allowbreak{}production} & FRED mirror & \texttt{AUTPROINDQISMEI} &  \\
+Employment and Unemployment & \texttt{unemployment\_\allowbreak{}rate} & FRED mirror & \texttt{LRHUTTTTATQ156S} &  \\
+Employment and Unemployment & \texttt{employment\_\allowbreak{}rate} & FRED mirror & \texttt{LREM64TTATQ156S} & Employment-to-population ratio, ages 15-64 (OECD MEI); included as a standard cross-country labour-market indicator even though FRED-QD has no direct equivalent (see us\_note). \\
+Housing & \texttt{house\_\allowbreak{}price\_\allowbreak{}real} & FRED mirror & \texttt{QATR628BIS} &  \\
+Inventories, Orders, and Sales & \texttt{retail\_\allowbreak{}sales\_\allowbreak{}volume} & FRED mirror & \texttt{AUTSARTQISMEI} & OECD MEI retail sales volume is not published for the USA itself via this mirror -- a genuine coverage gap for that one country, not a wrong code. \\
+Prices & \texttt{cpi\_\allowbreak{}index} & FRED mirror & \texttt{CPALTT01ATQ657N} &  \\
+Earnings and Productivity & \texttt{unit\_\allowbreak{}labor\_\allowbreak{}cost} & FRED mirror & \texttt{ULQEUL01ATQ657S} & OECD MEI unit labour cost (employment-based, \% change), confirmed live for AT/DE/FR/GB/US. \\
+Interest Rates & \texttt{long\_\allowbreak{}term\_\allowbreak{}rate} & FRED mirror & \texttt{IRLTLT01ATQ156N} &  \\
+Interest Rates & \texttt{short\_\allowbreak{}term\_\allowbreak{}rate} & FRED mirror & \texttt{IR3TIB01ATQ156N} &  \\
+Interest Rates & \texttt{mortgage\_\allowbreak{}rate} & ECB MIR & \texttt{A2C.\allowbreak{}R.\allowbreak{}A.\allowbreak{}2250.\allowbreak{}EUR.\allowbreak{}N} & ECB MFI Interest Rate Statistics (MIR): new-business loans to households for house purchase, all initial rate fixation periods combined -- genuinely country-specific (unlike euro\_area\_household\_net\_worth\_growth above), available for euro-area members only. \\
+Money and Credit & \texttt{credit\_\allowbreak{}to\_\allowbreak{}private\_\allowbreak{}nonfin\_\allowbreak{}sector} & BIS WS\_TC & \texttt{P} & BIS reports this as a stock, \% of GDP (private non-financial sector = households + nonfinancial corporations combined). \\
+Household Balance Sheets & \texttt{euro\_\allowbreak{}area\_\allowbreak{}household\_\allowbreak{}net\_\allowbreak{}worth\_\allowbreak{}growth} & ECB QSA\_PUB & \texttt{I8} & ECB QSA\_PUB publishes household net worth only for the euro-area AGGREGATE (REF\_AREA=I8) -- every euro-area country gets this same figure; it is not country-specific. \\
+Household Balance Sheets & \texttt{household\_\allowbreak{}credit\_\allowbreak{}to\_\allowbreak{}gdp} & BIS WS\_TC & \texttt{H} & BIS credit to households \& NPISHs, \% of GDP -- country-specific (unlike the ECB net-worth aggregate above). \\
+Non-Household Balance Sheets & \texttt{corporate\_\allowbreak{}credit\_\allowbreak{}to\_\allowbreak{}gdp} & BIS WS\_TC & \texttt{N} & BIS credit to nonfinancial corporations, \% of GDP -- country-specific. \\
+Exchange Rates & \texttt{fx\_\allowbreak{}rate\_\allowbreak{}to\_\allowbreak{}usd} & FRED mirror & \texttt{CCUSMA02ATQ618N} & OECD MEI bilateral exchange rate, national currency per USD. \\
+Exchange Rates & \texttt{real\_\allowbreak{}effective\_\allowbreak{}exchange\_\allowbreak{}rate} & FRED mirror & \texttt{CCRETT01ATQ661N} & OECD real (price-adjusted) effective exchange rate index -- see us\_note for how this differs from FRED-QD's nominal series. \\
+Other & \texttt{consumer\_\allowbreak{}confidence} & EC Business/Consumer Survey & \texttt{AT.\allowbreak{}CONS} & EU member states: sourced from the European Commission's own Business and Consumer Survey (a live, monthly, seasonally adjusted balance statistic, e.g. "AT.CONS"), NOT the frozen OECD-MEI-via-FRED mirror used for non-EU countries -- see R/ec\_survey.R. Falls back to the FRED mirror if the EC archive is unavailable for a given run. \\
+Stock Markets & \texttt{share\_\allowbreak{}price\_\allowbreak{}index} & Yahoo Finance & \texttt{\textasciicircum{}ATX} & Austria: sourced from the ATX (Austrian Traded Index) via Yahoo Finance (ticker "\textasciicircum{}ATX"), Austria's own actual benchmark index, NOT the generic OECD MEI 'all shares' proxy used for other countries -- see R/yahoo\_finance.R. Falls back to the FRED mirror if the Yahoo Finance fetch is unavailable for a given run. \\
 \bottomrule
 \end{longtable}
 
 \end{landscape}
-
-\section*{Notes}
-
-\begin{itemize}
-  \item Descriptions and group assignments are adapted from the FRED-QD
-    appendix (McCracken and Ng, 2020), cross-checked against the mnemonics
-    actually present in \texttt{FRED-Data.csv}.
-  \item A small number of series in this vintage of the dataset use FRED
-    mnemonics that superseded the ones documented in the original appendix
-    (the underlying concept is unchanged): \texttt{BOGMBASEREALx} succeeded
-    \texttt{AMBSLREALx} (St.\ Louis Adjusted Monetary Base), \texttt{M1REAL}
-    and \texttt{M2REAL} succeeded \texttt{M1REALx}/\texttt{M2REALx}, and
-    \texttt{TWEXAFEGSMTHx} (Trade Weighted U.S. Dollar Index: Advanced
-    Foreign Economies) succeeded \texttt{TWEXMMTH} following the Federal
-    Reserve Board's 2020 revision of its dollar index series.
-  \item Transformation codes (Tcode) and factor-model flags (SW) shown here
-    are read directly from rows 2--3 of \texttt{FRED-Data.csv} and may differ
-    slightly from the original 2018 appendix vintage as FRED-QD's own
-    recommended transformations are occasionally revised.
-\end{itemize}
 
 \end{document}

@@ -27,15 +27,23 @@ resolved.
 
 ## Three things live here
 
-1. **A FRED-QD reference document** ([docs/FRED-QD_variables.tex](docs/FRED-QD_variables.tex),
-   compiled to [docs/FRED-QD_variables.pdf](docs/FRED-QD_variables.pdf)) --
-   all 245 series of the actual FRED-QD file, grouped into the original 14
-   categories, with description, transformation code, and Stock-Watson
-   (2012) factor-model flag. It also includes a table mapping each FRED-QD
-   group to the source used (or not yet available) for Austria. (The raw
-   `FRED-Data.csv` this was generated from is no longer kept in the repo --
-   the PDF/TeX are the durable artifacts; regenerate from a fresh FRED-QD
-   download if the source list ever needs re-deriving.)
+1. **A technical report** ([docs/Mohr_AUSTRIA-QD.tex](docs/Mohr_AUSTRIA-QD.tex),
+   compiled to [docs/Mohr_AUSTRIA-QD.pdf](docs/Mohr_AUSTRIA-QD.pdf)) --
+   a working-paper-style writeup, modeled on
+   [McCracken and Ng (2020)](https://doi.org/10.20955/wp.2020.005), of how
+   this Austrian counterpart dataset is constructed: concept taxonomy,
+   source hierarchy, verification methodology, update cadence, known
+   limitations, and future work. Appendix A reproduces all 245 series of
+   the actual FRED-QD file, grouped into the original 14 categories, with
+   description, transformation code, and Stock-Watson (2012) factor-model
+   flag; Appendix B is the Austria source mapping, regenerated fresh from
+   `docs/data_sources.csv` every time the report is rebuilt (via
+   [docs/generate_technical_report.py](docs/generate_technical_report.py),
+   `python docs/generate_technical_report.py`), so it cannot drift out of
+   sync with what the CLI actually resolved. (The raw `FRED-Data.csv`
+   Appendix A was generated from is no longer kept in the repo --
+   regenerate from a fresh FRED-QD download if that catalog ever needs
+   re-deriving from scratch.)
 2. **A country-panel builder** ([scripts/build_country_panel.R](scripts/build_country_panel.R)
    plus the [R/](R) module library) -- a command-line tool that fetches a
    FRED-QD-style panel for one country at a time and writes both the data
@@ -115,13 +123,16 @@ output/                      Output of build_country_panel.R, checked into
                              scripts/update_monthly.R and commits output/ back
 
 docs/
-  FRED-QD_variables.tex/.pdf  (see above)
+  Mohr_AUSTRIA-QD.tex/.pdf  Technical report (see above)
+  generate_technical_report.py  Rebuilds the report above from
+                             Mohr_AUSTRIA-QD.tex's own Appendix A tables
+                             + a fresh read of data_sources.csv
   data_sources.csv           The data-sources registry -- see below
   candidate_indicators_austria.csv  Proposed (UNVERIFIED) Austrian sources
                              for the 245 - 25 FRED-QD series not yet
                              implemented -- see below
   generate_candidate_indicators.py  Regenerates the file above from
-                             docs/FRED-QD_variables.tex + a hand-built
+                             docs/Mohr_AUSTRIA-QD.tex + a hand-built
                              annotation table; run with
                              `python docs/generate_candidate_indicators.py`
 
@@ -277,7 +288,7 @@ Treat every row as a starting point for the same live-verification process
 `R/eurostat.R`, `R/ecb.R` etc. went through, not as ready to use.
 
 Regenerate with `python docs/generate_candidate_indicators.py` (parses
-`docs/FRED-QD_variables.tex` for the 245-series catalog and joins it
+`docs/Mohr_AUSTRIA-QD.tex` for the 245-series catalog and joins it
 against a hand-built annotation table in the same script) after adding new
 concepts to `concept_group_map` or updating the annotations.
 
