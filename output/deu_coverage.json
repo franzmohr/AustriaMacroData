@@ -1,0 +1,139 @@
+{
+  "country": "DEU",
+  "generated_at": "2026-08-30T11:49:48Z",
+  "start_period": "1995-Q1",
+  "resolved": [
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_gdp",
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:B1GQ]"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_household_consumption",
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P31_S14]"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_govt_consumption",
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P3_S13]"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_gfcf_total",
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P51G]"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_exports",
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P6]"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_imports",
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P7]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industrial_production",
+      "source": "OECD MEI / BIS (via FRED mirror) [DEUPROINDQISMEI]"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "unemployment_rate",
+      "source": "OECD MEI / BIS (via FRED mirror) [LRHUTTTTDEQ156S]"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "employment_rate",
+      "source": "OECD MEI / BIS (via FRED mirror) [LREM64TTDEQ156S]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "house_price_real",
+      "source": "OECD MEI / BIS (via FRED mirror) [QDER628BIS]"
+    },
+    {
+      "fred_qd_group": "Inventories, Orders, and Sales",
+      "label": "retail_sales_volume",
+      "source": "OECD MEI / BIS (via FRED mirror) [DEUSARTQISMEI]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "cpi_index",
+      "source": "OECD MEI / BIS (via FRED mirror) [CPALTT01DEQ657N]"
+    },
+    {
+      "fred_qd_group": "Earnings and Productivity",
+      "label": "unit_labor_cost",
+      "source": "OECD MEI / BIS (via FRED mirror) [ULQEUL01DEQ657S]"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "long_term_rate",
+      "source": "OECD MEI / BIS (via FRED mirror) [IRLTLT01DEQ156N]"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "short_term_rate",
+      "source": "OECD MEI / BIS (via FRED mirror) [IR3TIB01DEQ156N]"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "mortgage_rate",
+      "source": "ECB MFI Interest Rate Statistics (MIR) [A2C.R.A.2250.EUR.N]"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "credit_to_private_nonfin_sector",
+      "source": "BIS WS_TC [P]"
+    },
+    {
+      "fred_qd_group": "Household Balance Sheets",
+      "label": "euro_area_household_net_worth_growth",
+      "source": "ECB QSA_PUB (euro-area aggregate, not country-specific) [I8]"
+    },
+    {
+      "fred_qd_group": "Household Balance Sheets",
+      "label": "household_credit_to_gdp",
+      "source": "BIS WS_TC [H]"
+    },
+    {
+      "fred_qd_group": "Non-Household Balance Sheets",
+      "label": "corporate_credit_to_gdp",
+      "source": "BIS WS_TC [N]"
+    },
+    {
+      "fred_qd_group": "Exchange Rates",
+      "label": "fx_rate_to_usd",
+      "source": "OECD MEI / BIS (via FRED mirror) [CCUSMA02DEQ618N]"
+    },
+    {
+      "fred_qd_group": "Exchange Rates",
+      "label": "real_effective_exchange_rate",
+      "source": "OECD MEI / BIS (via FRED mirror) [CCRETT01DEQ661N]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_confidence",
+      "source": "European Commission Business and Consumer Survey [DE.CONS]"
+    },
+    {
+      "fred_qd_group": "Stock Markets",
+      "label": "share_price_index",
+      "source": "OECD MEI / BIS (via FRED mirror) [SPASTT01DEQ661N]"
+    }
+  ],
+  "skipped": [
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_household_disposable_income"
+    }
+  ],
+  "groups_not_attempted": [
+    {
+      "fred_qd_group": "Inventories, Orders, and Sales (full)",
+      "reason": "Only a retail-sales-volume proxy is included (see coverage); re-checked 2026-08-30 for a manufacturers' new-orders/inventories cross-country equivalent and found none -- US-specific Census Bureau concept, deliberately not attempted."
+    }
+  ]
+}

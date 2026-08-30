@@ -18,3 +18,13 @@ const_fetch_text <- function(text) function(url, ...) text
 ## Convenience: return NULL (simulating a failed request), like the real
 ## fetch_text() does on a network error or non-2xx status
 failing_fetch_text <- function() function(url, ...) NULL
+
+## Same three helpers, for `fetch_binary()` (R/ec_survey.R's zip download).
+with_mock_fetch_binary <- function(mock_fn, code) {
+  old <- get("fetch_binary", envir = .GlobalEnv)
+  assign("fetch_binary", mock_fn, envir = .GlobalEnv)
+  on.exit(assign("fetch_binary", old, envir = .GlobalEnv), add = TRUE)
+  force(code)
+}
+const_fetch_binary <- function(bytes) function(url, ...) bytes
+failing_fetch_binary <- function() function(url, ...) NULL

@@ -15,6 +15,7 @@ USA,cpi_index,FRED_QD,CPIAUCSL,
 USA,unit_labor_cost,FRED_QD,ULCNFB,"FRED-QD's ULCNFB is a nonfarm-business, hours-based unit-labor-cost INDEX; the OECD-mirror series used for every country (incl. the US) is an employment-based % CHANGE -- related concepts, different construction."
 USA,long_term_rate,FRED_QD,GS10,
 USA,short_term_rate,FRED_QD,TB3MS,
+USA,mortgage_rate,FRED_QD,MORTGAGE30US,FRED-QD's MORTGAGE30US is a 30-year FIXED-rate average; the ECB series used for euro-area countries is a new-business AAR/NDER rate across all initial rate fixation periods (fixed and variable combined) -- related but not an identical construction.
 USA,credit_to_private_nonfin_sector,NONE,,"FRED-QD tracks credit by purpose/level (BUSLOANSx, TOTALSLx, REALLNx, ...), not one combined %GDP series like BIS's."
 USA,euro_area_household_net_worth_growth,FRED_QD,TNWBSHNOx,
 USA,household_credit_to_gdp,NONE,,No %GDP household-credit series in FRED-QD; FRED itself mirrors the same underlying BIS series for the US as HDTGPDUSQ163N.
@@ -23,12 +24,12 @@ USA,fx_rate_to_usd,NONE,,Not meaningful for the US itself -- this concept is a f
 USA,real_effective_exchange_rate,FRED_QD,TWEXAFEGSMTHx,FRED-QD's series is a NOMINAL trade-weighted index against advanced foreign economies only; the OECD-mirror series used for other countries is REAL (price-adjusted) and broader -- related but not identical.
 USA,consumer_confidence,FRED_QD,UMCSENTx,
 USA,share_price_index,FRED_QD,S&P 500,
-AUT,real_gdp,OECD_QNA,S1.B1GQ,
-AUT,real_household_consumption,,,"Not resolved for AUT. OECD sector S1M is total-economy final consumption expenditure (incl. NPISHs), broader than FRED-QD's household-only PCE."
-AUT,real_govt_consumption,IMF_QNEA,P3_S13,OECD P3/S13 is government consumption expenditure only; FRED-QD's GCEC1 also includes government gross investment.
-AUT,real_gfcf_total,IMF_QNEA,P51G,OECD P51G is gross fixed capital formation for ALL sectors (incl. government); FRED-QD's FPIx is private-sector fixed investment only.
-AUT,real_exports,IMF_QNEA,P6,
-AUT,real_imports,IMF_QNEA,P7,
+AUT,real_gdp,EUROSTAT,namq_10_gdp:B1GQ,
+AUT,real_household_consumption,EUROSTAT,namq_10_gdp:P31_S14,"Source-dependent: for EU members (Eurostat NA_ITEM=P31_S14) this is household-only consumption, a close match to FRED-QD's household-only PCE; where OECD QNA is used instead (sector S1M), it is total-economy final consumption expenditure INCLUDING NPISHs, broader than FRED-QD's definition."
+AUT,real_govt_consumption,EUROSTAT,namq_10_gdp:P3_S13,"SNA/ESA transaction P3, sector S13 (general government) is government consumption expenditure only, whether sourced from OECD or Eurostat; FRED-QD's GCEC1 also includes government gross investment."
+AUT,real_gfcf_total,EUROSTAT,namq_10_gdp:P51G,"SNA/ESA transaction P51G (gross fixed capital formation) is for ALL sectors (incl. government), whether sourced from OECD or Eurostat; FRED-QD's FPIx is private-sector fixed investment only."
+AUT,real_exports,EUROSTAT,namq_10_gdp:P6,
+AUT,real_imports,EUROSTAT,namq_10_gdp:P7,
 AUT,real_household_disposable_income,,,"Not resolved for AUT. OECD's quarterly household disposable income (DF_QNA_INC_SAV) is published for only 11 countries (AUS, BRA, CAN, CHL, EST, GRC, HUN, LTU, LUX, LVA, ZAF); absent for most others, confirmed absent for DEU/AUT/USA/FRA/GBR."
 AUT,industrial_production,FRED_MIRROR,AUTPROINDQISMEI,
 AUT,unemployment_rate,FRED_MIRROR,LRHUTTTTATQ156S,
@@ -39,20 +40,21 @@ AUT,cpi_index,FRED_MIRROR,CPALTT01ATQ657N,
 AUT,unit_labor_cost,FRED_MIRROR,ULQEUL01ATQ657S,"OECD MEI unit labour cost (employment-based, % change), confirmed live for AT/DE/FR/GB/US."
 AUT,long_term_rate,FRED_MIRROR,IRLTLT01ATQ156N,
 AUT,short_term_rate,FRED_MIRROR,IR3TIB01ATQ156N,
+AUT,mortgage_rate,ECB_MIR,A2C.R.A.2250.EUR.N,"ECB MFI Interest Rate Statistics (MIR): new-business loans to households for house purchase, all initial rate fixation periods combined -- genuinely country-specific (unlike euro_area_household_net_worth_growth above), available for euro-area members only."
 AUT,credit_to_private_nonfin_sector,BIS_WSTC,P,"BIS reports this as a stock, % of GDP (private non-financial sector = households + nonfinancial corporations combined)."
 AUT,euro_area_household_net_worth_growth,ECB_QSA_PUB,I8,ECB QSA_PUB publishes household net worth only for the euro-area AGGREGATE (REF_AREA=I8) -- every euro-area country gets this same figure; it is not country-specific.
 AUT,household_credit_to_gdp,BIS_WSTC,H,"BIS credit to households & NPISHs, % of GDP -- country-specific (unlike the ECB net-worth aggregate above)."
 AUT,corporate_credit_to_gdp,BIS_WSTC,N,"BIS credit to nonfinancial corporations, % of GDP -- country-specific."
 AUT,fx_rate_to_usd,FRED_MIRROR,CCUSMA02ATQ618N,"OECD MEI bilateral exchange rate, national currency per USD."
 AUT,real_effective_exchange_rate,FRED_MIRROR,CCRETT01ATQ661N,OECD real (price-adjusted) effective exchange rate index -- see us_note for how this differs from FRED-QD's nominal series.
-AUT,consumer_confidence,FRED_MIRROR,CSCICP03ATM665S,
-AUT,share_price_index,FRED_MIRROR,SPASTT01ATQ661N,
-DEU,real_gdp,IMF_QNEA,B1GQ,
-DEU,real_household_consumption,,,"Not resolved for DEU. OECD sector S1M is total-economy final consumption expenditure (incl. NPISHs), broader than FRED-QD's household-only PCE."
-DEU,real_govt_consumption,IMF_QNEA,P3_S13,OECD P3/S13 is government consumption expenditure only; FRED-QD's GCEC1 also includes government gross investment.
-DEU,real_gfcf_total,IMF_QNEA,P51G,OECD P51G is gross fixed capital formation for ALL sectors (incl. government); FRED-QD's FPIx is private-sector fixed investment only.
-DEU,real_exports,IMF_QNEA,P6,
-DEU,real_imports,IMF_QNEA,P7,
+AUT,consumer_confidence,EC_BCS,AT.CONS,"EU member states: sourced from the European Commission's own Business and Consumer Survey (a live, monthly, seasonally adjusted balance statistic, e.g. ""AT.CONS""), NOT the frozen OECD-MEI-via-FRED mirror used for non-EU countries -- see R/ec_survey.R. Falls back to the FRED mirror if the EC archive is unavailable for a given run."
+AUT,share_price_index,YAHOO_FINANCE,^ATX,"Austria: sourced from the ATX (Austrian Traded Index) via Yahoo Finance (ticker ""^ATX""), Austria's own actual benchmark index, NOT the generic OECD MEI 'all shares' proxy used for other countries -- see R/yahoo_finance.R. Falls back to the FRED mirror if the Yahoo Finance fetch is unavailable for a given run."
+DEU,real_gdp,EUROSTAT,namq_10_gdp:B1GQ,
+DEU,real_household_consumption,EUROSTAT,namq_10_gdp:P31_S14,"Source-dependent: for EU members (Eurostat NA_ITEM=P31_S14) this is household-only consumption, a close match to FRED-QD's household-only PCE; where OECD QNA is used instead (sector S1M), it is total-economy final consumption expenditure INCLUDING NPISHs, broader than FRED-QD's definition."
+DEU,real_govt_consumption,EUROSTAT,namq_10_gdp:P3_S13,"SNA/ESA transaction P3, sector S13 (general government) is government consumption expenditure only, whether sourced from OECD or Eurostat; FRED-QD's GCEC1 also includes government gross investment."
+DEU,real_gfcf_total,EUROSTAT,namq_10_gdp:P51G,"SNA/ESA transaction P51G (gross fixed capital formation) is for ALL sectors (incl. government), whether sourced from OECD or Eurostat; FRED-QD's FPIx is private-sector fixed investment only."
+DEU,real_exports,EUROSTAT,namq_10_gdp:P6,
+DEU,real_imports,EUROSTAT,namq_10_gdp:P7,
 DEU,real_household_disposable_income,,,"Not resolved for DEU. OECD's quarterly household disposable income (DF_QNA_INC_SAV) is published for only 11 countries (AUS, BRA, CAN, CHL, EST, GRC, HUN, LTU, LUX, LVA, ZAF); absent for most others, confirmed absent for DEU/AUT/USA/FRA/GBR."
 DEU,industrial_production,FRED_MIRROR,DEUPROINDQISMEI,
 DEU,unemployment_rate,FRED_MIRROR,LRHUTTTTDEQ156S,
@@ -63,11 +65,12 @@ DEU,cpi_index,FRED_MIRROR,CPALTT01DEQ657N,
 DEU,unit_labor_cost,FRED_MIRROR,ULQEUL01DEQ657S,"OECD MEI unit labour cost (employment-based, % change), confirmed live for AT/DE/FR/GB/US."
 DEU,long_term_rate,FRED_MIRROR,IRLTLT01DEQ156N,
 DEU,short_term_rate,FRED_MIRROR,IR3TIB01DEQ156N,
+DEU,mortgage_rate,ECB_MIR,A2C.R.A.2250.EUR.N,"ECB MFI Interest Rate Statistics (MIR): new-business loans to households for house purchase, all initial rate fixation periods combined -- genuinely country-specific (unlike euro_area_household_net_worth_growth above), available for euro-area members only."
 DEU,credit_to_private_nonfin_sector,BIS_WSTC,P,"BIS reports this as a stock, % of GDP (private non-financial sector = households + nonfinancial corporations combined)."
 DEU,euro_area_household_net_worth_growth,ECB_QSA_PUB,I8,ECB QSA_PUB publishes household net worth only for the euro-area AGGREGATE (REF_AREA=I8) -- every euro-area country gets this same figure; it is not country-specific.
 DEU,household_credit_to_gdp,BIS_WSTC,H,"BIS credit to households & NPISHs, % of GDP -- country-specific (unlike the ECB net-worth aggregate above)."
 DEU,corporate_credit_to_gdp,BIS_WSTC,N,"BIS credit to nonfinancial corporations, % of GDP -- country-specific."
 DEU,fx_rate_to_usd,FRED_MIRROR,CCUSMA02DEQ618N,"OECD MEI bilateral exchange rate, national currency per USD."
 DEU,real_effective_exchange_rate,FRED_MIRROR,CCRETT01DEQ661N,OECD real (price-adjusted) effective exchange rate index -- see us_note for how this differs from FRED-QD's nominal series.
-DEU,consumer_confidence,FRED_MIRROR,CSCICP03DEM665S,
-DEU,share_price_index,FRED_MIRROR,SPASTT01DEQ661N,
+DEU,consumer_confidence,EC_BCS,DE.CONS,"EU member states: sourced from the European Commission's own Business and Consumer Survey (a live, monthly, seasonally adjusted balance statistic, e.g. ""AT.CONS""), NOT the frozen OECD-MEI-via-FRED mirror used for non-EU countries -- see R/ec_survey.R. Falls back to the FRED mirror if the EC archive is unavailable for a given run."
+DEU,share_price_index,FRED_MIRROR,SPASTT01DEQ661N,"Austria: sourced from the ATX (Austrian Traded Index) via Yahoo Finance (ticker ""^ATX""), Austria's own actual benchmark index, NOT the generic OECD MEI 'all shares' proxy used for other countries -- see R/yahoo_finance.R. Falls back to the FRED mirror if the Yahoo Finance fetch is unavailable for a given run."

@@ -87,6 +87,7 @@ concept_group_map <- tibble::tribble(
   "unit_labor_cost",                    "Earnings and Productivity",      "ULCNFB",          "FRED-QD's ULCNFB is a nonfarm-business, hours-based unit-labor-cost INDEX; the OECD-mirror series used for every country (incl. the US) is an employment-based % CHANGE -- related concepts, different construction.",
   "long_term_rate",                     "Interest Rates",                 "GS10",            NA,
   "short_term_rate",                    "Interest Rates",                 "TB3MS",           NA,
+  "mortgage_rate",                      "Interest Rates",                 "MORTGAGE30US",    "FRED-QD's MORTGAGE30US is a 30-year FIXED-rate average; the ECB series used for euro-area countries is a new-business AAR/NDER rate across all initial rate fixation periods (fixed and variable combined) -- related but not an identical construction.",
   "credit_to_private_nonfin_sector",    "Money and Credit",               NA,                "FRED-QD tracks credit by purpose/level (BUSLOANSx, TOTALSLx, REALLNx, ...), not one combined %GDP series like BIS's.",
   "euro_area_household_net_worth_growth", "Household Balance Sheets",     "TNWBSHNOx",       NA,
   "household_credit_to_gdp",            "Household Balance Sheets",       NA,                "No %GDP household-credit series in FRED-QD; FRED itself mirrors the same underlying BIS series for the US as HDTGPDUSQ163N.",
@@ -107,9 +108,9 @@ concept_group_map <- tibble::tribble(
 ## difference beyond ordinary cross-country methodology variation.
 concept_notes <- tibble::tribble(
   ~label,                                 ~note,
-  "real_household_consumption",           "OECD sector S1M is total-economy final consumption expenditure (incl. NPISHs), broader than FRED-QD's household-only PCE.",
-  "real_govt_consumption",                "OECD P3/S13 is government consumption expenditure only; FRED-QD's GCEC1 also includes government gross investment.",
-  "real_gfcf_total",                      "OECD P51G is gross fixed capital formation for ALL sectors (incl. government); FRED-QD's FPIx is private-sector fixed investment only.",
+  "real_household_consumption",           "Source-dependent: for EU members (Eurostat NA_ITEM=P31_S14) this is household-only consumption, a close match to FRED-QD's household-only PCE; where OECD QNA is used instead (sector S1M), it is total-economy final consumption expenditure INCLUDING NPISHs, broader than FRED-QD's definition.",
+  "real_govt_consumption",                "SNA/ESA transaction P3, sector S13 (general government) is government consumption expenditure only, whether sourced from OECD or Eurostat; FRED-QD's GCEC1 also includes government gross investment.",
+  "real_gfcf_total",                      "SNA/ESA transaction P51G (gross fixed capital formation) is for ALL sectors (incl. government), whether sourced from OECD or Eurostat; FRED-QD's FPIx is private-sector fixed investment only.",
   "real_household_disposable_income",     "OECD's quarterly household disposable income (DF_QNA_INC_SAV) is published for only 11 countries (AUS, BRA, CAN, CHL, EST, GRC, HUN, LTU, LUX, LVA, ZAF); absent for most others, confirmed absent for DEU/AUT/USA/FRA/GBR.",
   "employment_rate",                      "Employment-to-population ratio, ages 15-64 (OECD MEI); included as a standard cross-country labour-market indicator even though FRED-QD has no direct equivalent (see us_note).",
   "retail_sales_volume",                  "OECD MEI retail sales volume is not published for the USA itself via this mirror -- a genuine coverage gap for that one country, not a wrong code.",
@@ -119,7 +120,10 @@ concept_notes <- tibble::tribble(
   "household_credit_to_gdp",              "BIS credit to households & NPISHs, % of GDP -- country-specific (unlike the ECB net-worth aggregate above).",
   "corporate_credit_to_gdp",              "BIS credit to nonfinancial corporations, % of GDP -- country-specific.",
   "fx_rate_to_usd",                       "OECD MEI bilateral exchange rate, national currency per USD.",
-  "real_effective_exchange_rate",         "OECD real (price-adjusted) effective exchange rate index -- see us_note for how this differs from FRED-QD's nominal series."
+  "mortgage_rate",                        "ECB MFI Interest Rate Statistics (MIR): new-business loans to households for house purchase, all initial rate fixation periods combined -- genuinely country-specific (unlike euro_area_household_net_worth_growth above), available for euro-area members only.",
+  "real_effective_exchange_rate",         "OECD real (price-adjusted) effective exchange rate index -- see us_note for how this differs from FRED-QD's nominal series.",
+  "consumer_confidence",                  "EU member states: sourced from the European Commission's own Business and Consumer Survey (a live, monthly, seasonally adjusted balance statistic, e.g. \"AT.CONS\"), NOT the frozen OECD-MEI-via-FRED mirror used for non-EU countries -- see R/ec_survey.R. Falls back to the FRED mirror if the EC archive is unavailable for a given run.",
+  "share_price_index",                    "Austria: sourced from the ATX (Austrian Traded Index) via Yahoo Finance (ticker \"^ATX\"), Austria's own actual benchmark index, NOT the generic OECD MEI 'all shares' proxy used for other countries -- see R/yahoo_finance.R. Falls back to the FRED mirror if the Yahoo Finance fetch is unavailable for a given run."
 )
 
 ## Groups deliberately left unresolved -- see README for why. (Earnings
@@ -131,32 +135,53 @@ skipped_groups <- tibble::tribble(
 )
 
 ## =====================================================================
-## 1. OECD anchors, with IMF fallback for anything OECD didn't cover
+## 1. Anchor NIPA concepts: Eurostat first for EU members, then OECD QNA
+##    for whatever's still missing, then IMF QNEA fallback for whatever's
+##    missing after that
 ## =====================================================================
-message("Fetching anchor NIPA concepts for ", country, " from OECD QNA...")
-anchor_merged <- fetch_oecd_anchors(country, start_period = start_period)
+all_anchor_labels <- c(oecd_anchor_concepts$label, "real_household_disposable_income")
 
 ## `concept_source[[label]]` is a list(provider=, key=, note=) rather than a
 ## plain string -- `provider`+`key` are what get written into
 ## docs/data_sources.csv (step 8 below), so that CSV documents the EXACT
 ## identifier used, not just a human-readable provider name.
 concept_source <- list()
+anchor_merged <- NULL
+
+if (country %in% eu_member_countries) {
+  message("Country is an EU member -- trying Eurostat first for anchor NIPA concepts...")
+  eurostat_result <- fetch_eurostat_anchors(country, start_period = start_period)
+  if (!is.null(eurostat_result)) {
+    anchor_merged <- eurostat_result
+    for (lbl in setdiff(names(eurostat_result), "period")) {
+      na_item <- eurostat_anchor_concepts$na_item[eurostat_anchor_concepts$label == lbl]
+      concept_source[[lbl]] <- list(provider = "EUROSTAT", key = paste0("namq_10_gdp:", na_item))
+    }
+  }
+}
+
+still_missing <- setdiff(all_anchor_labels, names(concept_source))
+message("Fetching anchor NIPA concepts for ", country, " from OECD QNA (",
+        length(still_missing), " of ", length(all_anchor_labels), " not yet resolved)...")
+oecd_result <- fetch_oecd_anchors(country, start_period = start_period, labels = still_missing)
+
 oecd_anchor_key <- function(label) {
   row <- oecd_anchor_concepts[oecd_anchor_concepts$label == label, ]
   if (nrow(row) == 1) return(paste0(row$sector, ".", row$transaction))
   paste0(oecd_disposable_income_dims$sector, ".", oecd_disposable_income_dims$transaction, " (DF_QNA_INC_SAV)")
 }
-if (!is.null(anchor_merged)) {
-  for (lbl in setdiff(names(anchor_merged), "period")) {
+if (!is.null(oecd_result)) {
+  for (lbl in setdiff(names(oecd_result), "period")) {
+    anchor_merged <- if (is.null(anchor_merged)) oecd_result %>% dplyr::select(period, dplyr::all_of(lbl))
+                      else dplyr::full_join(anchor_merged, oecd_result %>% dplyr::select(period, dplyr::all_of(lbl)), by = "period")
     concept_source[[lbl]] <- list(provider = "OECD_QNA", key = oecd_anchor_key(lbl))
   }
 }
 
-resolved_anchor_labels <- if (is.null(anchor_merged)) character(0) else setdiff(names(anchor_merged), "period")
-missing_anchors <- setdiff(c(oecd_anchor_concepts$label, "real_household_disposable_income"), resolved_anchor_labels)
+missing_anchors <- setdiff(all_anchor_labels, names(concept_source))
 
 if (length(missing_anchors) > 0) {
-  message("OECD had no data for: ", paste(missing_anchors, collapse = ", "), " -- trying IMF QNEA fallback...")
+  message("OECD/Eurostat had no data for: ", paste(missing_anchors, collapse = ", "), " -- trying IMF QNEA fallback...")
   imf_fallback <- fetch_imf_fallbacks(country, missing_anchors, start_period = start_period)
   for (lbl in names(imf_fallback)) {
     anchor_merged <- if (is.null(anchor_merged)) imf_fallback[[lbl]] else dplyr::full_join(anchor_merged, imf_fallback[[lbl]], by = "period")
@@ -166,7 +191,8 @@ if (length(missing_anchors) > 0) {
   if (length(imf_fallback) > 0) anchor_merged <- dplyr::arrange(anchor_merged, period)
 }
 
-if (is.null(anchor_merged)) stop("No anchor series resolved from either OECD or IMF -- check the country code.", call. = FALSE)
+if (is.null(anchor_merged)) stop("No anchor series resolved from Eurostat, OECD or IMF -- check the country code.", call. = FALSE)
+anchor_merged <- dplyr::arrange(anchor_merged, period)
 
 panel <- anchor_merged %>% dplyr::mutate(date = period_to_date(.data$period)) %>% dplyr::select(-period)
 
@@ -206,6 +232,12 @@ if (!is.null(networth)) {
   concept_source[["euro_area_household_net_worth_growth"]] <- list(provider = "ECB_QSA_PUB", key = "I8")
 }
 
+mortgage <- fetch_ecb_mortgage_rate(country, start_period = start_period)
+if (!is.null(mortgage)) {
+  panel <- dplyr::full_join(panel, mortgage, by = "date")
+  concept_source[["mortgage_rate"]] <- list(provider = "ECB_MIR", key = "A2C.R.A.2250.EUR.N")
+}
+
 ## =====================================================================
 ## 4. FRED/OECD-MEI/BIS mirror groups
 ## =====================================================================
@@ -221,6 +253,39 @@ if (!is.na(country2)) {
   }
 } else {
   message("Skipping FRED-mirror groups: no FRED 2-letter code known for ", country, " (pass --fred-country2)")
+}
+
+## =====================================================================
+## 4c. EU-specific override: consumer confidence from the European
+##     Commission's own Business and Consumer Survey (fresher than the
+##     frozen OECD-MEI-via-FRED source above -- see R/ec_survey.R)
+## =====================================================================
+if (country %in% eu_member_countries) {
+  message("Country is an EU member -- trying the EC Business and Consumer Survey for consumer_confidence...")
+  ec_cc <- fetch_ec_consumer_confidence(country, start_period = start_period)
+  if (!is.null(ec_cc)) {
+    panel <- panel %>% dplyr::select(-dplyr::any_of("consumer_confidence")) %>%
+      dplyr::full_join(ec_cc, by = "date")
+    concept_source[["consumer_confidence"]] <- list(provider = "EC_BCS", key = paste0(lookup_ec_country2(country), ".CONS"))
+  } else {
+    message("EC survey unavailable for ", country, " this run -- keeping the FRED-mirror consumer_confidence value, if any.")
+  }
+}
+
+## =====================================================================
+## 4d. Austria-specific override: ATX index (via Yahoo Finance) in place
+##     of the generic OECD "all shares" proxy for share_price_index
+## =====================================================================
+if (country == "AUT") {
+  message("Country is Austria -- trying the ATX index (Yahoo Finance) for share_price_index...")
+  atx <- fetch_atx_quarterly(start_period = start_period)
+  if (!is.null(atx)) {
+    panel <- panel %>% dplyr::select(-dplyr::any_of("share_price_index")) %>%
+      dplyr::full_join(atx, by = "date")
+    concept_source[["share_price_index"]] <- list(provider = "YAHOO_FINANCE", key = "^ATX")
+  } else {
+    message("ATX fetch unavailable this run -- keeping the FRED-mirror share_price_index value, if any.")
+  }
 }
 
 panel <- dplyr::arrange(panel, date)
@@ -259,9 +324,13 @@ message(
 ## =====================================================================
 `%||%` <- function(a, b) if (is.null(a)) b else a
 provider_display_names <- c(
+  EUROSTAT = "Eurostat (namq_10_gdp)",
   OECD_QNA = "OECD QNA", IMF_QNEA = "IMF QNEA", BIS_WSTC = "BIS WS_TC",
   ECB_QSA_PUB = "ECB QSA_PUB (euro-area aggregate, not country-specific)",
-  FRED_MIRROR = "OECD MEI / BIS (via FRED mirror)"
+  ECB_MIR = "ECB MFI Interest Rate Statistics (MIR)",
+  FRED_MIRROR = "OECD MEI / BIS (via FRED mirror)",
+  EC_BCS = "European Commission Business and Consumer Survey",
+  YAHOO_FINANCE = "Yahoo Finance"
 )
 format_source <- function(src) {
   if (is.null(src)) return(NA_character_)

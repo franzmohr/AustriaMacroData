@@ -63,3 +63,30 @@ lookup_country2 <- function(country3) {
   }
   row$country2[1]
 }
+
+## ---------------------------------------------------------------
+## EU membership (27 states) -- used by R/ec_survey.R to decide whether
+## the European Commission's own Business and Consumer Survey (a live,
+## EU-specific source) should be tried for a given country. This is a
+## narrower, DIFFERENT list from R/ecb.R's `euro_area_countries` (EU
+## membership vs. euro currency union -- e.g. Sweden, Poland, Denmark are
+## EU but not euro area).
+## ---------------------------------------------------------------
+eu_member_countries <- c(
+  "AUT", "BEL", "BGR", "HRV", "CYP", "CZE", "DNK", "EST", "FIN", "FRA",
+  "DEU", "GRC", "HUN", "IRL", "ITA", "LVA", "LTU", "LUX", "MLT", "NLD",
+  "POL", "PRT", "ROU", "SVK", "SVN", "ESP", "SWE"
+)
+
+#' Look up the European Commission's 2-letter country code for its
+#' Business and Consumer Survey column headers (e.g. "AT.CONS")
+#'
+#' Confirmed live 2026-08-30 against the actual survey file: identical to
+#' the ISO-3166 alpha-2 / FRED 2-letter code used elsewhere in this
+#' project for every EU member EXCEPT Greece, which the Commission's own
+#' convention encodes as "EL" (not the ISO code "GR") -- confirmed by
+#' finding "EL.CONS" (not "GR.CONS") in the file's column headers.
+lookup_ec_country2 <- function(country3) {
+  if (identical(country3, "GRC")) return("EL")
+  lookup_country2(country3)
+}

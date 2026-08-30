@@ -1,5 +1,6 @@
 ## ---------------------------------------------------------------
-## ecb.R -- Household net worth via ECB's Quarterly Sector Accounts
+## ecb.R -- Household net worth (Quarterly Sector Accounts) and mortgage
+## interest rates (MFI Interest Rate Statistics), both from the ECB
 ##
 ## STATUS: VERIFIED 2026-08-30, with an important correction to the
 ## original script's premise.
@@ -85,4 +86,81 @@ fetch_ecb_household_networth <- function(country3, start_period = "1995-Q1") {
   df %>%
     dplyr::transmute(period = .data$TIME_PERIOD, !!label := as.numeric(.data$OBS_VALUE)) %>%
     dplyr::distinct(period, .keep_all = TRUE)
+}
+
+## ---------------------------------------------------------------
+## mortgage_rate -- ECB MFI Interest Rate Statistics (MIR), the natural
+## analog to FRED-QD's MORTGAGE30US (Interest Rates group)
+##
+## STATUS: VERIFIED 2026-08-30. Dataflow MIR, key dimension order (10
+## segments, confirmed straight from the API's own CSV header row, not
+## guessed): FREQ.REF_AREA.BS_REP_SECTOR.BS_ITEM.MATURITY_NOT_IRATE.
+## DATA_TYPE_MIR.AMOUNT_CAT.BS_COUNT_SECTOR.CURRENCY_TRANS.IR_BUS_COV.
+## Series "Bank interest rates - loans to households for house purchase
+## (new business)": M.<cc2>.B.A2C.A.R.A.2250.EUR.N -- confirmed with
+## real, CURRENT (through 2026-06) monthly data for BOTH AT (3.54%) and
+## DE (3.95%), and a clean 404 (not a hang or garbage) for a non-euro-
+## area country (US). UNLIKE `fetch_ecb_household_networth()` above,
+## this genuinely IS country-specific -- every euro-area member has its
+## own series, not a shared aggregate.
+## ---------------------------------------------------------------
+
+ecb_mir_dims <- c("FREQ", "REF_AREA", "BS_REP_SECTOR", "BS_ITEM", "MATURITY_NOT_IRATE",
+                   "DATA_TYPE_MIR", "AMOUNT_CAT", "BS_COUNT_SECTOR", "CURRENCY_TRANS", "IR_BUS_COV")
+
+#' Fetch the mortgage interest rate (new business, loans to households
+#' for house purchase) for one euro-area country
+#'
+#' Returns NULL (with a warning) if `country3` is not a euro-area member
+#' or has no FRED 2-letter code known (reused as the ECB REF_AREA code,
+#' confirmed identical for AT/DE).
+fetch_ecb_mortgage_rate <- function(country3, label = "mortgage_rate", start_period = "1995-Q1") {
+  if (!(country3 %in% euro_area_countries)) {
+    warning(sprintf("[%s] ECB mortgage rate: %s is not a euro-area country -- skipping", label, country3))
+    return(NULL)
+  }
+  country2 <- lookup_country2(country3)
+  if (is.na(country2)) return(NULL)
+
+  dims <- c(FREQ = "M", REF_AREA = country2, BS_REP_SECTOR = "B", BS_ITEM = "A2C",
+            MATURITY_NOT_IRATE = "A", DATA_TYPE_MIR = "R", AMOUNT_CAT = "A",
+            BS_COUNT_SECTOR = "2250", CURRENCY_TRANS = "EUR", IR_BUS_COV = "N")
+  key <- build_sdmx_key(dims[ecb_mir_dims])
+
+  ## MIR is monthly (FREQ=M); start_period here is a "YYYY-Qn" string like
+  ## everywhere else in this project, so it's converted to the "YYYY-MM"
+  ## the API expects for a monthly startPeriod.
+  start_month <- format(period_to_date(start_period), "%Y-%m")
+  url <- paste0(
+    "https://data-api.ecb.europa.eu/service/data/MIR/", key,
+    "?format=csvdata&startPeriod=", start_month
+  )
+
+  txt <- fetch_text(url, httr::add_headers(Accept = "text/csv"))
+  if (is.null(txt)) {
+    warning(sprintf("[%s] ECB mortgage rate fetch failed for %s -- verify manually at https://data.ecb.europa.eu", label, country3))
+    return(NULL)
+  }
+  if (stringr::str_detect(txt, stringr::regex('"status":\\s*404|No Series was returned', ignore_case = TRUE))) {
+    warning(sprintf("[%s] ECB has no mortgage-rate observations for %s", label, country3))
+    return(NULL)
+  }
+
+  df <- suppressWarnings(readr::read_csv(txt, show_col_types = FALSE))
+  if (!all(c("TIME_PERIOD", "OBS_VALUE") %in% names(df))) {
+    warning(sprintf("[%s] ECB mortgage rate: unexpected response shape, inspect manually", label))
+    return(NULL)
+  }
+
+  monthly <- df %>%
+    dplyr::transmute(
+      date = as.Date(paste0(.data$TIME_PERIOD, "-01")),
+      value = as.numeric(.data$OBS_VALUE)
+    ) %>%
+    dplyr::filter(!is.na(.data$date), !is.na(.data$value)) %>%
+    dplyr::distinct(date, .keep_all = TRUE)
+  names(monthly)[2] <- label
+
+  monthly_to_quarterly(monthly, label) %>%
+    dplyr::filter(.data$date >= period_to_date(start_period))
 }

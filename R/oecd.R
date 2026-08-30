@@ -112,31 +112,44 @@ fetch_oecd_series_impl <- function(country, sector, counterpart_sector, transact
   parse_time_value_csv(txt, label)
 }
 
-#' Fetch all anchor NIPA concepts for one country from OECD QNA
+#' Fetch anchor NIPA concepts for one country from OECD QNA
 #'
 #' Returns a tibble with one `period` column plus one column per concept
 #' that returned data. Concepts with no OECD coverage for this country are
 #' silently dropped (with a warning already issued by fetch_oecd_series) --
 #' the IMF fallback in R/imf.R is the next step for those.
-fetch_oecd_anchors <- function(country, start_period = "1995-Q1") {
+#'
+#' `labels`, if given, restricts which concepts are fetched at all (rather
+#' than fetching all 7 and discarding some) -- used by
+#' scripts/build_country_panel.R so that EU countries, which try Eurostat
+#' first (R/eurostat.R), only ask OECD for whatever Eurostat didn't
+#' resolve, instead of re-requesting concepts already in hand (OECD's data
+#' endpoint rate-limits under moderate volume -- see README -- so not
+#' making a redundant request matters in practice, not just in principle).
+fetch_oecd_anchors <- function(country, start_period = "1995-Q1", labels = NULL) {
+  concepts <- oecd_anchor_concepts
+  if (!is.null(labels)) concepts <- concepts[concepts$label %in% labels, ]
+
   results <- purrr::pmap(
-    list(oecd_anchor_concepts$sector, oecd_anchor_concepts$counterpart_sector,
-         oecd_anchor_concepts$transaction, oecd_anchor_concepts$label),
+    list(concepts$sector, concepts$counterpart_sector,
+         concepts$transaction, concepts$label),
     function(sector, counterpart_sector, transaction, label) {
       fetch_oecd_series(country, sector, counterpart_sector, transaction, label,
                          start_period = start_period)
     }
   )
-  names(results) <- oecd_anchor_concepts$label
+  names(results) <- concepts$label
   results <- purrr::compact(results)
 
-  disp <- with(oecd_disposable_income_dims,
-    fetch_oecd_series(country, sector, counterpart_sector, transaction,
-                       "real_household_disposable_income",
-                       dataflow = dataflow, price_base = price_base,
-                       table_id = table_id, start_period = start_period)
-  )
-  if (!is.null(disp)) results[["real_household_disposable_income"]] <- disp
+  if (is.null(labels) || "real_household_disposable_income" %in% labels) {
+    disp <- with(oecd_disposable_income_dims,
+      fetch_oecd_series(country, sector, counterpart_sector, transaction,
+                         "real_household_disposable_income",
+                         dataflow = dataflow, price_base = price_base,
+                         table_id = table_id, start_period = start_period)
+    )
+    if (!is.null(disp)) results[["real_household_disposable_income"]] <- disp
+  }
 
   if (length(results) == 0) return(NULL)
   purrr::reduce(results, dplyr::full_join, by = "period") %>% dplyr::arrange(period)

@@ -42,6 +42,30 @@ fetch_text <- function(url, ..., timeout_seconds = 30) {
   response_text(resp)
 }
 
+#' GET a URL and return its body as raw bytes, or NULL on any failure
+#'
+#' Analogous to `fetch_text()` but for binary downloads (R/ec_survey.R's
+#' .xlsx-in-a-.zip archive). A request that resolves via redirect to an
+#' HTML page instead of the expected binary (confirmed live: an
+#' unpublished monthly archive 301-redirects to a generic landing page,
+#' still HTTP 200 after the redirect) is treated as a failure -- checked
+#' via both the Content-Type header and the raw bytes not starting with
+#' the ZIP magic number "PK", since relying on either alone is fragile
+#' (a server could omit/mislabel Content-Type).
+fetch_binary <- function(url, ..., timeout_seconds = 30) {
+  resp <- safe_get(url, ..., timeout_seconds = timeout_seconds)
+  if (is.null(resp)) return(NULL)
+  ctype <- httr::headers(resp)[["content-type"]] %||% ""
+  bytes <- httr::content(resp, as = "raw")
+  looks_like_zip <- length(bytes) >= 2 && bytes[1] == as.raw(0x50) && bytes[2] == as.raw(0x4B)
+  if (stringr::str_detect(ctype, stringr::regex("html", ignore_case = TRUE)) || !looks_like_zip) {
+    return(NULL)
+  }
+  bytes
+}
+
+`%||%` <- function(a, b) if (is.null(a) || length(a) == 0) b else a
+
 #' Build a dot-separated SDMX key from a named list of dimension values
 #'
 #' `dims` must be a named character vector giving a value for every key
