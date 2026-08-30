@@ -125,3 +125,172 @@ fetch_eurostat_anchors <- function(country3, start_period = "1995-Q1", labels = 
   if (length(results) == 0) return(NULL)
   purrr::reduce(results, dplyr::full_join, by = "period") %>% dplyr::arrange(period)
 }
+
+## ---------------------------------------------------------------
+## Harmonised Index of Consumer Prices (prc_hicp_midx), EU-specific
+## override for `cpi_index` -- fresher than the frozen OECD-MEI-via-FRED
+## CPI mirror in R/fred_mirror.R.
+##
+## STATUS: VERIFIED 2026-08-30 against Eurostat's SDMX 2.1 API, real 200
+## response with current data for AT. Dimension order (4 key segments
+## before TIME_PERIOD) confirmed via a live structure query
+## (datastructure/ESTAT/prc_hicp_midx): FREQ.UNIT.COICOP.GEO.
+##
+## UNIT: the shared Eurostat UNIT codelist has 700+ entries, but only a
+## handful validate for THIS dataflow -- the same "shared codelist,
+## narrow per-dataflow subset" trap already documented above for
+## NA_ITEM. Querying with UNIT left as a wildcard (confirmed live) shows
+## the values that actually return data are index-base-year variants
+## (I05, I96, I15, ...), NOT the "HICP2015"/"HICP2025"-named codes that
+## look like the obvious choice from the codelist's own labels (those
+## return HTTP 400 INVALID_QUERY_DIMENSION_VALUE). "I05" (Index,
+## 2005=100) is used here, confirmed to return a complete, gap-free
+## series back to well before this project's earliest anchor concepts.
+##
+## COICOP: "CP00" = All-items HICP -- the closest match to FRED-QD's
+## CPIAUCSL (overall CPI, not a COICOP sub-category breakdown).
+##
+## Frequency: monthly, aggregated to quarterly by simple mean (same
+## `monthly_to_quarterly()` used for consumer_confidence in
+## R/ec_survey.R and defined in R/fred_mirror.R).
+##
+## MOTIVATION: FRED's OECD-MEI mirror (`CPALTT01{cc2}Q657N`, used for
+## every country including the US) was confirmed live 2026-08-30 to be
+## frozen at 2023-Q4 for Austria -- this Eurostat series extends to
+## 2025-Q4 for the same country, a ~2-year improvement for EU member
+## states. Not available for non-EU countries (e.g. the US), which keep
+## the FRED-mirror value; scripts/build_country_panel.R tries this
+## FIRST for EU members and falls back to the FRED mirror on failure,
+## the same override pattern as consumer_confidence and share_price_index.
+##
+## EXTENDED 2026-08-30: `fetch_eurostat_hicp()` gained a `coicop`
+## parameter so the same verified dataflow/key can also pull the
+## standard sub-category breakdown of headline inflation -- core
+## (excl. energy/food), food, energy, and services -- confirmed live for
+## AT and DE with the same UNIT="I05": TOT_X_NRG_FOOD, CP01, NRG, SERV
+## respectively (see `eurostat_hicp_subcategories` below). These give
+## the Prices group its first sub-index breakdown; core inflation
+## (TOT_X_NRG_FOOD) is the closest match to FRED-QD's CPILFESL. Food and
+## energy have no direct FRED-QD mnemonic (FRED-QD's own list has no
+## standalone CPI-food or CPI-energy series); services maps to
+## CUSR0000SAS.
+## ---------------------------------------------------------------
+
+eurostat_hicp_dataflow <- "prc_hicp_midx"
+eurostat_hicp_unit <- "I05"
+eurostat_hicp_coicop <- "CP00"
+
+eurostat_hicp_subcategories <- tibble::tribble(
+  ~label,                 ~coicop,
+  "core_cpi_index",       "TOT_X_NRG_FOOD",
+  "food_price_index",     "CP01",
+  "energy_price_index",   "NRG",
+  "services_price_index", "SERV"
+)
+
+#' Fetch one Eurostat HICP series (any COICOP category, quarterly-averaged)
+#' for one EU country, or NULL if the country isn't an EU member or
+#' nothing resolved
+fetch_eurostat_hicp <- function(country3, label = "cpi_index",
+                                 start_period = "1995-Q1",
+                                 unit = eurostat_hicp_unit,
+                                 coicop = eurostat_hicp_coicop) {
+  if (!country3 %in% eu_member_countries) return(NULL)
+  geo <- lookup_ec_country2(country3)
+  if (is.na(geo)) return(NULL)
+
+  start_month <- format(period_to_date(start_period), "%Y-%m")
+  key <- paste("M", unit, coicop, geo, sep = ".")
+  url <- sprintf(
+    "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/%s/%s?format=SDMX-CSV&startPeriod=%s",
+    eurostat_hicp_dataflow, key, start_month
+  )
+
+  txt <- fetch_text(url)
+  if (is.null(txt)) {
+    warning(sprintf("[%s] Eurostat HICP fetch failed -- URL: %s", label, url))
+    return(NULL)
+  }
+  if (stringr::str_detect(txt, stringr::regex("S:Fault|faultstring", ignore_case = TRUE))) {
+    warning(sprintf("[%s] Eurostat HICP has no observations for key '%s'", label, key))
+    return(NULL)
+  }
+
+  monthly <- parse_time_value_csv(txt, label)
+  if (is.null(monthly)) return(NULL)
+
+  monthly <- monthly %>%
+    dplyr::mutate(date = as.Date(paste0(.data$period, "-01"))) %>%
+    dplyr::select(-period)
+  monthly_to_quarterly(monthly, label)
+}
+
+## ---------------------------------------------------------------
+## Labour productivity and unit labour costs (namq_10_lp_ulc),
+## EU-specific override for `unit_labor_cost` -- a closer conceptual
+## match to FRED-QD's ULCNFB than the OECD-MEI-via-FRED proxy in
+## R/fred_mirror.R.
+##
+## STATUS: VERIFIED 2026-08-30 against Eurostat's SDMX 2.1 API, real 200
+## responses for AT and DE. Dimension order (5 key segments before
+## TIME_PERIOD) confirmed via a live structure query
+## (datastructure/ESTAT/namq_10_lp_ulc): FREQ.UNIT.S_ADJ.NA_ITEM.GEO.
+##
+## NA_ITEM: "NULC_HW" = Nominal unit labour cost based on HOURS WORKED --
+## the same hours-based construction as FRED-QD's ULCNFB (see
+## `concept_group_map`'s `us_note` for unit_labor_cost), unlike the
+## existing OECD-mirror proxy (`ULQEUL01{cc2}Q657S`), which is
+## EMPLOYMENT-based.
+##
+## UNIT: confirmed live that the shared UNIT codelist's INDEX-level codes
+## (e.g. "I10", index 2010=100) are only published for SOME countries --
+## Austria has a complete, gap-free I10/SCA/NULC_HW series back to
+## 1995-Q1, current through 2026-Q1, but the identical key for Germany
+## returns a structurally valid, zero-row response (only PCH_PRE/PCH_SM,
+## percentage-change variants, are published for DE at this NA_ITEM).
+## This module tries "I10" only, keyed to the confirmed-for-Austria case,
+## rather than guessing a per-country unit -- countries where I10 isn't
+## published simply return NULL (via `parse_time_value_csv()`'s zero-row
+## check) and scripts/build_country_panel.R falls back to the FRED-mirror
+## proxy for them, the same "try, else fall back" pattern as the other
+## EU-specific overrides in this file.
+##
+## Frequency: already quarterly (unlike HICP above), so no
+## `monthly_to_quarterly()` aggregation step is needed.
+## ---------------------------------------------------------------
+
+eurostat_ulc_dataflow <- "namq_10_lp_ulc"
+eurostat_ulc_unit <- "I10"
+eurostat_ulc_na_item <- "NULC_HW"
+
+#' Fetch the Eurostat hours-based nominal unit labour cost index for one
+#' EU country, or NULL if the country isn't an EU member, or Eurostat
+#' doesn't publish this NA_ITEM/UNIT combination for it
+fetch_eurostat_ulc <- function(country3, label = "unit_labor_cost",
+                                start_period = "1995-Q1",
+                                unit = eurostat_ulc_unit) {
+  if (!country3 %in% eu_member_countries) return(NULL)
+  geo <- lookup_ec_country2(country3)
+  if (is.na(geo)) return(NULL)
+
+  key <- paste("Q", unit, "SCA", eurostat_ulc_na_item, geo, sep = ".")
+  url <- sprintf(
+    "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/%s/%s?format=SDMX-CSV&startPeriod=%s",
+    eurostat_ulc_dataflow, key, start_period
+  )
+
+  txt <- fetch_text(url)
+  if (is.null(txt)) {
+    warning(sprintf("[%s] Eurostat ULC fetch failed -- URL: %s", label, url))
+    return(NULL)
+  }
+  if (stringr::str_detect(txt, stringr::regex("S:Fault|faultstring", ignore_case = TRUE))) {
+    warning(sprintf("[%s] Eurostat ULC has no observations for key '%s'", label, key))
+    return(NULL)
+  }
+
+  quarterly <- parse_time_value_csv(txt, label)
+  if (is.null(quarterly)) return(NULL)
+
+  quarterly %>% dplyr::mutate(date = period_to_date(.data$period)) %>% dplyr::select(-period)
+}

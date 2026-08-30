@@ -45,23 +45,23 @@ fetch_text <- function(url, ..., timeout_seconds = 30) {
 #' GET a URL and return its body as raw bytes, or NULL on any failure
 #'
 #' Analogous to `fetch_text()` but for binary downloads (R/ec_survey.R's
-#' .xlsx-in-a-.zip archive). A request that resolves via redirect to an
-#' HTML page instead of the expected binary (confirmed live: an
-#' unpublished monthly archive 301-redirects to a generic landing page,
-#' still HTTP 200 after the redirect) is treated as a failure -- checked
-#' via both the Content-Type header and the raw bytes not starting with
-#' the ZIP magic number "PK", since relying on either alone is fragile
-#' (a server could omit/mislabel Content-Type).
+#' .xlsx-in-a-.zip archive, R/gpr.R's .xls workbook). A request that
+#' resolves via redirect to an HTML page instead of the expected binary
+#' (confirmed live: an unpublished monthly EC survey archive 301-redirects
+#' to a generic landing page, still HTTP 200 after the redirect) is
+#' treated as a failure via the Content-Type header -- this alone is
+#' fragile (a server could omit/mislabel it), so callers that know their
+#' expected binary format's magic number should check the returned bytes
+#' themselves (see R/ec_survey.R's ZIP check) rather than relying only on
+#' this generic guard.
 fetch_binary <- function(url, ..., timeout_seconds = 30) {
   resp <- safe_get(url, ..., timeout_seconds = timeout_seconds)
   if (is.null(resp)) return(NULL)
   ctype <- httr::headers(resp)[["content-type"]] %||% ""
-  bytes <- httr::content(resp, as = "raw")
-  looks_like_zip <- length(bytes) >= 2 && bytes[1] == as.raw(0x50) && bytes[2] == as.raw(0x4B)
-  if (stringr::str_detect(ctype, stringr::regex("html", ignore_case = TRUE)) || !looks_like_zip) {
+  if (stringr::str_detect(ctype, stringr::regex("html", ignore_case = TRUE))) {
     return(NULL)
   }
-  bytes
+  httr::content(resp, as = "raw")
 }
 
 `%||%` <- function(a, b) if (is.null(a) || length(a) == 0) b else a
@@ -110,6 +110,21 @@ date_to_period <- function(date) {
 #' Column names vary by dataflow vintage, so this locates TIME_PERIOD and
 #' OBS_VALUE (or their SDMX-JSON camelCase equivalents) by regex rather than
 #' assuming a fixed position.
+#'
+#' A key that is STRUCTURALLY valid but has no observations for it (e.g. a
+#' UNIT/NA_ITEM combination that validates against the dataflow's DSD but
+#' simply isn't published for a given country -- confirmed live 2026-08-30
+#' for Eurostat's namq_10_lp_ulc, whose index-level unit "I10" exists for
+#' Austria but returns a real HTTP 200 with a header row and zero
+#' observations for Germany) comes back as an otherwise well-formed CSV
+#' with a header but no data rows -- NOT a SOAP Fault, and NOT
+#' distinguishable from a real result without checking `nrow()`. Treating
+#' that as NULL (like the SOAP-Fault and empty-body cases above) rather
+#' than an empty-but-truthy tibble matters for every EU/euro-area-specific
+#' OVERRIDE in scripts/build_country_panel.R (e.g. `if (!is.null(hicp))`):
+#' without this check, a full_join against a 0-row "success" would silently
+#' replace an already-resolved FRED-mirror value with NA instead of falling
+#' back to it.
 parse_time_value_csv <- function(txt, label) {
   if (nchar(trimws(txt)) == 0) {
     warning(sprintf("[%s] Empty response body", label))
@@ -127,6 +142,51 @@ parse_time_value_csv <- function(txt, label) {
   out <- df %>%
     dplyr::transmute(period = .data[[time_col]], value = as.numeric(.data[[value_col]])) %>%
     dplyr::distinct(period, .keep_all = TRUE)
+
+  if (nrow(out) == 0) {
+    warning(sprintf("[%s] Structurally valid key returned zero observations", label))
+    return(NULL)
+  }
+
   names(out)[2] <- label
   out
+}
+
+#' Merge two wide period-indexed tibbles, preferring `primary`'s value at
+#' each period and column, falling back to `secondary`'s value wherever
+#' `primary` has none (including periods or columns `primary` doesn't
+#' cover at all)
+#'
+#' Used to extend a shorter but conceptually preferred series (e.g.
+#' Eurostat, preferred for EU countries' anchor NIPA concepts -- see
+#' scripts/build_country_panel.R) with an available but non-preferred
+#' source's longer history (e.g. OECD QNA), rather than treating the
+#' non-preferred source as a pure "primary returned nothing at all"
+#' fallback and silently forfeiting decades of history for any concept
+#' the preferred source covers even partially. Confirmed live 2026-08-30:
+#' OECD QNA has Austrian real GDP back to 1960-Q1, 35 years before
+#' Eurostat's 1995-Q1 floor for the same concept.
+#'
+#' Both inputs (or either, but not both, being NULL) are expected to have
+#' a `period` column plus one column per concept label; column names that
+#' exist in only one input are carried through unchanged.
+merge_prefer <- function(primary, secondary) {
+  if (is.null(primary)) return(secondary)
+  if (is.null(secondary)) return(primary)
+
+  shared_labels <- intersect(setdiff(names(primary), "period"), setdiff(names(secondary), "period"))
+  merged <- dplyr::full_join(primary, secondary, by = "period", suffix = c("", ".secondary"))
+  for (lbl in shared_labels) {
+    sec_col <- paste0(lbl, ".secondary")
+    merged[[lbl]] <- dplyr::coalesce(merged[[lbl]], merged[[sec_col]])
+    merged[[sec_col]] <- NULL
+  }
+  dplyr::arrange(merged, period)
+}
+
+#' Does `df[[label]]` have at least one non-NA value? (FALSE if the column
+#' or the whole tibble is absent) -- used to decide, per concept, whether
+#' a given source actually contributed anything to a merged result.
+has_data <- function(df, label) {
+  !is.null(df) && label %in% names(df) && any(!is.na(df[[label]]))
 }

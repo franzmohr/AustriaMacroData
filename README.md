@@ -72,7 +72,9 @@ R/                          Fetcher library used by build_country_panel.R,
                              EU membership (`eu_member_countries`) and the
                              Commission's own 2-letter codes (Greece = "EL")
   eurostat.R                Eurostat Quarterly National Accounts -- PREFERRED
-                             anchor-concept source for EU member states
+                             anchor-concept source for EU member states;
+                             also HICP (cpi_index + 4 sub-categories) and
+                             labour productivity/ULC overrides
   oecd.R                    OECD Quarterly National Accounts (SDMX) -- anchor
                              concepts not covered by Eurostat, or for non-EU
                              countries
@@ -80,16 +82,29 @@ R/                          Fetcher library used by build_country_panel.R,
                              after Eurostat/OECD)
   bis.R                     BIS Credit to the Non-Financial Sector (SDMX) --
                              fetches ALL countries at once per sector
-                             (P/H/N), cached in data/landing/
+                             (P/H/N/G: private, households, corporations,
+                             general government), cached in data/landing/
   ecb.R                     ECB Quarterly Sector Accounts (household net
-                             worth, euro-area aggregate) and MFI Interest
+                             worth, euro-area aggregate), MFI Interest
                              Rate Statistics (mortgage rate, genuinely
-                             country-specific, euro-area members)
+                             country-specific, euro-area members), and MFI
+                             Balance Sheet Items (household mortgage loans
+                             outstanding, a different ECB dataflow entirely)
   ec_survey.R                European Commission Business and Consumer
                              Survey -- PREFERRED consumer-confidence source
                              for EU member states (fresher than the FRED
-                             mirror below); the monthly archive covers every
-                             EU country at once and is cached in data/landing/
+                             mirror below), plus 6 further per-country
+                             sentiment indicators (economic sentiment,
+                             industrial/services/retail/construction
+                             confidence, employment expectations); the
+                             monthly archive covers every EU country and
+                             all 7 indicators at once, cached in data/landing/
+  gpr.R                     Geopolitical Risk (GPR) Index (Caldara and
+                             Iacoviello, 2022) -- country-specific for 44
+                             countries, global index otherwise; downloaded
+                             directly from the authors' own data file,
+                             cached in data/landing/ (works for every
+                             country, not just the EU)
   yahoo_finance.R            ATX (Austrian Traded Index) via Yahoo Finance --
                              PREFERRED share_price_index source for Austria
                              specifically (its own benchmark index, not a
@@ -129,7 +144,7 @@ docs/
                              + a fresh read of data_sources.csv
   data_sources.csv           The data-sources registry -- see below
   candidate_indicators_austria.csv  Proposed (UNVERIFIED) Austrian sources
-                             for the 245 - 25 FRED-QD series not yet
+                             for the 245 - 38 FRED-QD series not yet
                              implemented -- see below
   generate_candidate_indicators.py  Regenerates the file above from
                              docs/Mohr_AUSTRIA-QD.tex + a hand-built
@@ -143,14 +158,14 @@ renv.lock, renv/, .Rprofile  renv-managed R dependency environment, pinned
 ## Usage
 
 ```bash
-Rscript scripts/build_country_panel.R --country AUT --start-period 1995-Q1
+Rscript scripts/build_country_panel.R --country AUT
 Rscript scripts/build_country_panel.R --country USA --validate
 ```
 
 | Option | Default | Description |
 |---|---|---|
 | `--country` | *(required)* | ISO-3166 alpha-3 code, e.g. `AUT`, `DEU`, `USA` |
-| `--start-period` | `1995-Q1` | First quarter to fetch (`YYYY-Qn`) |
+| `--start-period` | `1960-Q1` | First quarter to fetch (`YYYY-Qn`) -- OECD QNA has Austrian real GDP back to 1960-Q1 (confirmed live); concepts with no data this far back are simply `NA` before their own start, per the canonical-schema design |
 | `--fred-country2` | looked up | FRED's 2-letter OECD-mirror code, for countries not in `R/country_codes.R` |
 | `--validate` | off | Cross-check OECD-sourced series against the real FRED-QD file (USA only, since it's the only series with published ground truth) |
 | `--output-dir` | `output` | Where to write `<country>_nipa.csv` and `<country>_coverage.json` |
@@ -158,11 +173,15 @@ Rscript scripts/build_country_panel.R --country USA --validate
 
 The source hierarchy per run, most-preferred first:
 1. **Anchor NIPA concepts** (GDP, consumption, government spending,
-   investment, exports, imports, disposable income): **Eurostat** first for
-   EU member states (a closer conceptual match for household consumption
-   than OECD, see [Data-sources registry](#data-sources-registry) below),
-   then **OECD QNA** for whatever Eurostat didn't resolve, then **IMF QNEA**
-   for whatever's still missing.
+   investment, exports, imports, disposable income): **Eurostat**, preferred
+   for EU member states (a closer conceptual match for household
+   consumption than OECD, see [Data-sources registry](#data-sources-registry)
+   below), is EXTENDED with **OECD QNA** rather than only consulted where
+   Eurostat resolved nothing -- Eurostat's own data for Austria starts at
+   1995-Q1, but OECD QNA covers the same concepts back to 1960-Q1, so OECD
+   fills in every period Eurostat doesn't cover (`merge_prefer()` in
+   `R/utils.R`) instead of that history being silently dropped. **IMF QNEA**
+   is the final fallback for whatever neither source has at all.
 2. **Money and Credit / balance sheets**: **BIS** credit-to-GDP (private
    sector, households, nonfinancial corporations -- all genuinely
    country-specific), plus **ECB** household net worth (euro-area aggregate
@@ -182,7 +201,7 @@ resolves in practice per run, and
 [docs/data_sources.csv](docs/data_sources.csv) for the exact provider/key
 used for every (country, concept) pair across all runs so far.
 
-**Every `<country>_nipa.csv` has the same 25 columns, in the same order**
+**Every `<country>_nipa.csv` has the same 38 columns, in the same order**
 (`date` plus one column per concept in `concept_group_map`, see
 [scripts/build_country_panel.R](scripts/build_country_panel.R)), regardless
 of which concepts actually resolved for that country -- a concept that
@@ -247,22 +266,68 @@ source and the US/FRED-QD definition (e.g. "OECD sector S1M is
 total-economy consumption, broader than FRED-QD's household-only PCE") or,
 if the concept wasn't resolved for that country, why.
 
-Three deliberate per-country/per-group source overrides, all preferring a
-fresher or more specific primary source over the generic FRED-mirror
-default:
+Seven deliberate per-country/per-group source overrides, all preferring a
+fresher or more conceptually faithful primary source over the generic
+FRED-mirror default (plus two brand-new categories of concepts with no
+FRED-mirror default to override in the first place -- HICP sub-categories
+and EC survey/geopolitical-risk concepts):
 - **EU member states**: anchor NIPA concepts from Eurostat (not OECD) where
-  available, and consumer confidence from the EC's own Business and
-  Consumer Survey (not the FRED mirror, which is frozen -- see Known
-  issues below).
+  available, consumer confidence from the EC's own Business and
+  Consumer Survey, and the consumer price index from Eurostat's HICP
+  (not the FRED mirror, which is frozen for both -- see Known issues
+  below).
+- **EU member states, where Eurostat publishes an index-level series for
+  it**: unit labor cost from Eurostat's labour productivity/ULC dataflow,
+  hours-based like FRED-QD's own construction -- not a staleness fix like
+  the two above (the FRED-mirror proxy is current), but a closer
+  conceptual match than its employment-based %-change construction.
+  Confirmed available for Austria; confirmed **absent** for Germany
+  (which keeps the FRED-mirror value) -- unlike the other three overrides
+  here, this one can genuinely fail per-country even for an EU member.
 - **Euro-area members**: mortgage rate from the ECB's own MFI Interest Rate
   Statistics (there is no FRED-mirror equivalent to fall back to).
+- **Euro-area members**: household mortgage loans (outstanding stock, EUR
+  millions) from a *second* ECB dataflow, MFI Balance Sheet Items (BSI) --
+  the natural stock counterpart to the mortgage-rate override above.
+  BSI and MIR are both ECB MFI statistics about the same loans but use
+  completely different dimension codes; the working key was found by
+  searching the ECB Data Portal's own published series list, not by
+  guessing from MIR's key by analogy (which returned a structurally
+  valid zero-observation response even for the simplest case).
 - **Austria specifically**: share price index from the ATX (Austria's own
   benchmark index) via Yahoo Finance, not the generic OECD "all shares"
   proxy.
+- **EU member states, new concepts**: four HICP sub-categories (core,
+  food, energy, services) -- the same verified Eurostat HICP dataflow
+  used for `cpi_index` generalizes to any COICOP code, so these were a
+  small marginal addition once that fetcher existed.
+- **EU member states, new concepts**: six further EC Business and
+  Consumer Survey indicators, using the same archive already fetched for
+  `consumer_confidence`, generalized to accept any of its seven
+  per-country columns. Two were prioritized for documented predictive
+  power: the **Economic Sentiment Indicator** (`economic_sentiment_indicator`,
+  DG ECFIN's own flagship composite, empirically validated to track and
+  lead euro-area GDP growth) and **Industrial Confidence**
+  (`industrial_confidence`, one of the archive's oldest series and a
+  standard OECD Composite-Leading-Indicator input). A third,
+  **Employment Expectations** (`employment_expectations`), is DG ECFIN's
+  own purpose-built leading indicator for employment turning points. The
+  remaining three -- services, retail, and construction confidence --
+  are the archive's other standard sentiment sub-indices, added as a
+  low-cost extension once the fetcher was generalized.
+- **Every country, new concept**: geopolitical risk (`geopolitical_risk`)
+  from Caldara and Iacoviello's (2022) GPR index -- downloaded directly
+  from the authors' own published data file. Genuinely country-specific
+  for the 44 countries the source covers (confirmed: includes Germany and
+  the United States); falls back to the source's own global index for
+  every other country (confirmed: Austria is **not** among the 44 --
+  watch out for "GPRC_AUS", which is Australia, not Austria, the same
+  2-vs-3-letter code collision this project's own country-code table
+  exists to prevent elsewhere).
 
 ## Candidate indicators (proposed, unverified)
 
-The 25 implemented concepts are representative anchors, not a 1:1
+The 38 implemented concepts are representative anchors, not a 1:1
 replication of FRED-QD's 245 series (see Overview above -- most of those
 245 are U.S.-specific and have no cross-country equivalent at all).
 [docs/candidate_indicators_austria.csv](docs/candidate_indicators_austria.csv)
@@ -280,10 +345,12 @@ source after `scripts/build_country_panel.R` has actually fetched real
 data from it. `confidence` (`HIGH`/`MEDIUM`/`LOW`) reflects how sure this
 pass is that the named Eurostat/ECB/OECD dataset exists in roughly that
 form, based on domain knowledge of those agencies' data products -- a
-handful of the highest-value candidates (the CPI-staleness fix, government
-debt, building permits, labour productivity/ULC) had their Eurostat
-dataflow's *existence* confirmed live, but no candidate's exact
-dimension key has been tested the way every row in `data_sources.csv` has.
+handful of the highest-value candidates (government debt, building
+permits, labour productivity/ULC) had their Eurostat dataflow's
+*existence* confirmed live, but no candidate's exact dimension key has
+been tested the way every row in `data_sources.csv` has (the CPI-staleness
+fix that used to be listed here has since been fully implemented --
+see the `cpi_index` row in the Coverage table and Known issues below).
 Treat every row as a starting point for the same live-verification process
 `R/eurostat.R`, `R/ecb.R` etc. went through, not as ready to use.
 
@@ -293,20 +360,56 @@ against a hand-built annotation table in the same script) after adding new
 concepts to `concept_group_map` or updating the annotations.
 
 A few standout candidates worth prioritizing:
-- **Eurostat HICP** (`prc_hicp_midx`) could fix `cpi_index`'s known
-  staleness (see Known issues below) -- and, via its COICOP breakdown,
-  supply Austrian counterparts to most of FRED-QD's 20 PCE/CPI
-  sub-category price indices.
-- **Eurostat labour productivity and ULC** (`namq_10_lp_ulc`) is a direct
-  quarterly dataset for exactly this concept -- a candidate upgrade for
-  `unit_labor_cost`, which currently uses an OECD-mirror proxy.
-- **ECB MFI Balance Sheet Items (BSI)** looks like the same country-specific
-  statistical family as the already-implemented `mortgage_rate` (MIR) --
-  worth checking for loans-by-purpose series analogous to FRED-QD's
-  `BUSLOANSx`/`CONSUMERx`/`REALLNx`.
-- **Eurostat quarterly government debt** (`gov_10q_ggdebt`) is a
-  well-established EU series that should be a straightforward win for
-  `GFDEGDQ188S`/`GFDEBTNx`.
+- **Eurostat HICP's finer COICOP breakdown** (`prc_hicp_midx` -- the
+  overall `cpi_index` fix and four sub-categories, `core_cpi_index`/
+  `food_price_index`/`energy_price_index`/`services_price_index`, are
+  already implemented -- see the Coverage table above) could supply
+  Austrian counterparts to most of FRED-QD's remaining PCE/CPI
+  sub-category price indices (apparel, transport, health, and the
+  various all-items-less-X variants).
+- **Eurostat labour productivity and ULC** (`namq_10_lp_ulc`, already used
+  for the Austria-specific `unit_labor_cost` upgrade above) also carries
+  sector-specific output-per-hour and unit-labor-cost series -- a direct
+  source for FRED-QD's `OPHMFG`/`OPHNFB`/`OPHPBS`/`ULCBS`/`ULCMFG`
+  candidates, which this project doesn't yet track at all.
+- **ECB MFI Balance Sheet Items (BSI)** -- the household house-purchase
+  loans variant is already implemented as `household_mortgage_loans` (see
+  the Coverage table above). Its confirmed `BS_ITEM=A22T` key is the
+  template for the remaining purpose/sector breakdowns: `BS_ITEM=A21T`
+  ("Credit for consumption"), by direct analogy, is the natural next
+  candidate for `CONSUMERx`.
+
+`GFDEGDQ188S` (government debt, % of GDP) is no longer a candidate here --
+it's implemented as `government_debt_to_gdp` via BIS's `WS_TC` general-
+government sector (see the Coverage table above), not the Eurostat
+Maastricht-debt dataflow originally proposed for it, since BIS's dataflow
+was already verified, already cached, and covers non-EU countries too.
+`GFDEBTNx` (the same concept as a real-dollar level rather than a % of
+GDP) remains a genuine gap: BIS only publishes the ratio.
+
+### Cross-checked against EA-MD-QD
+
+[EA-MD-QD](https://doi.org/10.5281/zenodo.10514667) (Barigozzi and Lissona,
+2024; documented in detail by
+[Barigozzi, Lissona and Tonni, 2026](https://arxiv.org/abs/2410.05082)) is a
+1,136-series euro-area dataset that already covers Austria, live-verified
+and Austria-specific by construction. Its own published Table 1 was used as
+a second opinion on this project's candidate list:
+- It **confirms** four previously `LOW`-confidence, unverified candidates:
+  Austria-specific household total financial assets/liabilities (`HHASS`/
+  `HHLB`) and the non-financial-corporation equivalents (`NFCASS`/`NFCLB`)
+  are genuinely published per country, not just for the euro area as this
+  project's own live testing had found for the analogous ECB series --
+  those four rows are now `HIGH` confidence in
+  `candidate_indicators_austria.csv`.
+- It also surfaces **eight concepts with no FRED-QD equivalent at all**
+  (a household savings rate, household/corporate investment and profit
+  shares, a semi-durable-goods consumption category, a real effective
+  exchange rate, per-worker labour productivity, and sector-specific
+  confidence balances), each confirmed available for Austria and cataloged
+  separately in
+  [docs/candidate_indicators_ea_md_qd.csv](docs/candidate_indicators_ea_md_qd.csv)
+  since they fall outside FRED-QD's 245-series scope.
 
 ## Setup
 
@@ -402,7 +505,7 @@ original comments. Two real bugs were found this way and fixed (not just
 
 ### FRED-QD group coverage
 
-25 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
+38 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
 groups on 2026-08-30; grew via several same-day extension passes -- see
 `R/fred_mirror.R`, `R/bis.R`, `R/eurostat.R`, `R/ecb.R`, `R/ec_survey.R`
 and `R/yahoo_finance.R` header comments for the full trail, including one
@@ -418,49 +521,60 @@ override exists -- see the fallback chain earlier in this README.
 | Output and Income | Real GDP, household consumption, govt. consumption, GFCF, exports, imports | **Eurostat** `namq_10_gdp` (EU members), else OECD QNA `DF_QNA` | Verified -- real current (2026-Q2) data, AUT + DEU via Eurostat, USA via OECD |
 | Output and Income | Household disposable income | OECD `DF_QNA_INC_SAV`, IMF QNEA fallback | Verified absent for USA/DEU/FRA/GBR/AUT (checked against Eurostat too: no valid quarterly NA_ITEM either); available for 11 smaller economies only (see below) |
 | Industrial Production | Industrial production index | OECD MEI via FRED (`{cc3}PROINDQISMEI`) | Verified -- AUT + DEU + USA |
+| Industrial Production | Industrial confidence indicator | **EC Business and Consumer Survey** (`AT.INDU`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent. Documented leading-indicator value (OECD Composite Leading Indicators input) |
 | Employment and Unemployment | Unemployment rate | OECD MEI via FRED (`LRHUTTTT{cc}Q156S`) | Verified -- AUT + DEU + USA |
 | Employment and Unemployment | Employment rate (15-64) | OECD MEI via FRED (`LREM64TT{cc}Q156S`) | Verified -- AUT + DEU + USA; no direct FRED-QD equivalent |
+| Employment and Unemployment | Employment expectations indicator | **EC Business and Consumer Survey** (`AT.EEI`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent. DG ECFIN's own purpose-built leading indicator for employment turning points |
 | Housing | Real house price index | BIS via FRED (`Q{cc}R628BIS`) | Verified -- AUT + DEU + USA |
+| Housing | Construction confidence indicator | **EC Business and Consumer Survey** (`AT.BUIL`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent |
 | Inventories, Orders, and Sales | Retail sales volume (proxy) | OECD MEI via FRED (`{cc3}SARTQISMEI`) | Verified for AUT + DEU; **not published for USA** (genuine gap, not a bad code) |
+| Inventories, Orders, and Sales | Retail confidence indicator | **EC Business and Consumer Survey** (`AT.RETA`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent |
 | Inventories, Orders, and Sales | Manufacturers' new orders/inventories | -- | Re-checked 2026-08-30: no cross-country equivalent exists (US Census Bureau-specific concept); deliberately not attempted |
-| Prices | CPI index | OECD MEI via FRED (`CPALTT01{cc}Q657N`) | Verified, but **stale**: real 200 response, data stops ~2024 for DE -- see Known issues below |
-| Earnings and Productivity | Unit labor cost (employment-based, % change) | OECD MEI via FRED (`ULQEUL01{cc}Q657S`) | Verified -- AUT + DEU + USA; FRED-QD's ULCNFB is a related but differently-constructed index |
+| Prices | CPI index | **Eurostat HICP** `prc_hicp_midx` (EU members, live/current), else OECD MEI via FRED (`CPALTT01{cc}Q657N`, stale) | Verified -- AUT + DEU via Eurostat HICP (current through 2025-Q4, ~2 years fresher than the stale FRED mirror, which stops at 2023-Q4 for AT); USA via the stale FRED mirror (no EU HICP equivalent for non-EU countries) |
+| Prices | Core, food, energy, services CPI sub-indices | **Eurostat HICP** `prc_hicp_midx`, COICOP=`TOT_X_NRG_FOOD`/`CP01`/`NRG`/`SERV` | Verified -- AUT + DEU only; EU-only by construction, no FRED-mirror equivalent for any of the four |
+| Earnings and Productivity | Unit labor cost | **Eurostat labour productivity/ULC** `namq_10_lp_ulc` (EU members, where an index-level series is published), else OECD MEI via FRED (`ULQEUL01{cc}Q657S`) | Verified -- AUT via Eurostat (hours-based index, matching FRED-QD's ULCNFB construction); DEU + USA via the OECD-mirror proxy (employment-based % change, confirmed absent in index form for Germany) |
 | Interest Rates | Long-term interest rate | OECD MEI via FRED (`IRLTLT01{cc}Q156N`) | Verified -- AUT + DEU + USA |
 | Interest Rates | Short-term (3-month interbank) rate | OECD MEI via FRED (`IR3TIB01{cc}Q156N`) | Verified -- AUT + DEU + USA |
 | Interest Rates | Mortgage rate (new business, loans to households) | **ECB** `MIR` (euro-area members) | Verified -- AUT + DE, genuinely country-specific; no source for non-euro-area countries (incl. USA -- FRED-QD's own MORTGAGE30US is US-specific too) |
 | Money and Credit | Credit to private non-financial sector, % of GDP | BIS `WS_TC` v2.0, `TC_BORROWERS=P` (all countries in one bulk pull, cached) | Verified -- AUT + DE + US |
+| Money and Credit | Household mortgage loans, outstanding stock (EUR millions) | **ECB** `BSI` (euro-area members) | Verified -- AUT (EUR 133.0bn) + DE (EUR 1,658.4bn) as of 2026-07; pairs with the mortgage-rate row above (same loan category, different ECB dataflow entirely); no source for non-euro-area countries |
 | Household Balance Sheets | Household net worth (growth rate) | ECB `QSA_PUB` | Verified, but **euro-area aggregate only** -- no per-country series exists (see below) |
 | Household Balance Sheets | Household credit, % of GDP | BIS `WS_TC` v2.0, `TC_BORROWERS=H` | Verified -- AUT + DE + US; **country-specific**, unlike the ECB series above |
 | Non-Household Balance Sheets | Nonfinancial-corporation credit, % of GDP | BIS `WS_TC` v2.0, `TC_BORROWERS=N` | Verified -- AUT + DE + US |
+| Non-Household Balance Sheets | Government debt (BIS "credit to general government"), % of GDP | BIS `WS_TC` v2.0, `TC_BORROWERS=G` | Verified -- AUT + DE + US; genuinely cross-country (not EU-only), unlike most other overrides in this project -- FRED-QD's GFDEGDQ188S is US federal debt only, this is all levels of government combined |
 | Exchange Rates | FX rate to USD | OECD MEI via FRED (`CCUSMA02{cc}Q618N`) | Verified -- AUT + DEU; not applicable to USA itself |
 | Exchange Rates | Real effective exchange rate | OECD MEI via FRED (`CCRETT01{cc}Q661N`) | Verified -- AUT + DEU + USA |
 | Other | Consumer confidence | **EC Business and Consumer Survey** (EU members, live/current), else OECD MEI via FRED (`CSCICP03{cc}M665S`, stale) | Verified -- AUT + DEU via EC survey (current through 2026-Q3); USA via the stale FRED mirror (no EU-survey equivalent exists for non-EU countries) |
+| Other | Economic sentiment indicator | **EC Business and Consumer Survey** (`AT.ESI`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent. DG ECFIN's flagship composite, empirically validated to track/lead euro-area GDP growth |
+| Other | Services confidence indicator | **EC Business and Consumer Survey** (`AT.SERV`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent |
+| Other | Geopolitical risk | **GPR Index** (Caldara-Iacoviello), country-specific for 44 countries, else the global index | Verified -- DEU + USA via their own country-specific series; AUT via the global index (confirmed absent from the 44); genuinely cross-country, no FRED-QD equivalent |
 | Stock Markets | Share price index | **ATX via Yahoo Finance** (Austria specifically), else OECD MEI via FRED (`SPASTT01{cc}Q661N`) | Verified -- AUT via Yahoo Finance (current through 2026-Q3); DEU + USA via the OECD-mirror proxy |
 
 ### Known issues
 
-- **`cpi_index` is stale for every country** (no primary-source override
-  exists for it yet, unlike consumer confidence). It returns a real HTTP
-  200 response with real historical data, but that data stops around 2024
-  for DE (checked live 2026-08-30) -- this OECD-MEI-mirror-via-FRED series
-  appears to have been frozen when OECD migrated its legacy MEI dataflow
-  to a new SDMX 3.0 system, and FRED's mirror was never updated to follow.
-  PPI and business confidence were checked as alternates while extending
-  this table and rejected outright for the same reason (PPI stops in
-  2022). `consumer_confidence` had the identical problem but is now fixed
-  for EU member states via the EC Business and Consumer Survey override
-  (`R/ec_survey.R`) -- CPI needs the same treatment, sourcing from OECD's
-  or Eurostat's own current CPI dataflow directly (the way `R/oecd.R` /
-  `R/eurostat.R` already do for QNA), not done yet. A good next task.
+- **`cpi_index`'s FRED-mirror source is stale, and for EU member states is
+  now overridden.** The OECD-MEI-mirror-via-FRED series (`CPALTT01{cc}Q657N`)
+  returns a real HTTP 200 response, but that data stops at 2023-Q4 for
+  Austria (checked live 2026-08-30) -- this series appears to have been
+  frozen when OECD migrated its legacy MEI dataflow to a new SDMX 3.0
+  system, and FRED's mirror was never updated to follow. PPI and business
+  confidence were checked as alternates while extending this table and
+  rejected outright for the same reason (PPI stops in 2022). For EU member
+  states this is now fixed the same way `consumer_confidence` was: an
+  override to Eurostat's own HICP dataflow (`prc_hicp_midx`, see
+  `R/eurostat.R`), confirmed live to extend to 2025-Q4 for Austria. Non-EU
+  countries (incl. the USA) still get the stale FRED-mirror value -- no
+  EU-equivalent primary source exists for them.
 - **OECD's data endpoint rate-limits under moderate request volume.**
   Building all three example country panels back-to-back reliably
   triggered `HTTP 429` on at least one of them; the IMF QNEA fallback
   absorbs this gracefully (a 429'd OECD anchor still resolves via IMF), so
   panels stay usable, but don't expect to loop over many countries quickly
-  without hitting it. The Eurostat-first ordering for EU countries also
-  helps here indirectly, since it means OECD is asked for fewer anchor
-  concepts per EU-country run (typically just the 1 Eurostat doesn't
-  cover) than before.
+  without hitting it. Note that OECD QNA is now queried for all 7 anchor
+  concepts on every EU-country run, not only ones Eurostat resolved
+  nothing for -- a deliberate trade for the extended pre-1995 history
+  `merge_prefer()` provides (see Usage above), made explicit here rather
+  than silently reverted to the leaner but shallower-history behavior.
 - **Yahoo Finance requires a browser-like User-Agent.** Confirmed live: the
   default httr/curl User-Agent gets `HTTP 429` from
   `query2.finance.yahoo.com`, while a Chrome UA string succeeds

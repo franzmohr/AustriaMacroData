@@ -1,7 +1,7 @@
 {
   "country": "USA",
-  "generated_at": "2026-08-30T11:50:07Z",
-  "start_period": "1995-Q1",
+  "generated_at": "2026-08-30T18:48:30Z",
+  "start_period": "1960-Q1",
   "resolved": [
     {
       "fred_qd_group": "Output and Income",
@@ -89,6 +89,11 @@
       "source": "BIS WS_TC [N]"
     },
     {
+      "fred_qd_group": "Non-Household Balance Sheets",
+      "label": "government_debt_to_gdp",
+      "source": "BIS WS_TC [G]"
+    },
+    {
       "fred_qd_group": "Exchange Rates",
       "label": "real_effective_exchange_rate",
       "source": "OECD MEI / BIS (via FRED mirror) [CCRETT01USQ661N]"
@@ -97,6 +102,11 @@
       "fred_qd_group": "Other",
       "label": "consumer_confidence",
       "source": "OECD MEI / BIS (via FRED mirror) [CSCICP03USM665S]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "geopolitical_risk",
+      "source": "Geopolitical Risk Index (Caldara-Iacoviello) [GPRC_USA]"
     },
     {
       "fred_qd_group": "Stock Markets",
@@ -110,12 +120,48 @@
       "label": "real_household_disposable_income"
     },
     {
+      "fred_qd_group": "Industrial Production",
+      "label": "industrial_confidence"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "employment_expectations"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_confidence"
+    },
+    {
       "fred_qd_group": "Inventories, Orders, and Sales",
       "label": "retail_sales_volume"
     },
     {
+      "fred_qd_group": "Inventories, Orders, and Sales",
+      "label": "retail_confidence"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "core_cpi_index"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "food_price_index"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "energy_price_index"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "services_price_index"
+    },
+    {
       "fred_qd_group": "Interest Rates",
       "label": "mortgage_rate"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "household_mortgage_loans"
     },
     {
       "fred_qd_group": "Household Balance Sheets",
@@ -124,6 +170,14 @@
     {
       "fred_qd_group": "Exchange Rates",
       "label": "fx_rate_to_usd"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "economic_sentiment_indicator"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_confidence"
     }
   ],
   "groups_not_attempted": [

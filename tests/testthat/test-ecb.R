@@ -98,3 +98,60 @@ test_that("fetch_ecb_mortgage_rate warns and returns NULL when the request fails
   })
   expect_null(out)
 })
+
+## Fixture mirrors the real shape confirmed live against
+## data-api.ecb.europa.eu (dataflow BSI, format=csvdata) on 2026-08-30 --
+## found via the ECB Data Portal's own published series list, not
+## guessed from first principles (see R/ecb.R header for why the naive
+## by-analogy-with-MIR key returned zero observations).
+ecb_bsi_fixture <- paste(
+  "KEY,FREQ,REF_AREA,ADJUSTMENT,BS_REP_SECTOR,BS_ITEM,MATURITY_ORIG,DATA_TYPE,COUNT_AREA,BS_COUNT_SECTOR,CURRENCY_TRANS,BS_SUFFIX,TIME_PERIOD,OBS_VALUE",
+  "BSI.M.AT.N.A.A22T.A.1.U6.2250.Z01.E,M,AT,N,A,A22T,A,1,U6,2250,Z01,E,2026-04,131769",
+  "BSI.M.AT.N.A.A22T.A.1.U6.2250.Z01.E,M,AT,N,A,A22T,A,1,U6,2250,Z01,E,2026-05,132005",
+  "BSI.M.AT.N.A.A22T.A.1.U6.2250.Z01.E,M,AT,N,A,A22T,A,1,U6,2250,Z01,E,2026-06,133060",
+  sep = "\n"
+)
+
+ecb_bsi_not_found_fixture <- '{"type":"/service/data/BSI/M.XX.N.A.A22T.A.1.U6.2250.Z01.E","title":"Not Found","status":404,"detail":"No Series was returned for the query"}'
+
+test_that("fetch_ecb_household_mortgage_loans returns NULL for a non-euro-area country without making a request", {
+  called <- FALSE
+  mock <- function(url, ...) { called <<- TRUE; ecb_bsi_fixture }
+  with_mock_fetch_text(mock, {
+    expect_warning(out <- fetch_ecb_household_mortgage_loans("USA"), "not a euro-area country")
+  })
+  expect_null(out)
+  expect_false(called)
+})
+
+test_that("fetch_ecb_household_mortgage_loans builds the confirmed 11-segment BSI key, not the MIR-by-analogy guess", {
+  captured_url <- NULL
+  mock <- function(url, ...) { captured_url <<- url; ecb_bsi_fixture }
+  with_mock_fetch_text(mock, {
+    fetch_ecb_household_mortgage_loans("AUT")
+  })
+  expect_match(captured_url, "M\\.AT\\.N\\.A\\.A22T\\.A\\.1\\.U6\\.2250\\.Z01\\.E", perl = TRUE)
+})
+
+test_that("fetch_ecb_household_mortgage_loans averages monthly outstanding amounts into a quarterly value", {
+  with_mock_fetch_text(const_fetch_text(ecb_bsi_fixture), {
+    out <- fetch_ecb_household_mortgage_loans("AUT", start_period = "2026-Q2")
+  })
+  expect_equal(names(out), c("date", "household_mortgage_loans"))
+  expect_equal(out$date, as.Date("2026-04-01"))
+  expect_equal(out$household_mortgage_loans, mean(c(131769, 132005, 133060)))
+})
+
+test_that("fetch_ecb_household_mortgage_loans warns and returns NULL on a 404 (no series for this country)", {
+  with_mock_fetch_text(const_fetch_text(ecb_bsi_not_found_fixture), {
+    expect_warning(out <- fetch_ecb_household_mortgage_loans("AUT"), "no household-mortgage-loan observations")
+  })
+  expect_null(out)
+})
+
+test_that("fetch_ecb_household_mortgage_loans warns and returns NULL when the request fails outright", {
+  with_mock_fetch_text(failing_fetch_text(), {
+    expect_warning(out <- fetch_ecb_household_mortgage_loans("AUT"), "ECB household mortgage loans fetch failed")
+  })
+  expect_null(out)
+})

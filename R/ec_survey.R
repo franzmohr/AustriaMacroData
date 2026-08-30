@@ -7,8 +7,10 @@
 ## <YYMM> is a 2-digit year + 2-digit month (e.g. "2608" = August 2026).
 ## An unpublished month 301-redirects to a generic landing page (still
 ## HTTP 200 after the redirect, Content-Type text/html) rather than
-## returning a clean 404 -- confirmed live, handled by `fetch_binary()`
-## (R/utils.R) checking both Content-Type and the raw ZIP magic number.
+## returning a clean 404 -- confirmed live, caught by `fetch_binary()`'s
+## (R/utils.R) Content-Type check; a mislabeled response would still be
+## caught downstream since `extract_ec_survey_xlsx()`'s `unzip()` call
+## fails cleanly (returns NULL, not an error) on non-ZIP bytes.
 ##
 ## The archive is a single .xlsx (main_indicators_nace2.xlsx) with a
 ## "MONTHLY" sheet: column 1 = month-end date, and one column per
@@ -102,14 +104,17 @@ get_ec_survey_xlsx <- function(reference_date = Sys.Date(), max_lookback = 3,
   NULL
 }
 
-#' Extract one country's consumer-confidence column from a workbook path
+#' Extract one country's column for a given survey indicator from a
+#' workbook path
 #'
 #' `ec_country2` is the Commission's own 2-letter code (see
 #' R/country_codes.R's `lookup_ec_country2()` -- identical to the usual
-#' FRED 2-letter code except Greece, "EL" not "GR"). Returns a `date` +
-#' `label` monthly tibble, or NULL (with a warning) if the workbook can't
-#' be read or the country's column isn't in it.
-parse_ec_consumer_confidence <- function(xlsx_path, ec_country2, label) {
+#' FRED 2-letter code except Greece, "EL" not "GR"). `indicator` selects
+#' which of the archive's seven per-country columns to read (see
+#' `ec_survey_indicators` below for the confirmed suffixes). Returns a
+#' `date` + `label` monthly tibble, or NULL (with a warning) if the
+#' workbook can't be read or the country's column isn't in it.
+parse_ec_survey_indicator <- function(xlsx_path, ec_country2, label, indicator = "CONS") {
   monthly <- tryCatch(
     suppressMessages(readxl::read_excel(xlsx_path, sheet = "MONTHLY", col_names = FALSE)),
     error = function(e) NULL
@@ -120,7 +125,7 @@ parse_ec_consumer_confidence <- function(xlsx_path, ec_country2, label) {
   }
 
   header <- as.character(monthly[1, ])
-  col_name <- paste0(ec_country2, ".CONS")
+  col_name <- paste0(ec_country2, ".", indicator)
   col_idx <- which(header == col_name)
   if (length(col_idx) == 0) {
     warning(sprintf("[%s] Column '%s' not found in the EC survey archive", label, col_name))
@@ -136,6 +141,36 @@ parse_ec_consumer_confidence <- function(xlsx_path, ec_country2, label) {
   out
 }
 
+## EXTENDED 2026-08-30: the archive's "MONTHLY" sheet carries SEVEN
+## per-country columns, not just ".CONS" -- confirmed live in the
+## already-cached workbook (data/landing/ec_bcs_main_indicators_*.xlsx):
+## "<cc2>.INDU", ".SERV", ".CONS", ".RETA", ".BUIL", ".ESI", ".EEI",
+## present for every EU member checked (AT, DE). ESI (Economic Sentiment
+## Indicator) and INDU (Industrial Confidence) are the two with
+## documented predictive power for GDP/business-cycle turning points --
+## ESI is DG ECFIN's own flagship composite, explicitly constructed and
+## validated to track and lead euro-area GDP growth; INDU is one of the
+## oldest EU survey series (since 1985) and a standard input to the
+## OECD's Composite Leading Indicators for many countries. EEI
+## (Employment Expectations Indicator) is DG ECFIN's own purpose-built
+## leading indicator for employment turning points, introduced in 2013
+## specifically because the employment sub-components of the sectoral
+## surveys lead employment growth. SERV/RETA/BUIL (services/retail/
+## construction confidence) are the remaining ESI sub-components --
+## standard, EC-published sentiment measures without the same
+## individually-validated leading-indicator literature behind them, but
+## a low-cost extension since they are already in the same archive this
+## project caches.
+ec_survey_indicators <- tibble::tribble(
+  ~label,                         ~indicator,
+  "economic_sentiment_indicator", "ESI",
+  "industrial_confidence",        "INDU",
+  "employment_expectations",      "EEI",
+  "services_confidence",          "SERV",
+  "retail_confidence",            "RETA",
+  "construction_confidence",      "BUIL"
+)
+
 #' Fetch quarterly consumer confidence for an EU country from the EC's own
 #' Business and Consumer Survey, averaging the underlying monthly series
 #'
@@ -144,7 +179,38 @@ parse_ec_consumer_confidence <- function(xlsx_path, ec_country2, label) {
 #' or the country's column isn't in it.
 fetch_ec_consumer_confidence <- function(country3, label = "consumer_confidence",
                                           start_period = "1995-Q1",
-                                          reference_date = Sys.Date()) {
+                                          reference_date = Sys.Date(),
+                                          landing_dir = ec_survey_landing_dir) {
+  fetch_ec_survey_indicator(country3, label, indicator = "CONS",
+                             start_period = start_period, reference_date = reference_date,
+                             landing_dir = landing_dir)
+}
+
+#' Fetch any one of the EC Business and Consumer Survey's seven
+#' per-country indicators for an EU country, quarterly-averaged
+#'
+#' `indicator` is one of the confirmed suffixes in `ec_survey_indicators`
+#' (or "CONS", the consumer-confidence column `fetch_ec_consumer_confidence()`
+#' wraps this function for). Returns NULL (with a warning) if the country
+#' isn't an EU member, the archive can't be found (cached or fetched)
+#' within the lookback window, or the country's column isn't in it.
+#'
+#' BUG FIX 2026-08-30: this always called `get_ec_survey_xlsx()` with its
+#' OWN default `landing_dir` ("data/landing"), silently ignoring any
+#' `landing_dir` a caller might have intended -- unlike every other
+#' caching module in this project (`fetch_bis_credit_bulk()`,
+#' `fetch_gpr_bulk()`), which do expose and thread through `landing_dir`.
+#' No caller in `scripts/build_country_panel.R` was ever affected (none
+#' pass a non-default `landing_dir` here), but a test that mocked the
+#' network layer and expected an isolated temp cache was instead writing
+#' a real fixture file into the project's own `data/landing/` on every
+#' run -- caught by noticing an untracked `tests/testthat/data/landing/`
+#' directory reappear after a full test-suite run, not by a failing
+#' assertion (the test still passed; the leak was silent).
+fetch_ec_survey_indicator <- function(country3, label, indicator = "CONS",
+                                       start_period = "1995-Q1",
+                                       reference_date = Sys.Date(),
+                                       landing_dir = ec_survey_landing_dir) {
   if (!country3 %in% eu_member_countries) {
     warning(sprintf("[%s] EC Business and Consumer Survey only covers EU member states -- '%s' is not one", label, country3))
     return(NULL)
@@ -152,13 +218,13 @@ fetch_ec_consumer_confidence <- function(country3, label = "consumer_confidence"
   ec_country2 <- lookup_ec_country2(country3)
   if (is.na(ec_country2)) return(NULL)
 
-  found <- get_ec_survey_xlsx(reference_date)
+  found <- get_ec_survey_xlsx(reference_date, landing_dir = landing_dir)
   if (is.null(found)) {
     warning(sprintf("[%s] Could not find a published EC survey archive (cached or live) within the lookback window", label))
     return(NULL)
   }
 
-  monthly_df <- parse_ec_consumer_confidence(found$path, ec_country2, label)
+  monthly_df <- parse_ec_survey_indicator(found$path, ec_country2, label, indicator = indicator)
   if (is.null(monthly_df)) return(NULL)
 
   monthly_to_quarterly(monthly_df, label) %>%

@@ -1,42 +1,47 @@
 {
   "country": "DEU",
-  "generated_at": "2026-08-30T11:49:48Z",
-  "start_period": "1995-Q1",
+  "generated_at": "2026-08-30T18:47:46Z",
+  "start_period": "1960-Q1",
   "resolved": [
     {
       "fred_qd_group": "Output and Income",
       "label": "real_gdp",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:B1GQ]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:B1GQ (extended pre-1995 with OECD_QNA:S1.B1GQ)]"
     },
     {
       "fred_qd_group": "Output and Income",
       "label": "real_household_consumption",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P31_S14]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P31_S14 (extended pre-1995 with OECD_QNA:S1M.P3)]"
     },
     {
       "fred_qd_group": "Output and Income",
       "label": "real_govt_consumption",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P3_S13]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P3_S13 (extended pre-1995 with OECD_QNA:S13.P3)]"
     },
     {
       "fred_qd_group": "Output and Income",
       "label": "real_gfcf_total",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P51G]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P51G (extended pre-1995 with OECD_QNA:.P51G)]"
     },
     {
       "fred_qd_group": "Output and Income",
       "label": "real_exports",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P6]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P6 (extended pre-1995 with OECD_QNA:S1.P6)]"
     },
     {
       "fred_qd_group": "Output and Income",
       "label": "real_imports",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P7]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P7 (extended pre-1995 with OECD_QNA:S1.P7)]"
     },
     {
       "fred_qd_group": "Industrial Production",
       "label": "industrial_production",
       "source": "OECD MEI / BIS (via FRED mirror) [DEUPROINDQISMEI]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industrial_confidence",
+      "source": "European Commission Business and Consumer Survey [DE.INDU]"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
@@ -49,9 +54,19 @@
       "source": "OECD MEI / BIS (via FRED mirror) [LREM64TTDEQ156S]"
     },
     {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "employment_expectations",
+      "source": "European Commission Business and Consumer Survey [DE.EEI]"
+    },
+    {
       "fred_qd_group": "Housing",
       "label": "house_price_real",
       "source": "OECD MEI / BIS (via FRED mirror) [QDER628BIS]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_confidence",
+      "source": "European Commission Business and Consumer Survey [DE.BUIL]"
     },
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
@@ -59,9 +74,34 @@
       "source": "OECD MEI / BIS (via FRED mirror) [DEUSARTQISMEI]"
     },
     {
+      "fred_qd_group": "Inventories, Orders, and Sales",
+      "label": "retail_confidence",
+      "source": "European Commission Business and Consumer Survey [DE.RETA]"
+    },
+    {
       "fred_qd_group": "Prices",
       "label": "cpi_index",
-      "source": "OECD MEI / BIS (via FRED mirror) [CPALTT01DEQ657N]"
+      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.CP00.DE]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "core_cpi_index",
+      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.DE]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "food_price_index",
+      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.CP01.DE]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "energy_price_index",
+      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.NRG.DE]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "services_price_index",
+      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.SERV.DE]"
     },
     {
       "fred_qd_group": "Earnings and Productivity",
@@ -89,6 +129,11 @@
       "source": "BIS WS_TC [P]"
     },
     {
+      "fred_qd_group": "Money and Credit",
+      "label": "household_mortgage_loans",
+      "source": "ECB MFI Balance Sheet Items (BSI) [A22T.A.1.U6.2250.Z01.E]"
+    },
+    {
       "fred_qd_group": "Household Balance Sheets",
       "label": "euro_area_household_net_worth_growth",
       "source": "ECB QSA_PUB (euro-area aggregate, not country-specific) [I8]"
@@ -104,6 +149,11 @@
       "source": "BIS WS_TC [N]"
     },
     {
+      "fred_qd_group": "Non-Household Balance Sheets",
+      "label": "government_debt_to_gdp",
+      "source": "BIS WS_TC [G]"
+    },
+    {
       "fred_qd_group": "Exchange Rates",
       "label": "fx_rate_to_usd",
       "source": "OECD MEI / BIS (via FRED mirror) [CCUSMA02DEQ618N]"
@@ -117,6 +167,21 @@
       "fred_qd_group": "Other",
       "label": "consumer_confidence",
       "source": "European Commission Business and Consumer Survey [DE.CONS]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "economic_sentiment_indicator",
+      "source": "European Commission Business and Consumer Survey [DE.ESI]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_confidence",
+      "source": "European Commission Business and Consumer Survey [DE.SERV]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "geopolitical_risk",
+      "source": "Geopolitical Risk Index (Caldara-Iacoviello) [GPRC_DEU]"
     },
     {
       "fred_qd_group": "Stock Markets",

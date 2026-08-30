@@ -30,6 +30,7 @@ build_fixture_zip_bytes <- function() {
     c2 = c("EU.CONS", "-10.2", "-10.6"),
     c3 = c("AT.CONS", "-5.1", "-6.2"),
     c4 = c("DE.CONS", "-8.0", "-8.3"),
+    c5 = c("AT.ESI", "95.4", "96.1"),
     stringsAsFactors = FALSE
   )
   writexl::write_xlsx(
@@ -116,22 +117,32 @@ test_that("get_ec_survey_xlsx returns NULL after exhausting the lookback window"
   expect_null(out)
 })
 
-test_that("parse_ec_consumer_confidence extracts the requested country's column", {
+test_that("parse_ec_survey_indicator extracts the requested country's CONS column by default", {
   zip_bytes <- build_fixture_zip_bytes()
   skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
   xlsx_path <- extract_ec_survey_xlsx(zip_bytes)
 
-  out <- parse_ec_consumer_confidence(xlsx_path, "AT", "consumer_confidence")
+  out <- parse_ec_survey_indicator(xlsx_path, "AT", "consumer_confidence")
   expect_equal(names(out), c("date", "consumer_confidence"))
   expect_equal(out$consumer_confidence, c(-5.1, -6.2))
 })
 
-test_that("parse_ec_consumer_confidence returns NULL with a warning for an unknown country column", {
+test_that("parse_ec_survey_indicator's indicator parameter selects a different column", {
   zip_bytes <- build_fixture_zip_bytes()
   skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
   xlsx_path <- extract_ec_survey_xlsx(zip_bytes)
 
-  expect_warning(out <- parse_ec_consumer_confidence(xlsx_path, "ZZ", "consumer_confidence"), "not found")
+  out <- parse_ec_survey_indicator(xlsx_path, "AT", "economic_sentiment_indicator", indicator = "ESI")
+  expect_equal(names(out), c("date", "economic_sentiment_indicator"))
+  expect_equal(out$economic_sentiment_indicator, c(95.4, 96.1))
+})
+
+test_that("parse_ec_survey_indicator returns NULL with a warning for an unknown country column", {
+  zip_bytes <- build_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  xlsx_path <- extract_ec_survey_xlsx(zip_bytes)
+
+  expect_warning(out <- parse_ec_survey_indicator(xlsx_path, "ZZ", "consumer_confidence"), "not found")
   expect_null(out)
 })
 
@@ -142,4 +153,37 @@ test_that("fetch_ec_consumer_confidence refuses non-EU countries without a netwo
   })
   expect_null(out)
   expect_false(called)
+})
+
+test_that("fetch_ec_survey_indicator refuses non-EU countries without a network call", {
+  called <- FALSE
+  with_mock_fetch_binary(function(url, ...) { called <<- TRUE; NULL }, {
+    expect_warning(out <- fetch_ec_survey_indicator("USA", "economic_sentiment_indicator", indicator = "ESI"), "EU member states")
+  })
+  expect_null(out)
+  expect_false(called)
+})
+
+test_that("fetch_ec_survey_indicator fetches and quarterly-averages a non-CONS indicator", {
+  zip_bytes <- build_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  landing_dir <- tempfile()
+  on.exit(unlink(landing_dir, recursive = TRUE), add = TRUE)
+
+  with_mock_fetch_binary(const_fetch_binary(zip_bytes), {
+    out <- fetch_ec_survey_indicator("AUT", "economic_sentiment_indicator", indicator = "ESI",
+                                      start_period = "1985-Q1", reference_date = as.Date("2026-08-30"),
+                                      landing_dir = landing_dir)
+  })
+  expect_equal(names(out), c("date", "economic_sentiment_indicator"))
+  expect_equal(out$date, as.Date("1985-01-01"))
+  expect_equal(out$economic_sentiment_indicator, mean(c(95.4, 96.1)))
+})
+
+test_that("ec_survey_indicators lists the six confirmed-live sub-indicators with their column suffixes", {
+  expect_equal(ec_survey_indicators$label,
+               c("economic_sentiment_indicator", "industrial_confidence", "employment_expectations",
+                 "services_confidence", "retail_confidence", "construction_confidence"))
+  expect_equal(ec_survey_indicators$indicator,
+               c("ESI", "INDU", "EEI", "SERV", "RETA", "BUIL"))
 })

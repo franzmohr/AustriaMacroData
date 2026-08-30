@@ -37,6 +37,16 @@
 ## manual-refresh convention as `data/bronze/`'s OECD pulls). Building
 ## panels for AUT, then DEU, then USA in one sitting now downloads each
 ## of the 3 sectors (P/H/N) ONCE total, not once per country.
+##
+## EXTENDED AGAIN 2026-08-30: added TC_BORROWERS="G" (general government),
+## confirmed live for AT/DE/US (e.g. AT/G = 76.5% of GDP, DE/G = 58.9% of
+## GDP, US/G = 111.0% of GDP, all 2025-Q4), giving `government_debt_to_gdp`
+## its first real source -- previously nothing was attempted for it. "BIS
+## credit" is a broader concept than gross government debt in the strict
+## Maastricht/EDP sense (BIS's own methodology treats it as a close proxy,
+## not an identical construction), but it is the only genuinely
+## cross-country (not EU-only, unlike Eurostat's quarterly Maastricht-debt
+## dataflow) quarterly source found for this concept.
 ## ---------------------------------------------------------------
 
 bis_wstc_dims <- c("FREQ", "BORROWERS_CTY", "TC_BORROWERS", "TC_LENDERS",
@@ -49,12 +59,14 @@ bis_landing_dir <- "data/landing"
 ## sector breakdowns FRED-QD keeps separate (households vs. nonfinancial
 ## corporations):
 ##   C - Non financial sector (economy-wide, incl. general government)
-##   G - General government
+##   G - General government            <- government_debt_to_gdp
 ##   H - Households & NPISHs           <- household_credit_to_gdp
 ##   N - Non-financial corporations    <- corporate_credit_to_gdp
 ##   P - Private non-financial sector  <- credit_to_private_nonfin_sector (default, unchanged)
-## All three (P, H, N) confirmed to return real quarterly observations for
-## AT, DE and US (e.g. AT/H = 49.6% of GDP, AT/N = 94.6% of GDP in 2020-Q1).
+## All four (P, H, N, G) confirmed to return real quarterly observations
+## for AT, DE and US (e.g. AT/H = 49.6% of GDP, AT/N = 94.6% of GDP in
+## 2020-Q1; AT/G = 76.5% of GDP, DE/G = 58.9% of GDP, US/G = 111.0% of GDP,
+## all 2025-Q4).
 
 #' Local cache path for one sector's all-countries bulk pull
 bis_landing_path <- function(tc_borrowers, landing_dir = bis_landing_dir) {
@@ -67,11 +79,12 @@ bis_landing_path <- function(tc_borrowers, landing_dir = bis_landing_dir) {
 #' Returns a `country2, period, value` tibble (BIS's own 2-letter codes,
 #' e.g. "DE", "US", not ISO-3166 alpha-3). NOTE: the cache is keyed only
 #' by `tc_borrowers`, not `start_period` -- since every caller in this
-#' project uses the same "1995-Q1" default, this doesn't matter in
-#' practice, but a cached pull from a later `start_period` would silently
-#' lack earlier data for a caller requesting more history. Delete the
-#' cache file to force a refresh (same manual-refresh convention as
-#' `data/bronze/`'s OECD pulls).
+#' project passes the same CLI-wide `start_period` (see
+#' scripts/build_country_panel.R's `--start-period` default), this
+#' doesn't matter in practice, but a cached pull from a later
+#' `start_period` would silently lack earlier data for a caller
+#' requesting more history. Delete the cache file to force a refresh
+#' (same manual-refresh convention as `data/bronze/`'s OECD pulls).
 fetch_bis_credit_bulk <- function(tc_borrowers, start_period = "1995-Q1",
                                    landing_dir = bis_landing_dir) {
   cache_path <- bis_landing_path(tc_borrowers, landing_dir)

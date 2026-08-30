@@ -61,7 +61,7 @@ implemented_mnemonics = {
     "GDPC1", "GPDIC1", "PCECC96", "GCEC1", "FPIx", "EXPGSC1", "IMPGSC1",
     "INDPRO", "UNRATE", "USSTHPI", "RSAFSx", "CPIAUCSL", "ULCNFB", "GS10",
     "TB3MS", "MORTGAGE30US", "TNWBSHNOx", "TWEXAFEGSMTHx", "EXUSEU", "UMCSENTx",
-    "S&P 500",
+    "S&P 500", "GFDEGDQ188S", "CPILFESL", "CUSR0000SAS", "REALLNx",
 }
 
 # ---- 3. Candidate annotations, keyed by mnemonic ----
@@ -154,19 +154,18 @@ add("GDPCTPI,GPDICTPI", "DERIVABLE", note="Nominal/real ratio, once nominal GDP/
 add("IPDBS", "CANDIDATE", "Eurostat business-sector GVA deflator (derived from nominal/real GVA)", "LOW")
 add("DGDSRG3Q086SBEA,DDURRG3Q086SBEA,DSERRG3Q086SBEA,DNDGRG3Q086SBEA,DHCERG3Q086SBEA,DMOTRG3Q086SBEA,DFDHRG3Q086SBEA,DREQRG3Q086SBEA,DODGRG3Q086SBEA,DFXARG3Q086SBEA,DCLORG3Q086SBEA,DGOERG3Q086SBEA,DONGRG3Q086SBEA,DHUTRG3Q086SBEA,DHLCRG3Q086SBEA,DTRSRG3Q086SBEA,DRCARG3Q086SBEA,DFSARG3Q086SBEA,DIFSRG3Q086SBEA,DOTSRG3Q086SBEA",
     "CANDIDATE", "Eurostat HICP by COICOP division/group (prc_hicp_midx), ~90 categories per country", "MEDIUM", "Conceptually parallel (price index by consumption category) but COICOP != BEA's NIPA categories; needs a category-by-category crosswalk, not a 1:1 code match")
-add("CPILFESL", "CANDIDATE", "Eurostat HICP excl. energy, food, alcohol and tobacco (standard ECB core measure)", "HIGH")
 add("WPSFD49207,PPIACO,WPSFD49502,WPSFD4111,PPIIDC,WPSID61,WPSID62,PPICMM", "CANDIDATE", "Eurostat/Statistik Austria Producer Price Index by MIG/NACE product group (sts_inpp_m)", "HIGH", "PPI with MIG breakdown (energy/intermediate/capital/durable/non-durable consumer goods) closely parallels several of these WPS series")
 add("WPU0531,WPU0561", "CANDIDATE", "Eurostat PPI, NACE energy products (natural gas/petroleum)", "MEDIUM")
 add("OILPRICEx", "CANDIDATE", "Same global benchmark (Brent/WTI) usable unchanged for any country -- not Austria-specific", "HIGH", "No country adaptation needed; could be added to the panel as-is")
-add("CPIAPPSL,CPITRNSL,CPIMEDSL,CUSR0000SAC,CUSR0000SAD,CUSR0000SAS,CPIULFSL,CUSR0000SA0L2,CUSR0000SA0L5",
-    "CANDIDATE", "Eurostat HICP by COICOP category (apparel, transport, health, durables/services, all-items-less-X variants)", "MEDIUM")
+add("CPIAPPSL,CPITRNSL,CPIMEDSL,CUSR0000SAC,CUSR0000SAD,CPIULFSL,CUSR0000SA0L2,CUSR0000SA0L5",
+    "CANDIDATE", "Eurostat HICP by COICOP category (apparel, transport, health, durables/services, all-items-less-X variants)", "MEDIUM", "The fetch_eurostat_hicp() infrastructure this would use is now generalized and proven (see the already-implemented core_cpi_index/food_price_index/energy_price_index/services_price_index, and CUSR0000SAS above) -- each of these remaining COICOP categories is a one-line addition once its exact code is confirmed live")
 add("CUSR0000SEHC", "CANDIDATE", "Eurostat experimental owner-occupied housing (OOH) price index", "LOW", "HICP historically excludes owner-occupied housing costs; the OOH index is newer/experimental and coverage for AT is unconfirmed")
 
 # --- Earnings and Productivity ---
 add("AHETPIx,CES2000000008x,CES3000000008x,CES0600000008", "CANDIDATE", "Eurostat Labour Cost Index (LCI, quarterly, lc_lci_r2_q) by NACE", "HIGH")
 add("COMPRMS,COMPRNFB,RCPHBS", "CANDIDATE", "Eurostat LCI, labour cost per hour worked, deflated by HICP", "MEDIUM")
-add("OPHMFG,OPHNFB,OPHPBS", "CANDIDATE", "Eurostat labour productivity and unit labour costs (namq_10_lp_ulc)", "HIGH", "Dataflow existence confirmed live 2026-08-30; exact dimension key not yet verified. A direct quarterly Eurostat dataset for exactly this concept -- also a candidate UPGRADE for the already-implemented unit_labor_cost, which currently uses an OECD-mirror proxy")
-add("ULCBS,ULCMFG", "CANDIDATE", "Eurostat namq_10_lp_ulc (see OPHMFG note above)", "HIGH", "Dataflow existence confirmed live 2026-08-30; exact dimension key not yet verified")
+add("OPHMFG,OPHNFB,OPHPBS", "CANDIDATE", "Eurostat labour productivity and unit labour costs (namq_10_lp_ulc)", "HIGH", "Dataflow existence and dimension key (FREQ.UNIT.S_ADJ.NA_ITEM.GEO) confirmed live 2026-08-30 -- this is the same dataflow now used for the already-implemented unit_labor_cost's Austria-specific override (NA_ITEM=NULC_HW); the productivity-level NA_ITEM codes for this concept (RLPR_PER/RLPR_HW) were not individually re-verified, but the dataflow and key structure are proven to work")
+add("ULCBS,ULCMFG", "CANDIDATE", "Eurostat namq_10_lp_ulc (see OPHMFG note above)", "HIGH", "Same dataflow as the already-implemented unit_labor_cost override -- these would need sector-specific NA_ITEM codes (this project's override uses the whole-economy NULC_HW) and were not individually re-verified")
 add("UNLPNBS", "NO_EQUIVALENT", note="Residual \"unit nonlabor payments\" concept specific to BLS productivity accounts construction")
 
 # --- Interest Rates ---
@@ -180,21 +179,22 @@ add("CP3M", "CANDIDATE", "Euro commercial paper rate (less standardized publicly
 # --- Money and Credit ---
 add("BOGMBASEREALx", "CANDIDATE", "ECB monetary base (BSI dataset), euro-area-wide", "MEDIUM")
 add("M1REAL,M2REAL", "CANDIDATE", "ECB Monetary aggregates M1/M2/M3 (BSI dataset), euro-area-wide", "HIGH")
-add("BUSLOANSx,CONSUMERx,NONREVSLx,REALLNx,REVOLSLx,TOTALSLx", "CANDIDATE", "ECB MFI Balance Sheet Items (BSI): loans to households/NFCs by purpose, genuinely country-specific", "HIGH", "Same ECB statistical family as the already-implemented mortgage_rate (MIR); BSI's loan breakdowns by counterpart sector and purpose are per-country")
+add("BUSLOANSx,CONSUMERx,NONREVSLx,REVOLSLx,TOTALSLx", "CANDIDATE", "ECB MFI Balance Sheet Items (BSI): loans to households/NFCs by purpose, genuinely country-specific", "HIGH", "REALLNx (the household house-purchase loans variant) is now IMPLEMENTED as household_mortgage_loans -- see docs/data_sources.csv. Its BS_ITEM/BS_COUNT_SECTOR/COUNT_AREA key structure (confirmed live via the ECB Data Portal's own published series list, not guessed) is the template for the remaining purpose/sector breakdowns here -- e.g. BS_ITEM=A21T (\"Credit for consumption\") is the natural candidate for CONSUMERx, by direct analogy with A22T (\"Lending for house purchase\") used for REALLNx")
 add("DRIWCIL", "CANDIDATE", "ECB Bank Lending Survey (BLS), country-level results", "MEDIUM")
 add("TOTRESNS,NONBORRES", "CANDIDATE", "ECB reserves data, euro-area-wide only (not allocable to Austria specifically)", "LOW")
 add("DTCOLNVHFNM,DTCTHFNM", "NO_EQUIVALENT", note="US \"finance company\" sector is a specific US institutional category with no EU/ESA2010 equivalent")
 add("INVEST", "CANDIDATE", "ECB BSI, MFI holdings of securities, country-specific", "MEDIUM")
 
 # --- Household Balance Sheets ---
-add("TABSHNOx,TLBSHNOx,TARESAx,HNOREMQ027Sx,TFAABSHNOx", "CANDIDATE", "ECB Quarterly Sector Accounts (QSA_PUB), other STO codes beyond B90", "LOW", "The already-implemented euro_area_household_net_worth_growth found ONLY the euro-area aggregate has data for STO=B90; other balance-sheet items in the same dataflow likely face the same per-country data gap, unconfirmed")
+add("TFAABSHNOx,TLBSHNOx", "CANDIDATE", "ECB/Eurostat Quarterly Sector Accounts, household total financial assets/liabilities", "HIGH", "Corroborated by EA-MD-QD (Barigozzi, Lissona and Tonni 2026, Table 1): its HHASS/HHLB series confirm Austria-specific (not merely euro-area) household total financial assets and liabilities ARE published in this statistical family, unlike the euro-area-only STO=B90 net-worth series already implemented")
+add("TABSHNOx,TARESAx,HNOREMQ027Sx", "CANDIDATE", "ECB Quarterly Sector Accounts (QSA_PUB), other STO codes beyond B90", "LOW", "EA-MD-QD's household balance-sheet series (HHASS/HHLB) confirm the financial-assets/liabilities totals but do not cover real estate or other non-financial assets, so this remains unconfirmed for the total-assets and real-estate-specific concepts")
 add("NWPIx,LIABPIx,CONSPIx", "DERIVABLE", note="Ratios to disposable income, once the corresponding level series exist")
 
 # --- Exchange Rates ---
 add("EXSZUSx,EXJPUSx,EXUSUKx,EXCAUSx", "CANDIDATE", "ECB euro reference rates vs. CHF/JPY/GBP/CAD", "HIGH", "Same ECB reference-rate source as the already-implemented fx_rate_to_usd; trivial extension to other currency pairs")
 
 # --- Other ---
-add("USEPUINDXM", "CANDIDATE", "policyuncertainty.com European/country EPU index", "LOW", "Austria is not confirmed among the individually-maintained country EPU indices on that site (Germany, France, Italy, UK are); a European-aggregate EPU index may be the closest available, not Austria-specific")
+add("USEPUINDXM", "CANDIDATE", "policyuncertainty.com European/country EPU index", "LOW", "Austria is not confirmed among the individually-maintained country EPU indices on that site (Germany, France, Italy, UK are); a European-aggregate EPU index may be the closest available, not Austria-specific. A related but distinct uncertainty concept, geopolitical (not economic-policy) risk, is now IMPLEMENTED as geopolitical_risk via Caldara and Iacoviello's GPR index -- see docs/data_sources.csv and R/gpr.R")
 
 # --- Stock Markets ---
 add("VIXCLSx", "CANDIDATE", "VSTOXX (Euro STOXX 50 Volatility Index), euro-area-wide, via Yahoo Finance ticker \"^V2TX\" or STOXX directly", "MEDIUM", "Not Austria-specific -- same proxy every euro-area country would use")
@@ -202,8 +202,10 @@ add("NIKKEI225,NASDAQCOM", "CANDIDATE", "No country adaptation needed -- these a
 add("S&P div yield,S&P PE ratio", "CANDIDATE", "Wiener Börse's own ATX statistics (not exposed via the Yahoo Finance chart API already used for the index level)", "LOW", "Would need a different endpoint/source than R/yahoo_finance.R's current chart API")
 
 # --- Non-Household Balance Sheets ---
-add("GFDEGDQ188S,GFDEBTNx", "CANDIDATE", "Eurostat quarterly government debt (Maastricht debt), gov_10q_ggdebt", "HIGH", "Dataflow existence confirmed live 2026-08-30; exact dimension key not yet verified. A standard, well-established EU quarterly series")
-add("TLBSNNCBx,TTAABSNNCBx,TNWMVBSNNCBx,TNWMVBSNNCBBDIx,TLBSNNCBBDIx", "CANDIDATE", "Eurostat quarterly non-financial sector accounts, sector S11 (non-financial corporations)", "LOW", "May face the same per-country data-availability gap already found in the analogous ECB household QSA dataflow, unconfirmed")
+add("GFDEBTNx", "CANDIDATE", "Eurostat quarterly government debt (Maastricht debt), gov_10q_ggdebt, or a real-dollar-level derivation from the now-implemented government_debt_to_gdp", "MEDIUM", "GFDEGDQ188S (the %GDP version of this concept) is now IMPLEMENTED via BIS WS_TC (TC_BORROWERS=G) -- see docs/data_sources.csv. This is a REAL-DOLLAR LEVEL series instead, which BIS doesn't publish; would need Eurostat's Maastricht-debt dataflow (dataflow existence confirmed live 2026-08-30, exact dimension key not yet verified) or nominal GDP x the implemented ratio, once nominal GDP is added")
+add("TLBSNNCBx,TTAABSNNCBx", "CANDIDATE", "ECB/Eurostat Quarterly Sector Accounts, non-financial-corporation total financial assets/liabilities", "HIGH", "Corroborated by EA-MD-QD (Barigozzi, Lissona and Tonni 2026, Table 1): its NFCASS/NFCLB series confirm Austria-specific non-financial-corporation total financial assets and liabilities ARE published in this statistical family")
+add("TNWMVBSNNCBx", "CANDIDATE", "Derived from the now-corroborated TLBSNNCBx/TTAABSNNCBx pair above (assets minus liabilities)", "MEDIUM", "Net worth itself isn't a directly published EA-MD-QD series, but both of its components are now confirmed available for Austria")
+add("TNWMVBSNNCBBDIx,TLBSNNCBBDIx", "CANDIDATE", "Eurostat quarterly non-financial sector accounts, sector S11 (non-financial corporations)", "LOW", "The asset/liability numerators are now corroborated (see TLBSNNCBx/TTAABSNNCBx above), but the disposable-business-income denominator (CNCFx) remains unconfirmed for Austria")
 add("TLBSNNBx,TLBSNNBBDIx,TABSNNBx,TNWBSNNBx,TNWBSNNBBDIx", "NO_EQUIVALENT", note="\"Non-corporate business\" (sole proprietorships) is a distinct US National Accounts sector; ESA2010 (the EU standard) folds this into the household sector (S14), so there is no separately-published Austrian equivalent")
 add("CNCFx", "CANDIDATE", "Eurostat non-financial corporate sector accounts, disposable income/saving", "LOW")
 
