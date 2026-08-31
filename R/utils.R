@@ -190,3 +190,75 @@ merge_prefer <- function(primary, secondary) {
 has_data <- function(df, label) {
   !is.null(df) && label %in% names(df) && any(!is.na(df[[label]]))
 }
+
+#' Like `merge_prefer()`, but first RESCALES each of `secondary`'s
+#' columns to match `primary`'s level at the first period where BOTH
+#' have real data for that column (a genuine overlap point), before
+#' coalescing -- for combining two sources known to have a systematic
+#' SCALE mismatch, not just a coverage gap `merge_prefer()` alone is fine
+#' for.
+#'
+#' BUG FOUND AND FIXED 2026-08-30, by this project's own plausibility
+#' checks (`R/plausibility_checks.R`), not by the pre-existing
+#' `--validate` flag: `merge_prefer(eurostat_result, oecd_result)` in
+#' `scripts/build_country_panel.R`'s anchor-concept step introduced a
+#' ~4x level DISCONTINUITY at the exact quarter Austria's merge switches
+#' from OECD to Eurostat (1994-Q4 to 1995-Q1), across all six anchor
+#' concepts identically. Root cause, confirmed live: OECD QNA's table
+#' T0102 (used for every anchor concept) only offers
+#' `TRANSFORMATION="LA"` ("Annual levels", i.e. the quarterly series
+#' expressed at an annualized rate) -- there is no non-annualized
+#' quarterly variant of this table at all, confirmed by querying
+#' `TRANSFORMATION="N"` ("Non transformed data") for both a 1990s and a
+#' 2020s period and getting a clean `NoRecordsFound` both times, not a
+#' guess. Eurostat's `namq_10_gdp`, by contrast, reports actual
+#' (non-annualized) quarterly levels, so simply coalescing the two (as
+#' `merge_prefer()` does) mixes annualized-rate values with true
+#' quarterly values in one column.
+#'
+#' This was invisible to the `--validate` flag because that flag only
+#' ever compares GROWTH RATES: annualizing a series multiplies every
+#' period by a near-constant factor, so its period-over-period % growth
+#' rate is virtually identical to the true series' -- the correlation
+#' check that gave `real_gdp` a perfect 1.000 for the United States
+#' would have looked exactly as good even with this exact bug present,
+#' because it never inspects LEVELS at all. The plausibility checks do,
+#' which is how a >300% quarter-over-quarter jump surfaced it.
+#'
+#' Rescaling (rather than discarding OECD's pre-Eurostat history
+#' entirely, which would forfeit the whole point of `merge_prefer()`)
+#' preserves OECD's own internally-consistent quarter-to-quarter
+#' DYNAMICS for the period Eurostat doesn't cover, while correcting its
+#' ABSOLUTE LEVEL to match Eurostat's at the point the two meet -- the
+#' standard "level-splice" technique for joining two differently-based
+#' series into one comparable one. The scale factor is computed
+#' EMPIRICALLY per concept (not assumed to be a fixed ~4), since OECD's
+#' own annualization convention need not be exactly 4x every quarter's
+#' true value; `secondary` (OECD) is already fetched for the FULL
+#' requested range in `scripts/build_country_panel.R`, so the overlap
+#' point this needs already exists in the data being merged -- no extra
+#' API call required.
+splice_prefer <- function(primary, secondary) {
+  if (is.null(primary)) return(secondary)
+  if (is.null(secondary)) return(primary)
+
+  shared_labels <- intersect(setdiff(names(primary), "period"), setdiff(names(secondary), "period"))
+  merged <- dplyr::full_join(primary, secondary, by = "period", suffix = c("", ".secondary"))
+  for (lbl in shared_labels) {
+    sec_col <- paste0(lbl, ".secondary")
+    both <- !is.na(merged[[lbl]]) & !is.na(merged[[sec_col]])
+    if (any(both)) {
+      first_overlap <- which(both)[1]
+      scale <- merged[[lbl]][first_overlap] / merged[[sec_col]][first_overlap]
+      if (is.finite(scale) && scale > 0) {
+        merged[[sec_col]] <- merged[[sec_col]] * scale
+      }
+      ## else: no usable overlap ratio (e.g. secondary's value at the
+      ## overlap point is exactly 0) -- fall through unscaled rather
+      ## than corrupt the column with an Inf/NaN/negative multiplier.
+    }
+    merged[[lbl]] <- dplyr::coalesce(merged[[lbl]], merged[[sec_col]])
+    merged[[sec_col]] <- NULL
+  }
+  dplyr::arrange(merged, period)
+}

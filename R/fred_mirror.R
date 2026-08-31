@@ -61,6 +61,27 @@ get_fred_series <- function(fred_id) {
 ## Left as-is (better than nothing, but not "current") rather than
 ## papering over it; worth a follow-up once the rate limit clears.
 ##
+## SECOND, DEEPER ISSUE found 2026-08-31 by `R/plausibility_checks.R`
+## (this project's country-agnostic sanity-check layer, not a human
+## re-reading this file): `cpi_index`'s FRED-mirror value
+## (CPALTT01{cc2}Q657N) is itself a quarterly PERCENT CHANGE series, not
+## the INDEX LEVEL its own name and its FRED-QD mnemonic (CPIAUCSL, a
+## genuine level index) both imply -- confirmed directly against the raw
+## series: values like 2.97, 1.31, 0.37 for 2022-2023 match real US
+## quarterly inflation RATES almost exactly, not a CPI level (which
+## should read roughly 25-30 for a 1950s observation on FRED-QD's own
+## 1982-84=100 base, not 0-1). Every EU member state already gets a
+## genuine level index via the Eurostat HICP override
+## (`fetch_eurostat_hicp()`, R/eurostat.R); this only affects countries
+## still on the FRED-mirror default (confirmed: the United States).
+## NOT fixed here -- finding OECD's or FRED's actual CPI LEVEL mnemonic
+## for non-EU countries needs the same live-verification treatment every
+## other correction in this file got, which is a task in its own right
+## (a good first task for a researcher extending this project -- see
+## CONTRIBUTING.md). `R/plausibility_checks.R` categorizes `cpi_index`
+## to tolerate both constructions rather than silently masking the
+## finding.
+##
 ## ADDED 2026-08-30 (4 new concepts, filling 2 groups that previously had
 ## nothing and enriching 2 that only had one representative concept),
 ## each confirmed with a real, CURRENT (2026-Q1/Q2) 200 response for both

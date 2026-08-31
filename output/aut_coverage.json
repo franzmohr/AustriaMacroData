@@ -1,37 +1,37 @@
 {
   "country": "AUT",
-  "generated_at": "2026-08-30T21:45:28Z",
+  "generated_at": "2026-08-30T22:02:36Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
       "fred_qd_group": "Output and Income",
       "label": "real_gdp",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:B1GQ (extended pre-1995 with OECD_QNA:S1.B1GQ)]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:B1GQ (extended pre-1995 with level-spliced OECD_QNA:S1.B1GQ)]"
     },
     {
       "fred_qd_group": "Output and Income",
       "label": "real_household_consumption",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P31_S14 (extended pre-1995 with OECD_QNA:S1M.P3)]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P31_S14 (extended pre-1995 with level-spliced OECD_QNA:S1M.P3)]"
     },
     {
       "fred_qd_group": "Output and Income",
       "label": "real_govt_consumption",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P3_S13 (extended pre-1995 with OECD_QNA:S13.P3)]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P3_S13 (extended pre-1995 with level-spliced OECD_QNA:S13.P3)]"
     },
     {
       "fred_qd_group": "Output and Income",
       "label": "real_gfcf_total",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P51G (extended pre-1995 with OECD_QNA:.P51G)]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P51G (extended pre-1995 with level-spliced OECD_QNA:.P51G)]"
     },
     {
       "fred_qd_group": "Output and Income",
       "label": "real_exports",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P6 (extended pre-1995 with OECD_QNA:S1.P6)]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P6 (extended pre-1995 with level-spliced OECD_QNA:S1.P6)]"
     },
     {
       "fred_qd_group": "Output and Income",
       "label": "real_imports",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P7 (extended pre-1995 with OECD_QNA:S1.P7)]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P7 (extended pre-1995 with level-spliced OECD_QNA:S1.P7)]"
     },
     {
       "fred_qd_group": "Industrial Production",
@@ -206,37 +206,37 @@
       "label": "real_gdp",
       "category": "level",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change -75%."
+      "detail": "Positive throughout; largest quarter-over-quarter change -13%."
     },
     {
       "label": "real_household_consumption",
       "category": "level",
-      "status": "FLAG",
-      "detail": "Largest quarter-over-quarter change is 318%, above the 90% heuristic threshold -- check for a units/decimal/sector mismatch."
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 12%."
     },
     {
       "label": "real_govt_consumption",
       "category": "level",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change -75%."
+      "detail": "Positive throughout; largest quarter-over-quarter change 12%."
     },
     {
       "label": "real_gfcf_total",
       "category": "level",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change -75%."
+      "detail": "Positive throughout; largest quarter-over-quarter change 15%."
     },
     {
       "label": "real_exports",
       "category": "level",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change -74%."
+      "detail": "Positive throughout; largest quarter-over-quarter change -20%."
     },
     {
       "label": "real_imports",
       "category": "level",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change -75%."
+      "detail": "Positive throughout; largest quarter-over-quarter change 22%."
     },
     {
       "label": "real_household_disposable_income",
@@ -420,9 +420,9 @@
     },
     {
       "label": "geopolitical_risk",
-      "category": "level",
-      "status": "FLAG",
-      "detail": "Largest quarter-over-quarter change is 241%, above the 90% heuristic threshold -- check for a units/decimal/sector mismatch."
+      "category": "level_event_driven",
+      "status": "PASS",
+      "detail": "Positive throughout (167 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
     },
     {
       "label": "share_price_index",

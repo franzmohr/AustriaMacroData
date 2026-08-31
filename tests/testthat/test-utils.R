@@ -83,6 +83,64 @@ test_that("merge_prefer returns NULL when both inputs are NULL", {
   expect_null(merge_prefer(NULL, NULL))
 })
 
+test_that("splice_prefer rescales secondary to match primary's level at the first overlap point", {
+  ## primary (Eurostat-shaped): starts 1995-Q1 at true quarterly scale
+  primary <- tibble::tibble(period = c("1995-Q1", "1995-Q2"), real_gdp = c(64507.3, 65200))
+  ## secondary (OECD-shaped): covers the whole range, but at ~4x scale
+  ## (its own "LA" annualized-rate convention) -- including the SAME
+  ## 1995-Q1 overlap point, at the wrong scale (260636.4, not 64507.3)
+  secondary <- tibble::tibble(period = c("1994-Q4", "1995-Q1", "1995-Q2"),
+                               real_gdp = c(258475, 260636.4, 261741.6))
+  out <- splice_prefer(primary, secondary)
+  expect_equal(out$period, c("1994-Q4", "1995-Q1", "1995-Q2"))
+  ## 1995-Q1 and 1995-Q2 keep primary's own (already-correct) values
+  expect_equal(out$real_gdp[out$period == "1995-Q1"], 64507.3)
+  expect_equal(out$real_gdp[out$period == "1995-Q2"], 65200)
+  ## 1994-Q4 (secondary-only) is rescaled by primary/secondary at the
+  ## overlap point (64507.3 / 260636.4), not used at face value
+  expected_scale <- 64507.3 / 260636.4
+  expect_equal(out$real_gdp[out$period == "1994-Q4"], 258475 * expected_scale)
+})
+
+test_that("splice_prefer falls back to unscaled merge when there is no overlap point", {
+  ## No period where BOTH primary and secondary have real_gdp -- can't
+  ## compute a splice ratio, so secondary's own values pass through as-is
+  ## (same behavior as merge_prefer would give).
+  primary <- tibble::tibble(period = c("1995-Q1", "1995-Q2"), real_gdp = c(64507.3, 65200))
+  secondary <- tibble::tibble(period = c("1994-Q3", "1994-Q4"), real_gdp = c(255031.9, 258475))
+  out <- splice_prefer(primary, secondary)
+  expect_equal(out$real_gdp[out$period == "1994-Q4"], 258475)
+})
+
+test_that("splice_prefer computes the scale factor independently per column", {
+  primary <- tibble::tibble(period = "1995-Q1", real_gdp = 100, real_exports = 50)
+  secondary <- tibble::tibble(period = c("1994-Q4", "1995-Q1"),
+                               real_gdp = c(400, 400), real_exports = c(100, 100))
+  out <- splice_prefer(primary, secondary)
+  ## real_gdp scale = 100/400 = 0.25; real_exports scale = 50/100 = 0.5
+  expect_equal(out$real_gdp[out$period == "1994-Q4"], 400 * 0.25)
+  expect_equal(out$real_exports[out$period == "1994-Q4"], 100 * 0.5)
+})
+
+test_that("splice_prefer returns the non-NULL side unchanged when the other is NULL", {
+  df <- tibble::tibble(period = "2000-Q1", x = 1)
+  expect_equal(splice_prefer(df, NULL), df)
+  expect_equal(splice_prefer(NULL, df), df)
+})
+
+test_that("splice_prefer returns NULL when both inputs are NULL", {
+  expect_null(splice_prefer(NULL, NULL))
+})
+
+test_that("splice_prefer carries through columns present in only one input, unscaled", {
+  primary <- tibble::tibble(period = "2000-Q1", a = 1)
+  secondary <- tibble::tibble(period = "2000-Q1", b = 2)
+  out <- splice_prefer(primary, secondary)
+  expect_equal(sort(names(out)), c("a", "b", "period"))
+  expect_equal(out$a, 1)
+  expect_equal(out$b, 2)
+})
+
 test_that("has_data correctly detects a usable column", {
   df <- tibble::tibble(period = c("2000-Q1", "2000-Q2"), x = c(NA_real_, 1), y = c(NA_real_, NA_real_))
   expect_true(has_data(df, "x"))

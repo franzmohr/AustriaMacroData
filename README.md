@@ -179,9 +179,12 @@ The source hierarchy per run, most-preferred first:
    below), is EXTENDED with **OECD QNA** rather than only consulted where
    Eurostat resolved nothing -- Eurostat's own data for Austria starts at
    1995-Q1, but OECD QNA covers the same concepts back to 1960-Q1, so OECD
-   fills in every period Eurostat doesn't cover (`merge_prefer()` in
-   `R/utils.R`) instead of that history being silently dropped. **IMF QNEA**
-   is the final fallback for whatever neither source has at all.
+   fills in every period Eurostat doesn't cover (`splice_prefer()` in
+   `R/utils.R`, which also rescales OECD's contribution to match
+   Eurostat's level at the point they meet -- see Known issues below for
+   why that rescaling is necessary) instead of that history being
+   silently dropped. **IMF QNEA** is the final fallback for whatever
+   neither source has at all.
 2. **Money and Credit / balance sheets**: **BIS** credit-to-GDP (private
    sector, households, nonfinancial corporations -- all genuinely
    country-specific), plus **ECB** household net worth (euro-area aggregate
@@ -242,7 +245,7 @@ the top of `scripts/update_monthly.R`. To change the schedule, edit the
 `country, variable, provider, key, comment` -- with one row per (country,
 concept) pair the CLI has actually resolved or attempted, across every
 country it has been run for so far (USA, DEU, AUT). It is rewritten
-incrementally: running the CLI for a new country adds that country's 25
+incrementally: running the CLI for a new country adds that country's 38
 rows without touching any other country's; running it again for an
 existing country replaces just that country's rows.
 
@@ -256,15 +259,22 @@ international sources -- that run's own OECD/IMF/BIS/FRED-mirror
 resolutions are still visible in `output/usa_coverage.json` as a
 cross-check, not a substitute for the ground truth.
 
-For every other country, `provider` is one of `EUROSTAT`, `OECD_QNA`,
-`IMF_QNEA`, `BIS_WSTC`, `ECB_QSA_PUB`, `ECB_MIR`, `FRED_MIRROR`, `EC_BCS` or
-`YAHOO_FINANCE`; `key` is the exact identifier used (a Eurostat/OECD
-sector-transaction pair, an IMF indicator code, a BIS `TC_BORROWERS` sector
-code, a fully-resolved FRED mnemonic, an EC survey country code, or a
-ticker), and `comment` explains any known conceptual gap between that
-source and the US/FRED-QD definition (e.g. "OECD sector S1M is
-total-economy consumption, broader than FRED-QD's household-only PCE") or,
-if the concept wasn't resolved for that country, why.
+For every other country, `provider` is one of `EUROSTAT`, `EUROSTAT_HICP`,
+`EUROSTAT_ULC`, `OECD_QNA`, `IMF_QNEA`, `BIS_WSTC`, `ECB_QSA_PUB`, `ECB_MIR`,
+`ECB_BSI`, `GPR`, `FRED_MIRROR`, `EC_BCS` or `YAHOO_FINANCE`; `key` is the
+exact identifier used (a Eurostat/OECD sector-transaction pair, an IMF
+indicator code, a BIS `TC_BORROWERS` sector code, an ECB dataflow key, a
+fully-resolved FRED mnemonic, an EC survey country code, or a ticker), and
+`comment` explains any known conceptual gap between that source and the
+US/FRED-QD definition (e.g. "OECD sector S1M is total-economy consumption,
+broader than FRED-QD's household-only PCE") or, if the concept wasn't
+resolved for that country, why. Note that for EU-member anchor concepts the
+`EUROSTAT` row's own `key` records the OECD-sourced pre-1995 extension
+inline (e.g. `namq_10_gdp:B1GQ (extended pre-1995 with level-spliced
+OECD_QNA:S1.B1GQ)`) rather than splitting it into a separate `OECD_QNA` row
+-- `splice_prefer()` merges the two into one column, so one row is the
+accurate unit of documentation; `OECD_QNA` only appears as the `provider`
+value on its own for a non-EU country with no Eurostat coverage at all.
 
 Seven deliberate per-country/per-group source overrides, all preferring a
 fresher or more conceptually faithful primary source over the generic
@@ -552,6 +562,40 @@ override exists -- see the fallback chain earlier in this README.
 
 ### Known issues
 
+- **A ~4x level discontinuity in the anchor NIPA concepts' pre-1995
+  history was found and fixed 2026-08-31**, by this project's own
+  plausibility checks (`R/plausibility_checks.R`, see below) -- not by
+  the pre-existing `--validate` flag, which is blind to this class of
+  error. Root cause: OECD QNA's table (T0102, used for every anchor
+  concept) only offers `TRANSFORMATION="LA"` ("Annual levels", i.e. the
+  quarterly series expressed at an annualized rate), confirmed live by
+  querying `TRANSFORMATION="N"` ("Non transformed data") and getting a
+  clean `NoRecordsFound` for both a 1990s and a 2020s period -- there is
+  no non-annualized quarterly variant of this OECD table at all.
+  Eurostat's `namq_10_gdp` reports true (non-annualized) quarterly
+  levels, so the naive merge (`merge_prefer()`) was combining
+  differently-scaled values in one column, producing a ~75% level jump
+  at the exact quarter each anchor concept's source switches from OECD
+  to Eurostat (1994-Q4 to 1995-Q1 for Austria). This was invisible to
+  `--validate` because that flag only ever compares GROWTH RATES, and
+  annualizing barely changes a growth rate. Fixed by `splice_prefer()`
+  (`R/utils.R`), which rescales OECD's contribution to match Eurostat's
+  level at their one real overlap point before coalescing, preserving
+  OECD's own valid quarter-to-quarter dynamics while correcting its
+  absolute scale. See `splice_prefer()`'s header comment for the full
+  account, including the exact before/after values.
+- **`cpi_index`'s FRED-mirror default is itself a percent-change series,
+  not an index level**, discovered the same way on 2026-08-31: the raw
+  `CPALTT01{cc2}Q657N` series returns values like 2.97, 1.31, 0.37 for
+  2022-2023 -- real US quarterly inflation RATES, not a CPI level (which
+  should read roughly 25-30 for a 1950s observation on FRED-QD's own
+  1982-84=100 base). EU member states already get a genuine level index
+  via the Eurostat HICP override; this only affects non-EU countries
+  still on the FRED-mirror default (confirmed: the United States). Not
+  fixed yet -- finding the actual CPI level mnemonic for non-EU
+  countries is flagged as a good first task in [CONTRIBUTING.md](CONTRIBUTING.md); in the
+  meantime `R/plausibility_checks.R` categorizes `cpi_index` to tolerate
+  both constructions rather than mask the finding.
 - **`cpi_index`'s FRED-mirror source is stale, and for EU member states is
   now overridden.** The OECD-MEI-mirror-via-FRED series (`CPALTT01{cc}Q657N`)
   returns a real HTTP 200 response, but that data stops at 2023-Q4 for
@@ -573,13 +617,33 @@ override exists -- see the fallback chain earlier in this README.
   without hitting it. Note that OECD QNA is now queried for all 7 anchor
   concepts on every EU-country run, not only ones Eurostat resolved
   nothing for -- a deliberate trade for the extended pre-1995 history
-  `merge_prefer()` provides (see Usage above), made explicit here rather
+  `splice_prefer()` provides (see Usage above), made explicit here rather
   than silently reverted to the leaner but shallower-history behavior.
 - **Yahoo Finance requires a browser-like User-Agent.** Confirmed live: the
   default httr/curl User-Agent gets `HTTP 429` from
   `query2.finance.yahoo.com`, while a Chrome UA string succeeds
   immediately and repeatedly -- this is IP+UA filtering, not a real
   request-volume rate limit. `R/yahoo_finance.R` always sends one.
+
+### Plausibility checks (a verification layer with no ground truth needed)
+
+`--validate` (above) only works for the United States, since FRED-QD is
+the only real published ground truth this project has access to. Every
+other country -- including Austria itself -- has no analogous file to
+compare against. `R/plausibility_checks.R` closes that gap: after every
+run, it checks each resolved concept's own values for (1) a
+plausible sign/range for its measurement type (rate, survey balance,
+growth rate, or level/index), and (2) for levels/indices, no
+implausible quarter-over-quarter jump (a heuristic threshold, tuned to
+catch units/decimal/sector errors while tolerating genuine volatility --
+confirmed live not to false-flag real crisis-era spikes in Austria's
+`geopolitical_risk` series). Results are written into
+`<country>_coverage.json`'s new `plausibility_checks` array and
+summarized on the console (`PASS`/`FLAG`/`NO_DATA`/`TOO_SHORT` counts,
+plus the detail for every `FLAG`). It needs no ground truth at all, so
+it runs identically for AUT, DEU, USA, or any new country added later --
+see [CONTRIBUTING.md](CONTRIBUTING.md) for how to use it when adding one.
+This is exactly what caught both discoveries above on its first live run.
 
 ### Evaluated, not integrated
 
@@ -593,7 +657,7 @@ override exists -- see the fallback chain earlier in this README.
   paper over with quarter-repeated annual values. Worth revisiting as a
   SEPARATE annual output file (fiscal balance, potential output, output
   gap, etc. -- concepts genuinely absent from both FRED-QD and this
-  project's current 25) rather than forcing it into `<country>_nipa.csv`.
+  project's current 38) rather than forcing it into `<country>_nipa.csv`.
 
 ### Non-goals (deliberate, carried over from the original script)
 
@@ -606,6 +670,16 @@ override exists -- see the fallback chain earlier in this README.
   It's exploratory/untested machinery beyond what this verification pass
   covers; `build_country_nipa_dataset.R` is kept as-is if you want to reuse
   it manually.
+
+## Contributing
+
+Want to add another EU country? See [CONTRIBUTING.md](CONTRIBUTING.md) --
+a checklist covering the country-code tables that need a new entry, running
+the CLI, reading `<country>_coverage.json`, and verifying the result (there
+is no published ground truth outside the US, so this leans on the
+plausibility checks above plus manual spot-checks). It also names a
+concrete, ready-made first task: `cpi_index`'s non-EU default is a
+percent-change series mislabeled as a level (see Known issues above).
 
 ## License
 

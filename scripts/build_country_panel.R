@@ -176,18 +176,34 @@ concept_source <- list()
 
 ## EXTENDED 2026-08-30: OECD QNA is now fetched for ALL anchor concepts,
 ## not only ones Eurostat failed to resolve at all, and merged with
-## Eurostat's result via merge_prefer() (R/utils.R) -- preferring
-## Eurostat's value at each period (it is the closer conceptual match for
-## household consumption, see Section 2.2 of the technical report) but
-## filling in any period Eurostat has nothing for. Treating OECD as a pure
-## "Eurostat returned nothing at all" fallback would silently forfeit
-## decades of history for any concept Eurostat covers even partially --
-## confirmed live 2026-08-30 that OECD QNA has Austrian real GDP back to
-## 1960-Q1, 35 years before Eurostat's 1995-Q1 floor for the same concept.
-## This does mean OECD is queried on every EU-country run now, not only
-## ones where Eurostat comes up empty -- an intentional trade against
-## OECD's rate limit (see README Known issues), made explicit here rather
-## than silently reverted.
+## Eurostat's result -- preferring Eurostat's value at each period (it is
+## the closer conceptual match for household consumption, see
+## Section 2.2 of the technical report) but filling in any period
+## Eurostat has nothing for. Treating OECD as a pure "Eurostat returned
+## nothing at all" fallback would silently forfeit decades of history for
+## any concept Eurostat covers even partially -- confirmed live
+## 2026-08-30 that OECD QNA has Austrian real GDP back to 1960-Q1, 35
+## years before Eurostat's 1995-Q1 floor for the same concept. This does
+## mean OECD is queried on every EU-country run now, not only ones where
+## Eurostat comes up empty -- an intentional trade against OECD's rate
+## limit (see README Known issues), made explicit here rather than
+## silently reverted.
+##
+## BUG FOUND AND FIXED 2026-08-30 (this project's own plausibility
+## checks, R/plausibility_checks.R, flagged it -- not the pre-existing
+## --validate flag, which is blind to this class of error, see
+## splice_prefer()'s header comment in R/utils.R for the full story):
+## plain merge_prefer() introduced a ~4x level discontinuity at the exact
+## quarter the merge switches from OECD to Eurostat, because OECD's QNA
+## table (T0102) only offers annualized-rate levels
+## (TRANSFORMATION="LA"), not genuine quarterly ones, for ANY country --
+## confirmed by querying TRANSFORMATION="N" ("Non transformed data") and
+## getting NoRecordsFound for both a 1990s and a 2020s period. Switched
+## to splice_prefer(), which rescales OECD's contribution to match
+## Eurostat's level at their one real overlap point (OECD is fetched for
+## the full range, so this point already exists in oecd_result) before
+## coalescing, preserving OECD's own valid quarter-to-quarter dynamics
+## while correcting its absolute scale.
 eurostat_result <- NULL
 if (country %in% eu_member_countries) {
   message("Country is an EU member -- trying Eurostat for anchor NIPA concepts...")
@@ -197,7 +213,7 @@ if (country %in% eu_member_countries) {
 message("Fetching anchor NIPA concepts for ", country, " from OECD QNA...")
 oecd_result <- fetch_oecd_anchors(country, start_period = start_period)
 
-anchor_merged <- merge_prefer(eurostat_result, oecd_result)
+anchor_merged <- splice_prefer(eurostat_result, oecd_result)
 
 oecd_anchor_key <- function(label) {
   row <- oecd_anchor_concepts[oecd_anchor_concepts$label == label, ]
@@ -212,7 +228,7 @@ for (lbl in all_anchor_labels) {
     na_item <- eurostat_anchor_concepts$na_item[eurostat_anchor_concepts$label == lbl]
     concept_source[[lbl]] <- list(
       provider = "EUROSTAT",
-      key = sprintf("namq_10_gdp:%s (extended pre-1995 with OECD_QNA:%s)", na_item, oecd_anchor_key(lbl))
+      key = sprintf("namq_10_gdp:%s (extended pre-1995 with level-spliced OECD_QNA:%s)", na_item, oecd_anchor_key(lbl))
     )
   } else if (from_eurostat) {
     na_item <- eurostat_anchor_concepts$na_item[eurostat_anchor_concepts$label == lbl]

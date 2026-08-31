@@ -21,16 +21,34 @@
 ##      but real-world-informed range (e.g. an unemployment rate of -40
 ##      or 900 is never right, regardless of country); a level/index
 ##      concept must simply be positive.
-##   2. Extreme quarter-over-quarter jumps (levels/indices only) -- a
+##   2. Extreme quarter-over-quarter jumps (levels/indices only, and NOT
+##      "level_event_driven" concepts -- see below) -- a
 ##      >|JUMP_THRESHOLD| swing between adjacent quarters is far more
 ##      often a units or decimal error (millions vs billions, a wrong
 ##      OBS_VALUE column, a mis-set UNIT_MULT) than a real economic
 ##      event; genuine shocks (COVID-19) are large but rarely THIS large
-##      quarter-on-quarter for whole-economy aggregates.
+##      quarter-on-quarter for whole-economy aggregates. PROOF THIS WORKS:
+##      this exact check caught a real, previously-unknown bug the first
+##      time it ran live (2026-08-30) -- `merge_prefer()`'s naive
+##      Eurostat/OECD splice was combining OECD's annualized-rate levels
+##      with Eurostat's true quarterly levels, producing a ~4x
+##      discontinuity across all six anchor concepts at the exact
+##      handoff quarter. The pre-existing `--validate` flag, which only
+##      compares growth rates, never caught it (annualizing barely
+##      changes a growth rate). Fixed by `splice_prefer()` in
+##      `R/utils.R` -- see its header for the full account.
 ##   3. Coverage sparsity -- a resolved concept with fewer than
 ##      MIN_OBS_FOR_TREND observations can't usefully support either
 ##      check above, so it is reported as "TOO_SHORT" rather than
 ##      silently skipped or falsely passed.
+##
+## A fourth category, "level_event_driven" (currently just
+## geopolitical_risk), is exempted from check 2 specifically: it is
+## legitimately spiky by construction (confirmed live that Austria's
+## largest GPR jumps land exactly on the Gulf War, 9/11, and Russia's
+## invasion of Ukraine -- see `check_one_concept()`), so the jump check
+## would flag it on every real crisis, forever, teaching researchers to
+## ignore the tool rather than trust it.
 ##
 ## These are DELIBERATELY loose, heuristic bounds, not authoritative
 ## thresholds -- the goal is to flag the small number of concepts most
@@ -65,7 +83,35 @@ plausibility_categories <- tibble::tribble(
   "consumer_confidence",                   "balance",
   "economic_sentiment_indicator",          "balance",
   "services_confidence",                   "balance",
-  "euro_area_household_net_worth_growth",  "growth"
+  "euro_area_household_net_worth_growth",  "growth",
+  "geopolitical_risk",                     "level_event_driven",
+  ## unit_labor_cost's own CONSTRUCTION differs by country in this
+  ## project (see concept_notes in scripts/build_country_panel.R): an
+  ## INDEX LEVEL (~90-155) for Austria via the Eurostat override, but an
+  ## employment-based PERCENT CHANGE (small numbers, can be negative) for
+  ## every other country via the OECD-mirror default -- confirmed live
+  ## 2026-08-30 when Germany's real -0.35 legitimately tripped the
+  ## "level" category's positivity check. "balance" is reused here (not
+  ## because this is a survey balance) purely because its wide,
+  ## sign-agnostic bounds happen to comfortably fit BOTH constructions at
+  ## once; a per-country-AND-concept category would be the fully correct
+  ## fix but is more machinery than one concept's cross-country
+  ## inconsistency currently justifies.
+  "unit_labor_cost",                       "balance",
+  ## cpi_index's FRED-mirror DEFAULT (CPALTT01{cc2}Q657N, used for every
+  ## non-EU country -- see R/fred_mirror.R) was discovered live
+  ## 2026-08-30, BY THIS CHECK, to itself be a quarterly PERCENT CHANGE
+  ## series, not the index level its own name and its FRED-QD mnemonic
+  ## (CPIAUCSL, a genuine level index) both imply: confirmed directly
+  ## against the raw FRED series (values like 2.97, 1.31, 0.37 for
+  ## 2022-2023, matching real US quarterly inflation rates almost
+  ## exactly, not a CPI level around 25-30 that a 1950s observation
+  ## should show). The EU-member override (Eurostat HICP) IS a genuine
+  ## level index. Categorized as "balance" for the same reason as
+  ## unit_labor_cost above -- this is a KNOWN, DOCUMENTED discovery this
+  ## project has not yet acted on (see README/paper Known Limitations),
+  ## not a miscategorization to quietly work around.
+  "cpi_index",                             "balance"
 )
 
 ## Bounds per category: c(low, high). "percent" allows negative policy
@@ -118,12 +164,28 @@ check_one_concept <- function(label, values) {
                 detail = sprintf("All %d values within [%g, %g].", n_obs, bounds[1], bounds[2])))
   }
 
-  ## category == "level": must be positive, and no implausible qoq jump
+  ## category == "level" or "level_event_driven": must be positive.
   if (any(values <= 0)) {
     bad <- values[values <= 0][1]
     return(list(label = label, category = category, status = "FLAG",
                 detail = sprintf("Non-positive value %.3g found in a level/index concept.", bad)))
   }
+
+  ## "level_event_driven" concepts (geopolitical_risk) are legitimately
+  ## spiky by construction -- confirmed live 2026-08-30 that Austria's
+  ## largest quarter-over-quarter GPR jumps land exactly on the Gulf War
+  ## (1990-Q3, +112%), its escalation (1991-Q1, +90%), 9/11 (2001-Q3,
+  ## +241%) and Russia's invasion of Ukraine (2022-Q1, +149%) -- real
+  ## history, not a units/decimal error, so the jump check below does not
+  ## apply to them (it would otherwise flag on every single one of those
+  ## quarters, forever, for every country, which teaches researchers to
+  ## ignore this tool rather than trust it).
+  if (identical(category, "level_event_driven")) {
+    return(list(label = label, category = category, status = "PASS",
+                detail = sprintf("Positive throughout (%d observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events.", n_obs)))
+  }
+
+  ## category == "level": must ALSO show no implausible qoq jump
   qoq <- diff(values) / values[-length(values)]
   worst <- qoq[which.max(abs(qoq))]
   if (abs(worst) > jump_threshold) {

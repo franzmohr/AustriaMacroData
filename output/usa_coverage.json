@@ -1,6 +1,6 @@
 {
   "country": "USA",
-  "generated_at": "2026-08-30T18:48:30Z",
+  "generated_at": "2026-08-30T22:10:11Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -184,6 +184,236 @@
     {
       "fred_qd_group": "Inventories, Orders, and Sales (full)",
       "reason": "Only a retail-sales-volume proxy is included (see coverage); re-checked 2026-08-30 for a manufacturers' new-orders/inventories cross-country equivalent and found none -- US-specific Census Bureau concept, deliberately not attempted."
+    }
+  ],
+  "plausibility_checks": [
+    {
+      "label": "real_gdp",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -8%."
+    },
+    {
+      "label": "real_household_consumption",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 9%."
+    },
+    {
+      "label": "real_govt_consumption",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 7%."
+    },
+    {
+      "label": "real_gfcf_total",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 8%."
+    },
+    {
+      "label": "real_exports",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 22%."
+    },
+    {
+      "label": "real_imports",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 20%."
+    },
+    {
+      "label": "real_household_disposable_income",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "industrial_production",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 20%."
+    },
+    {
+      "label": "industrial_confidence",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "unemployment_rate",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 284 values within [-10, 400]."
+    },
+    {
+      "label": "employment_rate",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 198 values within [-10, 400]."
+    },
+    {
+      "label": "employment_expectations",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "house_price_real",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -7%."
+    },
+    {
+      "label": "construction_confidence",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "retail_sales_volume",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "retail_confidence",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "cpi_index",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 276 values within [-150, 250]."
+    },
+    {
+      "label": "core_cpi_index",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "food_price_index",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "energy_price_index",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "services_price_index",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "unit_labor_cost",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 282 values within [-150, 250]."
+    },
+    {
+      "label": "long_term_rate",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 293 values within [-10, 400]."
+    },
+    {
+      "label": "short_term_rate",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 248 values within [-10, 400]."
+    },
+    {
+      "label": "mortgage_rate",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "credit_to_private_nonfin_sector",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 124 values within [-10, 400]."
+    },
+    {
+      "label": "household_mortgage_loans",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "euro_area_household_net_worth_growth",
+      "category": "growth",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "household_credit_to_gdp",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 124 values within [-10, 400]."
+    },
+    {
+      "label": "corporate_credit_to_gdp",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 124 values within [-10, 400]."
+    },
+    {
+      "label": "government_debt_to_gdp",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 264 values within [-10, 400]."
+    },
+    {
+      "label": "fx_rate_to_usd",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "real_effective_exchange_rate",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 8%."
+    },
+    {
+      "label": "consumer_confidence",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 257 values within [-150, 250]."
+    },
+    {
+      "label": "economic_sentiment_indicator",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "services_confidence",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "geopolitical_risk",
+      "category": "level_event_driven",
+      "status": "PASS",
+      "detail": "Positive throughout (167 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
+      "label": "share_price_index",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -30%."
     }
   ]
 }

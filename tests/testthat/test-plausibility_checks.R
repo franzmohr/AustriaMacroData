@@ -72,6 +72,36 @@ test_that("check_one_concept flags an extreme quarter-over-quarter jump in a lev
   expect_match(out$detail, "quarter-over-quarter change")
 })
 
+test_that("check_one_concept exempts level_event_driven concepts from the jump check", {
+  ## Real Austrian GPR-style spikes (Gulf War, 9/11, Ukraine invasion)
+  ## routinely exceed the 90% jump threshold -- must still PASS.
+  out <- check_one_concept("geopolitical_risk", c(61.0, 207.9, 90.3, 224.6, 100.0))
+  expect_equal(out$status, "PASS")
+  expect_equal(out$category, "level_event_driven")
+})
+
+test_that("check_one_concept still flags a non-positive value for a level_event_driven concept", {
+  out <- check_one_concept("geopolitical_risk", c(100, -5, 90, 110, 95))
+  expect_equal(out$status, "FLAG")
+  expect_match(out$detail, "Non-positive value")
+})
+
+test_that("check_one_concept accepts both constructions of unit_labor_cost (index level or % change)", {
+  ## Austria: an index level around 90-155 (Eurostat NULC_HW override)
+  expect_equal(check_one_concept("unit_labor_cost", c(120, 122, 121, 123, 125))$status, "PASS")
+  ## Germany/USA: a small, possibly-negative % change (OECD-mirror default)
+  expect_equal(check_one_concept("unit_labor_cost", c(1.2, -0.35, 0.8, -0.1, 0.5))$status, "PASS")
+})
+
+test_that("check_one_concept accepts both constructions of cpi_index (index level or % change)", {
+  ## EU members: a genuine index level (Eurostat HICP override)
+  expect_equal(check_one_concept("cpi_index", c(150, 152, 151, 153, 155))$status, "PASS")
+  ## Non-EU countries: a quarterly % change, including a real 0% quarter
+  ## (confirmed live 2026-08-30 for the US FRED-mirror default) -- must
+  ## NOT be flagged as a non-positive level/index value.
+  expect_equal(check_one_concept("cpi_index", c(0.5, 0, 0.3, 1.1, 0.8))$status, "PASS")
+})
+
 test_that("check_one_concept does not flag a large but plausible level swing (e.g. COVID-era)", {
   ## A ~35% single-quarter drop (2020-Q2 GDP-type shock) should NOT trip
   ## the 90% heuristic threshold.

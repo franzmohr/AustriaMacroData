@@ -242,7 +242,14 @@ merging rather than strictly falling back between sources for the anchor
 national-accounts concepts recovers 35 years of Austrian history that a
 naive Eurostat-then-OECD fallback would silently forfeit, extending
 coverage to 1960-Q1 -- four decades earlier than EA-MD-QD's stated
-January~2000 start. The reference implementation itself
+January~2000 start. A second payoff came from a country-agnostic
+plausibility-check layer added specifically so a researcher extending
+this project to a new country has some automated verification beyond
+eyeballing a spreadsheet: on its first live run, it caught a
+previously-unknown $\sim$4x level discontinuity that very merge had
+introduced (OECD's contribution was on an annualized-rate scale,
+Eurostat's was not), invisible to growth-rate correlation checks alone
+-- fixed the same day it was found. The reference implementation itself
 covers 38 concepts, identical in column structure for every country the
 underlying open-source tool has been run for, and the report catalogs,
 series by series, which of FRED-QD's remaining 207 concepts have a
@@ -408,6 +415,30 @@ recovers it, extending this project's default starting point from
 1995-Q1 to 1960-Q1 -- four decades earlier than EA-MD-QD's stated
 January~2000 starting vintage \citep{barigozzi2024eamdqd}.
 
+Merging two sources is not simply coalescing them, however: a plain
+period-by-period coalesce (\texttt{merge\_prefer()} in the code) silently
+assumes both sources report the SAME quantity on the SAME scale wherever
+one takes over from the other, an assumption this project's own
+plausibility checks (Section~\ref{sec:plausibility}) found to be false
+here. OECD's QNA table (\texttt{T0102}, used for every anchor concept)
+only offers \texttt{TRANSFORMATION=\allowbreak{}"LA"} (``Annual
+levels'', i.e. the quarterly series expressed at an annualized rate) --
+confirmed live by querying \texttt{TRANSFORMATION=\allowbreak{}"N"}
+(``Non transformed data'') and receiving a clean \texttt{NoRecordsFound}
+for both a 1990s and a 2020s period, not a guess -- while Eurostat
+reports true, non-annualized quarterly levels. Coalescing the two as-is
+therefore introduced a $\sim$75\% level discontinuity at the exact
+quarter each anchor concept's source switches from OECD to Eurostat
+(1994-Q4 to 1995-Q1 for Austria), across all six concepts alike. The fix,
+\texttt{splice\_prefer()}, rescales OECD's contribution by the ratio of
+the two sources' values at their one genuine overlap point (OECD is
+queried for the full requested range regardless of where Eurostat takes
+over, so this overlap already exists in the fetched data) before
+coalescing -- preserving OECD's own internally-consistent quarter-to-
+quarter dynamics for the period Eurostat does not cover, while correcting
+its absolute level to match Eurostat's. Section~\ref{sec:plausibility}
+describes how this was found.
+
 For credit and balance-sheet concepts, the BIS's Credit to the
 Non-Financial Sector dataflow (\texttt{WS\_TC}) is queried once per
 borrower sector (private non-financial sector, households, non-financial
@@ -571,6 +602,48 @@ consistency with the literature that already uses these codes, rather than
 introducing an independent judgment call about each series' order of
 integration.
 
+\subsection{Plausibility checks: verification without a ground truth}
+\label{sec:plausibility}
+
+Section~\ref{sec:overrides} above (\emph{Verification methodology}) describes
+how every SOURCE was confirmed against its live API before being wired
+into the tool. That check happens once, when a module is built. A
+separate question is whether the OUTPUT a given run actually produces
+still looks right -- and for the United States, \S~\ref{sec:coverage}'s
+\texttt{--validate} flag answers exactly that, by correlating this
+project's growth rates against the real published FRED-QD file. No such
+file exists for any other country, including Austria itself; without a
+second check, a researcher extending this project to a new country would
+have no automated signal at all pointing at which of the panel's 38
+columns might be wrong, only the option of reading every value by hand.
+
+\texttt{R/plausibility\_checks.R} closes that gap with checks that need
+no ground truth, only the panel itself and each concept's known
+measurement type (percentage/ratio, survey balance or sentiment index,
+quarterly growth rate, or level/index): a broad but real-world-informed
+range for the first three types, and, for levels and indices, both
+positivity and the absence of an implausible quarter-over-quarter jump
+(a heuristic threshold, loose enough to tolerate genuine volatility --
+confirmed live not to flag real crisis-era spikes in Austria's own
+\texttt{geopolitical\_risk} series, which move far more than any
+whole-economy aggregate around events like the Gulf War or Russia's 2022
+invasion of Ukraine). These are deliberately loose bounds, not
+authoritative thresholds: the goal is a prioritized list of which
+concepts most reward a researcher's limited manual-verification time, not
+a certificate of correctness. Results are written into
+\texttt{<country>\_coverage.json} alongside the existing resolved/skipped
+breakdown, and summarized on the console after every run.
+
+This is not a hypothetical safeguard: on its first live run, it caught a
+real, previously-unknown bug (the OECD/Eurostat level-splice issue
+described in Section~\ref{sec:overrides}) that had been present, and
+invisible to \texttt{--validate}, since the anchor-concept merge was
+introduced. It also surfaced a second, deeper finding not yet acted on:
+\texttt{cpi\_index}'s FRED-mirror default (used for non-EU countries) is
+itself a percentage-change series, not the index level its own FRED-QD
+mnemonic (\texttt{CPIAUCSL}) implies -- flagged as a concrete first task
+for a researcher extending this project, in \texttt{CONTRIBUTING.md}.
+
 \section{The Data-Sources Registry}
 \label{sec:registry}
 
@@ -651,6 +724,19 @@ not a coverage failure of this project's own sources. The one exception
 to this section's pattern of EU/euro-area-only overrides is geopolitical
 risk, which -- unlike every other addition here -- resolves for every
 country regardless of EU membership (Section~\ref{sec:overrides}).
+Sixth, the anchor-concept merge itself had a genuine level-scale bug --
+found and fixed the same day by the plausibility checks introduced in
+this pass (Section~\ref{sec:plausibility}); see Section~\ref{sec:overrides}
+for the full account. It is recorded here, not just where it was fixed,
+because FRED-QD's own convention this section follows is to document
+data-quality issues rather than let a fix quietly erase the fact that a
+real error existed in a previously-distributed vintage of this dataset.
+Seventh, and NOT yet fixed: \texttt{cpi\_index}'s FRED-mirror default for
+non-EU countries was found, by the same plausibility checks, to be a
+percentage-change series rather than the index level its own FRED-QD
+mnemonic implies (Section~\ref{sec:plausibility}) -- flagged as a
+concrete first task in \texttt{CONTRIBUTING.md} rather than guessed at
+under this report's own writing deadline.
 Finally, quarterly household disposable income was not found for
 Austria, Germany, or the United States themselves through either OECD or
 Eurostat, consistent with McCracken and Ng's own observation that FRED-QD's
