@@ -60,7 +60,7 @@ build_oecd_qna_key <- function(country, sector, counterpart_sector, transaction,
   ## INSTR_ASSET/ACTIVITY/EXPENDITURE left blank (wildcard) -- this exact
   ## pattern is what was verified end-to-end: it's what the CLI actually
   ## used to pull real 200-with-data responses for all 6 anchors for both
-  ## DEU and USA (see output/*_nipa.csv). OECD's API treats an empty key
+  ## DEU and USA (see output/*_panel.csv). OECD's API treats an empty key
   ## segment as equivalent to the explicit "_Z" (not applicable) code for
   ## these dimensions.
   dims <- c(FREQ = "Q", ADJUSTMENT = adjustment, REF_AREA = country, SECTOR = sector,

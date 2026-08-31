@@ -37,47 +37,26 @@ if len(group_tables) != 14:
 appendix_a_tables = "\n\n".join(group_tables)
 
 # ---- 2. Concept taxonomy (label -> group, FRED-QD mnemonic, us_note) ----
-# Mirrors scripts/build_country_panel.R's concept_group_map exactly.
-concept_group_map = [
-    ("real_gdp", "Output and Income", "GDPC1", None),
-    ("real_household_consumption", "Output and Income", "PCECC96", None),
-    ("real_govt_consumption", "Output and Income", "GCEC1", None),
-    ("real_gfcf_total", "Output and Income", "FPIx", None),
-    ("real_exports", "Output and Income", "EXPGSC1", None),
-    ("real_imports", "Output and Income", "IMPGSC1", None),
-    ("real_household_disposable_income", "Output and Income", "DPIC96", None),
-    ("industrial_production", "Industrial Production", "INDPRO", None),
-    ("industrial_confidence", "Industrial Production", None, "no FRED-QD equivalent"),
-    ("unemployment_rate", "Employment and Unemployment", "UNRATE", None),
-    ("employment_rate", "Employment and Unemployment", None, "no FRED-QD equivalent"),
-    ("employment_expectations", "Employment and Unemployment", None, "no FRED-QD equivalent"),
-    ("house_price_real", "Housing", "USSTHPI", None),
-    ("construction_confidence", "Housing", None, "no FRED-QD equivalent"),
-    ("retail_sales_volume", "Inventories, Orders, and Sales", "RSAFSx", None),
-    ("retail_confidence", "Inventories, Orders, and Sales", None, "no FRED-QD equivalent"),
-    ("cpi_index", "Prices", "CPIAUCSL", None),
-    ("core_cpi_index", "Prices", "CPILFESL", None),
-    ("food_price_index", "Prices", None, "no standalone FRED-QD CPI-food mnemonic"),
-    ("energy_price_index", "Prices", None, "no standalone FRED-QD CPI-energy mnemonic"),
-    ("services_price_index", "Prices", "CUSR0000SAS", None),
-    ("unit_labor_cost", "Earnings and Productivity", "ULCNFB", None),
-    ("long_term_rate", "Interest Rates", "GS10", None),
-    ("short_term_rate", "Interest Rates", "TB3MS", None),
-    ("mortgage_rate", "Interest Rates", "MORTGAGE30US", None),
-    ("credit_to_private_nonfin_sector", "Money and Credit", None, "no FRED-QD equivalent"),
-    ("household_mortgage_loans", "Money and Credit", "REALLNx", None),
-    ("euro_area_household_net_worth_growth", "Household Balance Sheets", "TNWBSHNOx", None),
-    ("household_credit_to_gdp", "Household Balance Sheets", None, "no FRED-QD equivalent"),
-    ("corporate_credit_to_gdp", "Non-Household Balance Sheets", None, "no FRED-QD equivalent"),
-    ("government_debt_to_gdp", "Non-Household Balance Sheets", "GFDEGDQ188S", None),
-    ("fx_rate_to_usd", "Exchange Rates", None, "not meaningful for the US itself"),
-    ("real_effective_exchange_rate", "Exchange Rates", "TWEXAFEGSMTHx", None),
-    ("consumer_confidence", "Other", "UMCSENTx", None),
-    ("economic_sentiment_indicator", "Other", None, "no FRED-QD equivalent"),
-    ("services_confidence", "Other", None, "no FRED-QD equivalent"),
-    ("geopolitical_risk", "Other", None, "no FRED-QD equivalent"),
-    ("share_price_index", "Stock Markets", "S&P 500", None),
-]
+# Read fresh from docs/concept_dictionary.csv every run, rather than a
+# separately hand-transcribed Python copy (the previous approach here,
+# and the exact class of risk R/concept_dictionary.R was created to
+# eliminate on the R side -- see that file's header: two independently
+# maintained tables once silently disagreed about real_gfcf_total's
+# FRED-QD mnemonic). docs/concept_dictionary.csv is written by
+# scripts/build_country_panel.R directly from R/concept_dictionary.R's
+# `concept_dictionary`, the single authored source, every time the CLI
+# runs -- so this script can never drift out of sync with it the way the
+# old hardcoded copy silently could.
+concept_dictionary_path = os.path.join(script_dir, "concept_dictionary.csv")
+concept_group_map = []
+with open(concept_dictionary_path, encoding="utf-8") as f:
+    for row in csv.DictReader(f):
+        concept_group_map.append((
+            row["label"],
+            row["fred_qd_group"],
+            row["fred_qd_mnemonic"] or None,
+            row["us_note"] or None,
+        ))
 label_order = [c[0] for c in concept_group_map]
 label_to_group = {c[0]: c[1] for c in concept_group_map}
 

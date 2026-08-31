@@ -8,7 +8,7 @@
 ## ground truth available (see that file's header). A researcher adding
 ## a NEW country (say, FRA or POL) has no analogous ground truth to
 ## compare against -- until now, their only recourse was to eyeball
-## <country>_nipa.csv and docs/data_sources.csv by hand, concept by
+## <country>_panel.csv and docs/data_sources.csv by hand, concept by
 ## concept, with no automated signal pointing at which of the 38 columns
 ## might actually be wrong (a wrong SDMX dimension picking the wrong
 ## sector, a units mismatch, a sign error, ...).
@@ -58,61 +58,43 @@
 ## wrong -- it is a prioritized to-do list.
 ## ---------------------------------------------------------------
 
-## Category assignment for all 38 concepts in
-## scripts/build_country_panel.R's `concept_group_map`. A concept added
-## in the future and left OUT of this table falls through to "level" by
-## default (see `plausibility_category()`) -- the strictest category
+## Category assignment for all 38 concepts, derived from
+## R/concept_dictionary.R's `plausibility_category` column -- the single
+## authored source for this and every other piece of concept-level
+## metadata (see that file's header for why this used to be its own
+## hand-maintained table). A concept added to `concept_dictionary` in the
+## future without an explicit category still defaults through to "level"
+## (see `plausibility_category()` below) -- the strictest category
 ## (values must be positive) -- rather than silently skipping checks for
-## it; update this table when adding a new concept whose natural range
-## is a percentage, balance, or growth rate instead.
-plausibility_categories <- tibble::tribble(
-  ~label,                                  ~category,
-  "unemployment_rate",                     "percent",
-  "employment_rate",                       "percent",
-  "short_term_rate",                       "percent",
-  "long_term_rate",                        "percent",
-  "mortgage_rate",                         "percent",
-  "credit_to_private_nonfin_sector",       "percent",
-  "household_credit_to_gdp",               "percent",
-  "corporate_credit_to_gdp",               "percent",
-  "government_debt_to_gdp",                "percent",
-  "industrial_confidence",                 "balance",
-  "employment_expectations",               "balance",
-  "construction_confidence",               "balance",
-  "retail_confidence",                     "balance",
-  "consumer_confidence",                   "balance",
-  "economic_sentiment_indicator",          "balance",
-  "services_confidence",                   "balance",
-  "euro_area_household_net_worth_growth",  "growth",
-  "geopolitical_risk",                     "level_event_driven",
-  ## unit_labor_cost's own CONSTRUCTION differs by country in this
-  ## project (see concept_notes in scripts/build_country_panel.R): an
-  ## INDEX LEVEL (~90-155) for Austria via the Eurostat override, but an
-  ## employment-based PERCENT CHANGE (small numbers, can be negative) for
-  ## every other country via the OECD-mirror default -- confirmed live
-  ## 2026-08-30 when Germany's real -0.35 legitimately tripped the
-  ## "level" category's positivity check. "balance" is reused here (not
-  ## because this is a survey balance) purely because its wide,
-  ## sign-agnostic bounds happen to comfortably fit BOTH constructions at
-  ## once; a per-country-AND-concept category would be the fully correct
-  ## fix but is more machinery than one concept's cross-country
-  ## inconsistency currently justifies.
-  "unit_labor_cost",                       "balance",
-  ## cpi_index's FRED-mirror DEFAULT (CPALTT01{cc2}Q657N, used for every
-  ## non-EU country -- see R/fred_mirror.R) was discovered live
-  ## 2026-08-30, BY THIS CHECK, to itself be a quarterly PERCENT CHANGE
-  ## series, not the index level its own name and its FRED-QD mnemonic
-  ## (CPIAUCSL, a genuine level index) both imply: confirmed directly
-  ## against the raw FRED series (values like 2.97, 1.31, 0.37 for
-  ## 2022-2023, matching real US quarterly inflation rates almost
-  ## exactly, not a CPI level around 25-30 that a 1950s observation
-  ## should show). The EU-member override (Eurostat HICP) IS a genuine
-  ## level index. Categorized as "balance" for the same reason as
-  ## unit_labor_cost above -- this is a KNOWN, DOCUMENTED discovery this
-  ## project has not yet acted on (see README/paper Known Limitations),
-  ## not a miscategorization to quietly work around.
-  "cpi_index",                             "balance"
-)
+## it.
+##
+## Two categorization calls worth explaining, both preserved from
+## `concept_dictionary`'s own rationale:
+## - `unit_labor_cost`'s own CONSTRUCTION differs by country in this
+##   project (see its `cross_country_note`): an INDEX LEVEL (~90-155) for
+##   Austria via the Eurostat override, but an employment-based PERCENT
+##   CHANGE (small numbers, can be negative) for every other country via
+##   the OECD-mirror default -- confirmed live 2026-08-30 when Germany's
+##   real -0.35 legitimately tripped the "level" category's positivity
+##   check. "balance" is used here (not because this is a survey balance)
+##   purely because its wide, sign-agnostic bounds happen to comfortably
+##   fit BOTH constructions at once.
+## - `cpi_index`'s FRED-mirror DEFAULT (CPALTT01{cc2}Q657N, used for every
+##   non-EU country -- see R/fred_mirror.R) was discovered live
+##   2026-08-30, BY THIS CHECK, to itself be a quarterly PERCENT CHANGE
+##   series, not the index level its own name and its FRED-QD mnemonic
+##   (CPIAUCSL, a genuine level index) both imply: confirmed directly
+##   against the raw FRED series (values like 2.97, 1.31, 0.37 for
+##   2022-2023, matching real US quarterly inflation rates almost
+##   exactly, not a CPI level around 25-30 that a 1950s observation
+##   should show). The EU-member override (Eurostat HICP) IS a genuine
+##   level index. Categorized as "balance" for the same reason as
+##   unit_labor_cost above -- this is a KNOWN, DOCUMENTED discovery this
+##   project has not yet acted on (see README/paper Known Limitations),
+##   not a miscategorization to quietly work around.
+plausibility_categories <- concept_dictionary %>%
+  dplyr::filter(.data$plausibility_category != "level") %>%
+  dplyr::transmute(label, category = .data$plausibility_category)
 
 ## Bounds per category: c(low, high). "percent" allows negative policy
 ## rates and >100% debt-to-GDP ratios (both real and observed); "balance"
@@ -199,7 +181,7 @@ check_one_concept <- function(label, values) {
 #' Run plausibility checks for every canonical column of a finished panel
 #'
 #' `panel` is the same wide, date-sorted, canonical-schema tibble
-#' `scripts/build_country_panel.R` writes to `<country>_nipa.csv`;
+#' `scripts/build_country_panel.R` writes to `<country>_panel.csv`;
 #' `canonical_cols` is `concept_group_map$label`. Returns a list of
 #' per-concept result lists (label/category/status/detail), in
 #' `canonical_cols` order, suitable for `jsonlite::write_json()`.

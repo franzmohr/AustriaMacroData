@@ -41,20 +41,24 @@ fetch_actual_fred_qd <- function(vintage_url) {
   )
 }
 
-#' Map from this project's anchor labels to real FRED-QD mnemonics
+#' Map from this project's concept labels to real FRED-QD mnemonics,
+#' derived from R/concept_dictionary.R (the single authored source -- see
+#' its header for why this used to be its own hand-maintained table, and
+#' how that caused a real bug: this table once validated `real_gfcf_total`
+#' against GPDIC1 while `concept_group_map` in
+#' scripts/build_country_panel.R documented FPIx as the correct reference
+#' for the same concept -- found live 2026-08-31 when GPDIC1 FAILed at
+#' corr=0.660).
 ##
-## No household disposable income row on purpose: that concept has no
-## reliable quarterly source for USA from either OECD or IMF (verified,
-## see README/R/oecd.R), so there is nothing to validate it against.
-fred_qd_validation_map <- tibble::tribble(
-  ~our_label,                          ~fred_qd_mnemonic,
-  "real_gdp",                          "GDPC1",
-  "real_household_consumption",        "PCECC96",
-  "real_govt_consumption",             "GCEC1",
-  "real_gfcf_total",                   "GPDIC1",
-  "real_exports",                      "EXPGSC1",
-  "real_imports",                      "IMPGSC1"
-)
+## No explicit exclusion for household disposable income is needed even
+## though it DOES have a real mnemonic (DPIC96): `validate_against_fred_qd()`
+## below only validates concepts present in `anchor_merged`, and that
+## concept has no reliable quarterly source for USA from either OECD or
+## IMF (verified, see README/R/oecd.R), so it is never a column of
+## `anchor_merged` for the one country --validate actually runs against.
+fred_qd_validation_map <- concept_dictionary %>%
+  dplyr::filter(!is.na(.data$fred_qd_mnemonic)) %>%
+  dplyr::transmute(our_label = .data$label, fred_qd_mnemonic = .data$fred_qd_mnemonic)
 
 #' Correlate our OECD-sourced growth rates against the real FRED-QD series
 ##

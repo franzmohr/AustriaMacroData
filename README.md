@@ -66,6 +66,14 @@ R/                          Fetcher library used by build_country_panel.R,
                              each module individually verified against its
                              live API (see header comments for verification
                              notes and corrections vs. earlier guesses)
+  concept_dictionary.R      The single authored source of metadata for all
+                             38 concepts (FRED-QD group, mnemonic, notes,
+                             plausibility category) -- scripts/build_country_panel.R,
+                             R/fred_qd_validation.R and R/plausibility_checks.R
+                             all derive their working tables from this one
+                             file instead of hand-maintaining their own
+                             copies (see its header for the real bug two
+                             independent copies once caused)
   utils.R                   Shared HTTP/parsing helpers (incl. fetch_text,
                              fetch_binary)
   country_codes.R           ISO-3166 alpha-3 <-> FRED 2-letter country code;
@@ -130,7 +138,7 @@ data/
 
 output/                      Output of build_country_panel.R, checked into
                              git and refreshed monthly by CI (see below):
-                             <country>_nipa.csv + <country>_coverage.json for
+                             <country>_panel.csv + <country>_coverage.json for
                              AUT, DEU and USA, plus vintages/ (dated archive)
 
 .github/workflows/
@@ -141,7 +149,13 @@ docs/
   Mohr_AUSTRIA-QD.tex/.pdf  Technical report (see above)
   generate_technical_report.py  Rebuilds the report above from
                              Mohr_AUSTRIA-QD.tex's own Appendix A tables
-                             + a fresh read of data_sources.csv
+                             + a fresh read of data_sources.csv and
+                             concept_dictionary.csv
+  concept_dictionary.csv     CSV export of R/concept_dictionary.R's
+                             `concept_dictionary`, written on every CLI run
+                             so non-R tooling (the report generator above)
+                             can read the same single source of truth
+                             instead of keeping its own hand-copied table
   data_sources.csv           The data-sources registry -- see below
   candidate_indicators_austria.csv  Proposed (UNVERIFIED) Austrian sources
                              for the 245 - 38 FRED-QD series not yet
@@ -168,7 +182,7 @@ Rscript scripts/build_country_panel.R --country USA --validate
 | `--start-period` | `1960-Q1` | First quarter to fetch (`YYYY-Qn`) -- OECD QNA has Austrian real GDP back to 1960-Q1 (confirmed live); concepts with no data this far back are simply `NA` before their own start, per the canonical-schema design |
 | `--fred-country2` | looked up | FRED's 2-letter OECD-mirror code, for countries not in `R/country_codes.R` |
 | `--validate` | off | Cross-check OECD-sourced series against the real FRED-QD file (USA only, since it's the only series with published ground truth) |
-| `--output-dir` | `output` | Where to write `<country>_nipa.csv` and `<country>_coverage.json` |
+| `--output-dir` | `output` | Where to write `<country>_panel.csv` and `<country>_coverage.json` |
 | `--fred-qd-vintage` | `2026-07` | FRED-QD monthly vintage to validate against (`YYYY-MM`) |
 
 The source hierarchy per run, most-preferred first:
@@ -204,7 +218,7 @@ resolves in practice per run, and
 [docs/data_sources.csv](docs/data_sources.csv) for the exact provider/key
 used for every (country, concept) pair across all runs so far.
 
-**Every `<country>_nipa.csv` has the same 38 columns, in the same order**
+**Every `<country>_panel.csv` has the same 38 columns, in the same order**
 (`date` plus one column per concept in `concept_group_map`, see
 [scripts/build_country_panel.R](scripts/build_country_panel.R)), regardless
 of which concepts actually resolved for that country -- a concept that
@@ -212,11 +226,11 @@ could not be resolved is still present as an all-NA column rather than
 missing from the file. This is deliberate: the point of routing every
 country through the same FRED-QD-style concept labels is that switching
 `--country` should be the *only* thing that changes between two runs, so
-downstream code can load `aut_nipa.csv` and `deu_nipa.csv` (or any other
+downstream code can load `aut_panel.csv` and `deu_panel.csv` (or any other
 country's file) with the same column-handling logic. Compare
-[output/aut_nipa.csv](output/aut_nipa.csv),
-[output/deu_nipa.csv](output/deu_nipa.csv) and
-[output/usa_nipa.csv](output/usa_nipa.csv): same header, same column order,
+[output/aut_panel.csv](output/aut_panel.csv),
+[output/deu_panel.csv](output/deu_panel.csv) and
+[output/usa_panel.csv](output/usa_panel.csv): same header, same column order,
 different data (and different NAs, per each file's coverage report).
 
 ## Automated updates
@@ -227,10 +241,10 @@ runs [scripts/update_monthly.R](scripts/update_monthly.R) at 06:00 UTC on the
 `workflow_dispatch`), the same way FRED-QD itself is republished monthly.
 Each run:
 
-1. Rebuilds `output/<country>_nipa.csv` + `_coverage.json` for AUT, DEU and
+1. Rebuilds `output/<country>_panel.csv` + `_coverage.json` for AUT, DEU and
    USA via `scripts/build_country_panel.R`, overwriting the "latest" files.
 2. Archives a dated copy of both into `output/vintages/`, e.g.
-   `output/vintages/aut_nipa_2026-09.csv` -- a monthly vintage history, not
+   `output/vintages/aut_panel_2026-09.csv` -- a monthly vintage history, not
    just a single always-overwritten snapshot.
 3. Commits and pushes `output/` back to `main` if anything changed, as
    `github-actions[bot]`.
@@ -454,8 +468,8 @@ AUSTRIAMACRODATA_RUN_INTEGRATION=true Rscript -e 'testthat::test_dir("tests/test
 Every source below was checked against its own live API on 2026-08-30 --
 structure/codelist queries where relevant, then real data pulls for Germany
 (DEU/DE) and the US (USA/US) -- not re-guessed from `build_country_nipa_dataset.R`'s
-original comments. Two real bugs were found this way and fixed (not just
-"made the warning go away"):
+original comments. Several real bugs were found this way and fixed (not
+just "made the warning go away"):
 
 - **OECD**: the prototype's guessed dataflow (`DSD_NAMAIN10@DF_TABLE1_EXPENDITURE`,
   12-segment key) turned out to have a real but different structure than
@@ -512,6 +526,26 @@ original comments. Two real bugs were found this way and fixed (not just
   erroring" -- exactly the failure mode this project exists to catch.
   Fixed with a real `date_to_period()` helper (`R/utils.R`), covered by
   `tests/testthat/test-fred_qd_validation.R`.
+- **`real_gfcf_total`'s own validation table disagreed with its own
+  documentation**, found 2026-08-31 while consolidating concept metadata
+  into a single dictionary (`R/concept_dictionary.R`, see Repository
+  layout above): `R/fred_qd_validation.R` independently validated this
+  concept against `GPDIC1` (total private domestic investment), while
+  `concept_group_map`'s own `us_note` documented the correct reference as
+  `FPIx` (private FIXED investment only, matching this project's own GFCF
+  construction, which excludes inventories) -- two hand-maintained copies
+  of the same fact, silently disagreeing. `--validate` had been reporting
+  a FAIL on this concept (`corr=+0.660`) that was actually a wrong
+  comparison target, not a real data problem: switching the validation to
+  `FPIx` immediately raised the correlation to `+0.952`, a clean PASS.
+  Fixed by making `R/fred_qd_validation.R` derive its mnemonic table from
+  `concept_dictionary` instead of keeping its own copy, so this class of
+  disagreement can't recur. `real_govt_consumption` still FAILs
+  (`corr=+0.746`) after this fix -- that one is not a mnemonic bug (both
+  tables already agreed on `GCEC1`); see this concept's `cross_country_note`
+  for the likely conceptual explanation (FRED-QD's GCEC1 includes
+  government gross investment, while the SNA/ESA P3 transaction sourced
+  here is consumption-only) -- not yet independently re-verified live.
 
 ### FRED-QD group coverage
 
@@ -657,7 +691,7 @@ This is exactly what caught both discoveries above on its first live run.
   paper over with quarter-repeated annual values. Worth revisiting as a
   SEPARATE annual output file (fiscal balance, potential output, output
   gap, etc. -- concepts genuinely absent from both FRED-QD and this
-  project's current 38) rather than forcing it into `<country>_nipa.csv`.
+  project's current 38) rather than forcing it into `<country>_panel.csv`.
 
 ### Non-goals (deliberate, carried over from the original script)
 

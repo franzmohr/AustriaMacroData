@@ -68,6 +68,28 @@ test_that("validate_against_fred_qd reports NO_DATA rather than erroring when a 
   expect_true(is.na(results$correlation[results$our_label == "real_gdp"]))
 })
 
-test_that("fred_qd_validation_map has no row for household disposable income (nothing to validate it against)", {
-  expect_false("real_household_disposable_income" %in% fred_qd_validation_map$our_label)
+test_that("fred_qd_validation_map has a row for household disposable income (it IS a real FRED-QD mnemonic)", {
+  ## real_household_disposable_income has a genuine FRED-QD mnemonic
+  ## (DPIC96), so it belongs in this table -- derived straight from
+  ## R/concept_dictionary.R's fred_qd_mnemonic column, not hand-curated
+  ## per concept. It is still never actually validated for USA, because
+  ## the next test shows validate_against_fred_qd() only validates
+  ## concepts present in anchor_merged, and that concept has no reliable
+  ## USA source (see R/oecd.R), so it's simply absent from anchor_merged
+  ## at runtime -- there's no need to also leave it out of this table.
+  expect_true("real_household_disposable_income" %in% fred_qd_validation_map$our_label)
+  expect_equal(
+    fred_qd_validation_map$fred_qd_mnemonic[fred_qd_validation_map$our_label == "real_household_disposable_income"],
+    "DPIC96"
+  )
+})
+
+test_that("validate_against_fred_qd skips a concept with a real mnemonic but absent from anchor_merged", {
+  ## Mirrors the actual USA runtime case: real_household_disposable_income
+  ## has a row in fred_qd_validation_map (DPIC96) but is never resolved
+  ## for the US, so it's simply not a column of anchor_merged.
+  anchor_merged <- data.frame(period = "2020-Q1", real_gdp = 100)
+  fred_qd_data <- data.frame(sasdate = as.Date("2020-01-01"), GDPC1 = 100, DPIC96 = 50)
+  results <- validate_against_fred_qd(anchor_merged, list(data = fred_qd_data))
+  expect_false("real_household_disposable_income" %in% results$our_label)
 })

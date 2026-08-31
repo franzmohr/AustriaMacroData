@@ -40,7 +40,7 @@ option_list <- list(
   make_option("--validate", action = "store_true", default = FALSE,
               help = "Cross-check the OECD-sourced anchor series against the real FRED-QD file (USA only)"),
   make_option("--output-dir", type = "character", default = "output", dest = "output_dir",
-              help = "Directory to write <country>_nipa.csv and <country>_coverage.json into [default %default]"),
+              help = "Directory to write <country>_panel.csv and <country>_coverage.json into [default %default]"),
   make_option("--fred-qd-vintage", type = "character", default = "2026-07", dest = "fred_qd_vintage",
               help = "FRED-QD monthly vintage to validate against, format YYYY-MM [default %default]")
 )
@@ -56,102 +56,49 @@ dir.create(opt$output_dir, showWarnings = FALSE, recursive = TRUE)
 country2 <- if (!is.null(opt$fred_country2)) opt$fred_country2 else lookup_country2(country)
 
 ## ---- FRED-QD group taxonomy + ground-truth reference ----------------
-## 24 concepts across all 14 FRED-QD groups (as of 2026-08-30; started at
-## 18 concepts across 12 groups -- see R/fred_mirror.R and R/bis.R header
-## comments for what was added and how each addition was verified).
+## 38 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
+## groups on 2026-08-30; grew via several same-day extension passes -- see
+## R/fred_mirror.R and R/bis.R header comments for what was added and how
+## each addition was verified).
 ##
-## `fred_qd_mnemonic` is the actual FRED-QD series each concept is meant to
-## approximate for the United States (NA where none exists -- `us_note`
-## explains why). FRED-QD IS the ground truth for the US, so this is what
-## verifies the FRED-QD source; it seeds the "USA" rows of
+## `concept_group_map` and `concept_notes` are thin views onto
+## R/concept_dictionary.R's `concept_dictionary` -- the single authored
+## source for this metadata (see that file's header for why: two
+## independently hand-maintained copies of this same data, here and in
+## R/fred_qd_validation.R, once disagreed about real_gfcf_total's FRED-QD
+## mnemonic, and the disagreement went undetected until --validate FAILed
+## it). `fred_qd_mnemonic` is the actual FRED-QD series each concept is
+## meant to approximate for the United States (NA where none exists --
+## `us_note` explains why). FRED-QD IS the ground truth for the US, so
+## this is what verifies the FRED-QD source; it seeds the "USA" rows of
 ## docs/data_sources.csv (see step 8 below), which are fixed reference
 ## documentation and are NOT overwritten by a live --country USA run (that
 ## run's OECD/IMF/BIS/FRED-mirror keys are still visible in
 ## output/usa_coverage.json as an interesting cross-check, not a
 ## replacement for the ground truth).
-concept_group_map <- tibble::tribble(
-  ~label,                               ~fred_qd_group,                   ~fred_qd_mnemonic, ~us_note,
-  "real_gdp",                           "Output and Income",              "GDPC1",           NA,
-  "real_household_consumption",         "Output and Income",              "PCECC96",         NA,
-  "real_govt_consumption",              "Output and Income",              "GCEC1",           NA,
-  "real_gfcf_total",                    "Output and Income",              "FPIx",            NA,
-  "real_exports",                       "Output and Income",              "EXPGSC1",         NA,
-  "real_imports",                       "Output and Income",              "IMPGSC1",         NA,
-  "real_household_disposable_income",   "Output and Income",              "DPIC96",          NA,
-  "industrial_production",              "Industrial Production",          "INDPRO",          NA,
-  "industrial_confidence",              "Industrial Production",          NA,                "No FRED-QD equivalent; the EC's Industrial Confidence Indicator (since 1985) is a standard input to the OECD's Composite Leading Indicators for many countries, with documented leading-indicator value for industrial production/GDP turning points.",
-  "unemployment_rate",                  "Employment and Unemployment",    "UNRATE",          NA,
-  "employment_rate",                    "Employment and Unemployment",    NA,                "No FRED-QD employment-rate series; nearest are CE16OV (level) and CIVPART (participation rate).",
-  "employment_expectations",            "Employment and Unemployment",    NA,                "No FRED-QD equivalent; DG ECFIN's own purpose-built leading indicator for employment turning points (introduced 2013 specifically because the surveys' employment sub-components lead employment growth).",
-  "house_price_real",                   "Housing",                        "USSTHPI",         NA,
-  "construction_confidence",            "Housing",                        NA,                "No FRED-QD equivalent; a standard EC sentiment sub-index for the construction sector, companion to house_price_real.",
-  "retail_sales_volume",                "Inventories, Orders, and Sales", "RSAFSx",          NA,
-  "retail_confidence",                  "Inventories, Orders, and Sales", NA,                "No FRED-QD equivalent; a standard EC sentiment sub-index for the retail sector, companion to retail_sales_volume.",
-  "cpi_index",                          "Prices",                         "CPIAUCSL",        NA,
-  "core_cpi_index",                     "Prices",                         "CPILFESL",        NA,
-  "food_price_index",                   "Prices",                         NA,                "No standalone CPI-food mnemonic in FRED-QD's 245-series list (the closest entries are PCE-side, e.g. DFXARG3Q086SBEA); included as a standard EU/ECB headline-inflation breakdown component.",
-  "energy_price_index",                 "Prices",                         NA,                "No standalone CPI-energy mnemonic in FRED-QD's 245-series list (the closest entries are producer-price WPU0531/WPU0561 or the global OILPRICEx benchmark, none implemented here); included as a standard EU/ECB headline-inflation breakdown component.",
-  "services_price_index",               "Prices",                         "CUSR0000SAS",     NA,
-  "unit_labor_cost",                    "Earnings and Productivity",      "ULCNFB",          "FRED-QD's ULCNFB is a nonfarm-business, hours-based unit-labor-cost INDEX; the OECD-mirror series used for every country (incl. the US) is an employment-based % CHANGE -- related concepts, different construction.",
-  "long_term_rate",                     "Interest Rates",                 "GS10",            NA,
-  "short_term_rate",                    "Interest Rates",                 "TB3MS",           NA,
-  "mortgage_rate",                      "Interest Rates",                 "MORTGAGE30US",    "FRED-QD's MORTGAGE30US is a 30-year FIXED-rate average; the ECB series used for euro-area countries is a new-business AAR/NDER rate across all initial rate fixation periods (fixed and variable combined) -- related but not an identical construction.",
-  "credit_to_private_nonfin_sector",    "Money and Credit",               NA,                "FRED-QD tracks credit by purpose/level (BUSLOANSx, TOTALSLx, REALLNx, ...), not one combined %GDP series like BIS's.",
-  "household_mortgage_loans",           "Money and Credit",               "REALLNx",         "FRED-QD's REALLNx is REAL (Core-PCE-deflated) dollars; the ECB BSI series used for euro-area countries is a NOMINAL euro-denominated stock of outstanding MFI loans to households for house purchase -- related but not an identical construction, and not deflated here.",
-  "euro_area_household_net_worth_growth", "Household Balance Sheets",     "TNWBSHNOx",       NA,
-  "household_credit_to_gdp",            "Household Balance Sheets",       NA,                "No %GDP household-credit series in FRED-QD; FRED itself mirrors the same underlying BIS series for the US as HDTGPDUSQ163N.",
-  "corporate_credit_to_gdp",            "Non-Household Balance Sheets",   NA,                "FRED-QD's TLBSNNCBx is a dollar-level series, not %GDP; no confirmed FRED %GDP analog for the US was found.",
-  "government_debt_to_gdp",             "Non-Household Balance Sheets",   "GFDEGDQ188S",     "FRED-QD's GFDEGDQ188S is US FEDERAL debt only (excludes state/local government); the BIS series used for every country (incl. the US) is credit to the WHOLE general-government sector (all levels combined) -- related but broader-scoped concepts, not identical.",
-  "fx_rate_to_usd",                     "Exchange Rates",                 NA,                "Not meaningful for the US itself -- this concept is a foreign currency's price in USD.",
-  "real_effective_exchange_rate",       "Exchange Rates",                 "TWEXAFEGSMTHx",   "FRED-QD's series is a NOMINAL trade-weighted index against advanced foreign economies only; the OECD-mirror series used for other countries is REAL (price-adjusted) and broader -- related but not identical.",
-  "consumer_confidence",                "Other",                          "UMCSENTx",        NA,
-  "economic_sentiment_indicator",       "Other",                          NA,                "No FRED-QD equivalent; DG ECFIN's own flagship composite indicator (weighted average of industry/services/consumer/retail/construction survey balances), explicitly constructed and empirically validated to track and lead euro-area GDP growth.",
-  "services_confidence",                "Other",                          NA,                "No FRED-QD equivalent; a standard EC sentiment sub-index for the services sector.",
-  "geopolitical_risk",                  "Other",                          NA,                "No FRED-QD equivalent; the Caldara-Iacoviello (2022) Geopolitical Risk index, the standard academic/policy measure -- country-specific for the 44 countries the source covers (confirmed: includes DEU/USA, excludes AUT), global index used otherwise (see R/gpr.R).",
-  "share_price_index",                  "Stock Markets",                  "S&P 500",         NA
-)
+concept_group_map <- dplyr::select(concept_dictionary, label, fred_qd_group, fred_qd_mnemonic, us_note)
 
 ## ---- Cross-country caveats -------------------------------------------
-## For each concept, how the international source used for every
-## NON-US country differs conceptually from the US/FRED-QD definition
-## above -- this is the same note for every country using that source
-## (the methodology doesn't vary by country, only the country code does),
-## and becomes the `comment` column in docs/data_sources.csv for every
-## non-USA row. Concepts not listed here have no material conceptual
-## difference beyond ordinary cross-country methodology variation.
-concept_notes <- tibble::tribble(
-  ~label,                                 ~note,
-  "real_household_consumption",           "Source-dependent: for EU members (Eurostat NA_ITEM=P31_S14) this is household-only consumption, a close match to FRED-QD's household-only PCE; where OECD QNA is used instead (sector S1M), it is total-economy final consumption expenditure INCLUDING NPISHs, broader than FRED-QD's definition.",
-  "real_govt_consumption",                "SNA/ESA transaction P3, sector S13 (general government) is government consumption expenditure only, whether sourced from OECD or Eurostat; FRED-QD's GCEC1 also includes government gross investment.",
-  "real_gfcf_total",                      "SNA/ESA transaction P51G (gross fixed capital formation) is for ALL sectors (incl. government), whether sourced from OECD or Eurostat; FRED-QD's FPIx is private-sector fixed investment only.",
-  "real_household_disposable_income",     "OECD's quarterly household disposable income (DF_QNA_INC_SAV) is published for only 11 countries (AUS, BRA, CAN, CHL, EST, GRC, HUN, LTU, LUX, LVA, ZAF); absent for most others, confirmed absent for DEU/AUT/USA/FRA/GBR.",
-  "employment_rate",                      "Employment-to-population ratio, ages 15-64 (OECD MEI); included as a standard cross-country labour-market indicator even though FRED-QD has no direct equivalent (see us_note).",
-  "retail_sales_volume",                  "OECD MEI retail sales volume is not published for the USA itself via this mirror -- a genuine coverage gap for that one country, not a wrong code.",
-  "credit_to_private_nonfin_sector",      "BIS reports this as a stock, % of GDP (private non-financial sector = households + nonfinancial corporations combined).",
-  "euro_area_household_net_worth_growth", "ECB QSA_PUB publishes household net worth only for the euro-area AGGREGATE (REF_AREA=I8) -- every euro-area country gets this same figure; it is not country-specific.",
-  "household_credit_to_gdp",              "BIS credit to households & NPISHs, % of GDP -- country-specific (unlike the ECB net-worth aggregate above).",
-  "corporate_credit_to_gdp",              "BIS credit to nonfinancial corporations, % of GDP -- country-specific.",
-  "government_debt_to_gdp",               "BIS credit to general government (all levels: federal/state/local combined), % of GDP -- BIS's own credit-statistics methodology treats this as a close proxy for gross government debt; genuinely country-specific and, unlike the euro-area-only mortgage_rate/consumer_confidence overrides, available for non-EU countries too (confirmed live for AT/DE/US).",
-  "fx_rate_to_usd",                       "OECD MEI bilateral exchange rate, national currency per USD.",
-  "mortgage_rate",                        "ECB MFI Interest Rate Statistics (MIR): new-business loans to households for house purchase, all initial rate fixation periods combined -- genuinely country-specific (unlike euro_area_household_net_worth_growth above), available for euro-area members only.",
-  "real_effective_exchange_rate",         "OECD real (price-adjusted) effective exchange rate index -- see us_note for how this differs from FRED-QD's nominal series.",
-  "consumer_confidence",                  "EU member states: sourced from the European Commission's own Business and Consumer Survey (a live, monthly, seasonally adjusted balance statistic, e.g. \"AT.CONS\"), NOT the frozen OECD-MEI-via-FRED mirror used for non-EU countries -- see R/ec_survey.R. Falls back to the FRED mirror if the EC archive is unavailable for a given run.",
-  "cpi_index",                             "EU member states: sourced from Eurostat's Harmonised Index of Consumer Prices (HICP, all-items, prc_hicp_midx), NOT the frozen OECD-MEI-via-FRED mirror used for non-EU countries -- see R/eurostat.R. Confirmed live 2026-08-30 to extend to 2025-Q4 for Austria, versus the FRED mirror's confirmed freeze at 2023-Q4 -- a roughly 2-year improvement. HICP's basket/methodology differs somewhat from the US CPI-U basket underlying FRED-QD's CPIAUCSL, but is the standard EU consumer-price measure. Falls back to the FRED mirror if the Eurostat series is unavailable for a given run.",
-  "unit_labor_cost",                      "Where Eurostat publishes an index-level series for it (confirmed for Austria: namq_10_lp_ulc, NA_ITEM=NULC_HW, UNIT=I10, hours-based like FRED-QD's ULCNFB), this replaces the default OECD-mirror proxy (OECD MEI unit labour cost, employment-based, % change, confirmed live for AT/DE/FR/GB/US) -- see R/eurostat.R. Not every EU country publishes this index-level series (confirmed absent for Germany, which keeps the OECD-mirror value).",
-  "share_price_index",                    "Austria: sourced from the ATX (Austrian Traded Index) via Yahoo Finance (ticker \"^ATX\"), Austria's own actual benchmark index, NOT the generic OECD MEI 'all shares' proxy used for other countries -- see R/yahoo_finance.R. Falls back to the FRED mirror if the Yahoo Finance fetch is unavailable for a given run.",
-  "core_cpi_index",                       "Eurostat HICP excluding energy, food, alcohol and tobacco (COICOP=TOT_X_NRG_FOOD) -- the standard ECB/Eurostat \"core inflation\" measure. EU member states only; no FRED-mirror fallback exists for this concept.",
-  "food_price_index",                     "Eurostat HICP, food and non-alcoholic beverages (COICOP=CP01). EU member states only; no FRED-mirror fallback exists for this concept.",
-  "energy_price_index",                   "Eurostat HICP, energy (COICOP=NRG). EU member states only; no FRED-mirror fallback exists for this concept.",
-  "services_price_index",                 "Eurostat HICP, services (overall index excluding goods) (COICOP=SERV). EU member states only; no FRED-mirror fallback exists for this concept.",
-  "household_mortgage_loans",             "ECB MFI Balance Sheet Items (BSI): outstanding amounts (stocks, millions of EUR) of loans to households for house purchase, domestic counterpart -- genuinely country-specific (unlike euro_area_household_net_worth_growth), available for euro-area members only. Same purpose category as mortgage_rate, but a different ECB dataflow with an entirely different dimension structure -- see R/ecb.R.",
-  "industrial_confidence",                "EU member states only: European Commission Business and Consumer Survey, Industrial Confidence Indicator (\"AT.INDU\") -- see R/ec_survey.R. No FRED-mirror fallback exists for this concept.",
-  "employment_expectations",              "EU member states only: European Commission Business and Consumer Survey, Employment Expectations Indicator (\"AT.EEI\") -- see R/ec_survey.R. No FRED-mirror fallback exists for this concept.",
-  "construction_confidence",              "EU member states only: European Commission Business and Consumer Survey, Construction Confidence Indicator (\"AT.BUIL\") -- see R/ec_survey.R. No FRED-mirror fallback exists for this concept.",
-  "retail_confidence",                    "EU member states only: European Commission Business and Consumer Survey, Retail Trade Confidence Indicator (\"AT.RETA\") -- see R/ec_survey.R. No FRED-mirror fallback exists for this concept.",
-  "economic_sentiment_indicator",         "EU member states only: European Commission Business and Consumer Survey, Economic Sentiment Indicator (\"AT.ESI\") -- see R/ec_survey.R. No FRED-mirror fallback exists for this concept.",
-  "services_confidence",                  "EU member states only: European Commission Business and Consumer Survey, Services Confidence Indicator (\"AT.SERV\") -- see R/ec_survey.R. No FRED-mirror fallback exists for this concept.",
-  "geopolitical_risk",                    "Caldara and Iacoviello's (2022) Geopolitical Risk index, from matteoiacoviello.com's own published data file -- see R/gpr.R. Genuinely country-specific for the 44 countries the source constructs one for (confirmed: Germany, the United States); the global index is used for every other country (confirmed: Austria), not a country-specific gap in this project's own sourcing."
-)
+## How the international source used for every NON-US country differs
+## conceptually from the US/FRED-QD definition above -- this is the same
+## note for every country using that source (the methodology doesn't vary
+## by country, only the country code does), and becomes the `comment`
+## column in docs/data_sources.csv for every non-USA row. Concepts not
+## listed here (`cross_country_note` is NA in the dictionary) have no
+## material conceptual difference beyond ordinary cross-country
+## methodology variation.
+concept_notes <- concept_dictionary %>%
+  dplyr::filter(!is.na(.data$cross_country_note)) %>%
+  dplyr::transmute(label, note = .data$cross_country_note)
+
+## Export the dictionary itself so non-R tooling can read it too, instead
+## of hand-maintaining yet another copy -- docs/generate_technical_report.py
+## used to keep its own separately-transcribed Python list of this exact
+## data (commented "Mirrors scripts/build_country_panel.R's
+## concept_group_map exactly"), the same class of risk this file was
+## created to eliminate on the R side. Written unconditionally (cheap,
+## no API calls, doesn't depend on which country this run is for).
+readr::write_csv(concept_dictionary, file.path(project_root, "docs", "concept_dictionary.csv"), na = "")
 
 ## Groups deliberately left unresolved -- see README for why. (Earnings
 ## and Productivity and Non-Household Balance Sheets are no longer here:
@@ -463,7 +410,7 @@ panel <- dplyr::arrange(panel, date)
 ## The whole point of pulling from OECD/IMF/BIS/ECB/FRED behind a single
 ## FRED-QD-style concept label is that a user should be able to change
 ## only --country and get a like-for-like file back. That only holds if
-## every <country>_nipa.csv has the same columns, in the same order,
+## every <country>_panel.csv has the same columns, in the same order,
 ## regardless of which concepts happened to resolve for that country --
 ## so concepts that did not resolve are still included here, filled with
 ## NA, rather than silently missing from the file. (Which concepts are
@@ -477,7 +424,7 @@ panel <- dplyr::select(panel, date, dplyr::all_of(canonical_cols))
 ## =====================================================================
 ## 5. Write output CSV
 ## =====================================================================
-csv_path <- file.path(opt$output_dir, paste0(tolower(country), "_nipa.csv"))
+csv_path <- file.path(opt$output_dir, paste0(tolower(country), "_panel.csv"))
 readr::write_csv(panel, csv_path)
 n_resolved <- sum(canonical_cols %in% names(concept_source))
 message(

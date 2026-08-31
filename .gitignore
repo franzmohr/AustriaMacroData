@@ -17,5 +17,5 @@ data/bronze/
 # renv/ has its own .gitignore for the local library/cache
 
 # output/ IS tracked: .github/workflows/monthly-update.yml commits the
-# monthly <country>_nipa.csv / _coverage.json + output/vintages/ archive
+# monthly <country>_panel.csv / _coverage.json + output/vintages/ archive
 # back to the repo, since GitHub Actions runners are ephemeral.

@@ -1,6 +1,6 @@
 {
   "country": "AUT",
-  "generated_at": "2026-08-30T22:02:36Z",
+  "generated_at": "2026-08-31T05:55:44Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -300,9 +300,9 @@
     },
     {
       "label": "cpi_index",
-      "category": "level",
+      "category": "balance",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change 3%."
+      "detail": "All 120 values within [-150, 250]."
     },
     {
       "label": "core_cpi_index",
@@ -330,9 +330,9 @@
     },
     {
       "label": "unit_labor_cost",
-      "category": "level",
+      "category": "balance",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change 12%."
+      "detail": "All 125 values within [-150, 250]."
     },
     {
       "label": "long_term_rate",

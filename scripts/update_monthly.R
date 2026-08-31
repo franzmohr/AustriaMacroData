@@ -3,7 +3,7 @@
 ## update_monthly.R -- scheduled entrypoint, run by
 ## .github/workflows/monthly-update.yml on the 1st of every month.
 ##
-## Rebuilds output/<country>_nipa.csv + _coverage.json for each country
+## Rebuilds output/<country>_panel.csv + _coverage.json for each country
 ## below via scripts/build_country_panel.R, then archives a dated copy
 ## of both into output/vintages/, mirroring how FRED-QD itself keeps a
 ## monthly vintage history rather than only ever exposing "latest".
@@ -28,8 +28,8 @@ for (country in countries) {
 
   cc <- tolower(country)
   file.copy(
-    file.path(output_dir, paste0(cc, "_nipa.csv")),
-    file.path(vintage_dir, paste0(cc, "_nipa_", vintage_tag, ".csv")),
+    file.path(output_dir, paste0(cc, "_panel.csv")),
+    file.path(vintage_dir, paste0(cc, "_panel_", vintage_tag, ".csv")),
     overwrite = TRUE
   )
   file.copy(
