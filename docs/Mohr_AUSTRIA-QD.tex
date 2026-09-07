@@ -52,7 +52,7 @@ previously-unknown $\sim$4x level discontinuity that very merge had
 introduced (OECD's contribution was on an annualized-rate scale,
 Eurostat's was not), invisible to growth-rate correlation checks alone
 -- fixed the same day it was found. The reference implementation itself
-covers 38 concepts, identical in column structure for every country the
+covers 41 concepts, identical in column structure for every country the
 underlying open-source tool has been run for, and the report catalogs,
 series by series, which of FRED-QD's remaining 207 concepts have a
 plausible but as yet unverified Austrian counterpart, which are directly
@@ -118,7 +118,7 @@ describes how the panel is constructed: the concept taxonomy, the source
 hierarchy and the country-specific overrides that take precedence over it,
 the verification methodology, and the update cadence. Section~\ref{sec:registry}
 describes the data-sources registry itself. Section~\ref{sec:coverage}
-situates the 38 implemented concepts against FRED-QD's full 245-series
+situates the 41 implemented concepts against FRED-QD's full 245-series
 catalog. Section~\ref{sec:limitations} documents known data-quality issues
 and gaps, following FRED-QD's own convention of disclosing rather than
 papering over them. Section~\ref{sec:future} outlines concrete extensions.
@@ -132,7 +132,7 @@ current Austria-specific source mapping.
 \subsection{Concept taxonomy and canonical schema}
 
 Every country the underlying tool (\texttt{scripts/build\_country\_panel.R})
-is run for produces a panel with exactly the same 38 columns, in the same
+is run for produces a panel with exactly the same 41 columns, in the same
 order, regardless of which concepts actually resolved for that country: a
 concept with no available source for a given country is still present as
 an all-\texttt{NA} column rather than silently missing. This mirrors, in
@@ -142,7 +142,7 @@ series: the point of routing every country through the same 25
 FRED-QD-style concept labels is that switching the country argument should
 be the \emph{only} thing that changes between two runs, so that downstream
 code can load any country's file with identical column-handling logic.
-Table~\ref{tab:groups} lists the 38 concepts, the FRED-QD group each
+Table~\ref{tab:groups} lists the 41 concepts, the FRED-QD group each
 belongs to, and -- alongside the FRED-QD mnemonic each already
 approximates for the United States -- the corresponding quarterly series
 ID from EA-MD-QD \citep{barigozzi2026eamdqdpaper}, the large existing
@@ -195,8 +195,11 @@ Other & \texttt{economic\_\allowbreak{}sentiment\_\allowbreak{}indicator} & \emp
 Other & \texttt{services\_\allowbreak{}confidence} & \emph{none} & \emph{none} \\
 Other & \texttt{geopolitical\_\allowbreak{}risk} & \emph{none} & \emph{none} \\
 Stock Markets & \texttt{share\_\allowbreak{}price\_\allowbreak{}index} & \texttt{S\&P 500} & \emph{none} \\
+Housing & \texttt{construction\_\allowbreak{}weather\_\allowbreak{}constraint} & \emph{none} & \emph{none} \\
+Other & \texttt{heating\_\allowbreak{}degree\_\allowbreak{}days} & \emph{none} & \emph{none} \\
+Other & \texttt{cooling\_\allowbreak{}degree\_\allowbreak{}days} & \emph{none} & \emph{none} \\
 \bottomrule
-\caption{The 38 implemented concepts, their FRED-QD group, and their US
+\caption{The 41 implemented concepts, their FRED-QD group, and their US
 (FRED-QD) and EA (EA-MD-QD, quarterly series only) cross-references.
 Fourteen concepts have no direct FRED-QD mnemonic: five standard
 cross-country indicators FRED-QD has no equivalent for at all (employment
@@ -453,7 +456,7 @@ still looks right -- and for the United States, \S~\ref{sec:coverage}'s
 project's growth rates against the real published FRED-QD file. No such
 file exists for any other country, including Austria itself; without a
 second check, a researcher extending this project to a new country would
-have no automated signal at all pointing at which of the panel's 38
+have no automated signal at all pointing at which of the panel's 41
 columns might be wrong, only the option of reading every value by hand.
 
 \texttt{R/plausibility\_checks.R} closes that gap with checks that need
@@ -501,7 +504,7 @@ States. Appendix~\ref{app:mapping} reproduces the current Austria rows.
 \section{Coverage Relative to FRED-QD}
 \label{sec:coverage}
 
-Of FRED-QD's 245 series, 38 concepts are currently implemented for Austria
+Of FRED-QD's 245 series, 41 concepts are currently implemented for Austria
 (24 correspond directly to a specific FRED-QD mnemonic; the remaining
 fourteen have none, as Table~\ref{tab:groups}'s caption details -- five
 standard cross-country indicators, two HICP sub-categories, and seven
@@ -558,7 +561,7 @@ for the EU. Combined with the pre-existing genuine data gaps this section
 already documents -- retail sales volume specifically for the US, the
 euro-area-only household-net-worth aggregate, and the FX-rate concept
 that is not meaningful for the US itself -- this means sixteen of the
-panel's 38 concepts are necessarily \texttt{NA} for the United States,
+panel's 41 concepts are necessarily \texttt{NA} for the United States,
 not a coverage failure of this project's own sources. The one exception
 to this section's pattern of EU/euro-area-only overrides is geopolitical
 risk, which -- unlike every other addition here -- resolves for every
@@ -716,7 +719,7 @@ Disentangling the Channels of the 2007--2009 Recession.
 \section{FRED-QD Variable Catalog}
 \label{app:catalog}
 
-For reference, Table~\ref{tab:groups} lists this project's 38 implemented
+For reference, Table~\ref{tab:groups} lists this project's 41 implemented
 concepts and their FRED-QD group; the tables that follow reproduce
 FRED-QD's complete 245-series catalog (McCracken and Ng, 2020), grouped
 into the original fourteen categories, with each series' recommended
@@ -1120,7 +1123,7 @@ Table~\ref{tab:austria} reproduces the current Austria rows of
 \texttt{docs/data\_sources.csv} (Section~\ref{sec:registry}) -- regenerated
 directly from that file every time this report is rebuilt, so it cannot
 drift out of sync with what \texttt{scripts/build\_country\_panel.R}
-actually resolved. 37 of 38 concepts were
+actually resolved. 40 of 41 concepts were
 resolved as of the most recent run; an empty Provider/Key cell means the
 concept was attempted but no source returned data for Austria, with the
 reason given in the Comment column.
@@ -1175,6 +1178,9 @@ Other & \texttt{economic\_\allowbreak{}sentiment\_\allowbreak{}indicator} & EC B
 Other & \texttt{services\_\allowbreak{}confidence} & EC Business/Consumer Survey & \texttt{AT.\allowbreak{}SERV} & EU member states only: European Commission Business and Consumer Survey, Services Confidence Indicator ("AT.SERV") -- see R/ec\_survey.R. No FRED-mirror fallback exists for this concept. \\
 Other & \texttt{geopolitical\_\allowbreak{}risk} & GPR Index & \texttt{GPR} & Caldara and Iacoviello's (2022) Geopolitical Risk index, from matteoiacoviello.com's own published data file -- see R/gpr.R. Genuinely country-specific for the 44 countries the source constructs one for (confirmed: Germany, the United States); the global index is used for every other country (confirmed: Austria), not a country-specific gap in this project's own sourcing. \\
 Stock Markets & \texttt{share\_\allowbreak{}price\_\allowbreak{}index} & Yahoo Finance & \texttt{\textasciicircum{}ATX} & Austria: sourced from the ATX (Austrian Traded Index) via Yahoo Finance (ticker "\textasciicircum{}ATX"), Austria's own actual benchmark index, NOT the generic OECD MEI 'all shares' proxy used for other countries -- see R/yahoo\_finance.R. Falls back to the FRED mirror if the Yahoo Finance fetch is unavailable for a given run. \\
+Housing & \texttt{construction\_\allowbreak{}weather\_\allowbreak{}constraint} & EC Business/Consumer Survey & \texttt{BUIL.\allowbreak{}AT.\allowbreak{}TOT.\allowbreak{}2.\allowbreak{}F3S.\allowbreak{}M} & EU member states only: European Commission Business and Consumer Survey, construction survey question 2, answer F3S ("AT.TOT.2.F3S") -- see R/ec\_survey.R. Already seasonally adjusted at source, so it reads as a weather ANOMALY (how unusually obstructive this quarter's weather was) rather than a raw seasonal pattern. No FRED-mirror fallback exists for this concept. \\
+Other & \texttt{heating\_\allowbreak{}degree\_\allowbreak{}days} & ERA5 (Open-Meteo) & \texttt{ERA5, 6-city population-weighted, spliced with Eurostat nrg\_\allowbreak{}chdd\_\allowbreak{}m and level-calibrated to it (x1.\allowbreak{}220, corr 0.\allowbreak{}996 over 552 months)} & Quarterly total of monthly heating degree days on Eurostat's definition (reference 18 C, counted on days with a mean temperature at or below 15 C). Eurostat's own nrg\_chdd\_m is used wherever it publishes; because that dataflow runs roughly nine months behind, the pre-1980 history and the recent quarters are filled with an ERA5 series (via the Open-Meteo archive) computed over a population-weighted set of representative cities and level-calibrated to Eurostat over the overlap -- see R/weather.R. Countries with neither a city set nor Eurostat coverage resolve to NA. \\
+Other & \texttt{cooling\_\allowbreak{}degree\_\allowbreak{}days} & ERA5 (Open-Meteo) & \texttt{ERA5, 6-city population-weighted, spliced with Eurostat nrg\_\allowbreak{}chdd\_\allowbreak{}m and level-calibrated to it (x0.\allowbreak{}340, corr 0.\allowbreak{}975 over 552 months)} & Quarterly total of monthly cooling degree days on Eurostat's definition (reference 21 C, counted on days with a mean temperature at or above 24 C -- note the deliberate gap between the reference and threshold temperatures, which is Eurostat's convention and not the single-base-temperature convention common in US work). Same source hierarchy as heating\_degree\_days; legitimately 0.00 for whole quarters in cooler countries, which is why these two concepts have their own plausibility category. \\
 \bottomrule
 \end{longtable}
 

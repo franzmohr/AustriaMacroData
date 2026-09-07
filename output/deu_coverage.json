@@ -1,6 +1,6 @@
 {
   "country": "DEU",
-  "generated_at": "2026-09-01T10:54:31Z",
+  "generated_at": "2026-09-07T09:23:27Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -187,6 +187,21 @@
       "fred_qd_group": "Stock Markets",
       "label": "share_price_index",
       "source": "OECD MEI / BIS (via FRED mirror) [SPASTT01DEQ661N]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_weather_constraint",
+      "source": "European Commission Business and Consumer Survey [BUIL.DE.TOT.2.F3S.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "heating_degree_days",
+      "source": "ERA5 reanalysis (via the Open-Meteo archive API) [ERA5, 8-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x1.029, corr 0.999 over 552 months)]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "cooling_degree_days",
+      "source": "ERA5 reanalysis (via the Open-Meteo archive API) [ERA5, 8-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x0.698, corr 0.971 over 552 months)]"
     }
   ],
   "skipped": [
@@ -350,7 +365,7 @@
       "label": "mortgage_rate",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 106 values within [-10, 400]."
+      "detail": "All 107 values within [-10, 400]."
     },
     {
       "label": "credit_to_private_nonfin_sector",
@@ -429,6 +444,24 @@
       "category": "level",
       "status": "PASS",
       "detail": "Positive throughout; largest quarter-over-quarter change -27%."
+    },
+    {
+      "label": "construction_weather_constraint",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 143 values within [-150, 250]."
+    },
+    {
+      "label": "heating_degree_days",
+      "category": "nonneg_seasonal",
+      "status": "PASS",
+      "detail": "All 266 values within [0, 4000]."
+    },
+    {
+      "label": "cooling_degree_days",
+      "category": "nonneg_seasonal",
+      "status": "PASS",
+      "detail": "All 266 values within [0, 4000]."
     }
   ]
 }

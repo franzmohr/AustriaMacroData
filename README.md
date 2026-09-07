@@ -67,7 +67,7 @@ R/                          Fetcher library used by build_country_panel.R,
                              live API (see header comments for verification
                              notes and corrections vs. earlier guesses)
   concept_dictionary.R      The single authored source of metadata for all
-                             38 concepts (FRED-QD group, mnemonic, notes,
+                             41 concepts (FRED-QD group, mnemonic, notes,
                              plausibility category) -- scripts/build_country_panel.R,
                              R/fred_qd_validation.R and R/plausibility_checks.R
                              all derive their working tables from this one
@@ -106,7 +106,20 @@ R/                          Fetcher library used by build_country_panel.R,
                              industrial/services/retail/construction
                              confidence, employment expectations); the
                              monthly archive covers every EU country and
-                             all 7 indicators at once, cached in data/landing/
+                             all 7 indicators at once, cached in data/landing/.
+                             Also reads the same folder's CONSTRUCTION
+                             survey archive for the share of building firms
+                             naming weather as a factor limiting their
+                             activity -- weather measured by its reported
+                             economic effect
+  weather.R                 Heating and cooling degree days: Eurostat
+                             nrg_chdd_m (official, but ~9 months behind)
+                             spliced with a level-calibrated ERA5 series
+                             from the Open-Meteo archive (~5 days behind,
+                             back to 1940), computed over a
+                             population-weighted city set; works for any
+                             country with rows in weather_city_weights,
+                             plus Eurostat-only for other EU members
   gpr.R                     Geopolitical Risk (GPR) Index (Caldara and
                              Iacoviello, 2022) -- country-specific for 44
                              countries, global index otherwise; downloaded
@@ -158,7 +171,7 @@ docs/
                              instead of keeping its own hand-copied table
   data_sources.csv           The data-sources registry -- see below
   candidate_indicators_austria.csv  Proposed (UNVERIFIED) Austrian sources
-                             for the 245 - 38 FRED-QD series not yet
+                             for the 245 - 41 FRED-QD series not yet
                              implemented -- see below
   generate_candidate_indicators.py  Regenerates the file above from
                              docs/Mohr_AUSTRIA-QD.tex + a hand-built
@@ -218,7 +231,7 @@ resolves in practice per run, and
 [docs/data_sources.csv](docs/data_sources.csv) for the exact provider/key
 used for every (country, concept) pair across all runs so far.
 
-**Every `<country>_panel.csv` has the same 38 columns, in the same order**
+**Every `<country>_panel.csv` has the same 41 columns, in the same order**
 (`date` plus one column per concept in `concept_group_map`, see
 [scripts/build_country_panel.R](scripts/build_country_panel.R)), regardless
 of which concepts actually resolved for that country -- a concept that
@@ -259,7 +272,7 @@ the top of `scripts/update_monthly.R`. To change the schedule, edit the
 `country, variable, provider, key, comment` -- with one row per (country,
 concept) pair the CLI has actually resolved or attempted, across every
 country it has been run for so far (USA, DEU, AUT). It is rewritten
-incrementally: running the CLI for a new country adds that country's 38
+incrementally: running the CLI for a new country adds that country's 41
 rows without touching any other country's; running it again for an
 existing country replaces just that country's rows.
 
@@ -339,6 +352,33 @@ and EC survey/geopolitical-risk concepts):
   remaining three -- services, retail, and construction confidence --
   are the archive's other standard sentiment sub-indices, added as a
   low-cost extension once the fetcher was generalized.
+- **Every country, new concepts**: heating and cooling degree days
+  (`heating_degree_days`, `cooling_degree_days`) -- the standard
+  quantitative weather input in applied macro (energy demand, gas
+  consumption, construction, the energy trade balance), and the only
+  series in this panel that is both exogenous to the economy and never
+  revised. FRED-QD has no weather variable at all. Built on Eurostat's
+  own definition and, wherever Eurostat publishes, on Eurostat's own
+  numbers; because `nrg_chdd_m` runs roughly nine months behind (verified
+  live 2026-09-07: last update 2026-05-08, observations ending 2025-12),
+  the pre-1980 history and the recent quarters come from ERA5 via the
+  Open-Meteo archive, level-calibrated to Eurostat over the overlap. The
+  ERA5 construction was checked against Eurostat across all 552
+  overlapping months: correlation 0.996 (AUT) and 0.999 (DEU) for heating
+  degree days, 0.975 and 0.970 for cooling -- with level ratios of 0.82
+  and 1.42, which is exactly why the calibration is not optional. See
+  `R/weather.R`.
+- **EU members, new concept**: weather as a reported constraint on
+  construction activity (`construction_weather_constraint`) -- the share
+  of building firms naming weather as a factor currently limiting their
+  activity, from the EC Business and Consumer Survey's construction
+  archive (`BUIL.AT.TOT.2.F3S.M`, verified live: monthly, seasonally
+  adjusted, 500 observations from 1985-01 through 2026-08). Because it is
+  seasonally adjusted at source it reads as a weather *anomaly* -- how
+  unusually obstructive this quarter's weather was for building -- and
+  it is the counterpart to the meteorological degree-day concepts above:
+  weather measured by what firms say it cost them, rather than by
+  temperature.
 - **Every country, new concept**: geopolitical risk (`geopolitical_risk`)
   from Caldara and Iacoviello's (2022) GPR index -- downloaded directly
   from the authors' own published data file. Genuinely country-specific
@@ -351,7 +391,7 @@ and EC survey/geopolitical-risk concepts):
 
 ## Candidate indicators (proposed, unverified)
 
-The 38 implemented concepts are representative anchors, not a 1:1
+The 41 implemented concepts are representative anchors, not a 1:1
 replication of FRED-QD's 245 series (see Overview above -- most of those
 245 are U.S.-specific and have no cross-country equivalent at all).
 [docs/candidate_indicators_austria.csv](docs/candidate_indicators_austria.csv)
@@ -549,7 +589,7 @@ just "made the warning go away"):
 
 ### FRED-QD group coverage
 
-38 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
+41 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
 groups on 2026-08-30; grew via several same-day extension passes -- see
 `R/fred_mirror.R`, `R/bis.R`, `R/eurostat.R`, `R/ecb.R`, `R/ec_survey.R`
 and `R/yahoo_finance.R` header comments for the full trail, including one
@@ -591,11 +631,27 @@ override exists -- see the fallback chain earlier in this README.
 | Other | Consumer confidence | **EC Business and Consumer Survey** (EU members, live/current), else OECD MEI via FRED (`CSCICP03{cc}M665S`, stale) | Verified -- AUT + DEU via EC survey (current through 2026-Q3); USA via the stale FRED mirror (no EU-survey equivalent exists for non-EU countries) |
 | Other | Economic sentiment indicator | **EC Business and Consumer Survey** (`AT.ESI`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent. DG ECFIN's flagship composite, empirically validated to track/lead euro-area GDP growth |
 | Other | Services confidence indicator | **EC Business and Consumer Survey** (`AT.SERV`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent |
+| Housing | Weather as a factor limiting building activity | **EC Business and Consumer Survey**, construction survey Q2 answer F3S (`BUIL.AT.TOT.2.F3S.M`) | Verified -- AUT + DEU; EU-only, no FRED-mirror equivalent. Seasonally adjusted at source, so it reads as a weather anomaly; 500 monthly observations for AUT from 1985-01 |
+| Other | Heating degree days | **Eurostat** `nrg_chdd_m` (official, ~9 months behind) spliced with level-calibrated **ERA5 via Open-Meteo** (~5 days behind, back to 1940) | Verified -- AUT + DEU via both sources; USA via Open-Meteo alone (uncalibrated -- Eurostat publishes no cross-check for it). ERA5-vs-Eurostat correlation 0.996 (AUT) / 0.999 (DEU) over 552 months. Not resolved for countries with neither a city set nor Eurostat coverage |
+| Other | Cooling degree days | Same sources as heating degree days | Verified -- ERA5-vs-Eurostat correlation 0.975 (AUT) / 0.970 (DEU) over 552 months; legitimately 0.00 for whole winters, which is why both degree-day concepts get their own plausibility category |
 | Other | Geopolitical risk | **GPR Index** (Caldara-Iacoviello), country-specific for 44 countries, else the global index | Verified -- DEU + USA via their own country-specific series; AUT via the global index (confirmed absent from the 44); genuinely cross-country, no FRED-QD equivalent |
 | Stock Markets | Share price index | **ATX via Yahoo Finance** (Austria specifically), else OECD MEI via FRED (`SPASTT01{cc}Q661N`) | Verified -- AUT via Yahoo Finance (current through 2026-Q3); DEU + USA via the OECD-mirror proxy |
 
 ### Known issues
 
+- **Open-Meteo rate limits can cost a run its degree-day concepts.** The
+  free archive endpoint weights a request by locations times days, and
+  a monthly CI rebuild of AUT + DEU + USA on a fresh runner issues 29
+  single-city requests each covering six decades, with an empty
+  `data/landing/` cache. Confirmed live 2026-09-07 that HTTP 429 does
+  happen at this volume. `R/weather.R` mitigates it three ways -- one
+  city per request, retries with a growing pause, and a PER-CITY cache
+  so a refused run resumes rather than restarts -- but cannot rule it
+  out. The failure is loud and safe rather than silent: an EU country
+  falls back to Eurostat's own series alone (correct, but ending
+  roughly nine months back), and the United States reports the two
+  concepts as unresolved. Both say which happened, and why, in the
+  coverage report's `source` string.
 - **A ~4x level discontinuity in the anchor NIPA concepts' pre-1995
   history was found and fixed 2026-08-31**, by this project's own
   plausibility checks (`R/plausibility_checks.R`, see below) -- not by
@@ -691,7 +747,7 @@ This is exactly what caught both discoveries above on its first live run.
   paper over with quarter-repeated annual values. Worth revisiting as a
   SEPARATE annual output file (fiscal balance, potential output, output
   gap, etc. -- concepts genuinely absent from both FRED-QD and this
-  project's current 38) rather than forcing it into `<country>_panel.csv`.
+  project's current 41) rather than forcing it into `<country>_panel.csv`.
 
 ### Non-goals (deliberate, carried over from the original script)
 

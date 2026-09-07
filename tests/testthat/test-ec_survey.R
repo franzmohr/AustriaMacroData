@@ -187,3 +187,120 @@ test_that("ec_survey_indicators lists the six confirmed-live sub-indicators with
   expect_equal(ec_survey_indicators$indicator,
                c("ESI", "INDU", "EEI", "SERV", "RETA", "BUIL"))
 })
+
+## ---- Construction survey archive (weather as a limiting factor) -------
+
+test_that("ec_survey_zip_url and ec_survey_landing_path address the construction archive", {
+  expect_equal(
+    ec_survey_zip_url(2026, 8, archive = "building"),
+    "https://ec.europa.eu/economy_finance/db_indicators/surveys/documents/series/nace2_ecfin_2608/building_total_sa_nace2.zip"
+  )
+  expect_equal(
+    ec_survey_landing_path(2026, 8, "data/landing", archive = "building"),
+    file.path("data/landing", "ec_bcs_building_2608.xlsx")
+  )
+})
+
+test_that("the two archives cache to different files, so one cannot be served for the other", {
+  expect_false(identical(
+    ec_survey_landing_path(2026, 8, "data/landing", archive = "main"),
+    ec_survey_landing_path(2026, 8, "data/landing", archive = "building")
+  ))
+})
+
+test_that("an unknown archive name is an error, not a silent fall back to the main one", {
+  expect_error(ec_survey_zip_url(2026, 8, archive = "services"), "Unknown EC survey archive")
+  expect_error(get_ec_survey_xlsx(archive = "services"), "Unknown EC survey archive")
+})
+
+test_that("ec_building_factor_column builds the construction survey's series code", {
+  expect_equal(ec_building_factor_column("AT"), "BUIL.AT.TOT.2.F3S.M")
+  expect_equal(ec_building_factor_column("DE"), "BUIL.DE.TOT.2.F3S.M")
+  ## The answer code is a parameter so the choice of F3S stays visible
+  ## and checkable rather than being baked into a format string.
+  expect_equal(ec_building_factor_column("AT", "F4S"), "BUIL.AT.TOT.2.F4S.M")
+})
+
+build_building_fixture_zip_bytes <- function() {
+  skip_if_not_installed("writexl")
+  tmp_xlsx <- tempfile(fileext = ".xlsx")
+  on.exit(unlink(tmp_xlsx), add = TRUE)
+
+  ## Column order deliberately mirrors the real workbook, where the
+  ## weather answer (F3S) sits between "insufficient demand" (F2S) and
+  ## "shortage of labour force" (F4S) -- a parser that picked a column by
+  ## position rather than by name would pass against a one-column fixture.
+  building <- data.frame(
+    c1 = c(NA, "1985-01-31", "1985-02-28", "1985-03-31"),
+    c2 = c("BUIL.AT.TOT.2.F2S.M", "40.0", "41.0", "42.0"),
+    c3 = c("BUIL.AT.TOT.2.F3S.M", "18.0", "12.0", "9.0"),
+    c4 = c("BUIL.AT.TOT.2.F4S.M", "3.0", "3.5", "4.0"),
+    c5 = c("BUIL.DE.TOT.2.F3S.M", "22.0", "20.0", "15.0"),
+    stringsAsFactors = FALSE
+  )
+  writexl::write_xlsx(
+    list(Index = data.frame(x = 1), INFO = data.frame(x = 1), `BUILDING MONTHLY` = building),
+    tmp_xlsx, col_names = FALSE
+  )
+
+  tmp_zip <- tempfile(fileext = ".zip")
+  old_wd <- setwd(dirname(tmp_xlsx))
+  on.exit(setwd(old_wd), add = TRUE)
+  utils::zip(tmp_zip, basename(tmp_xlsx), flags = "-q")
+  readBin(tmp_zip, "raw", file.info(tmp_zip)$size)
+}
+
+test_that("parse_ec_survey_building_factor picks the weather column by name, not position", {
+  zip_bytes <- build_building_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  xlsx_path <- extract_ec_survey_xlsx(zip_bytes)
+
+  out <- parse_ec_survey_building_factor(xlsx_path, "AT", "construction_weather_constraint")
+  expect_equal(names(out), c("date", "construction_weather_constraint"))
+  expect_equal(out$construction_weather_constraint, c(18, 12, 9))
+
+  de <- parse_ec_survey_building_factor(xlsx_path, "DE", "construction_weather_constraint")
+  expect_equal(de$construction_weather_constraint, c(22, 20, 15))
+})
+
+test_that("parse_ec_survey_building_factor returns NULL with a warning for a country not surveyed", {
+  zip_bytes <- build_building_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  xlsx_path <- extract_ec_survey_xlsx(zip_bytes)
+
+  ## Not hypothetical: the UK's building survey stopped in 2019 and the
+  ## workbook's INFO sheet lists further suspended countries.
+  expect_warning(
+    out <- parse_ec_survey_building_factor(xlsx_path, "UK", "construction_weather_constraint"),
+    "not found"
+  )
+  expect_null(out)
+})
+
+test_that("fetch_ec_construction_weather_constraint quarterly-averages the monthly series", {
+  zip_bytes <- build_building_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  landing_dir <- tempfile()
+  on.exit(unlink(landing_dir, recursive = TRUE), add = TRUE)
+
+  urls <- character()
+  with_mock_fetch_binary(function(url, ...) { urls <<- c(urls, url); zip_bytes }, {
+    out <- fetch_ec_construction_weather_constraint(
+      "AUT", start_period = "1985-Q1", reference_date = as.Date("2026-08-30"),
+      landing_dir = landing_dir
+    )
+  })
+  expect_true(grepl("building_total_sa_nace2\\.zip", urls[1]))
+  expect_equal(names(out), c("date", "construction_weather_constraint"))
+  expect_equal(out$date, as.Date("1985-01-01"))
+  expect_equal(out$construction_weather_constraint, mean(c(18, 12, 9)))
+})
+
+test_that("fetch_ec_construction_weather_constraint refuses non-EU countries without a network call", {
+  called <- FALSE
+  with_mock_fetch_binary(function(url, ...) { called <<- TRUE; NULL }, {
+    expect_warning(out <- fetch_ec_construction_weather_constraint("USA"), "EU member states")
+  })
+  expect_null(out)
+  expect_false(called)
+})

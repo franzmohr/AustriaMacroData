@@ -9,7 +9,7 @@
 ## a NEW country (say, FRA or POL) has no analogous ground truth to
 ## compare against -- until now, their only recourse was to eyeball
 ## <country>_panel.csv and docs/data_sources.csv by hand, concept by
-## concept, with no automated signal pointing at which of the 38 columns
+## concept, with no automated signal pointing at which of the 41 columns
 ## might actually be wrong (a wrong SDMX dimension picking the wrong
 ## sector, a units mismatch, a sign error, ...).
 ##
@@ -58,7 +58,7 @@
 ## wrong -- it is a prioritized to-do list.
 ## ---------------------------------------------------------------
 
-## Category assignment for all 38 concepts, derived from
+## Category assignment for all 41 concepts, derived from
 ## R/concept_dictionary.R's `plausibility_category` column -- the single
 ## authored source for this and every other piece of concept-level
 ## metadata (see that file's header for why this used to be its own
@@ -101,10 +101,25 @@ plausibility_categories <- concept_dictionary %>%
 ## covers both EC survey balances (roughly -100..100) and the ESI's
 ## 0..~150 scale in one relaxed band; "growth" is a quarterly growth
 ## rate, generous enough for crisis-period swings.
+##
+## "nonneg_seasonal" exists for the two degree-day concepts (R/weather.R)
+## and captures something none of the other categories can: a quantity
+## that is non-negative but legitimately EXACTLY ZERO, and that swings
+## enormously between adjacent quarters as a matter of physics rather
+## than measurement error. Both of the "level" category's rules are wrong
+## for it -- its positivity check would FLAG every Austrian winter's
+## cooling degree days (0.00, correctly), and its quarter-over-quarter
+## jump check would FLAG all four quarters of every year, forever. The
+## upper bound is deliberately far above any realistic value (a cold
+## northern European first quarter tops out near 2,500 heating degree
+## days) so that it still catches the failure this check is actually for:
+## a units error, a missing division by the weight total, or an
+## accidental sum over the wrong window.
 plausibility_bounds <- list(
-  percent = c(-10, 400),
-  balance = c(-150, 250),
-  growth  = c(-50, 50)
+  percent         = c(-10, 400),
+  balance         = c(-150, 250),
+  growth          = c(-50, 50),
+  nonneg_seasonal = c(0, 4000)
 )
 
 jump_threshold <- 0.90     # flag |quarter-over-quarter % change| above this, "level" category only

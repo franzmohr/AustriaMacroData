@@ -11,7 +11,7 @@ test_that("concept_dictionary has the expected columns", {
 })
 
 test_that("every row has a non-NA, valid plausibility_category", {
-  valid_categories <- c("percent", "balance", "growth", "level", "level_event_driven")
+  valid_categories <- c("percent", "balance", "growth", "level", "level_event_driven", "nonneg_seasonal")
   expect_false(anyNA(concept_dictionary$plausibility_category))
   expect_true(all(concept_dictionary$plausibility_category %in% valid_categories))
 })
@@ -47,6 +47,16 @@ test_that("downstream tables derived from concept_dictionary agree on real_gfcf_
 ## so they aren't in scope here -- tests/testthat/setup.R only sources
 ## R/*.R. They're exercised live every time the CLI runs; see this
 ## project's Verification section in README.md.
+
+test_that("every non-'level' plausibility category has bounds defined for it", {
+  ## A category named in concept_dictionary but absent from
+  ## plausibility_bounds falls through `check_one_concept()` to the
+  ## "level" branch, silently applying a positivity and jump check the
+  ## category was invented to avoid -- the exact trap "nonneg_seasonal"
+  ## (the degree-day concepts) was added to escape.
+  expect_true(all(unique(plausibility_categories$category) %in% names(plausibility_bounds) |
+                    unique(plausibility_categories$category) == "level_event_driven"))
+})
 
 test_that("plausibility_categories (derived view) omits the default 'level' category", {
   expect_false("level" %in% plausibility_categories$category)

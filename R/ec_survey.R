@@ -36,20 +36,79 @@
 ## country. `get_ec_survey_xlsx()` checks the local cache for each
 ## candidate month BEFORE ever hitting the network; building the panel
 ## for e.g. AUT then DEU in the same month downloads the archive once.
+##
+## EXTENDED 2026-09-07: the same monthly folder publishes the SECTORAL
+## survey archives alongside the headline one, and the construction
+## survey carries something no other source in this project does -- a
+## harmonised, self-reported measure of WEATHER as a constraint on real
+## economic activity. `building_total_sa_nace2.zip` (confirmed live:
+## HTTP 200, 1.0 MB for month "2608"; an unpublished month 301-redirects
+## exactly like the main archive, so the same month-walkback logic
+## applies unchanged) contains one .xlsx whose "BUILDING MONTHLY" sheet
+## uses a DIFFERENT column-naming scheme from the main archive's
+## "MONTHLY" sheet: `<SECTOR>.<COUNTRY>.<SUBSECTOR>.<QUESTION>.<ANSWER>.<FREQ>`,
+## e.g. "BUIL.AT.TOT.2.F3S.M". Question 2 is "Main factors currently
+## limiting your building activity" and answer F3S is documented by the
+## workbook's own Index sheet as "Weather conditions (% s.a. - monthly
+## question 2)" -- read off that sheet, not inferred from the
+## questionnaire's answer ordering, which is a real trap here: the
+## published order puts financial constraints LAST (F7S) while "other
+## factors" is F6S, so counting down the questionnaire would have picked
+## the wrong column. Confirmed live for Austria: monthly, seasonally
+## adjusted, 500 non-NA observations from 1985-01 through 2026-08.
+##
+## That the series is already seasonally adjusted is what makes it
+## usable here: the raw share of construction firms blaming the weather
+## is overwhelmingly a January-versus-July effect, whereas the s.a.
+## series is by construction a weather ANOMALY -- how unusually
+## obstructive this month's weather was for building activity, relative
+## to a normal month of the same name.
 ## ---------------------------------------------------------------
 
 ec_survey_base_url <- "https://ec.europa.eu/economy_finance/db_indicators/surveys/documents/series"
 ec_survey_landing_dir <- "data/landing"
 
+## The two archives this project reads out of the same monthly folder.
+## Both are zipped single-.xlsx downloads that behave identically as far
+## as fetching, month-walkback and caching are concerned -- they differ
+## only in file name, sheet name and column-naming scheme, so everything
+## below is parameterised by this table rather than duplicated.
+ec_survey_archives <- list(
+  main = list(
+    zip_name   = "main_indicators_sa_nace2.zip",
+    cache_stem = "ec_bcs_main_indicators",
+    sheet      = "MONTHLY"
+  ),
+  building = list(
+    zip_name   = "building_total_sa_nace2.zip",
+    cache_stem = "ec_bcs_building",
+    sheet      = "BUILDING MONTHLY"
+  )
+)
+
+#' Look up one archive's spec, erroring loudly on an unknown name rather
+#' than silently falling back to the main archive
+ec_survey_archive <- function(archive = "main") {
+  spec <- ec_survey_archives[[archive]]
+  if (is.null(spec)) {
+    stop(sprintf("Unknown EC survey archive '%s' -- known: %s",
+                 archive, paste(names(ec_survey_archives), collapse = ", ")),
+         call. = FALSE)
+  }
+  spec
+}
+
 #' Build the archive URL for a given calendar year/month
-ec_survey_zip_url <- function(year, month) {
+ec_survey_zip_url <- function(year, month, archive = "main") {
   yymm <- sprintf("%02d%02d", year %% 100, month)
-  sprintf("%s/nace2_ecfin_%s/main_indicators_sa_nace2.zip", ec_survey_base_url, yymm)
+  sprintf("%s/nace2_ecfin_%s/%s", ec_survey_base_url, yymm, ec_survey_archive(archive)$zip_name)
 }
 
 #' Local cache path for a given calendar year/month's workbook
-ec_survey_landing_path <- function(year, month, landing_dir = ec_survey_landing_dir) {
-  file.path(landing_dir, sprintf("ec_bcs_main_indicators_%02d%02d.xlsx", year %% 100, month))
+ec_survey_landing_path <- function(year, month, landing_dir = ec_survey_landing_dir,
+                                    archive = "main") {
+  file.path(landing_dir, sprintf("%s_%02d%02d.xlsx", ec_survey_archive(archive)$cache_stem,
+                                  year %% 100, month))
 }
 
 #' Unzip archive bytes and return the path to the .xlsx inside, or NULL
@@ -79,18 +138,20 @@ extract_ec_survey_xlsx <- function(zip_bytes) {
 #' every later call (any country, same month) hits the cache. Returns
 #' NULL if no candidate month is either cached or fetchable.
 get_ec_survey_xlsx <- function(reference_date = Sys.Date(), max_lookback = 3,
-                                landing_dir = ec_survey_landing_dir) {
+                                landing_dir = ec_survey_landing_dir,
+                                archive = "main") {
+  ec_survey_archive(archive)  # fail fast on a typo'd archive name
   ym0 <- as.integer(format(reference_date, "%Y")) * 12 + (as.integer(format(reference_date, "%m")) - 1)
   for (back in 0:max_lookback) {
     ym <- ym0 - back
     year <- ym %/% 12
     month <- ym %% 12 + 1
-    cached_path <- ec_survey_landing_path(year, month, landing_dir)
+    cached_path <- ec_survey_landing_path(year, month, landing_dir, archive)
     if (file.exists(cached_path)) {
       return(list(path = cached_path, year = year, month = month, cached = TRUE))
     }
 
-    bytes <- fetch_binary(ec_survey_zip_url(year, month))
+    bytes <- fetch_binary(ec_survey_zip_url(year, month, archive))
     if (!is.null(bytes)) {
       extracted_path <- extract_ec_survey_xlsx(bytes)
       if (!is.null(extracted_path)) {
@@ -115,17 +176,31 @@ get_ec_survey_xlsx <- function(reference_date = Sys.Date(), max_lookback = 3,
 #' `date` + `label` monthly tibble, or NULL (with a warning) if the
 #' workbook can't be read or the country's column isn't in it.
 parse_ec_survey_indicator <- function(xlsx_path, ec_country2, label, indicator = "CONS") {
+  parse_ec_survey_column(xlsx_path, sheet = "MONTHLY",
+                          col_name = paste0(ec_country2, ".", indicator), label = label)
+}
+
+#' Extract one named column from one sheet of an EC survey workbook
+#'
+#' Both archives lay their sheets out the same way -- row 1 is a header
+#' of series codes, column 1 is a month-end date -- and differ only in
+#' the sheet name and the shape of the series codes, so both
+#' `parse_ec_survey_indicator()` (main archive, "<CC>.<INDICATOR>") and
+#' `parse_ec_survey_building_factor()` (construction archive,
+#' "BUIL.<CC>.TOT.<Q>.<ANSWER>.M") come through here. Returns a `date` +
+#' `label` monthly tibble, or NULL (with a warning) if the sheet can't be
+#' read or the column isn't in it.
+parse_ec_survey_column <- function(xlsx_path, sheet, col_name, label) {
   monthly <- tryCatch(
-    suppressMessages(readxl::read_excel(xlsx_path, sheet = "MONTHLY", col_names = FALSE)),
+    suppressMessages(readxl::read_excel(xlsx_path, sheet = sheet, col_names = FALSE)),
     error = function(e) NULL
   )
   if (is.null(monthly)) {
-    warning(sprintf("[%s] Could not read the 'MONTHLY' sheet from the EC survey archive", label))
+    warning(sprintf("[%s] Could not read the '%s' sheet from the EC survey archive", label, sheet))
     return(NULL)
   }
 
   header <- as.character(monthly[1, ])
-  col_name <- paste0(ec_country2, ".", indicator)
   col_idx <- which(header == col_name)
   if (length(col_idx) == 0) {
     warning(sprintf("[%s] Column '%s' not found in the EC survey archive", label, col_name))
@@ -225,6 +300,78 @@ fetch_ec_survey_indicator <- function(country3, label, indicator = "CONS",
   }
 
   monthly_df <- parse_ec_survey_indicator(found$path, ec_country2, label, indicator = indicator)
+  if (is.null(monthly_df)) return(NULL)
+
+  monthly_to_quarterly(monthly_df, label) %>%
+    dplyr::filter(.data$date >= period_to_date(start_period))
+}
+
+## ---------------------------------------------------------------
+## Construction survey: weather as a reported constraint on activity
+## ---------------------------------------------------------------
+## The construction survey's question 2 ("Main factors currently limiting
+## your building activity") is a multiple-choice question whose answers
+## are published as the percentage of firms citing each factor, s.a.
+## F3S is weather (see this file's header for why the code is read off
+## the workbook's Index sheet rather than counted out of the
+## questionnaire). The remaining answer codes are listed here because
+## having them written down is what makes the F3S choice checkable by
+## the next reader, not because this project fetches them.
+##
+## F1S none, F2S insufficient demand, F3S weather conditions,
+## F4S shortage of labour force, F5S shortage of material and/or
+## equipment, F6S other factors, F7S financial constraints.
+ec_building_weather_answer <- "F3S"
+
+#' Build the construction-survey column name for one country's answer to
+#' the "factors limiting building activity" question
+ec_building_factor_column <- function(ec_country2, answer = ec_building_weather_answer) {
+  sprintf("BUIL.%s.TOT.2.%s.M", ec_country2, answer)
+}
+
+#' Extract one country's "factors limiting building activity" answer from
+#' a construction-survey workbook
+parse_ec_survey_building_factor <- function(xlsx_path, ec_country2, label,
+                                             answer = ec_building_weather_answer) {
+  parse_ec_survey_column(xlsx_path, sheet = ec_survey_archives$building$sheet,
+                          col_name = ec_building_factor_column(ec_country2, answer),
+                          label = label)
+}
+
+#' Fetch the quarterly share of construction firms reporting weather as a
+#' factor limiting their building activity, for an EU country
+#'
+#' Quarterly-AVERAGED (not summed) like every other survey balance in
+#' this project: this is a percentage of respondents, so a quarter's
+#' value is the average of its months, and unlike degree days (see
+#' R/weather.R) a partially-observed quarter is a noisier estimate rather
+#' than a systematically smaller number.
+#'
+#' Returns NULL (with a warning) if the country isn't an EU member, the
+#' construction archive can't be found (cached or fetched) within the
+#' lookback window, or the country's column isn't in it -- the last of
+#' which is a real case, not a defensive one: the UK's building survey
+#' stopped in November 2019, and the workbook's own INFO sheet records
+#' several countries whose surveys are suspended.
+fetch_ec_construction_weather_constraint <- function(country3,
+                                                      label = "construction_weather_constraint",
+                                                      start_period = "1995-Q1",
+                                                      reference_date = Sys.Date(),
+                                                      landing_dir = ec_survey_landing_dir) {
+  if (!country3 %in% eu_member_countries) {
+    warning(sprintf("[%s] EC Business and Consumer Survey only covers EU member states -- '%s' is not one", label, country3))
+    return(NULL)
+  }
+  ec_country2 <- lookup_ec_country2(country3)
+  if (is.na(ec_country2)) return(NULL)
+
+  found <- get_ec_survey_xlsx(reference_date, landing_dir = landing_dir, archive = "building")
+  if (is.null(found)) {
+    warning(sprintf("[%s] Could not find a published EC construction survey archive (cached or live) within the lookback window", label))
+    return(NULL)
+  }
+
+  monthly_df <- parse_ec_survey_building_factor(found$path, ec_country2, label)
   if (is.null(monthly_df)) return(NULL)
 
   monthly_to_quarterly(monthly_df, label) %>%

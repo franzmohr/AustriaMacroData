@@ -56,7 +56,7 @@ dir.create(opt$output_dir, showWarnings = FALSE, recursive = TRUE)
 country2 <- if (!is.null(opt$fred_country2)) opt$fred_country2 else lookup_country2(country)
 
 ## ---- FRED-QD group taxonomy + ground-truth reference ----------------
-## 38 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
+## 41 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
 ## groups on 2026-08-30; grew via several same-day extension passes -- see
 ## R/fred_mirror.R and R/bis.R header comments for what was added and how
 ## each addition was verified).
@@ -402,6 +402,49 @@ if (country %in% eu_member_countries) {
   }
 }
 
+## =====================================================================
+## 4i. EU-specific: weather as a reported constraint on construction
+##     activity, from the EC Business and Consumer Survey's CONSTRUCTION
+##     archive (a different zip and sheet from the headline indicators
+##     above -- see R/ec_survey.R). A new concept with no FRED-mirror
+##     fallback, so it resolves to NA for non-EU countries.
+## =====================================================================
+if (country %in% eu_member_countries) {
+  message("Country is an EU member -- fetching the EC construction survey's weather-constraint series...")
+  weather_constraint <- fetch_ec_construction_weather_constraint(country, start_period = start_period)
+  if (!is.null(weather_constraint)) {
+    panel <- dplyr::full_join(panel, weather_constraint, by = "date")
+    concept_source[["construction_weather_constraint"]] <- list(
+      provider = "EC_BCS",
+      key = ec_building_factor_column(lookup_ec_country2(country))
+    )
+  }
+}
+
+## =====================================================================
+## 4j. Heating and cooling degree days -- Eurostat's official monthly
+##     series spliced with a level-calibrated ERA5/Open-Meteo series that
+##     carries the pre-1980 history and the recent quarters Eurostat runs
+##     roughly nine months behind on (see R/weather.R). Unlike the EU-only
+##     concepts above this is attempted for EVERY country, since the
+##     Open-Meteo source is not EU-specific -- it resolves for any country
+##     with rows in `weather_city_weights`, plus (Eurostat-only) any EU
+##     member without them.
+## =====================================================================
+message("Fetching heating/cooling degree days for ", country, "...")
+degree_days <- fetch_degree_days(country, start_period = start_period)
+if (!is.null(degree_days)) {
+  dd_sources <- attr(degree_days, "sources")
+  panel <- dplyr::full_join(panel, degree_days, by = "date")
+  for (lbl in names(dd_sources)) {
+    concept_source[[lbl]] <- dd_sources[[lbl]]
+    message("  ", lbl, ": ", dd_sources[[lbl]]$key)
+  }
+} else {
+  message("No degree-day source resolved for ", country,
+          " -- add rows to `weather_city_weights` in R/weather.R to enable the Open-Meteo source for it.")
+}
+
 panel <- dplyr::arrange(panel, date)
 
 ## =====================================================================
@@ -448,7 +491,9 @@ provider_display_names <- c(
   EUROSTAT_HICP = "Eurostat (prc_hicp_midx, HICP)",
   EUROSTAT_ULC = "Eurostat (namq_10_lp_ulc, hours-based ULC)",
   YAHOO_FINANCE = "Yahoo Finance",
-  GPR = "Geopolitical Risk Index (Caldara-Iacoviello)"
+  GPR = "Geopolitical Risk Index (Caldara-Iacoviello)",
+  EUROSTAT_CHDD = "Eurostat (nrg_chdd_m, degree days)",
+  OPEN_METEO = "ERA5 reanalysis (via the Open-Meteo archive API)"
 )
 format_source <- function(src) {
   if (is.null(src)) return(NA_character_)

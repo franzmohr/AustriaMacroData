@@ -1,6 +1,6 @@
 {
   "country": "USA",
-  "generated_at": "2026-09-01T10:54:58Z",
+  "generated_at": "2026-09-07T09:27:31Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -112,6 +112,16 @@
       "fred_qd_group": "Stock Markets",
       "label": "share_price_index",
       "source": "OECD MEI / BIS (via FRED mirror) [SPASTT01USQ661N]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "heating_degree_days",
+      "source": "ERA5 reanalysis (via the Open-Meteo archive API) [ERA5, 15-city population-weighted (USA); UNCALIBRATED -- Eurostat nrg_chdd_m publishes no cross-check for this country]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "cooling_degree_days",
+      "source": "ERA5 reanalysis (via the Open-Meteo archive API) [ERA5, 15-city population-weighted (USA); UNCALIBRATED -- Eurostat nrg_chdd_m publishes no cross-check for this country]"
     }
   ],
   "skipped": [
@@ -178,6 +188,10 @@
     {
       "fred_qd_group": "Other",
       "label": "services_confidence"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_weather_constraint"
     }
   ],
   "groups_not_attempted": [
@@ -414,6 +428,24 @@
       "category": "level",
       "status": "PASS",
       "detail": "Positive throughout; largest quarter-over-quarter change -30%."
+    },
+    {
+      "label": "construction_weather_constraint",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "heating_degree_days",
+      "category": "nonneg_seasonal",
+      "status": "PASS",
+      "detail": "All 266 values within [0, 4000]."
+    },
+    {
+      "label": "cooling_degree_days",
+      "category": "nonneg_seasonal",
+      "status": "PASS",
+      "detail": "All 266 values within [0, 4000]."
     }
   ]
 }

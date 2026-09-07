@@ -1,6 +1,6 @@
 ## ---------------------------------------------------------------
 ## concept_dictionary.R -- the single authored source of metadata for
-## every one of this project's 38 FRED-QD-style concepts
+## every one of this project's 41 FRED-QD-style concepts
 ##
 ## MOTIVATION: before this file existed, the same concept-level facts
 ## (which FRED-QD group a concept belongs to, its FRED-QD mnemonic, its
@@ -207,5 +207,17 @@ concept_dictionary <- tibble::tribble(
     "level_event_driven",
   "share_price_index",                     "Stock Markets",                  "S&P 500",         NA,
     "Austria: sourced from the ATX (Austrian Traded Index) via Yahoo Finance (ticker \"^ATX\"), Austria's own actual benchmark index, NOT the generic OECD MEI 'all shares' proxy used for other countries -- see R/yahoo_finance.R. Falls back to the FRED mirror if the Yahoo Finance fetch is unavailable for a given run.",
-    "level"
+    "level",
+  "construction_weather_constraint",        "Housing",                        NA,
+    "No FRED-QD equivalent; FRED-QD contains no weather variable of any kind. This is the share of construction firms naming weather as a factor currently limiting their building activity -- weather measured by its reported ECONOMIC effect rather than meteorologically, and the companion concept to construction_confidence from the same survey.",
+    "EU member states only: European Commission Business and Consumer Survey, construction survey question 2, answer F3S (\"AT.TOT.2.F3S\") -- see R/ec_survey.R. Already seasonally adjusted at source, so it reads as a weather ANOMALY (how unusually obstructive this quarter's weather was) rather than a raw seasonal pattern. No FRED-mirror fallback exists for this concept.",
+    "balance",
+  "heating_degree_days",                    "Other",                          NA,
+    "No FRED-QD equivalent; FRED-QD contains no weather variable of any kind. Degree days are the standard quantitative weather input in applied macro (energy demand, gas consumption, construction, the energy trade balance) and are exogenous and essentially never revised, unlike every national-accounts series in this panel.",
+    "Quarterly total of monthly heating degree days on Eurostat's definition (reference 18 C, counted on days with a mean temperature at or below 15 C). Eurostat's own nrg_chdd_m is used wherever it publishes; because that dataflow runs roughly nine months behind, the pre-1980 history and the recent quarters are filled with an ERA5 series (via the Open-Meteo archive) computed over a population-weighted set of representative cities and level-calibrated to Eurostat over the overlap -- see R/weather.R. Countries with neither a city set nor Eurostat coverage resolve to NA.",
+    "nonneg_seasonal",
+  "cooling_degree_days",                    "Other",                          NA,
+    "No FRED-QD equivalent; FRED-QD contains no weather variable of any kind. The cooling-side companion to heating_degree_days, and the more informative of the two for a warming climate.",
+    "Quarterly total of monthly cooling degree days on Eurostat's definition (reference 21 C, counted on days with a mean temperature at or above 24 C -- note the deliberate gap between the reference and threshold temperatures, which is Eurostat's convention and not the single-base-temperature convention common in US work). Same source hierarchy as heating_degree_days; legitimately 0.00 for whole quarters in cooler countries, which is why these two concepts have their own plausibility category.",
+    "nonneg_seasonal"
 )

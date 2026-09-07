@@ -61,7 +61,7 @@ label_order = [c[0] for c in concept_group_map]
 label_to_group = {c[0]: c[1] for c in concept_group_map}
 
 # ---- 2b. EA-MD-QD cross-reference (quarterly series only) ----
-# Matches this project's 38 concepts against EA-MD-QD's own QUARTERLY
+# Matches this project's 41 concepts against EA-MD-QD's own QUARTERLY
 # indicators (Barigozzi, Lissona and Tonni 2026, Table 1) -- EA-MD-QD's
 # 118 EA-level series are roughly 60% quarterly / 40% monthly (Table 2 of
 # that paper); only the quarterly ones are in scope here, since the
@@ -132,6 +132,7 @@ provider_display = {
     "ECB_MIR": "ECB MIR", "ECB_BSI": "ECB BSI", "FRED_MIRROR": "FRED mirror",
     "EC_BCS": "EC Business/Consumer Survey", "YAHOO_FINANCE": "Yahoo Finance",
     "EUROSTAT_HICP": "Eurostat HICP", "EUROSTAT_ULC": "Eurostat ULC",
+    "EUROSTAT_CHDD": "Eurostat degree days", "OPEN_METEO": "ERA5 (Open-Meteo)",
     "GPR": "GPR Index", "": "\\emph{unresolved}",
 }
 
@@ -145,7 +146,12 @@ for label in label_order:
     comment = row.get("comment", "") or ""
     if provider:
         n_resolved += 1
-    provider_disp = provider_display.get(provider, provider)
+    ## The fallback ESCAPES rather than passing the raw registry string
+    ## through: provider codes are SCREAMING_SNAKE_CASE, so a provider
+    ## missing from the map above puts a bare "_" into LaTeX, which is a
+    ## fatal "Missing $ inserted" rather than a cosmetic problem.
+    ## Confirmed 2026-09-07, when adding OPEN_METEO broke the build here.
+    provider_disp = provider_display.get(provider, tex_escape(provider))
     key_disp = code_break(tex_escape(key))
     label_disp = code_break(tex_escape(label))
     comment_disp = tex_escape(comment)
@@ -156,7 +162,7 @@ for label in label_order:
 appendix_b_body = "\n".join(appendix_b_rows)
 n_concepts = len(label_order)
 
-# ---- 3b. Table 1 (main body): the 38-concept taxonomy by FRED-QD group,
+# ---- 3b. Table 1 (main body): the 41-concept taxonomy by FRED-QD group,
 #      cross-referenced against both FRED-QD (US) and EA-MD-QD (EA) ----
 table1_rows = []
 for label in label_order:
@@ -229,7 +235,7 @@ previously-unknown $\sim$4x level discontinuity that very merge had
 introduced (OECD's contribution was on an annualized-rate scale,
 Eurostat's was not), invisible to growth-rate correlation checks alone
 -- fixed the same day it was found. The reference implementation itself
-covers 38 concepts, identical in column structure for every country the
+covers 41 concepts, identical in column structure for every country the
 underlying open-source tool has been run for, and the report catalogs,
 series by series, which of FRED-QD's remaining 207 concepts have a
 plausible but as yet unverified Austrian counterpart, which are directly
@@ -295,7 +301,7 @@ describes how the panel is constructed: the concept taxonomy, the source
 hierarchy and the country-specific overrides that take precedence over it,
 the verification methodology, and the update cadence. Section~\ref{sec:registry}
 describes the data-sources registry itself. Section~\ref{sec:coverage}
-situates the 38 implemented concepts against FRED-QD's full 245-series
+situates the 41 implemented concepts against FRED-QD's full 245-series
 catalog. Section~\ref{sec:limitations} documents known data-quality issues
 and gaps, following FRED-QD's own convention of disclosing rather than
 papering over them. Section~\ref{sec:future} outlines concrete extensions.
@@ -309,7 +315,7 @@ current Austria-specific source mapping.
 \subsection{Concept taxonomy and canonical schema}
 
 Every country the underlying tool (\texttt{scripts/build\_country\_panel.R})
-is run for produces a panel with exactly the same 38 columns, in the same
+is run for produces a panel with exactly the same 41 columns, in the same
 order, regardless of which concepts actually resolved for that country: a
 concept with no available source for a given country is still present as
 an all-\texttt{NA} column rather than silently missing. This mirrors, in
@@ -319,7 +325,7 @@ series: the point of routing every country through the same 25
 FRED-QD-style concept labels is that switching the country argument should
 be the \emph{only} thing that changes between two runs, so that downstream
 code can load any country's file with identical column-handling logic.
-Table~\ref{tab:groups} lists the 38 concepts, the FRED-QD group each
+Table~\ref{tab:groups} lists the 41 concepts, the FRED-QD group each
 belongs to, and -- alongside the FRED-QD mnemonic each already
 approximates for the United States -- the corresponding quarterly series
 ID from EA-MD-QD \citep{barigozzi2026eamdqdpaper}, the large existing
@@ -336,7 +342,7 @@ any conceptual caveat.
 \endhead
 """ + table1_body + r"""
 \bottomrule
-\caption{The 38 implemented concepts, their FRED-QD group, and their US
+\caption{The 41 implemented concepts, their FRED-QD group, and their US
 (FRED-QD) and EA (EA-MD-QD, quarterly series only) cross-references.
 Fourteen concepts have no direct FRED-QD mnemonic: five standard
 cross-country indicators FRED-QD has no equivalent for at all (employment
@@ -593,7 +599,7 @@ still looks right -- and for the United States, \S~\ref{sec:coverage}'s
 project's growth rates against the real published FRED-QD file. No such
 file exists for any other country, including Austria itself; without a
 second check, a researcher extending this project to a new country would
-have no automated signal at all pointing at which of the panel's 38
+have no automated signal at all pointing at which of the panel's 41
 columns might be wrong, only the option of reading every value by hand.
 
 \texttt{R/plausibility\_checks.R} closes that gap with checks that need
@@ -641,7 +647,7 @@ States. Appendix~\ref{app:mapping} reproduces the current Austria rows.
 \section{Coverage Relative to FRED-QD}
 \label{sec:coverage}
 
-Of FRED-QD's 245 series, 38 concepts are currently implemented for Austria
+Of FRED-QD's 245 series, 41 concepts are currently implemented for Austria
 (24 correspond directly to a specific FRED-QD mnemonic; the remaining
 fourteen have none, as Table~\ref{tab:groups}'s caption details -- five
 standard cross-country indicators, two HICP sub-categories, and seven
@@ -698,7 +704,7 @@ for the EU. Combined with the pre-existing genuine data gaps this section
 already documents -- retail sales volume specifically for the US, the
 euro-area-only household-net-worth aggregate, and the FX-rate concept
 that is not meaningful for the US itself -- this means sixteen of the
-panel's 38 concepts are necessarily \texttt{NA} for the United States,
+panel's 41 concepts are necessarily \texttt{NA} for the United States,
 not a coverage failure of this project's own sources. The one exception
 to this section's pattern of EU/euro-area-only overrides is geopolitical
 risk, which -- unlike every other addition here -- resolves for every
@@ -856,7 +862,7 @@ Disentangling the Channels of the 2007--2009 Recession.
 \section{FRED-QD Variable Catalog}
 \label{app:catalog}
 
-For reference, Table~\ref{tab:groups} lists this project's 38 implemented
+For reference, Table~\ref{tab:groups} lists this project's 41 implemented
 concepts and their FRED-QD group; the tables that follow reproduce
 FRED-QD's complete 245-series catalog (McCracken and Ng, 2020), grouped
 into the original fourteen categories, with each series' recommended
