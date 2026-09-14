@@ -1,6 +1,6 @@
 {
   "country": "DEU",
-  "generated_at": "2026-09-07T09:23:27Z",
+  "generated_at": "2026-09-14T09:40:43Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -36,7 +36,7 @@
     {
       "fred_qd_group": "Industrial Production",
       "label": "industrial_production",
-      "source": "OECD MEI / BIS (via FRED mirror) [DEUPROINDQISMEI]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [DEUPROINDQISMEI]"
     },
     {
       "fred_qd_group": "Industrial Production",
@@ -46,12 +46,12 @@
     {
       "fred_qd_group": "Employment and Unemployment",
       "label": "unemployment_rate",
-      "source": "OECD MEI / BIS (via FRED mirror) [LRHUTTTTDEQ156S]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [LRHUTTTTDEQ156S]"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
       "label": "employment_rate",
-      "source": "OECD MEI / BIS (via FRED mirror) [LREM64TTDEQ156S]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [LREM64TTDEQ156S]"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
@@ -61,7 +61,7 @@
     {
       "fred_qd_group": "Housing",
       "label": "house_price_real",
-      "source": "OECD MEI / BIS (via FRED mirror) [QDER628BIS]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [QDER628BIS]"
     },
     {
       "fred_qd_group": "Housing",
@@ -71,7 +71,7 @@
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
       "label": "retail_sales_volume",
-      "source": "OECD MEI / BIS (via FRED mirror) [DEUSARTQISMEI]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [DEUSARTQISMEI]"
     },
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
@@ -106,17 +106,17 @@
     {
       "fred_qd_group": "Earnings and Productivity",
       "label": "unit_labor_cost",
-      "source": "OECD MEI / BIS (via FRED mirror) [ULQEUL01DEQ657S]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [ULQEUL01DEQ657S]"
     },
     {
       "fred_qd_group": "Interest Rates",
       "label": "long_term_rate",
-      "source": "OECD MEI / BIS (via FRED mirror) [IRLTLT01DEQ156N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IRLTLT01DEQ156N]"
     },
     {
       "fred_qd_group": "Interest Rates",
       "label": "short_term_rate",
-      "source": "OECD MEI / BIS (via FRED mirror) [IR3TIB01DEQ156N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IR3TIB01DEQ156N]"
     },
     {
       "fred_qd_group": "Interest Rates",
@@ -126,7 +126,7 @@
     {
       "fred_qd_group": "Money and Credit",
       "label": "credit_to_private_nonfin_sector",
-      "source": "BIS WS_TC [P]"
+      "source": "BIS WS_TC [Q.DE.P.A.M.770.A]"
     },
     {
       "fred_qd_group": "Money and Credit",
@@ -141,27 +141,32 @@
     {
       "fred_qd_group": "Household Balance Sheets",
       "label": "household_credit_to_gdp",
-      "source": "BIS WS_TC [H]"
+      "source": "BIS WS_TC [Q.DE.H.A.M.770.A]"
     },
     {
       "fred_qd_group": "Non-Household Balance Sheets",
       "label": "corporate_credit_to_gdp",
-      "source": "BIS WS_TC [N]"
+      "source": "BIS WS_TC [Q.DE.N.A.M.770.A]"
     },
     {
       "fred_qd_group": "Non-Household Balance Sheets",
       "label": "government_debt_to_gdp",
-      "source": "BIS WS_TC [G]"
+      "source": "BIS WS_TC [Q.DE.G.A.N.770.A]"
+    },
+    {
+      "fred_qd_group": "Non-Household Balance Sheets",
+      "label": "government_primary_balance_to_gdp",
+      "source": "Eurostat (gov_10q_ggnfa, government finance statistics) [gov_10q_ggnfa:Q.PC_GDP.NSA.S13.B9+D41PAY.DE]"
     },
     {
       "fred_qd_group": "Exchange Rates",
       "label": "fx_rate_to_usd",
-      "source": "OECD MEI / BIS (via FRED mirror) [CCUSMA02DEQ618N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CCUSMA02DEQ618N]"
     },
     {
       "fred_qd_group": "Exchange Rates",
       "label": "real_effective_exchange_rate",
-      "source": "OECD MEI / BIS (via FRED mirror) [CCRETT01DEQ661N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CCRETT01DEQ661N]"
     },
     {
       "fred_qd_group": "Other",
@@ -184,9 +189,19 @@
       "source": "Geopolitical Risk Index (Caldara-Iacoviello) [GPRC_DEU]"
     },
     {
+      "fred_qd_group": "Other",
+      "label": "financial_stress",
+      "source": "ECB Composite Indicator of Systemic Stress (CISS) [D.DE.Z0Z.4F.EC.SS_CIN.IDX]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "world_uncertainty_index",
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [WUIDEU]"
+    },
+    {
       "fred_qd_group": "Stock Markets",
       "label": "share_price_index",
-      "source": "OECD MEI / BIS (via FRED mirror) [SPASTT01DEQ661N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [SPASTT01DEQ661N]"
     },
     {
       "fred_qd_group": "Housing",
@@ -401,7 +416,13 @@
       "label": "government_debt_to_gdp",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 109 values within [-10, 400]."
+      "detail": "All 104 values within [-10, 400]."
+    },
+    {
+      "label": "government_primary_balance_to_gdp",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 97 values within [-150, 250]."
     },
     {
       "label": "fx_rate_to_usd",
@@ -438,6 +459,18 @@
       "category": "level_event_driven",
       "status": "PASS",
       "detail": "Positive throughout (167 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
+      "label": "financial_stress",
+      "category": "level_event_driven",
+      "status": "PASS",
+      "detail": "Positive throughout (187 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
+      "label": "world_uncertainty_index",
+      "category": "nonneg_event_driven",
+      "status": "PASS",
+      "detail": "All 297 values within [0, 100]."
     },
     {
       "label": "share_price_index",

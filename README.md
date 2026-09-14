@@ -67,7 +67,7 @@ R/                          Fetcher library used by build_country_panel.R,
                              live API (see header comments for verification
                              notes and corrections vs. earlier guesses)
   concept_dictionary.R      The single authored source of metadata for all
-                             41 concepts (FRED-QD group, mnemonic, notes,
+                             44 concepts (FRED-QD group, mnemonic, notes,
                              plausibility category) -- scripts/build_country_panel.R,
                              R/fred_qd_validation.R and R/plausibility_checks.R
                              all derive their working tables from this one
@@ -171,7 +171,7 @@ docs/
                              instead of keeping its own hand-copied table
   data_sources.csv           The data-sources registry -- see below
   candidate_indicators_austria.csv  Proposed (UNVERIFIED) Austrian sources
-                             for the 245 - 41 FRED-QD series not yet
+                             for the 245 - 44 FRED-QD series not yet
                              implemented -- see below
   generate_candidate_indicators.py  Regenerates the file above from
                              docs/Mohr_AUSTRIA-QD.tex + a hand-built
@@ -231,7 +231,7 @@ resolves in practice per run, and
 [docs/data_sources.csv](docs/data_sources.csv) for the exact provider/key
 used for every (country, concept) pair across all runs so far.
 
-**Every `<country>_panel.csv` has the same 41 columns, in the same order**
+**Every `<country>_panel.csv` has the same 44 columns, in the same order**
 (`date` plus one column per concept in `concept_group_map`, see
 [scripts/build_country_panel.R](scripts/build_country_panel.R)), regardless
 of which concepts actually resolved for that country -- a concept that
@@ -272,7 +272,7 @@ the top of `scripts/update_monthly.R`. To change the schedule, edit the
 `country, variable, provider, key, comment` -- with one row per (country,
 concept) pair the CLI has actually resolved or attempted, across every
 country it has been run for so far (USA, DEU, AUT). It is rewritten
-incrementally: running the CLI for a new country adds that country's 41
+incrementally: running the CLI for a new country adds that country's 44
 rows without touching any other country's; running it again for an
 existing country replaces just that country's rows.
 
@@ -388,10 +388,20 @@ and EC survey/geopolitical-risk concepts):
   watch out for "GPRC_AUS", which is Australia, not Austria, the same
   2-vs-3-letter code collision this project's own country-code table
   exists to prevent elsewhere).
+- **Three new concepts for debt-risk work** (added 2026-09-14): the
+  general-government primary balance (`government_primary_balance_to_gdp`,
+  EU members, Eurostat `gov_10q_ggnfa` -- the flow companion to the BIS
+  `government_debt_to_gdp` stock), financial stress
+  (`financial_stress`, every country the ECB covers, its country-level
+  CISS) and uncertainty (`world_uncertainty_index`, every country, the
+  World Uncertainty Index via FRED). Together with GDP, inflation and
+  the long-term rate they are the conditioning variables of the IMF's
+  debt-at-risk framework (Furceri et al., 2025). See `R/eurostat.R`,
+  `R/ecb.R` and `R/fred_mirror.R`.
 
 ## Candidate indicators (proposed, unverified)
 
-The 41 implemented concepts are representative anchors, not a 1:1
+The 44 implemented concepts are representative anchors, not a 1:1
 replication of FRED-QD's 245 series (see Overview above -- most of those
 245 are U.S.-specific and have no cross-country equivalent at all).
 [docs/candidate_indicators_austria.csv](docs/candidate_indicators_austria.csv)
@@ -589,7 +599,7 @@ just "made the warning go away"):
 
 ### FRED-QD group coverage
 
-41 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
+44 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
 groups on 2026-08-30; grew via several same-day extension passes -- see
 `R/fred_mirror.R`, `R/bis.R`, `R/eurostat.R`, `R/ecb.R`, `R/ec_survey.R`
 and `R/yahoo_finance.R` header comments for the full trail, including one
@@ -625,7 +635,8 @@ override exists -- see the fallback chain earlier in this README.
 | Household Balance Sheets | Household net worth (growth rate) | ECB `QSA_PUB` | Verified, but **euro-area aggregate only** -- no per-country series exists (see below) |
 | Household Balance Sheets | Household credit, % of GDP | BIS `WS_TC` v2.0, `TC_BORROWERS=H` | Verified -- AUT + DE + US; **country-specific**, unlike the ECB series above |
 | Non-Household Balance Sheets | Nonfinancial-corporation credit, % of GDP | BIS `WS_TC` v2.0, `TC_BORROWERS=N` | Verified -- AUT + DE + US |
-| Non-Household Balance Sheets | Government debt (BIS "credit to general government"), % of GDP | BIS `WS_TC` v2.0, `TC_BORROWERS=G` | Verified -- AUT + DE + US; genuinely cross-country (not EU-only), unlike most other overrides in this project -- FRED-QD's GFDEGDQ188S is US federal debt only, this is all levels of government combined |
+| Non-Household Balance Sheets | Government debt (BIS "credit to general government"), % of GDP | BIS `WS_TC` v2.0, `TC_BORROWERS=G`, `VALUATION=N` (nominal value) | Verified -- AUT + DE + US; genuinely cross-country (not EU-only), unlike most other overrides in this project -- FRED-QD's GFDEGDQ188S is US federal debt only, this is all levels of government combined. Nominal rather than market value since 2026-09-14: at market value the ratio moves with bond prices (Austria: 100.7% in 2020); at nominal value it tracks the Maastricht ratio (81.5% vs. 81.3% for 2025-Q4) |
+| Non-Household Balance Sheets | Government primary balance, % of GDP | **Eurostat** `gov_10q_ggnfa`, net lending `B9` plus interest payable `D41PAY`, not seasonally adjusted (EU members) | Verified -- AUT from 2001-Q1; EU-only, no FRED-QD or FRED-mirror equivalent. Not seasonally adjusted because Eurostat publishes no adjusted `D41PAY`; average four quarters to read it as an annual ratio |
 | Exchange Rates | FX rate to USD | OECD MEI via FRED (`CCUSMA02{cc}Q618N`) | Verified -- AUT + DEU; not applicable to USA itself |
 | Exchange Rates | Real effective exchange rate | OECD MEI via FRED (`CCRETT01{cc}Q661N`) | Verified -- AUT + DEU + USA |
 | Other | Consumer confidence | **EC Business and Consumer Survey** (EU members, live/current), else OECD MEI via FRED (`CSCICP03{cc}M665S`, stale) | Verified -- AUT + DEU via EC survey (current through 2026-Q3); USA via the stale FRED mirror (no EU-survey equivalent exists for non-EU countries) |
@@ -635,6 +646,8 @@ override exists -- see the fallback chain earlier in this README.
 | Other | Heating degree days | **Eurostat** `nrg_chdd_m` (official, ~9 months behind) spliced with level-calibrated **ERA5 via Open-Meteo** (~5 days behind, back to 1940) | Verified -- AUT + DEU via both sources; USA via Open-Meteo alone (uncalibrated -- Eurostat publishes no cross-check for it). ERA5-vs-Eurostat correlation 0.996 (AUT) / 0.999 (DEU) over 552 months. Not resolved for countries with neither a city set nor Eurostat coverage |
 | Other | Cooling degree days | Same sources as heating degree days | Verified -- ERA5-vs-Eurostat correlation 0.975 (AUT) / 0.970 (DEU) over 552 months; legitimately 0.00 for whole winters, which is why both degree-day concepts get their own plausibility category |
 | Other | Geopolitical risk | **GPR Index** (Caldara-Iacoviello), country-specific for 44 countries, else the global index | Verified -- DEU + USA via their own country-specific series; AUT via the global index (confirmed absent from the 44); genuinely cross-country, no FRED-QD equivalent |
+| Other | Financial stress | **ECB** `CISS`, the country-level Composite Indicator of Systemic Stress, daily averaged to quarters | Verified -- AUT (from 1999-Q1) + DEU + USA (from 1980-Q1); published beyond the euro area, so attempted for every country; no FRED-QD equivalent |
+| Other | World Uncertainty Index | Ahir-Bloom-Furceri WUI via FRED (`WUI{cc3}`, alpha-3 code) | Verified -- AUT + DEU + USA, current through 2026-Q2; genuine zeros in some early quarters; no FRED-QD equivalent |
 | Stock Markets | Share price index | **ATX via Yahoo Finance** (Austria specifically), else OECD MEI via FRED (`SPASTT01{cc}Q661N`) | Verified -- AUT via Yahoo Finance (current through 2026-Q3); DEU + USA via the OECD-mirror proxy |
 
 ### Known issues
@@ -747,7 +760,7 @@ This is exactly what caught both discoveries above on its first live run.
   paper over with quarter-repeated annual values. Worth revisiting as a
   SEPARATE annual output file (fiscal balance, potential output, output
   gap, etc. -- concepts genuinely absent from both FRED-QD and this
-  project's current 41) rather than forcing it into `<country>_panel.csv`.
+  project's current 44) rather than forcing it into `<country>_panel.csv`.
 
 ### Non-goals (deliberate, carried over from the original script)
 

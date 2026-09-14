@@ -78,3 +78,17 @@ test_that("other_groups table has one row per FRED-QD group it targets, each wit
   expect_true(all(grepl("\\{cc2\\}|\\{cc3\\}", other_groups$id_template)))
   expect_true(all(other_groups$frequency %in% c("Q", "M")))
 })
+
+test_that("world_uncertainty_index resolves by the alpha-3 code (WUIAUT), not FRED's 2-letter code", {
+  row <- other_groups[other_groups$label == "world_uncertainty_index", ]
+  expect_equal(nrow(row), 1)
+  captured_url <- NULL
+  mock <- function(url, ...) { captured_url <<- url; "observation_date,WUIAUT\n2026-01-01,0.8976661\n2026-04-01,1.1060930\n" }
+  with_mock_fetch_text(mock, {
+    out <- fetch_other_group_series(row$id_template, row$frequency, "AT", "AUT", row$label,
+                                     row$fred_qd_group, row$source)
+  })
+  expect_match(captured_url, "id=WUIAUT", fixed = TRUE)
+  expect_equal(names(out), c("date", "world_uncertainty_index"))
+  expect_equal(out$world_uncertainty_index, c(0.8976661, 1.1060930))
+})

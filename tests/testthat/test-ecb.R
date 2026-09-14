@@ -155,3 +155,51 @@ test_that("fetch_ecb_household_mortgage_loans warns and returns NULL when the re
   })
   expect_null(out)
 })
+
+## Fixture mirrors the real shape confirmed live against
+## data-api.ecb.europa.eu (dataflow CISS, format=csvdata) on 2026-09-14:
+## daily, with rows that carry an empty OBS_VALUE before the country's
+## coverage starts (Austria's first non-missing day is 1999-01-05).
+ecb_ciss_fixture <- paste(
+  "KEY,FREQ,REF_AREA,CURRENCY,PROVIDER_FM,INSTRUMENT_FM,PROVIDER_FM_ID,DATA_TYPE_FM,TIME_PERIOD,OBS_VALUE,OBS_STATUS",
+  "CISS.D.AT.Z0Z.4F.EC.SS_CIN.IDX,D,AT,Z0Z,4F,EC,SS_CIN,IDX,1999-01-04,,M",
+  "CISS.D.AT.Z0Z.4F.EC.SS_CIN.IDX,D,AT,Z0Z,4F,EC,SS_CIN,IDX,1999-01-05,0.020,A",
+  "CISS.D.AT.Z0Z.4F.EC.SS_CIN.IDX,D,AT,Z0Z,4F,EC,SS_CIN,IDX,1999-02-15,0.040,A",
+  "CISS.D.AT.Z0Z.4F.EC.SS_CIN.IDX,D,AT,Z0Z,4F,EC,SS_CIN,IDX,1999-04-01,0.100,A",
+  sep = "\n"
+)
+
+ecb_ciss_not_found_fixture <- '{"type":"/service/data/CISS/D.XX.Z0Z.4F.EC.SS_CIN.IDX","title":"Not Found","status":404,"detail":"No Series was returned for the query"}'
+
+test_that("fetch_ecb_ciss averages daily values to quarters, skipping days with an empty value", {
+  with_mock_fetch_text(const_fetch_text(ecb_ciss_fixture), {
+    out <- fetch_ecb_ciss("AUT")
+  })
+  expect_equal(names(out), c("date", "financial_stress"))
+  expect_equal(out$date, as.Date(c("1999-01-01", "1999-04-01")))
+  expect_equal(out$financial_stress, c(0.03, 0.10))
+  expect_equal(attr(out, "key"), "D.AT.Z0Z.4F.EC.SS_CIN.IDX")
+})
+
+test_that("fetch_ecb_ciss builds the confirmed 7-segment daily key and a day-precision startPeriod", {
+  captured_url <- NULL
+  with_mock_fetch_text(function(url, ...) { captured_url <<- url; ecb_ciss_fixture }, {
+    fetch_ecb_ciss("USA", start_period = "1980-Q1")
+  })
+  expect_match(captured_url, "/CISS/D.US.Z0Z.4F.EC.SS_CIN.IDX?", fixed = TRUE)
+  expect_match(captured_url, "startPeriod=1980-01-01", fixed = TRUE)
+})
+
+test_that("fetch_ecb_ciss warns and returns NULL when the ECB publishes no CISS for a country", {
+  with_mock_fetch_text(const_fetch_text(ecb_ciss_not_found_fixture), {
+    expect_warning(out <- fetch_ecb_ciss("DEU"), "publishes no CISS")
+  })
+  expect_null(out)
+})
+
+test_that("fetch_ecb_ciss warns and returns NULL when the request fails outright", {
+  with_mock_fetch_text(failing_fetch_text(), {
+    expect_warning(out <- fetch_ecb_ciss("AUT"), "ECB CISS fetch failed")
+  })
+  expect_null(out)
+})

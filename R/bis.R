@@ -68,9 +68,22 @@ bis_landing_dir <- "data/landing"
 ## 2020-Q1; AT/G = 76.5% of GDP, DE/G = 58.9% of GDP, US/G = 111.0% of GDP,
 ## all 2025-Q4).
 
-#' Local cache path for one sector's all-countries bulk pull
-bis_landing_path <- function(tc_borrowers, landing_dir = bis_landing_dir) {
-  file.path(landing_dir, sprintf("bis_credit_%s.csv", tc_borrowers))
+## VALUATION: "M" (market value) is used for the three private-sector
+## concepts, as since the first pass. General government ("G") is taken at
+## "N" (NOMINAL value) instead -- changed 2026-09-14. At market value a
+## government's bonds are revalued with their prices, so the ratio moves
+## with interest rates even when not a euro of debt is issued or repaid:
+## confirmed live that Austria's market-value ratio peaked at 100.7% of
+## GDP in the low-yield year 2020 and read 75.2% in 2025-Q4, while the
+## nominal-value series reads 81.5% for 2025-Q4 -- against 81.3% for the
+## Maastricht debt ratio in Eurostat's gov_10q_ggdebt, the concept debt
+## statistics and debt-sustainability work actually use. The nominal
+## series is published for AT and DE from 2000-Q1 and for the US from
+## 1947-Q4 (all confirmed live).
+
+#' Local cache path for one sector's all-countries bulk pull at one valuation
+bis_landing_path <- function(tc_borrowers, landing_dir = bis_landing_dir, valuation = "M") {
+  file.path(landing_dir, sprintf("bis_credit_%s_%s.csv", tc_borrowers, valuation))
 }
 
 #' Fetch BIS credit-to-GDP for ALL countries at once, for one borrower
@@ -86,14 +99,14 @@ bis_landing_path <- function(tc_borrowers, landing_dir = bis_landing_dir) {
 #' requesting more history. Delete the cache file to force a refresh
 #' (same manual-refresh convention as `data/bronze/`'s OECD pulls).
 fetch_bis_credit_bulk <- function(tc_borrowers, start_period = "1995-Q1",
-                                   landing_dir = bis_landing_dir) {
-  cache_path <- bis_landing_path(tc_borrowers, landing_dir)
+                                   landing_dir = bis_landing_dir, valuation = "M") {
+  cache_path <- bis_landing_path(tc_borrowers, landing_dir, valuation)
   if (file.exists(cache_path)) {
     return(suppressMessages(readr::read_csv(cache_path, show_col_types = FALSE)))
   }
 
   dims <- c(FREQ = "Q", BORROWERS_CTY = "", TC_BORROWERS = tc_borrowers,
-            TC_LENDERS = "A", VALUATION = "M", UNIT_TYPE = "770", TC_ADJUST = "A")
+            TC_LENDERS = "A", VALUATION = valuation, UNIT_TYPE = "770", TC_ADJUST = "A")
   key <- build_sdmx_key(dims[bis_wstc_dims])
   url <- paste0(
     "https://stats.bis.org/api/v2/data/dataflow/BIS/WS_TC/2.0/", key,
@@ -133,8 +146,10 @@ fetch_bis_credit_bulk <- function(tc_borrowers, start_period = "1995-Q1",
 fetch_bis_credit <- function(country2, tc_borrowers = "P",
                               label = "credit_to_private_nonfin_sector",
                               start_period = "1995-Q1",
-                              landing_dir = bis_landing_dir) {
-  bulk <- fetch_bis_credit_bulk(tc_borrowers, start_period = start_period, landing_dir = landing_dir)
+                              landing_dir = bis_landing_dir,
+                              valuation = "M") {
+  bulk <- fetch_bis_credit_bulk(tc_borrowers, start_period = start_period,
+                                landing_dir = landing_dir, valuation = valuation)
   if (is.null(bulk)) return(NULL)
 
   out <- bulk %>%

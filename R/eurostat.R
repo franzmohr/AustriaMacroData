@@ -294,3 +294,87 @@ fetch_eurostat_ulc <- function(country3, label = "unit_labor_cost",
 
   quarterly %>% dplyr::mutate(date = period_to_date(.data$period)) %>% dplyr::select(-period)
 }
+
+## ---------------------------------------------------------------
+## Quarterly government finance statistics (gov_10q_ggnfa), for the
+## concept `government_primary_balance_to_gdp` -- the flow companion to
+## the `government_debt_to_gdp` stock from R/bis.R.
+##
+## STATUS: VERIFIED 2026-09-14 against Eurostat's SDMX 2.1 API, a real 200
+## response for AT with data from 2001-Q1 through 2026-Q1. Dimension order
+## (6 key segments before TIME_PERIOD), confirmed from the response's own
+## header row: FREQ.UNIT.S_ADJ.SECTOR.NA_ITEM.GEO. UNIT = "PC_GDP"
+## (percentage of GDP), SECTOR = "S13" (general government).
+##
+## The primary balance is not published as an NA_ITEM of its own, so it is
+## built as net lending/borrowing (B9) plus interest payable (D41PAY), the
+## balance before interest. Two traps, both confirmed live:
+##   - the interest NA_ITEM is "D41PAY"; plain "D41" is not valid for this
+##     dataflow and comes back as a SOAP Fault rather than an empty response;
+##   - S_ADJ = "SCA" is published for B9 but returns zero rows for D41PAY,
+##     so both components are taken NOT seasonally adjusted ("NSA"). An
+##     adjusted B9 plus an unadjusted D41PAY would be neither.
+## Both components come from ONE request ("B9+D41PAY", SDMX's OR operator),
+## and a quarter is kept only if both are present.
+##
+## The ratio is to the same quarter's GDP, so a quarterly value has the
+## magnitude of an annual ratio but a seasonal pattern; a four-quarter
+## average is the usual way to read it.
+## ---------------------------------------------------------------
+
+eurostat_gov_dataflow <- "gov_10q_ggnfa"
+
+#' Fetch the general-government primary balance (% of GDP, not seasonally
+#' adjusted) for one EU country, or NULL if the country isn't an EU member
+#' or Eurostat doesn't publish both components for it
+fetch_eurostat_primary_balance <- function(country3, label = "government_primary_balance_to_gdp",
+                                            start_period = "1995-Q1") {
+  if (!country3 %in% eu_member_countries) return(NULL)
+  geo <- lookup_ec_country2(country3)
+  if (is.na(geo)) return(NULL)
+
+  key <- paste("Q", "PC_GDP", "NSA", "S13", "B9+D41PAY", geo, sep = ".")
+  url <- sprintf(
+    "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/%s/%s?format=SDMX-CSV&startPeriod=%s",
+    eurostat_gov_dataflow, key, start_period
+  )
+
+  txt <- fetch_text(url)
+  if (is.null(txt)) {
+    warning(sprintf("[%s] Eurostat government finance fetch failed -- URL: %s", label, url))
+    return(NULL)
+  }
+  if (stringr::str_detect(txt, stringr::regex("S:Fault|faultstring", ignore_case = TRUE))) {
+    warning(sprintf("[%s] Eurostat government finance has no observations for key '%s'", label, key))
+    return(NULL)
+  }
+
+  df <- suppressWarnings(readr::read_csv(txt, show_col_types = FALSE))
+  if (!all(c("na_item", "TIME_PERIOD", "OBS_VALUE") %in% names(df))) {
+    warning(sprintf("[%s] Eurostat government finance: unexpected response shape, inspect manually", label))
+    return(NULL)
+  }
+
+  components <- df %>%
+    dplyr::transmute(period = .data$TIME_PERIOD, na_item = .data$na_item,
+                     value = as.numeric(.data$OBS_VALUE)) %>%
+    dplyr::distinct(period, na_item, .keep_all = TRUE) %>%
+    tidyr::pivot_wider(names_from = "na_item", values_from = "value")
+  if (!all(c("B9", "D41PAY") %in% names(components))) {
+    warning(sprintf("[%s] Eurostat did not return both B9 and D41PAY for key '%s' -- the primary balance needs both", label, key))
+    return(NULL)
+  }
+
+  ## Eurostat publishes both components to one decimal, so their sum is
+  ## rounded back to one decimal rather than carrying floating-point noise.
+  out <- components %>%
+    dplyr::filter(!is.na(.data$B9), !is.na(.data$D41PAY)) %>%
+    dplyr::transmute(date = period_to_date(.data$period),
+                     !!label := round(.data$B9 + .data$D41PAY, 1)) %>%
+    dplyr::arrange(.data$date)
+  if (nrow(out) == 0) {
+    warning(sprintf("[%s] Eurostat has no quarter with both B9 and D41PAY for key '%s'", label, key))
+    return(NULL)
+  }
+  out
+}

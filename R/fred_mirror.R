@@ -105,6 +105,13 @@ get_fred_series <- function(fred_id) {
 ## PPI (PIEAMP01/PIEATI01{cc2}Q661N, data stops 2022) and business
 ## confidence (BSCICP03{cc2}M665S, data stops 2024 -- same frozen-mirror
 ## issue as cpi_index/consumer_confidence above).
+##
+## ADDED 2026-09-14: world_uncertainty_index, WUI{cc3} -- FRED's mirror of
+## the World Uncertainty Index of Ahir, Bloom and Furceri (2022). Unlike
+## the OECD MEI family it is keyed by the ISO-3166 ALPHA-3 code (WUIAUT,
+## WUIDEU, WUIUSA), confirmed with a real, current (2026-Q2) 200 response
+## for all three. Its early quarters contain genuine zeros (WUIAUT reads
+## 0 in 1963-Q4 and 1964-Q1), hence its own plausibility category.
 other_groups <- tibble::tribble(
   ~fred_qd_group,                       ~label,                          ~id_template,             ~frequency, ~source,
   "Industrial Production",              "industrial_production",        "{cc3}PROINDQISMEI",      "Q",        "OECD MEI (via FRED)",
@@ -119,7 +126,8 @@ other_groups <- tibble::tribble(
   "Other",                              "consumer_confidence",           "CSCICP03{cc2}M665S",     "M",        "OECD MEI (via FRED)",
   "Housing",                            "house_price_real",              "Q{cc2}R628BIS",          "Q",        "BIS Residential Property Prices (via FRED)",
   "Inventories, Orders, and Sales",     "retail_sales_volume",           "{cc3}SARTQISMEI",        "Q",        "OECD MEI (via FRED)",
-  "Stock Markets",                      "share_price_index",             "SPASTT01{cc2}Q661N",     "Q",        "OECD MEI (via FRED)"
+  "Stock Markets",                      "share_price_index",             "SPASTT01{cc2}Q661N",     "Q",        "OECD MEI (via FRED)",
+  "Other",                              "world_uncertainty_index",       "WUI{cc3}",               "Q",        "World Uncertainty Index (via FRED)"
 )
 
 #' Average a monthly series up to quarterly (calendar quarters, simple mean)

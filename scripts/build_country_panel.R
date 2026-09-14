@@ -213,23 +213,29 @@ panel <- anchor_merged %>% dplyr::mutate(date = period_to_date(.data$period)) %>
 ## genuinely cross-country (not EU-only) source via the same
 ## already-verified dataflow used for the other three sectors -- see
 ## R/bis.R's header comment for the confirmed CL_TC_BORROWERS codelist.
+## CHANGED 2026-09-14: general government is taken at NOMINAL value
+## (VALUATION=N) rather than market value -- see R/bis.R's header for why
+## a market-value debt ratio moves with bond prices.
 bis_credit_concepts <- tibble::tribble(
-  ~label,                             ~tc_borrowers,
-  "credit_to_private_nonfin_sector",  "P",
-  "household_credit_to_gdp",          "H",
-  "corporate_credit_to_gdp",          "N",
-  "government_debt_to_gdp",           "G"
+  ~label,                             ~tc_borrowers, ~valuation,
+  "credit_to_private_nonfin_sector",  "P",           "M",
+  "household_credit_to_gdp",          "H",           "M",
+  "corporate_credit_to_gdp",          "N",           "M",
+  "government_debt_to_gdp",           "G",           "N"
 )
 if (!is.na(country2)) {
   message("Fetching Money and Credit from BIS for ", country2, "...")
   for (i in seq_len(nrow(bis_credit_concepts))) {
     lbl <- bis_credit_concepts$label[i]
     tcb <- bis_credit_concepts$tc_borrowers[i]
-    credit <- fetch_bis_credit(country2, tc_borrowers = tcb, label = lbl, start_period = start_period)
+    val <- bis_credit_concepts$valuation[i]
+    credit <- fetch_bis_credit(country2, tc_borrowers = tcb, label = lbl,
+                               start_period = start_period, valuation = val)
     if (!is.null(credit)) {
       credit <- credit %>% dplyr::mutate(date = period_to_date(.data$period)) %>% dplyr::select(-period)
       panel <- dplyr::full_join(panel, credit, by = "date")
-      concept_source[[lbl]] <- list(provider = "BIS_WSTC", key = tcb)
+      concept_source[[lbl]] <- list(provider = "BIS_WSTC",
+                                    key = sprintf("Q.%s.%s.A.%s.770.A", country2, tcb, val))
     }
   }
 } else {
@@ -245,6 +251,35 @@ gpr <- fetch_geopolitical_risk(country, start_period = start_period)
 if (!is.null(gpr)) {
   panel <- dplyr::full_join(panel, gpr, by = "date")
   concept_source[["geopolitical_risk"]] <- list(provider = "GPR", key = attr(gpr, "source_col"))
+}
+
+## =====================================================================
+## 2c. Financial stress (ECB country-level CISS) -- attempted for every
+##     country, since the ECB publishes it beyond the euro area (confirmed
+##     live for AT, DE and US); resolves to NA where no series exists
+##     (see R/ecb.R)
+## =====================================================================
+ciss <- fetch_ecb_ciss(country, start_period = start_period)
+if (!is.null(ciss)) {
+  panel <- dplyr::full_join(panel, ciss, by = "date")
+  concept_source[["financial_stress"]] <- list(provider = "ECB_CISS", key = attr(ciss, "key"))
+}
+
+## =====================================================================
+## 2d. EU-specific: general-government primary balance from Eurostat's
+##     quarterly government finance statistics (see R/eurostat.R). A new
+##     concept with no non-EU fallback, so it resolves to NA for the US.
+## =====================================================================
+if (country %in% eu_member_countries) {
+  message("Country is an EU member -- fetching the government primary balance from Eurostat...")
+  primary_balance <- fetch_eurostat_primary_balance(country, start_period = start_period)
+  if (!is.null(primary_balance)) {
+    panel <- dplyr::full_join(panel, primary_balance, by = "date")
+    concept_source[["government_primary_balance_to_gdp"]] <- list(
+      provider = "EUROSTAT_GOV",
+      key = sprintf("%s:Q.PC_GDP.NSA.S13.B9+D41PAY.%s", eurostat_gov_dataflow, lookup_ec_country2(country))
+    )
+  }
 }
 
 ## =====================================================================
@@ -486,10 +521,12 @@ provider_display_names <- c(
   ECB_QSA_PUB = "ECB QSA_PUB (euro-area aggregate, not country-specific)",
   ECB_MIR = "ECB MFI Interest Rate Statistics (MIR)",
   ECB_BSI = "ECB MFI Balance Sheet Items (BSI)",
-  FRED_MIRROR = "OECD MEI / BIS (via FRED mirror)",
+  ECB_CISS = "ECB Composite Indicator of Systemic Stress (CISS)",
+  FRED_MIRROR = "OECD MEI / BIS / World Uncertainty Index (via FRED mirror)",
   EC_BCS = "European Commission Business and Consumer Survey",
   EUROSTAT_HICP = "Eurostat (prc_hicp_midx, HICP)",
   EUROSTAT_ULC = "Eurostat (namq_10_lp_ulc, hours-based ULC)",
+  EUROSTAT_GOV = "Eurostat (gov_10q_ggnfa, government finance statistics)",
   YAHOO_FINANCE = "Yahoo Finance",
   GPR = "Geopolitical Risk Index (Caldara-Iacoviello)",
   EUROSTAT_CHDD = "Eurostat (nrg_chdd_m, degree days)",

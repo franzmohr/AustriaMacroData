@@ -216,3 +216,66 @@ test_that("fetch_eurostat_ulc warns and returns NULL when the request fails outr
   })
   expect_null(out)
 })
+
+## Fixture mirrors the real shape confirmed live against
+## ec.europa.eu/eurostat's SDMX 2.1 API on 2026-09-14
+## (gov_10q_ggnfa, format=SDMX-CSV, key Q.PC_GDP.NSA.S13.B9+D41PAY.AT):
+## both components arrive in one long response, told apart by na_item.
+## The 2026-Q2 row has B9 but no D41PAY, to exercise the both-or-nothing rule.
+eurostat_gov_fixture <- paste(
+  "DATAFLOW,LAST UPDATE,freq,unit,s_adj,sector,na_item,geo,TIME_PERIOD,OBS_VALUE,OBS_FLAG,CONF_STATUS",
+  "ESTAT:GOV_10Q_GGNFA(1.0),21/07/26 11:00:00,Q,PC_GDP,NSA,S13,B9,AT,2025-Q4,-5.1,,",
+  "ESTAT:GOV_10Q_GGNFA(1.0),21/07/26 11:00:00,Q,PC_GDP,NSA,S13,B9,AT,2026-Q1,-3.9,p,",
+  "ESTAT:GOV_10Q_GGNFA(1.0),21/07/26 11:00:00,Q,PC_GDP,NSA,S13,B9,AT,2026-Q2,-2.0,p,",
+  "ESTAT:GOV_10Q_GGNFA(1.0),21/07/26 11:00:00,Q,PC_GDP,NSA,S13,D41PAY,AT,2025-Q4,1.6,,",
+  "ESTAT:GOV_10Q_GGNFA(1.0),21/07/26 11:00:00,Q,PC_GDP,NSA,S13,D41PAY,AT,2026-Q1,1.7,p,",
+  sep = "\n"
+)
+
+test_that("fetch_eurostat_primary_balance adds interest payable back to net lending, quarter by quarter", {
+  with_mock_fetch_text(const_fetch_text(eurostat_gov_fixture), {
+    out <- fetch_eurostat_primary_balance("AUT")
+  })
+  expect_equal(names(out), c("date", "government_primary_balance_to_gdp"))
+  expect_equal(out$date, as.Date(c("2025-10-01", "2026-01-01")))
+  expect_equal(out$government_primary_balance_to_gdp, c(-3.5, -2.2))
+})
+
+test_that("fetch_eurostat_primary_balance returns NULL for a non-EU country without any network call", {
+  called <- FALSE
+  with_mock_fetch_text(function(url, ...) { called <<- TRUE; eurostat_gov_fixture }, {
+    out <- fetch_eurostat_primary_balance("USA")
+  })
+  expect_null(out)
+  expect_false(called)
+})
+
+test_that("fetch_eurostat_primary_balance requests both NSA components in one 6-segment key", {
+  captured_url <- NULL
+  with_mock_fetch_text(function(url, ...) { captured_url <<- url; eurostat_gov_fixture }, {
+    fetch_eurostat_primary_balance("AUT")
+  })
+  expect_true(grepl("gov_10q_ggnfa/Q.PC_GDP.NSA.S13.B9+D41PAY.AT", captured_url, fixed = TRUE))
+})
+
+test_that("fetch_eurostat_primary_balance warns and returns NULL when a component is missing entirely", {
+  b9_only <- paste(strsplit(eurostat_gov_fixture, "\n")[[1]][1:4], collapse = "\n")
+  with_mock_fetch_text(const_fetch_text(b9_only), {
+    expect_warning(out <- fetch_eurostat_primary_balance("AUT"), "both B9 and D41PAY")
+  })
+  expect_null(out)
+})
+
+test_that("fetch_eurostat_primary_balance warns and returns NULL on a SOAP Fault (e.g. NA_ITEM=D41)", {
+  with_mock_fetch_text(const_fetch_text(eurostat_fault_fixture), {
+    expect_warning(out <- fetch_eurostat_primary_balance("AUT"), "no observations")
+  })
+  expect_null(out)
+})
+
+test_that("fetch_eurostat_primary_balance warns and returns NULL when the request fails outright", {
+  with_mock_fetch_text(failing_fetch_text(), {
+    expect_warning(out <- fetch_eurostat_primary_balance("AUT"), "government finance fetch failed")
+  })
+  expect_null(out)
+})

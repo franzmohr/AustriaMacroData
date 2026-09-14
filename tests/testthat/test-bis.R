@@ -19,7 +19,7 @@ test_that("fetch_bis_credit_bulk parses a successful all-countries response and 
   })
   expect_equal(names(out), c("country2", "period", "value"))
   expect_setequal(out$country2, c("DE", "US"))
-  expect_true(file.exists(file.path(landing_dir, "bis_credit_P.csv")))
+  expect_true(file.exists(file.path(landing_dir, "bis_credit_P_M.csv")))
 })
 
 test_that("fetch_bis_credit_bulk reads from the cache on a second call, without hitting the network again", {
@@ -83,4 +83,18 @@ test_that("fetch_bis_credit_bulk warns and returns NULL when the request fails o
 test_that("BIS key uses the verified 7-dimension WS_TC order (FREQ.BORROWERS_CTY.TC_BORROWERS.TC_LENDERS.VALUATION.UNIT_TYPE.TC_ADJUST)", {
   expect_equal(bis_wstc_dims,
                c("FREQ", "BORROWERS_CTY", "TC_BORROWERS", "TC_LENDERS", "VALUATION", "UNIT_TYPE", "TC_ADJUST"))
+})
+
+test_that("fetch_bis_credit requests and caches the valuation it is given, separately from the default", {
+  landing_dir <- tempfile()
+  on.exit(unlink(landing_dir, recursive = TRUE), add = TRUE)
+
+  captured_url <- NULL
+  with_mock_fetch_text(function(url, ...) { captured_url <<- url; bis_credit_bulk_fixture }, {
+    fetch_bis_credit("DE", tc_borrowers = "G", label = "government_debt_to_gdp",
+                     landing_dir = landing_dir, valuation = "N")
+  })
+  expect_match(captured_url, "/WS_TC/2.0/Q..G.A.N.770.A?", fixed = TRUE)
+  expect_true(file.exists(file.path(landing_dir, "bis_credit_G_N.csv")))
+  expect_false(file.exists(file.path(landing_dir, "bis_credit_G_M.csv")))
 })

@@ -1,6 +1,6 @@
 {
   "country": "USA",
-  "generated_at": "2026-09-07T09:27:31Z",
+  "generated_at": "2026-09-14T09:40:53Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -36,72 +36,72 @@
     {
       "fred_qd_group": "Industrial Production",
       "label": "industrial_production",
-      "source": "OECD MEI / BIS (via FRED mirror) [USAPROINDQISMEI]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [USAPROINDQISMEI]"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
       "label": "unemployment_rate",
-      "source": "OECD MEI / BIS (via FRED mirror) [LRHUTTTTUSQ156S]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [LRHUTTTTUSQ156S]"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
       "label": "employment_rate",
-      "source": "OECD MEI / BIS (via FRED mirror) [LREM64TTUSQ156S]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [LREM64TTUSQ156S]"
     },
     {
       "fred_qd_group": "Housing",
       "label": "house_price_real",
-      "source": "OECD MEI / BIS (via FRED mirror) [QUSR628BIS]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [QUSR628BIS]"
     },
     {
       "fred_qd_group": "Prices",
       "label": "cpi_index",
-      "source": "OECD MEI / BIS (via FRED mirror) [CPALTT01USQ657N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CPALTT01USQ657N]"
     },
     {
       "fred_qd_group": "Earnings and Productivity",
       "label": "unit_labor_cost",
-      "source": "OECD MEI / BIS (via FRED mirror) [ULQEUL01USQ657S]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [ULQEUL01USQ657S]"
     },
     {
       "fred_qd_group": "Interest Rates",
       "label": "long_term_rate",
-      "source": "OECD MEI / BIS (via FRED mirror) [IRLTLT01USQ156N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IRLTLT01USQ156N]"
     },
     {
       "fred_qd_group": "Interest Rates",
       "label": "short_term_rate",
-      "source": "OECD MEI / BIS (via FRED mirror) [IR3TIB01USQ156N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IR3TIB01USQ156N]"
     },
     {
       "fred_qd_group": "Money and Credit",
       "label": "credit_to_private_nonfin_sector",
-      "source": "BIS WS_TC [P]"
+      "source": "BIS WS_TC [Q.US.P.A.M.770.A]"
     },
     {
       "fred_qd_group": "Household Balance Sheets",
       "label": "household_credit_to_gdp",
-      "source": "BIS WS_TC [H]"
+      "source": "BIS WS_TC [Q.US.H.A.M.770.A]"
     },
     {
       "fred_qd_group": "Non-Household Balance Sheets",
       "label": "corporate_credit_to_gdp",
-      "source": "BIS WS_TC [N]"
+      "source": "BIS WS_TC [Q.US.N.A.M.770.A]"
     },
     {
       "fred_qd_group": "Non-Household Balance Sheets",
       "label": "government_debt_to_gdp",
-      "source": "BIS WS_TC [G]"
+      "source": "BIS WS_TC [Q.US.G.A.N.770.A]"
     },
     {
       "fred_qd_group": "Exchange Rates",
       "label": "real_effective_exchange_rate",
-      "source": "OECD MEI / BIS (via FRED mirror) [CCRETT01USQ661N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CCRETT01USQ661N]"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_confidence",
-      "source": "OECD MEI / BIS (via FRED mirror) [CSCICP03USM665S]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CSCICP03USM665S]"
     },
     {
       "fred_qd_group": "Other",
@@ -109,9 +109,19 @@
       "source": "Geopolitical Risk Index (Caldara-Iacoviello) [GPRC_USA]"
     },
     {
+      "fred_qd_group": "Other",
+      "label": "financial_stress",
+      "source": "ECB Composite Indicator of Systemic Stress (CISS) [D.US.Z0Z.4F.EC.SS_CIN.IDX]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "world_uncertainty_index",
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [WUIUSA]"
+    },
+    {
       "fred_qd_group": "Stock Markets",
       "label": "share_price_index",
-      "source": "OECD MEI / BIS (via FRED mirror) [SPASTT01USQ661N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [SPASTT01USQ661N]"
     },
     {
       "fred_qd_group": "Other",
@@ -176,6 +186,10 @@
     {
       "fred_qd_group": "Household Balance Sheets",
       "label": "euro_area_household_net_worth_growth"
+    },
+    {
+      "fred_qd_group": "Non-Household Balance Sheets",
+      "label": "government_primary_balance_to_gdp"
     },
     {
       "fred_qd_group": "Exchange Rates",
@@ -388,6 +402,12 @@
       "detail": "All 264 values within [-10, 400]."
     },
     {
+      "label": "government_primary_balance_to_gdp",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
       "label": "fx_rate_to_usd",
       "category": "level",
       "status": "NO_DATA",
@@ -422,6 +442,18 @@
       "category": "level_event_driven",
       "status": "PASS",
       "detail": "Positive throughout (167 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
+      "label": "financial_stress",
+      "category": "level_event_driven",
+      "status": "PASS",
+      "detail": "Positive throughout (187 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
+      "label": "world_uncertainty_index",
+      "category": "nonneg_event_driven",
+      "status": "PASS",
+      "detail": "All 298 values within [0, 100]."
     },
     {
       "label": "share_price_index",

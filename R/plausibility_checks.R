@@ -9,7 +9,7 @@
 ## a NEW country (say, FRA or POL) has no analogous ground truth to
 ## compare against -- until now, their only recourse was to eyeball
 ## <country>_panel.csv and docs/data_sources.csv by hand, concept by
-## concept, with no automated signal pointing at which of the 41 columns
+## concept, with no automated signal pointing at which of the 44 columns
 ## might actually be wrong (a wrong SDMX dimension picking the wrong
 ## sector, a units mismatch, a sign error, ...).
 ##
@@ -50,6 +50,12 @@
 ## would flag it on every real crisis, forever, teaching researchers to
 ## ignore the tool rather than trust it.
 ##
+## "nonneg_event_driven" (currently just world_uncertainty_index) is the
+## same idea for an index that is legitimately 0 in some quarters: a
+## word-count index reads 0 whenever a report happens not to use the word,
+## so it gets a non-negative range check instead of the positivity check,
+## and no jump check (a move from 0 to anything is an infinite % change).
+##
 ## These are DELIBERATELY loose, heuristic bounds, not authoritative
 ## thresholds -- the goal is to flag the small number of concepts most
 ## likely to reward a researcher's limited manual-verification time
@@ -58,7 +64,7 @@
 ## wrong -- it is a prioritized to-do list.
 ## ---------------------------------------------------------------
 
-## Category assignment for all 41 concepts, derived from
+## Category assignment for all 44 concepts, derived from
 ## R/concept_dictionary.R's `plausibility_category` column -- the single
 ## authored source for this and every other piece of concept-level
 ## metadata (see that file's header for why this used to be its own
@@ -119,7 +125,8 @@ plausibility_bounds <- list(
   percent         = c(-10, 400),
   balance         = c(-150, 250),
   growth          = c(-50, 50),
-  nonneg_seasonal = c(0, 4000)
+  nonneg_seasonal = c(0, 4000),
+  nonneg_event_driven = c(0, 100)
 )
 
 jump_threshold <- 0.90     # flag |quarter-over-quarter % change| above this, "level" category only

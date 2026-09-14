@@ -1,6 +1,6 @@
 ## ---------------------------------------------------------------
 ## concept_dictionary.R -- the single authored source of metadata for
-## every one of this project's 41 FRED-QD-style concepts
+## every one of this project's 44 FRED-QD-style concepts
 ##
 ## MOTIVATION: before this file existed, the same concept-level facts
 ## (which FRED-QD group a concept belongs to, its FRED-QD mnemonic, its
@@ -58,7 +58,7 @@
 ##                          every non-USA row's `comment` in
 ##                          docs/data_sources.csv.
 ##   plausibility_category    One of "percent", "balance", "growth",
-##                          "level" or "level_event_driven" -- see
+##                          "level", "level_event_driven", "nonneg_seasonal" or "nonneg_event_driven" -- see
 ##                          R/plausibility_checks.R's header for what
 ##                          each category checks. Every row here is
 ##                          explicit (including "level", the strictest
@@ -180,8 +180,12 @@ concept_dictionary <- tibble::tribble(
     "percent",
   "government_debt_to_gdp",                "Non-Household Balance Sheets",   "GFDEGDQ188S",
     "FRED-QD's GFDEGDQ188S is US FEDERAL debt only (excludes state/local government); the BIS series used for every country (incl. the US) is credit to the WHOLE general-government sector (all levels combined) -- related but broader-scoped concepts, not identical.",
-    "BIS credit to general government (all levels: federal/state/local combined), % of GDP -- BIS's own credit-statistics methodology treats this as a close proxy for gross government debt; genuinely country-specific and, unlike the euro-area-only mortgage_rate/consumer_confidence overrides, available for non-EU countries too (confirmed live for AT/DE/US).",
+    "BIS credit to general government (all levels: federal/state/local combined), % of GDP, at NOMINAL value (VALUATION=N) -- BIS's own credit-statistics methodology treats this as a close proxy for gross government debt; genuinely country-specific and, unlike the euro-area-only mortgage_rate/consumer_confidence overrides, available for non-EU countries too (confirmed live for AT/DE/US). Nominal rather than market value since 2026-09-14: the market-value series revalues government bonds with their prices, so it swings with interest rates (Austria: 100.7% of GDP in 2020, 75.2% in 2025-Q4), whereas the nominal series reads 81.5% for 2025-Q4, against 81.3% for Eurostat's Maastricht debt ratio.",
     "percent",
+  "government_primary_balance_to_gdp",     "Non-Household Balance Sheets",   NA,
+    "No FRED-QD equivalent; FRED-QD carries no general-government primary balance. Added as the flow companion to government_debt_to_gdp's stock: the primary balance is one of the proximate drivers of the debt ratio in the debt-dynamics identity, beside interest payments and the growth-interest differential.",
+    "EU member states only: Eurostat quarterly government finance statistics (gov_10q_ggnfa), general government (S13), net lending/borrowing (B9) plus interest payable (D41PAY), both in % of GDP -- see R/eurostat.R. NOT seasonally adjusted: Eurostat publishes a seasonally adjusted B9 but no seasonally adjusted D41PAY, and summing an adjusted with an unadjusted series would be neither. The ratio is to the same quarter's GDP, so a four-quarter average is the annual equivalent. No non-EU fallback exists for this concept.",
+    "balance",
   "fx_rate_to_usd",                        "Exchange Rates",                 NA,
     "Not meaningful for the US itself -- this concept is a foreign currency's price in USD.",
     "OECD MEI bilateral exchange rate, national currency per USD.",
@@ -205,6 +209,14 @@ concept_dictionary <- tibble::tribble(
     "No FRED-QD equivalent; the Caldara-Iacoviello (2022) Geopolitical Risk index, the standard academic/policy measure -- country-specific for the 44 countries the source covers (confirmed: includes DEU/USA, excludes AUT), global index used otherwise (see R/gpr.R).",
     "Caldara and Iacoviello's (2022) Geopolitical Risk index, from matteoiacoviello.com's own published data file -- see R/gpr.R. Genuinely country-specific for the 44 countries the source constructs one for (confirmed: Germany, the United States); the global index is used for every other country (confirmed: Austria), not a country-specific gap in this project's own sourcing.",
     "level_event_driven",
+  "financial_stress",                      "Other",                          NA,
+    "No FRED-QD equivalent; FRED-QD has no composite financial stress index. The ECB publishes its country-level Composite Indicator of Systemic Stress for the United States too (REF_AREA=US, confirmed live), so the US panel carries the same construction as every other country rather than a US-specific substitute.",
+    "ECB country-level Composite Indicator of Systemic Stress (CISS), dataflow CISS, key D.<cc2>.Z0Z.4F.EC.SS_CIN.IDX -- daily, averaged to calendar quarters, see R/ecb.R. Bounded between 0 and 1 by construction; combines stress measures from several financial market segments, weighting them by their time-varying cross-correlations, so that stress in several segments at once counts for more than stress in one.",
+    "level_event_driven",
+  "world_uncertainty_index",               "Other",                          NA,
+    "No FRED-QD equivalent; FRED-QD has no text-based uncertainty index. The US panel uses the same country-level World Uncertainty Index (WUIUSA) as every other country, not the Baker-Bloom-Davis economic policy uncertainty index.",
+    "World Uncertainty Index (Ahir, Bloom and Furceri, 2022), the frequency of the word 'uncertainty' and its variants in the Economist Intelligence Unit's country reports -- quarterly and country-specific, via FRED's mirror (mnemonic WUI<ISO3>, e.g. WUIAUT, confirmed live for AUT/DEU/USA), see R/fred_mirror.R. Legitimately 0 in some early quarters in which a short report happens not to use the word, which is why it has a non-negative rather than a positive plausibility category.",
+    "nonneg_event_driven",
   "share_price_index",                     "Stock Markets",                  "S&P 500",         NA,
     "Austria: sourced from the ATX (Austrian Traded Index) via Yahoo Finance (ticker \"^ATX\"), Austria's own actual benchmark index, NOT the generic OECD MEI 'all shares' proxy used for other countries -- see R/yahoo_finance.R. Falls back to the FRED mirror if the Yahoo Finance fetch is unavailable for a given run.",
     "level",

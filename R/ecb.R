@@ -269,3 +269,83 @@ fetch_ecb_household_mortgage_loans <- function(country3, label = "household_mort
   monthly_to_quarterly(monthly, label) %>%
     dplyr::filter(.data$date >= period_to_date(start_period))
 }
+
+## ---------------------------------------------------------------
+## financial_stress -- the ECB's country-level Composite Indicator of
+## Systemic Stress (CISS)
+##
+## STATUS: VERIFIED 2026-09-14. Dataflow CISS, key dimension order (7
+## segments, confirmed from the API's own CSV header row, not guessed):
+## FREQ.REF_AREA.CURRENCY.PROVIDER_FM.INSTRUMENT_FM.PROVIDER_FM_ID.
+## DATA_TYPE_FM. Series "Austria, New Composite Indicator of Systemic
+## Stress (CISS), Index": D.AT.Z0Z.4F.EC.SS_CIN.IDX -- confirmed with
+## real, CURRENT (through 2026-09-11) daily data for AT, DE, US and GB.
+##
+## Only a DAILY series exists: the same key with FREQ=M is a clean 404,
+## so the daily values are averaged to calendar quarters here (the
+## current quarter is the mean of the days published so far). Unlike the
+## MIR and BSI series above the index is not restricted to the euro area,
+## so it is attempted for every country and resolves to NA only where the
+## ECB publishes nothing. The FRED 2-letter code doubles as REF_AREA, as
+## for MIR (confirmed identical for AT, DE and US).
+##
+## Coverage differs by country, and the response does not show it at a
+## glance: rows go back to 1980 for every country, but for Austria they
+## carry an empty OBS_VALUE until 1999-01-05 (Germany starts 1980-01-04,
+## the United States 1980-01-02). Empty rows are dropped before
+## aggregating, so a quarter is never averaged over missing days.
+## ---------------------------------------------------------------
+
+ecb_ciss_dims <- c("FREQ", "REF_AREA", "CURRENCY", "PROVIDER_FM", "INSTRUMENT_FM",
+                    "PROVIDER_FM_ID", "DATA_TYPE_FM")
+
+#' Fetch the ECB's country-level CISS for one country, averaged to
+#' quarters, or NULL if the ECB publishes none for it
+#'
+#' The SDMX key is attached as attribute "key", for the coverage report.
+fetch_ecb_ciss <- function(country3, label = "financial_stress", start_period = "1995-Q1") {
+  country2 <- lookup_country2(country3)
+  if (is.na(country2)) return(NULL)
+
+  dims <- c(FREQ = "D", REF_AREA = country2, CURRENCY = "Z0Z", PROVIDER_FM = "4F",
+            INSTRUMENT_FM = "EC", PROVIDER_FM_ID = "SS_CIN", DATA_TYPE_FM = "IDX")
+  key <- build_sdmx_key(dims[ecb_ciss_dims])
+
+  start_day <- format(period_to_date(start_period), "%Y-%m-%d")
+  url <- paste0(
+    "https://data-api.ecb.europa.eu/service/data/CISS/", key,
+    "?format=csvdata&startPeriod=", start_day
+  )
+
+  txt <- fetch_text(url, httr::add_headers(Accept = "text/csv"))
+  if (is.null(txt)) {
+    warning(sprintf("[%s] ECB CISS fetch failed for %s -- verify manually at https://data.ecb.europa.eu", label, country3))
+    return(NULL)
+  }
+  if (stringr::str_detect(txt, stringr::regex('"status":\\s*404|No Series was returned', ignore_case = TRUE))) {
+    warning(sprintf("[%s] ECB publishes no CISS for %s", label, country3))
+    return(NULL)
+  }
+
+  df <- suppressWarnings(readr::read_csv(txt, show_col_types = FALSE,
+                                         col_types = readr::cols(TIME_PERIOD = "c", OBS_VALUE = "d", .default = "c")))
+  if (!all(c("TIME_PERIOD", "OBS_VALUE") %in% names(df))) {
+    warning(sprintf("[%s] ECB CISS: unexpected response shape, inspect manually", label))
+    return(NULL)
+  }
+
+  daily <- df %>%
+    dplyr::transmute(date = as.Date(.data$TIME_PERIOD), value = .data$OBS_VALUE) %>%
+    dplyr::filter(!is.na(.data$date), !is.na(.data$value)) %>%
+    dplyr::distinct(date, .keep_all = TRUE)
+  if (nrow(daily) == 0) {
+    warning(sprintf("[%s] ECB CISS for %s has no non-missing observations", label, country3))
+    return(NULL)
+  }
+  names(daily)[2] <- label
+
+  out <- monthly_to_quarterly(daily, label) %>%
+    dplyr::filter(.data$date >= period_to_date(start_period))
+  attr(out, "key") <- key
+  out
+}
