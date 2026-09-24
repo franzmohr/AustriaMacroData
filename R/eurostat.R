@@ -378,3 +378,84 @@ fetch_eurostat_primary_balance <- function(country3, label = "government_primary
   }
   out
 }
+
+## ---------------------------------------------------------------
+## Total hours worked
+##
+## FRED-QD carries total hours in the nonfarm business sector (HOANBS)
+## and hours per worker alongside it, and hours are the labour input
+## every production-function or labour-market exercise wants: employment
+## counts heads, and heads move less than hours do over a cycle because
+## the adjustment runs through the intensive margin first.
+##
+## Eurostat's namq_10_a10_e publishes hours on the same quarterly
+## national-accounts basis as the output anchors in this file, so the
+## ratio of real_gdp to hours_worked is a coherent labour-productivity
+## measure rather than two sources glued together. `EMP_DC` is the
+## domestic-concept total -- employees and self-employed -- against
+## `SAL_DC`, which counts employees only; the total is the closer match
+## to FRED-QD's concept and the one a production function wants.
+##
+## DIMENSION ORDER. This dataflow orders its key
+## freq.unit.nace_r2.s_adj.na_item.geo, which is NOT the order
+## `fetch_eurostat_series_impl()` above builds for namq_10_gdp
+## (freq.unit.s_adj.na_item.geo). That is why this has its own URL
+## construction rather than reusing that helper: swapping the two middle
+## dimensions returns HTTP 400, not an empty result, so it fails loudly
+## -- but only at runtime.
+## ---------------------------------------------------------------
+
+eurostat_hours_dataflow <- "namq_10_a10_e"
+eurostat_hours_unit <- "THS_HW"      # thousands of hours worked
+eurostat_hours_na_item <- "EMP_DC"   # total employment, domestic concept
+eurostat_hours_nace <- "TOTAL"
+
+#' Fetch quarterly total hours worked for one EU country
+#'
+#' Returns a tibble with `date` and `label`, or NULL for a non-EU country
+#' or a failed request. There is no FRED-mirror fallback: FRED's OECD
+#' mirror carries hours per worker for a handful of countries and total
+#' hours for none of them, so outside the EU this concept resolves to NA.
+fetch_eurostat_hours <- function(country3, label = "hours_worked",
+                                 s_adj = "SCA", start_period = "1995-Q1") {
+  if (!country3 %in% eu_member_countries) return(NULL)
+
+  geo <- lookup_ec_country2(country3)
+  if (is.null(geo) || is.na(geo)) {
+    warning(sprintf("[%s] No Eurostat geo code for %s", label, country3))
+    return(NULL)
+  }
+
+  key <- paste("Q", eurostat_hours_unit, eurostat_hours_nace, s_adj,
+               eurostat_hours_na_item, geo, sep = ".")
+  url <- sprintf(
+    "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/%s/%s?format=SDMX-CSV&startPeriod=%s",
+    eurostat_hours_dataflow, key, start_period
+  )
+
+  txt <- tryCatch(fetch_text(url), error = function(e) {
+    warning(sprintf("[%s] Eurostat hours fetch errored: %s", label, conditionMessage(e)))
+    NULL
+  })
+  if (is.null(txt)) {
+    warning(sprintf("[%s] Eurostat hours fetch failed -- URL: %s", label, url))
+    return(NULL)
+  }
+  if (stringr::str_detect(txt, stringr::regex("S:Fault|faultstring", ignore_case = TRUE))) {
+    warning(sprintf("[%s] Eurostat has no observations for key '%s'", label, key))
+    return(NULL)
+  }
+
+  out <- parse_time_value_csv(txt, label)
+  if (is.null(out)) return(NULL)
+
+  # parse_time_value_csv() returns `period` plus one column already named
+  # after the concept, so only the period needs turning into a date.
+  out <- out %>%
+    dplyr::mutate(date = period_to_date(.data$period)) %>%
+    dplyr::select("date", dplyr::all_of(label)) %>%
+    dplyr::arrange(.data$date)
+
+  attr(out, "source_col") <- sprintf("%s:%s", eurostat_hours_dataflow, key)
+  out
+}

@@ -483,6 +483,33 @@ if (!is.null(degree_days)) {
 panel <- dplyr::arrange(panel, date)
 
 ## =====================================================================
+## 4k. Two concepts with no OECD/FRED-mirror route of their own
+##
+##     The world oil price is unconditional -- it is the same number in
+##     every country's panel, like R/gpr.R's global index for countries
+##     the GPR source does not cover separately -- while total hours
+##     worked is EU-only, since FRED's OECD mirror carries hours per
+##     worker for some countries and total hours for none.
+## =====================================================================
+oil <- fetch_oil_price(country, start_period = start_period)
+if (!is.null(oil)) {
+  panel <- dplyr::full_join(panel, oil, by = "date")
+  concept_source[["oil_price"]] <- list(provider = "FRED", key = attr(oil, "source_col"))
+}
+
+if (country %in% eu_member_countries) {
+  message("Country is an EU member -- fetching Eurostat total hours worked...")
+  hours <- fetch_eurostat_hours(country, start_period = start_period)
+  if (!is.null(hours)) {
+    panel <- dplyr::full_join(panel, hours, by = "date")
+    concept_source[["hours_worked"]] <- list(provider = "EUROSTAT_NA",
+                                             key = attr(hours, "source_col"))
+  } else {
+    message("Eurostat hours unavailable for ", country, " this run -- hours_worked stays NA.")
+  }
+}
+
+## =====================================================================
 ## 4b. Enforce a canonical column schema
 ## =====================================================================
 ## The whole point of pulling from OECD/IMF/BIS/ECB/FRED behind a single
@@ -498,6 +525,14 @@ for (col in setdiff(canonical_cols, names(panel))) {
   panel[[col]] <- NA_real_
 }
 panel <- dplyr::select(panel, date, dplyr::all_of(canonical_cols))
+
+## A full_join appends periods the left side does not have, so a concept
+## whose history reaches further back than the panel's leaves the rows out
+## of order -- which nothing downstream checks and a CSV does not show
+## until someone differences a column. Sorted here rather than relied on:
+## the order is a property of the panel, not of which concept happened to
+## be joined first.
+panel <- dplyr::arrange(panel, .data$date)
 
 ## =====================================================================
 ## 5. Write output CSV
@@ -530,6 +565,8 @@ provider_display_names <- c(
   YAHOO_FINANCE = "Yahoo Finance",
   GPR = "Geopolitical Risk Index (Caldara-Iacoviello)",
   EUROSTAT_CHDD = "Eurostat (nrg_chdd_m, degree days)",
+  EUROSTAT_NA = "Eurostat (namq_10_a10_e, national accounts by activity)",
+  FRED = "FRED (series published by FRED itself, not an OECD/BIS mirror)",
   OPEN_METEO = "ERA5 reanalysis (via the Open-Meteo archive API)"
 )
 format_source <- function(src) {
