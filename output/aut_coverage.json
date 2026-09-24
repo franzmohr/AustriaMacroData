@@ -1,6 +1,6 @@
 {
   "country": "AUT",
-  "generated_at": "2026-09-24T06:34:43Z",
+  "generated_at": "2026-09-24T19:26:57Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -197,6 +197,11 @@
       "fred_qd_group": "Other",
       "label": "geopolitical_risk",
       "source": "Geopolitical Risk Index (Caldara-Iacoviello) [GPR]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "global_activity",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [IGREA]"
     },
     {
       "fred_qd_group": "Other",
@@ -481,6 +486,12 @@
       "category": "level_event_driven",
       "status": "PASS",
       "detail": "Positive throughout (167 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
+      "label": "global_activity",
+      "category": "deviation",
+      "status": "PASS",
+      "detail": "All 235 values within [-300, 300]."
     },
     {
       "label": "financial_stress",
