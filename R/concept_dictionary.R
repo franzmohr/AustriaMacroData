@@ -1,6 +1,6 @@
 ## ---------------------------------------------------------------
 ## concept_dictionary.R -- the single authored source of metadata for
-## every one of this project's 44 FRED-QD-style concepts
+## every one of this project's 47 FRED-QD-style concepts
 ##
 ## MOTIVATION: before this file existed, the same concept-level facts
 ## (which FRED-QD group a concept belongs to, its FRED-QD mnemonic, its
@@ -151,7 +151,7 @@ concept_dictionary <- tibble::tribble(
     "level",
   "unit_labor_cost",                       "Earnings and Productivity",      "ULCNFB",
     "FRED-QD's ULCNFB is a nonfarm-business, hours-based unit-labor-cost INDEX; the OECD-mirror series used for every country (incl. the US) is an employment-based % CHANGE -- related concepts, different construction.",
-    "Where Eurostat publishes an index-level series for it (confirmed for Austria: namq_10_lp_ulc, NA_ITEM=NULC_HW, UNIT=I10, hours-based like FRED-QD's ULCNFB), this replaces the default OECD-mirror proxy (OECD MEI unit labour cost, employment-based, % change, confirmed live for AT/DE/FR/GB/US) -- see R/eurostat.R. Not every EU country publishes this index-level series (confirmed absent for Germany, which keeps the OECD-mirror value).",
+    "Where Eurostat publishes an index-level series for it (confirmed for Austria: namq_10_lp_ulc, NA_ITEM=NULC_HW, UNIT=I10, hours-based like FRED-QD's ULCNFB), this replaces the default OECD-mirror proxy (OECD MEI unit labour cost, employment-based, % change, confirmed live for AT/DE/FR/GB/US) -- see R/eurostat.R. Not every EU country publishes this index-level series, and which do changes over time: it was confirmed absent for Germany when this note was first written, and confirmed present for Germany on 2026-09-24, so Germany now resolves through Eurostat rather than keeping the OECD-mirror value. A country for which Eurostat has nothing still falls back to the mirror.",
     "balance",
   "long_term_rate",                        "Interest Rates",                 "GS10",            NA,
     NA,
@@ -217,6 +217,10 @@ concept_dictionary <- tibble::tribble(
     "No FRED-QD equivalent; the Caldara-Iacoviello (2022) Geopolitical Risk index, the standard academic/policy measure -- country-specific for the 44 countries the source covers (confirmed: includes DEU/USA, excludes AUT), global index used otherwise (see R/gpr.R).",
     "Caldara and Iacoviello's (2022) Geopolitical Risk index, from matteoiacoviello.com's own published data file -- see R/gpr.R. Genuinely country-specific for the 44 countries the source constructs one for (confirmed: Germany, the United States); the global index is used for every other country (confirmed: Austria), not a country-specific gap in this project's own sourcing.",
     "level_event_driven",
+  "global_activity",                       "Other",                          NA,
+    "No FRED-QD equivalent; FRED-QD is a US panel and carries no measure of WORLD activity at all. Kilian's (2009) index of global real economic activity, built from dry cargo ocean freight rates.",
+    "Not country-specific and not intended to be, exactly as oil_price is not: there is one world business cycle, so this column is identical in every country's panel. FRED IGREA, monthly from 1968, averaged within the quarter -- see R/global_activity.R. It is expressed in PERCENT DEVIATIONS FROM TREND, so it is signed and roughly half its observations are negative: do not log it and do not take quarter-over-quarter percent changes of it. It is here so that a panel carrying oil_price can separate an oil supply disturbance from an oil demand one, which is the distinction Kilian (2009) exists to make.",
+    "deviation",
   "financial_stress",                      "Other",                          NA,
     "No FRED-QD equivalent; FRED-QD has no composite financial stress index. The ECB publishes its country-level Composite Indicator of Systemic Stress for the United States too (REF_AREA=US, confirmed live), so the US panel carries the same construction as every other country rather than a US-specific substitute.",
     "ECB country-level Composite Indicator of Systemic Stress (CISS), dataflow CISS, key D.<cc2>.Z0Z.4F.EC.SS_CIN.IDX -- daily, averaged to calendar quarters, see R/ecb.R. Bounded between 0 and 1 by construction; combines stress measures from several financial market segments, weighting them by their time-varying cross-correlations, so that stress in several segments at once counts for more than stress in one.",

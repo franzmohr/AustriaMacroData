@@ -1,6 +1,6 @@
 {
   "country": "DEU",
-  "generated_at": "2026-09-14T09:40:43Z",
+  "generated_at": "2026-09-24T19:27:25Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -55,6 +55,11 @@
     },
     {
       "fred_qd_group": "Employment and Unemployment",
+      "label": "hours_worked",
+      "source": "Eurostat (namq_10_a10_e, national accounts by activity) [namq_10_a10_e:Q.THS_HW.TOTAL.SCA.EMP_DC.DE]"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
       "label": "employment_expectations",
       "source": "European Commission Business and Consumer Survey [DE.EEI]"
     },
@@ -106,7 +111,7 @@
     {
       "fred_qd_group": "Earnings and Productivity",
       "label": "unit_labor_cost",
-      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [ULQEUL01DEQ657S]"
+      "source": "Eurostat (namq_10_lp_ulc, hours-based ULC) [namq_10_lp_ulc:Q.I10.SCA.NULC_HW.DE]"
     },
     {
       "fred_qd_group": "Interest Rates",
@@ -184,9 +189,19 @@
       "source": "European Commission Business and Consumer Survey [DE.SERV]"
     },
     {
+      "fred_qd_group": "Prices",
+      "label": "oil_price",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [WTISPLC]"
+    },
+    {
       "fred_qd_group": "Other",
       "label": "geopolitical_risk",
       "source": "Geopolitical Risk Index (Caldara-Iacoviello) [GPRC_DEU]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "global_activity",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [IGREA]"
     },
     {
       "fred_qd_group": "Other",
@@ -296,7 +311,13 @@
       "label": "employment_rate",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 85 values within [-10, 400]."
+      "detail": "All 86 values within [-10, 400]."
+    },
+    {
+      "label": "hours_worked",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -6%."
     },
     {
       "label": "employment_expectations",
@@ -362,7 +383,7 @@
       "label": "unit_labor_cost",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 140 values within [-150, 250]."
+      "detail": "All 142 values within [-150, 250]."
     },
     {
       "label": "long_term_rate",
@@ -455,10 +476,22 @@
       "detail": "All 126 values within [-150, 250]."
     },
     {
+      "label": "oil_price",
+      "category": "level_event_driven",
+      "status": "PASS",
+      "detail": "Positive throughout (267 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
       "label": "geopolitical_risk",
       "category": "level_event_driven",
       "status": "PASS",
       "detail": "Positive throughout (167 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
+      "label": "global_activity",
+      "category": "deviation",
+      "status": "PASS",
+      "detail": "All 235 values within [-300, 300]."
     },
     {
       "label": "financial_stress",

@@ -11,7 +11,7 @@ test_that("concept_dictionary has the expected columns", {
 })
 
 test_that("every row has a non-NA, valid plausibility_category", {
-  valid_categories <- c("percent", "balance", "growth", "level", "level_event_driven", "nonneg_seasonal", "nonneg_event_driven")
+  valid_categories <- c("percent", "balance", "growth", "deviation", "level", "level_event_driven", "nonneg_seasonal", "nonneg_event_driven")
   expect_false(anyNA(concept_dictionary$plausibility_category))
   expect_true(all(concept_dictionary$plausibility_category %in% valid_categories))
 })

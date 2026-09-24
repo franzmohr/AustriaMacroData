@@ -64,7 +64,7 @@
 ## wrong -- it is a prioritized to-do list.
 ## ---------------------------------------------------------------
 
-## Category assignment for all 44 concepts, derived from
+## Category assignment for all 47 concepts, derived from
 ## R/concept_dictionary.R's `plausibility_category` column -- the single
 ## authored source for this and every other piece of concept-level
 ## metadata (see that file's header for why this used to be its own
@@ -121,8 +121,18 @@ plausibility_categories <- concept_dictionary %>%
 ## days) so that it still catches the failure this check is actually for:
 ## a units error, a missing division by the weight total, or an
 ## accidental sum over the wrong window.
+##
+## "deviation" exists for R/global_activity.R's Kilian index, and captures
+## the one thing no other category here allows: a series that is signed
+## and centred on ZERO, so that roughly half its observations are
+## negative and none of the positivity, ratio or growth-rate rules mean
+## anything for it. The bounds are deliberately far outside its observed
+## range (-162 to +189 over 1968-2026) so that the check still does the
+## job it is for -- catching a units error or a series that came back
+## scaled differently -- without FLAGging a genuine global recession.
 plausibility_bounds <- list(
   percent         = c(-10, 400),
+  deviation       = c(-300, 300),
   balance         = c(-150, 250),
   growth          = c(-50, 50),
   nonneg_seasonal = c(0, 4000),

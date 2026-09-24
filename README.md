@@ -67,7 +67,7 @@ R/                          Fetcher library used by build_country_panel.R,
                              live API (see header comments for verification
                              notes and corrections vs. earlier guesses)
   concept_dictionary.R      The single authored source of metadata for all
-                             44 concepts (FRED-QD group, mnemonic, notes,
+                             47 concepts (FRED-QD group, mnemonic, notes,
                              plausibility category) -- scripts/build_country_panel.R,
                              R/fred_qd_validation.R and R/plausibility_checks.R
                              all derive their working tables from this one
@@ -171,7 +171,7 @@ docs/
                              instead of keeping its own hand-copied table
   data_sources.csv           The data-sources registry -- see below
   candidate_indicators_austria.csv  Proposed (UNVERIFIED) Austrian sources
-                             for the 245 - 44 FRED-QD series not yet
+                             for the 245 - 47 FRED-QD series not yet
                              implemented -- see below
   generate_candidate_indicators.py  Regenerates the file above from
                              docs/Mohr_AUSTRIA-QD.tex + a hand-built
@@ -401,7 +401,7 @@ and EC survey/geopolitical-risk concepts):
 
 ## Candidate indicators (proposed, unverified)
 
-The 44 implemented concepts are representative anchors, not a 1:1
+The 47 implemented concepts are representative anchors, not a 1:1
 replication of FRED-QD's 245 series (see Overview above -- most of those
 245 are U.S.-specific and have no cross-country equivalent at all).
 [docs/candidate_indicators_austria.csv](docs/candidate_indicators_austria.csv)
@@ -599,7 +599,7 @@ just "made the warning go away"):
 
 ### FRED-QD group coverage
 
-44 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
+47 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
 groups on 2026-08-30; grew via several same-day extension passes -- see
 `R/fred_mirror.R`, `R/bis.R`, `R/eurostat.R`, `R/ecb.R`, `R/ec_survey.R`
 and `R/yahoo_finance.R` header comments for the full trail, including one

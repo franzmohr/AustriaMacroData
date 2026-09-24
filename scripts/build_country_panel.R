@@ -56,7 +56,7 @@ dir.create(opt$output_dir, showWarnings = FALSE, recursive = TRUE)
 country2 <- if (!is.null(opt$fred_country2)) opt$fred_country2 else lookup_country2(country)
 
 ## ---- FRED-QD group taxonomy + ground-truth reference ----------------
-## 41 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
+## 47 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
 ## groups on 2026-08-30; grew via several same-day extension passes -- see
 ## R/fred_mirror.R and R/bis.R header comments for what was added and how
 ## each addition was verified).
@@ -483,18 +483,29 @@ if (!is.null(degree_days)) {
 panel <- dplyr::arrange(panel, date)
 
 ## =====================================================================
-## 4k. Two concepts with no OECD/FRED-mirror route of their own
+## 4k. Three concepts with no OECD/FRED-mirror route of their own
 ##
-##     The world oil price is unconditional -- it is the same number in
+##     Two of them are unconditional -- the world oil price and Kilian's
+##     index of global real economic activity are the same numbers in
 ##     every country's panel, like R/gpr.R's global index for countries
-##     the GPR source does not cover separately -- while total hours
-##     worked is EU-only, since FRED's OECD mirror carries hours per
+##     the GPR source does not cover separately. They belong together:
+##     the oil price is not exogenous to world demand, so a panel that
+##     carries one without the other cannot separate an oil supply
+##     disturbance from an oil demand one. Total hours worked is the
+##     third, and is EU-only, since FRED's OECD mirror carries hours per
 ##     worker for some countries and total hours for none.
 ## =====================================================================
 oil <- fetch_oil_price(country, start_period = start_period)
 if (!is.null(oil)) {
   panel <- dplyr::full_join(panel, oil, by = "date")
   concept_source[["oil_price"]] <- list(provider = "FRED", key = attr(oil, "source_col"))
+}
+
+activity <- fetch_global_activity(country, start_period = start_period)
+if (!is.null(activity)) {
+  panel <- dplyr::full_join(panel, activity, by = "date")
+  concept_source[["global_activity"]] <- list(provider = "FRED",
+                                              key = attr(activity, "source_col"))
 }
 
 if (country %in% eu_member_countries) {
