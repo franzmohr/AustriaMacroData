@@ -79,15 +79,30 @@ build_sdmx_key <- function(dims) {
   paste(vals, collapse = ".")
 }
 
-#' Convert an SDMX "YYYY-Qn" period string to a Date (first day of quarter)
+#' Convert an SDMX period string to a Date (first day of the period)
 #'
 #' Used as the common join key between OECD/IMF/BIS/ECB series (which use
-#' "YYYY-Qn" period strings) and FRED series (which use Date columns).
+#' period strings) and FRED series (which use Date columns).
+#'
+#' Quarterly "YYYY-Qn" and monthly "YYYY-Mnn" are both understood, so that
+#' the same `start_period` argument can be handed to a fetcher whatever
+#' frequency it is being asked for. Anything in neither form comes back as
+#' NA rather than as a plausible-looking wrong date: a start that silently
+#' became the wrong month would be far harder to notice than one that
+#' filtered the series away.
 period_to_date <- function(period) {
-  m <- stringr::str_match(period, "^(\\d{4})-Q([1-4])$")
-  year <- as.integer(m[, 2])
-  quarter <- as.integer(m[, 3])
-  as.Date(sprintf("%d-%02d-01", year, (quarter - 1) * 3 + 1))
+  quarterly <- stringr::str_match(period, "^(\\d{4})-Q([1-4])$")
+  monthly <- stringr::str_match(period, "^(\\d{4})-M(0[1-9]|1[0-2])$")
+
+  year <- ifelse(is.na(quarterly[, 2]), monthly[, 2], quarterly[, 2])
+  month <- ifelse(is.na(quarterly[, 3]),
+                  as.integer(monthly[, 3]),
+                  (as.integer(quarterly[, 3]) - 1) * 3 + 1)
+
+  out <- rep(as.Date(NA), length(period))
+  ok <- !is.na(year) & !is.na(month)
+  out[ok] <- as.Date(sprintf("%s-%02d-01", year[ok], month[ok]))
+  out
 }
 
 #' Convert a Date to an SDMX "YYYY-Qn" period string
@@ -99,8 +114,11 @@ period_to_date <- function(period) {
 #' "2020-Qq"). That single bug broke every period join in the FRED-QD
 #' validation logic while still "running without erroring" -- the kind
 #' of silent failure this project is meant to catch, not reproduce.
-date_to_period <- function(date) {
+date_to_period <- function(date, frequency = "Q") {
   year <- as.integer(format(date, "%Y"))
+  if (identical(frequency, "M")) {
+    return(sprintf("%d-M%02d", year, as.integer(format(date, "%m"))))
+  }
   quarter <- (as.integer(format(date, "%m")) - 1) %/% 3 + 1
   sprintf("%d-Q%d", year, quarter)
 }
@@ -225,6 +243,12 @@ has_data <- function(df, label) {
 #' because it never inspects LEVELS at all. The plausibility checks do,
 #' which is how a >300% quarter-over-quarter jump surfaced it.
 #'
+#' The join key is a parameter because the monthly panel keys on `date`
+#' rather than on a `period` string, and a level splice is exactly as
+#' necessary there: the monthly panel's Eurostat sources are indices on
+#' 2021 = 100 while the FRED mirrors whose history they extend are on
+#' other bases.
+#'
 #' Rescaling (rather than discarding OECD's pre-Eurostat history
 #' entirely, which would forfeit the whole point of `merge_prefer()`)
 #' preserves OECD's own internally-consistent quarter-to-quarter
@@ -238,12 +262,12 @@ has_data <- function(df, label) {
 #' requested range in `scripts/build_country_panel.R`, so the overlap
 #' point this needs already exists in the data being merged -- no extra
 #' API call required.
-splice_prefer <- function(primary, secondary) {
+splice_prefer <- function(primary, secondary, by = "period") {
   if (is.null(primary)) return(secondary)
   if (is.null(secondary)) return(primary)
 
-  shared_labels <- intersect(setdiff(names(primary), "period"), setdiff(names(secondary), "period"))
-  merged <- dplyr::full_join(primary, secondary, by = "period", suffix = c("", ".secondary"))
+  shared_labels <- intersect(setdiff(names(primary), by), setdiff(names(secondary), by))
+  merged <- dplyr::full_join(primary, secondary, by = by, suffix = c("", ".secondary"))
   for (lbl in shared_labels) {
     sec_col <- paste0(lbl, ".secondary")
     both <- !is.na(merged[[lbl]]) & !is.na(merged[[sec_col]])
@@ -260,5 +284,5 @@ splice_prefer <- function(primary, secondary) {
     merged[[lbl]] <- dplyr::coalesce(merged[[lbl]], merged[[sec_col]])
     merged[[sec_col]] <- NULL
   }
-  dplyr::arrange(merged, period)
+  dplyr::arrange(merged, .data[[by]])
 }

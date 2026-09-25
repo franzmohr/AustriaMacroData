@@ -246,19 +246,63 @@ country's file) with the same column-handling logic. Compare
 [output/usa_panel.csv](output/usa_panel.csv): same header, same column order,
 different data (and different NAs, per each file's coverage report).
 
+## The monthly panel
+
+```bash
+Rscript scripts/build_monthly_panel.R --country AUT
+```
+
+`scripts/build_monthly_panel.R` builds the monthly companion to the quarterly
+panel, standing to it as FRED-MD stands to FRED-QD. It writes
+`output/<country>_monthly_panel.csv` and `_monthly_coverage.json`, with the
+same canonical-schema contract: every country's monthly file has the same
+columns in the same order, whether or not each one resolved.
+
+**27 of the 47 concepts are published monthly.** The other 20 are quarterly at
+source -- every national-accounts concept, the BIS credit series, government
+debt and the primary balance, hours worked, unit labour cost, the employment
+rate, real house prices, the World Uncertainty Index and the two degree-day
+series. They are **absent** from the monthly panel rather than interpolated
+across its months. A quarterly figure smoothed into three monthly cells is an
+invention that looks exactly like data once it is in a CSV; anyone who wants
+one can build it from the quarterly panel knowing that they did.
+
+| Option | Default | Description |
+|---|---|---|
+| `--country` | *(required)* | ISO-3166 alpha-3 code |
+| `--start-period` | `1960-M01` | First month to fetch (`YYYY-Mnn`; a `YYYY-Qn` start is accepted and read as the first month of that quarter) |
+| `--fred-country2` | looked up | As above |
+| `--output-dir` | `output` | Where to write `<country>_monthly_panel.csv` and `_monthly_coverage.json` |
+
+**The two panels share labels, not series.** Where a concept is in both, it is
+often a different source at the two frequencies: industrial production is
+Eurostat's `sts_inpr_m` in the monthly panel and an OECD MEI mirror in the
+quarterly one, on different index bases. Growth rates are comparable between
+them; levels are not. `docs/data_sources_monthly.csv` records exactly what
+each monthly column is, kept separate from `docs/data_sources.csv` for that
+reason.
+
+Which concepts are monthly is a column of `R/concept_dictionary.R`
+(`available_monthly`), not a second hand-written list -- the same
+single-source-of-truth rule the rest of that file's metadata follows.
+
 ## Automated updates
 
 [.github/workflows/monthly-update.yml](.github/workflows/monthly-update.yml)
-runs [scripts/update_monthly.R](scripts/update_monthly.R) at 06:00 UTC on the
-1st of every month (also triggerable manually from the Actions tab via
+runs [scripts/update_monthly.R](scripts/update_monthly.R) -- whose name is
+about cadence rather than frequency, and which predates the monthly panel --
+at 06:00 UTC on the 1st of every month (also triggerable manually from the Actions tab via
 `workflow_dispatch`), the same way FRED-QD itself is republished monthly.
 Each run:
 
 1. Rebuilds `output/<country>_panel.csv` + `_coverage.json` for AUT, DEU and
-   USA via `scripts/build_country_panel.R`, overwriting the "latest" files.
-2. Archives a dated copy of both into `output/vintages/`, e.g.
-   `output/vintages/aut_panel_2026-09.csv` -- a monthly vintage history, not
-   just a single always-overwritten snapshot.
+   USA via `scripts/build_country_panel.R`, and
+   `output/<country>_monthly_panel.csv` + `_monthly_coverage.json` via
+   `scripts/build_monthly_panel.R`, overwriting the "latest" files.
+2. Archives a dated copy of each into `output/vintages/`, e.g.
+   `output/vintages/aut_panel_2026-09.csv` and
+   `output/vintages/aut_monthly_panel_2026-09.csv` -- a monthly vintage
+   history, not just a single always-overwritten snapshot.
 3. Commits and pushes `output/` back to `main` if anything changed, as
    `github-actions[bot]`.
 

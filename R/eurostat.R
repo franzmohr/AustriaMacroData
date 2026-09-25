@@ -194,7 +194,8 @@ eurostat_hicp_subcategories <- tibble::tribble(
 fetch_eurostat_hicp <- function(country3, label = "cpi_index",
                                  start_period = "1995-Q1",
                                  unit = eurostat_hicp_unit,
-                                 coicop = eurostat_hicp_coicop) {
+                                 coicop = eurostat_hicp_coicop,
+                                 frequency = "Q") {
   if (!country3 %in% eu_member_countries) return(NULL)
   geo <- lookup_ec_country2(country3)
   if (is.na(geo)) return(NULL)
@@ -222,7 +223,7 @@ fetch_eurostat_hicp <- function(country3, label = "cpi_index",
   monthly <- monthly %>%
     dplyr::mutate(date = as.Date(paste0(.data$period, "-01"))) %>%
     dplyr::select(-period)
-  monthly_to_quarterly(monthly, label)
+  aggregate_to(monthly, label, frequency)
 }
 
 ## ---------------------------------------------------------------

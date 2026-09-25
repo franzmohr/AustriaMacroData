@@ -113,21 +113,27 @@ get_fred_series <- function(fred_id) {
 ## for all three. Its early quarters contain genuine zeros (WUIAUT reads
 ## 0 in 1963-Q4 and 1964-Q1), hence its own plausibility category.
 other_groups <- tibble::tribble(
-  ~fred_qd_group,                       ~label,                          ~id_template,             ~frequency, ~source,
-  "Industrial Production",              "industrial_production",        "{cc3}PROINDQISMEI",      "Q",        "OECD MEI (via FRED)",
-  "Employment and Unemployment",        "unemployment_rate",             "LRHUTTTT{cc2}Q156S",     "Q",        "OECD MEI (via FRED)",
-  "Employment and Unemployment",        "employment_rate",               "LREM64TT{cc2}Q156S",     "Q",        "OECD MEI (via FRED)",
-  "Prices",                             "cpi_index",                     "CPALTT01{cc2}Q657N",     "Q",        "OECD MEI (via FRED)",
-  "Earnings and Productivity",          "unit_labor_cost",               "ULQEUL01{cc2}Q657S",     "Q",        "OECD MEI (via FRED)",
-  "Interest Rates",                     "long_term_rate",                "IRLTLT01{cc2}Q156N",     "Q",        "OECD MEI (via FRED)",
-  "Interest Rates",                     "short_term_rate",                "IR3TIB01{cc2}Q156N",     "Q",        "OECD MEI (via FRED)",
-  "Exchange Rates",                     "fx_rate_to_usd",                "CCUSMA02{cc2}Q618N",     "Q",        "OECD MEI (via FRED)",
-  "Exchange Rates",                     "real_effective_exchange_rate",  "CCRETT01{cc2}Q661N",     "Q",        "OECD MEI (via FRED)",
-  "Other",                              "consumer_confidence",           "CSCICP03{cc2}M665S",     "M",        "OECD MEI (via FRED)",
-  "Housing",                            "house_price_real",              "Q{cc2}R628BIS",          "Q",        "BIS Residential Property Prices (via FRED)",
-  "Inventories, Orders, and Sales",     "retail_sales_volume",           "{cc3}SARTQISMEI",        "Q",        "OECD MEI (via FRED)",
-  "Stock Markets",                      "share_price_index",             "SPASTT01{cc2}Q661N",     "Q",        "OECD MEI (via FRED)",
-  "Other",                              "world_uncertainty_index",       "WUI{cc3}",               "Q",        "World Uncertainty Index (via FRED)"
+  ~fred_qd_group,                   ~label,                         ~id_template,         ~frequency, ~m_id_template,       ~source,
+  "Industrial Production",          "industrial_production",         "{cc3}PROINDQISMEI",   "Q",  "{cc3}PROINDMISMEI",   "OECD MEI (via FRED)",
+  "Employment and Unemployment",    "unemployment_rate",             "LRHUTTTT{cc2}Q156S",  "Q",  "LRHUTTTT{cc2}M156S",  "OECD MEI (via FRED)",
+  # cpi_index has NO usable monthly mirror. CPALTT01{cc2}M657N exists and
+  # returns data, but the OECD MEI suffix 657 is a GROWTH RATE, not an index:
+  # confirmed live 2026-09-25, CPALTT01ATM657N runs -2.36 to 5.12 with 160
+  # negative observations. Splicing that onto the HICP index produced a
+  # monthly cpi_index reaching -377, which is how it was found. The monthly
+  # panel therefore takes cpi_index from Eurostat's HICP or not at all.
+  "Employment and Unemployment",    "employment_rate",               "LREM64TT{cc2}Q156S",  "Q",  NA,                    "OECD MEI (via FRED)",
+  "Prices",                         "cpi_index",                     "CPALTT01{cc2}Q657N",  "Q",  NA,                     "OECD MEI (via FRED)",
+  "Earnings and Productivity",      "unit_labor_cost",               "ULQEUL01{cc2}Q657S",  "Q",  NA,                    "OECD MEI (via FRED)",
+  "Interest Rates",                 "long_term_rate",                "IRLTLT01{cc2}Q156N",  "Q",  "IRLTLT01{cc2}M156N",  "OECD MEI (via FRED)",
+  "Interest Rates",                 "short_term_rate",               "IR3TIB01{cc2}Q156N",  "Q",  "IR3TIB01{cc2}M156N",  "OECD MEI (via FRED)",
+  "Exchange Rates",                 "fx_rate_to_usd",                "CCUSMA02{cc2}Q618N",  "Q",  "CCUSMA02{cc2}M618N",  "OECD MEI (via FRED)",
+  "Exchange Rates",                 "real_effective_exchange_rate",  "CCRETT01{cc2}Q661N",  "Q",  "CCRETT01{cc2}M661N",  "OECD MEI (via FRED)",
+  "Other",                          "consumer_confidence",           "CSCICP03{cc2}M665S",  "M",  "CSCICP03{cc2}M665S",  "OECD MEI (via FRED)",
+  "Housing",                        "house_price_real",              "Q{cc2}R628BIS",       "Q",  NA,                    "BIS Residential Property Prices (via FRED)",
+  "Inventories, Orders, and Sales", "retail_sales_volume",           "{cc3}SARTQISMEI",     "Q",  "{cc3}SARTMISMEI",     "OECD MEI (via FRED)",
+  "Stock Markets",                  "share_price_index",             "SPASTT01{cc2}Q661N",  "Q",  "SPASTT01{cc2}M661N",  "OECD MEI (via FRED)",
+  "Other",                          "world_uncertainty_index",       "WUI{cc3}",            "Q",  NA,                    "World Uncertainty Index (via FRED)"
 )
 
 #' Average a monthly series up to quarterly (calendar quarters, simple mean)
@@ -142,7 +148,8 @@ monthly_to_quarterly <- function(df, value_col) {
     dplyr::summarise(!!value_col := mean(.data[[value_col]], na.rm = TRUE), .groups = "drop")
 }
 
-fetch_other_group_series <- function(id_template, frequency, cc2, cc3, label, fred_qd_group, source) {
+fetch_other_group_series <- function(id_template, source_frequency, cc2, cc3, label,
+                                      fred_qd_group, source, frequency = "Q") {
   fred_id <- id_template
   fred_id <- stringr::str_replace(fred_id, stringr::fixed("{cc2}"), cc2)
   fred_id <- stringr::str_replace(fred_id, stringr::fixed("{cc3}"), cc3)
@@ -156,7 +163,14 @@ fetch_other_group_series <- function(id_template, frequency, cc2, cc3, label, fr
     return(NULL)
   }
 
-  if (identical(frequency, "M")) df <- monthly_to_quarterly(df, fred_id)
+  # A monthly panel is only ever handed a monthly mnemonic, so the series is
+  # stamped to month starts and otherwise left alone. A quarterly panel
+  # averages a monthly source down and takes a quarterly one as it comes.
+  if (identical(frequency, "M")) {
+    df <- aggregate_to(df, fred_id, "M")
+  } else if (identical(source_frequency, "M")) {
+    df <- aggregate_to(df, fred_id, "Q")
+  }
 
   names(df)[2] <- label
   df
@@ -168,15 +182,31 @@ fetch_other_group_series <- function(id_template, frequency, cc2, cc3, label, fr
 #' `country3` is the ISO-3166 alpha-3 code (e.g. "DEU") also used for
 #' OECD/IMF. These are DIFFERENT coding conventions from different
 #' sources -- do not swap them.
-fetch_other_groups <- function(fred_country2, country3) {
+fetch_other_groups <- function(fred_country2, country3, frequency = "Q") {
+  check_frequency(frequency)
+
+  # Not every OECD MEI concept has a monthly counterpart, and the ones that
+  # do not are dropped here rather than fetched and discarded: a quarterly
+  # series joined into a monthly panel would sit on the first month of each
+  # quarter with two gaps after it, which looks like a reporting lag rather
+  # than a frequency mismatch. `m_id_template` is NA for those -- confirmed
+  # against real 404s from FRED for employment_rate (LREM64TT..M156S),
+  # unit_labor_cost (ULQEUL01..M657S) and house_price_real (M..R628BIS),
+  # and world_uncertainty_index is published quarterly at source.
+  wanted <- if (identical(frequency, "M")) {
+    dplyr::filter(other_groups, !is.na(.data$m_id_template))
+  } else {
+    other_groups
+  }
+  templates <- if (identical(frequency, "M")) wanted$m_id_template else wanted$id_template
+
   results <- purrr::pmap(
-    list(other_groups$id_template, other_groups$frequency, other_groups$label,
-         other_groups$fred_qd_group, other_groups$source),
-    function(id_template, frequency, label, fred_qd_group, source) {
-      fetch_other_group_series(id_template, frequency, fred_country2, country3,
-                                label, fred_qd_group, source)
+    list(templates, wanted$frequency, wanted$label, wanted$fred_qd_group, wanted$source),
+    function(id_template, source_frequency, label, fred_qd_group, source) {
+      fetch_other_group_series(id_template, source_frequency, fred_country2, country3,
+                                label, fred_qd_group, source, frequency = frequency)
     }
   )
-  names(results) <- other_groups$label
+  names(results) <- wanted$label
   purrr::compact(results)
 }

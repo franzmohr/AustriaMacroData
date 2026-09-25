@@ -62,7 +62,8 @@ global_activity_fred_id <- "IGREA"
 #' call this the way it calls every other concept fetcher.
 fetch_global_activity <- function(country3 = NULL, label = "global_activity",
                                   start_period = "1960-Q1",
-                                  fred_id = global_activity_fred_id) {
+                                  fred_id = global_activity_fred_id,
+                                  frequency = "Q") {
   df <- get_fred_series(fred_id)
   if (is.null(df)) {
     warning(sprintf("[%s] FRED fetch failed for %s", label, fred_id))
@@ -70,7 +71,7 @@ fetch_global_activity <- function(country3 = NULL, label = "global_activity",
   }
 
   names(df)[2] <- label
-  out <- monthly_to_quarterly(df, label)
+  out <- aggregate_to(df, label, frequency)
 
   # A quarter whose months were all missing averages to NaN rather than
   # dropping out, and a NaN reaching the panel would be written to the CSV

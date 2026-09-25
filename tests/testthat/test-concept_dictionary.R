@@ -6,7 +6,7 @@ test_that("concept_dictionary has exactly one row per concept, no duplicates", {
 test_that("concept_dictionary has the expected columns", {
   expect_setequal(
     names(concept_dictionary),
-    c("label", "fred_qd_group", "fred_qd_mnemonic", "us_note", "cross_country_note", "plausibility_category")
+    c("label", "fred_qd_group", "fred_qd_mnemonic", "us_note", "cross_country_note", "plausibility_category", "available_monthly")
   )
 })
 
@@ -61,4 +61,31 @@ test_that("every non-'level' plausibility category has bounds defined for it", {
 test_that("plausibility_categories (derived view) omits the default 'level' category", {
   expect_false("level" %in% plausibility_categories$category)
   expect_true(all(plausibility_categories$label %in% concept_dictionary$label))
+})
+
+test_that("available_monthly is a flag on every row and marks nothing quarterly-only", {
+  expect_type(concept_dictionary$available_monthly, "logical")
+  expect_false(anyNA(concept_dictionary$available_monthly))
+
+  monthly <- concept_dictionary$label[concept_dictionary$available_monthly]
+  expect_gt(length(monthly), 20)
+  expect_lt(length(monthly), nrow(concept_dictionary))
+
+  # scripts/build_monthly_panel.R takes its whole concept list from this
+  # column, so a concept that is quarterly at source and marked TRUE here
+  # would come back either empty or interpolated, and neither is visible in
+  # the output CSV. The national accounts are the clearest case: Eurostat
+  # and the OECD publish them quarterly and nobody publishes them monthly.
+  quarterly_at_source <- c("real_gdp", "real_household_consumption",
+                           "real_govt_consumption", "real_gfcf_total",
+                           "real_exports", "real_imports",
+                           "real_household_disposable_income", "hours_worked",
+                           "unit_labor_cost", "employment_rate",
+                           "house_price_real", "credit_to_private_nonfin_sector",
+                           "household_credit_to_gdp", "corporate_credit_to_gdp",
+                           "government_debt_to_gdp",
+                           "government_primary_balance_to_gdp",
+                           "euro_area_household_net_worth_growth",
+                           "world_uncertainty_index")
+  expect_false(any(quarterly_at_source %in% monthly))
 })

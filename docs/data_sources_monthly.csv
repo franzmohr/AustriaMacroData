@@ -1,0 +1,67 @@
+country,variable,provider,key
+AUT,construction_confidence,EC_BCS,AT.BUIL
+AUT,construction_weather_constraint,EC_BCS,AT.BUIL weather factor
+AUT,consumer_confidence,EC_BCS,AT.CONS (OECD MEI mirror dropped: it measures a different statistic)
+AUT,core_cpi_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.AT
+AUT,cpi_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP00.AT
+AUT,economic_sentiment_indicator,EC_BCS,AT.ESI
+AUT,employment_expectations,EC_BCS,AT.EEI
+AUT,energy_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.NRG.AT
+AUT,financial_stress,ECB_CISS,"CISS (daily, averaged within the month)"
+AUT,food_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP01.AT
+AUT,fx_rate_to_usd,FRED_MIRROR,CCUSMA02ATM618N
+AUT,geopolitical_risk,GPR,GPR
+AUT,global_activity,FRED,IGREA
+AUT,household_mortgage_loans,ECB_BSI,BSI
+AUT,industrial_confidence,EC_BCS,AT.INDU
+AUT,industrial_production,EUROSTAT_STS,"sts_inpr_m:M.PRD.B-D.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)"
+AUT,long_term_rate,FRED_MIRROR,IRLTLT01ATM156N
+AUT,mortgage_rate,ECB_MIR,MIR
+AUT,oil_price,FRED,WTISPLC
+AUT,real_effective_exchange_rate,FRED_MIRROR,CCRETT01ATM661N
+AUT,retail_confidence,EC_BCS,AT.RETA
+AUT,retail_sales_volume,EUROSTAT_STS,"sts_trtu_m:M.VOL_SLS.G47.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)"
+AUT,services_confidence,EC_BCS,AT.SERV
+AUT,services_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.SERV.AT
+AUT,share_price_index,FRED_MIRROR,SPASTT01ATM661N
+AUT,short_term_rate,FRED_MIRROR,IR3TIB01ATM156N
+AUT,unemployment_rate,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.AT (OECD MEI mirror fills earlier months unchanged, same units)"
+DEU,construction_confidence,EC_BCS,DE.BUIL
+DEU,construction_weather_constraint,EC_BCS,DE.BUIL weather factor
+DEU,consumer_confidence,EC_BCS,DE.CONS (OECD MEI mirror dropped: it measures a different statistic)
+DEU,core_cpi_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.DE
+DEU,cpi_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP00.DE
+DEU,economic_sentiment_indicator,EC_BCS,DE.ESI
+DEU,employment_expectations,EC_BCS,DE.EEI
+DEU,energy_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.NRG.DE
+DEU,financial_stress,ECB_CISS,"CISS (daily, averaged within the month)"
+DEU,food_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP01.DE
+DEU,fx_rate_to_usd,FRED_MIRROR,CCUSMA02DEM618N
+DEU,geopolitical_risk,GPR,GPRC_DEU
+DEU,global_activity,FRED,IGREA
+DEU,household_mortgage_loans,ECB_BSI,BSI
+DEU,industrial_confidence,EC_BCS,DE.INDU
+DEU,industrial_production,EUROSTAT_STS,"sts_inpr_m:M.PRD.B-D.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)"
+DEU,long_term_rate,FRED_MIRROR,IRLTLT01DEM156N
+DEU,mortgage_rate,ECB_MIR,MIR
+DEU,oil_price,FRED,WTISPLC
+DEU,real_effective_exchange_rate,FRED_MIRROR,CCRETT01DEM661N
+DEU,retail_confidence,EC_BCS,DE.RETA
+DEU,retail_sales_volume,EUROSTAT_STS,"sts_trtu_m:M.VOL_SLS.G47.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)"
+DEU,services_confidence,EC_BCS,DE.SERV
+DEU,services_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.SERV.DE
+DEU,share_price_index,FRED_MIRROR,SPASTT01DEM661N
+DEU,short_term_rate,FRED_MIRROR,IR3TIB01DEM156N
+DEU,unemployment_rate,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.DE (OECD MEI mirror fills earlier months unchanged, same units)"
+USA,consumer_confidence,FRED_MIRROR,CSCICP03USM665S
+USA,financial_stress,ECB_CISS,"CISS (daily, averaged within the month)"
+USA,geopolitical_risk,GPR,GPRC_USA
+USA,global_activity,FRED,IGREA
+USA,industrial_production,FRED_MIRROR,USAPROINDMISMEI
+USA,long_term_rate,FRED_MIRROR,IRLTLT01USM156N
+USA,oil_price,FRED,WTISPLC
+USA,real_effective_exchange_rate,FRED_MIRROR,CCRETT01USM661N
+USA,retail_sales_volume,FRED_MIRROR,USASARTMISMEI
+USA,share_price_index,FRED_MIRROR,SPASTT01USM661N
+USA,short_term_rate,FRED_MIRROR,IR3TIB01USM156N
+USA,unemployment_rate,FRED_MIRROR,LRHUTTTTUSM156S

@@ -1,0 +1,378 @@
+{
+  "country": "USA",
+  "frequency": "monthly",
+  "generated_at": "2026-09-25T05:29:02Z",
+  "start_period": "1960-M01",
+  "concepts_published_monthly": 27,
+  "concepts_quarterly_only": 20,
+  "resolved": [
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industrial_production",
+      "source": "OECD MEI (via FRED mirror), monthly [USAPROINDMISMEI]"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "unemployment_rate",
+      "source": "OECD MEI (via FRED mirror), monthly [LRHUTTTTUSM156S]"
+    },
+    {
+      "fred_qd_group": "Inventories, Orders, and Sales",
+      "label": "retail_sales_volume",
+      "source": "OECD MEI (via FRED mirror), monthly [USASARTMISMEI]"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "long_term_rate",
+      "source": "OECD MEI (via FRED mirror), monthly [IRLTLT01USM156N]"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "short_term_rate",
+      "source": "OECD MEI (via FRED mirror), monthly [IR3TIB01USM156N]"
+    },
+    {
+      "fred_qd_group": "Exchange Rates",
+      "label": "real_effective_exchange_rate",
+      "source": "OECD MEI (via FRED mirror), monthly [CCRETT01USM661N]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_confidence",
+      "source": "OECD MEI (via FRED mirror), monthly [CSCICP03USM665S]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "oil_price",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [WTISPLC]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "geopolitical_risk",
+      "source": "Geopolitical Risk Index (Caldara-Iacoviello) [GPRC_USA]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "global_activity",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [IGREA]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "financial_stress",
+      "source": "ECB Composite Indicator of Systemic Stress (CISS) [CISS (daily, averaged within the month)]"
+    },
+    {
+      "fred_qd_group": "Stock Markets",
+      "label": "share_price_index",
+      "source": "OECD MEI (via FRED mirror), monthly [SPASTT01USM661N]"
+    }
+  ],
+  "skipped": [
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industrial_confidence"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "employment_expectations"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_confidence"
+    },
+    {
+      "fred_qd_group": "Inventories, Orders, and Sales",
+      "label": "retail_confidence"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "cpi_index"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "core_cpi_index"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "food_price_index"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "energy_price_index"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "services_price_index"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "mortgage_rate"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "household_mortgage_loans"
+    },
+    {
+      "fred_qd_group": "Exchange Rates",
+      "label": "fx_rate_to_usd"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "economic_sentiment_indicator"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_confidence"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_weather_constraint"
+    }
+  ],
+  "quarterly_only": [
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_gdp"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_household_consumption"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_govt_consumption"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_gfcf_total"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_exports"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_imports"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_household_disposable_income"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "employment_rate"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "hours_worked"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "house_price_real"
+    },
+    {
+      "fred_qd_group": "Earnings and Productivity",
+      "label": "unit_labor_cost"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "credit_to_private_nonfin_sector"
+    },
+    {
+      "fred_qd_group": "Household Balance Sheets",
+      "label": "euro_area_household_net_worth_growth"
+    },
+    {
+      "fred_qd_group": "Household Balance Sheets",
+      "label": "household_credit_to_gdp"
+    },
+    {
+      "fred_qd_group": "Non-Household Balance Sheets",
+      "label": "corporate_credit_to_gdp"
+    },
+    {
+      "fred_qd_group": "Non-Household Balance Sheets",
+      "label": "government_debt_to_gdp"
+    },
+    {
+      "fred_qd_group": "Non-Household Balance Sheets",
+      "label": "government_primary_balance_to_gdp"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "world_uncertainty_index"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "heating_degree_days"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "cooling_degree_days"
+    }
+  ],
+  "plausibility_checks": [
+    {
+      "label": "industrial_production",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -13%."
+    },
+    {
+      "label": "industrial_confidence",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "unemployment_rate",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 789 values within [-10, 400]."
+    },
+    {
+      "label": "employment_expectations",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "construction_confidence",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "retail_sales_volume",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 18%."
+    },
+    {
+      "label": "retail_confidence",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "cpi_index",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "core_cpi_index",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "food_price_index",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "energy_price_index",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "services_price_index",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "long_term_rate",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 800 values within [-10, 400]."
+    },
+    {
+      "label": "short_term_rate",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 746 values within [-10, 400]."
+    },
+    {
+      "label": "mortgage_rate",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "household_mortgage_loans",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "fx_rate_to_usd",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "real_effective_exchange_rate",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 6%."
+    },
+    {
+      "label": "consumer_confidence",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 769 values within [-150, 250]."
+    },
+    {
+      "label": "economic_sentiment_indicator",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "services_confidence",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "oil_price",
+      "category": "level_event_driven",
+      "status": "PASS",
+      "detail": "Positive throughout (800 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
+      "label": "geopolitical_risk",
+      "category": "level_event_driven",
+      "status": "PASS",
+      "detail": "Positive throughout (499 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
+      "label": "global_activity",
+      "category": "deviation",
+      "status": "PASS",
+      "detail": "All 703 values within [-300, 300]."
+    },
+    {
+      "label": "financial_stress",
+      "category": "level_event_driven",
+      "status": "PASS",
+      "detail": "Positive throughout (561 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
+      "label": "share_price_index",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -22%."
+    },
+    {
+      "label": "construction_weather_constraint",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    }
+  ]
+}
