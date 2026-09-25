@@ -219,6 +219,23 @@ if (country %in% eu_member_countries) {
 }
 
 ## =====================================================================
+## 3b. A national CPI index where the HICP does not reach
+##
+##     The OECD MEI mirror cannot serve here: its only CPI series are
+##     growth rates (see R/fred_mirror.R). So a country outside the EU
+##     gets its own national index if this project has verified one, and
+##     an honest NA otherwise.
+## =====================================================================
+if (!"cpi_index" %in% names(concept_source)) {
+  national <- fetch_national_cpi_index(country, start_period = start_period,
+                                       frequency = FREQ)
+  if (!is.null(national)) {
+    message("No Eurostat HICP for ", country, " -- using its national CPI index.")
+    join_concept(national, "cpi_index", "FRED", attr(national, "source_col"))
+  }
+}
+
+## =====================================================================
 ## 4. European Commission Business and Consumer Survey -- seven
 ##    concepts, monthly at source and published within the month they
 ##    refer to, which makes them the timeliest thing in this panel.

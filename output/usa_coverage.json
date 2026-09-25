@@ -1,6 +1,6 @@
 {
   "country": "USA",
-  "generated_at": "2026-09-14T09:40:53Z",
+  "generated_at": "2026-09-25T06:29:57Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -26,12 +26,12 @@
     {
       "fred_qd_group": "Output and Income",
       "label": "real_exports",
-      "source": "OECD QNA [S1.P6]"
+      "source": "IMF QNEA [P6]"
     },
     {
       "fred_qd_group": "Output and Income",
       "label": "real_imports",
-      "source": "OECD QNA [S1.P7]"
+      "source": "IMF QNEA [P7]"
     },
     {
       "fred_qd_group": "Industrial Production",
@@ -56,7 +56,7 @@
     {
       "fred_qd_group": "Prices",
       "label": "cpi_index",
-      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CPALTT01USQ657N]"
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [CPIAUCSL]"
     },
     {
       "fred_qd_group": "Earnings and Productivity",
@@ -104,9 +104,19 @@
       "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CSCICP03USM665S]"
     },
     {
+      "fred_qd_group": "Prices",
+      "label": "oil_price",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [WTISPLC]"
+    },
+    {
       "fred_qd_group": "Other",
       "label": "geopolitical_risk",
       "source": "Geopolitical Risk Index (Caldara-Iacoviello) [GPRC_USA]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "global_activity",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [IGREA]"
     },
     {
       "fred_qd_group": "Other",
@@ -142,6 +152,10 @@
     {
       "fred_qd_group": "Industrial Production",
       "label": "industrial_confidence"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "hours_worked"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
@@ -249,7 +263,7 @@
       "label": "real_imports",
       "category": "level",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change 20%."
+      "detail": "Positive throughout; largest quarter-over-quarter change 23%."
     },
     {
       "label": "real_household_disposable_income",
@@ -280,6 +294,12 @@
       "category": "percent",
       "status": "PASS",
       "detail": "All 198 values within [-10, 400]."
+    },
+    {
+      "label": "hours_worked",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
     },
     {
       "label": "employment_expectations",
@@ -313,9 +333,9 @@
     },
     {
       "label": "cpi_index",
-      "category": "balance",
+      "category": "level",
       "status": "PASS",
-      "detail": "All 276 values within [-150, 250]."
+      "detail": "Positive throughout; largest quarter-over-quarter change 4%."
     },
     {
       "label": "core_cpi_index",
@@ -438,10 +458,22 @@
       "detail": "No non-NA observations."
     },
     {
+      "label": "oil_price",
+      "category": "level_event_driven",
+      "status": "PASS",
+      "detail": "Positive throughout (267 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
       "label": "geopolitical_risk",
       "category": "level_event_driven",
       "status": "PASS",
       "detail": "Positive throughout (167 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
+      "label": "global_activity",
+      "category": "deviation",
+      "status": "PASS",
+      "detail": "All 235 values within [-300, 300]."
     },
     {
       "label": "financial_stress",

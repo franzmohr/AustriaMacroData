@@ -54,6 +54,7 @@ DEU,share_price_index,FRED_MIRROR,SPASTT01DEM661N
 DEU,short_term_rate,FRED_MIRROR,IR3TIB01DEM156N
 DEU,unemployment_rate,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.DE (OECD MEI mirror fills earlier months unchanged, same units)"
 USA,consumer_confidence,FRED_MIRROR,CSCICP03USM665S
+USA,cpi_index,FRED,CPIAUCSL
 USA,financial_stress,ECB_CISS,"CISS (daily, averaged within the month)"
 USA,geopolitical_risk,GPR,GPRC_USA
 USA,global_activity,FRED,IGREA

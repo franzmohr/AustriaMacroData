@@ -375,6 +375,74 @@ if (country %in% eu_member_countries) {
 }
 
 ## =====================================================================
+## 4e2. A national CPI index where the HICP does not reach
+##
+##      The OECD MEI mirror above cannot serve as the fallback it looks
+##      like: CPALTT01{cc2}Q657N is a quarter-on-quarter GROWTH RATE,
+##      not an index (confirmed live 2026-09-25 -- the US series runs
+##      -2.83 to 3.95 with 15 negative values), so `cpi_index` has been
+##      holding an index level for EU members and a percent change for
+##      everyone else. docs/data_sources.csv has always documented the
+##      intended US source as the index CPIAUCSL; the panel now matches
+##      its own documentation. See R/fred_mirror.R for why this is a
+##      short explicit table and not a template.
+## =====================================================================
+national_cpi <- fetch_national_cpi_index(country, start_period = start_period,
+                                         frequency = "Q")
+if (!is.null(national_cpi) &&
+    !identical(concept_source[["cpi_index"]]$provider, "EUROSTAT_HICP")) {
+  message("Using ", country, "'s own national CPI index rather than the OECD MEI growth rate...")
+  panel <- panel %>% dplyr::select(-dplyr::any_of("cpi_index")) %>%
+    dplyr::full_join(national_cpi[, c("date", "cpi_index")], by = "date")
+  concept_source[["cpi_index"]] <- list(provider = "FRED",
+                                        key = attr(national_cpi, "source_col"))
+}
+
+## =====================================================================
+## 4e3. EU-specific override: industrial production and retail sales
+##      from Eurostat's short-term statistics
+##
+##      Their OECD MEI mirrors are frozen -- AUTPROINDQISMEI and
+##      AUTSARTQISMEI both stop at 2024-Q1, while every other concept in
+##      this panel runs to the current quarter. A panel whose shortest
+##      series ends two and a half years early truncates every model
+##      estimated on it, and nothing about the CSV says so.
+##
+##      Spliced rather than substituted: Eurostat's index starts in 1996
+##      (2000 for retail) and the mirrors reach back to 1955 and 1973, on
+##      a different base. splice_prefer() rescales the mirror's history
+##      to Eurostat's level at the overlap, so its own dynamics survive
+##      and the level break does not. Worth knowing before trusting the
+##      join: over their overlap the two retail series correlate 0.998 in
+##      log differences, the two industrial production series only 0.896
+##      -- they are close relatives rather than the same series, and the
+##      spliced history should be read as such.
+## =====================================================================
+if (country %in% eu_member_countries) {
+  message("Country is an EU member -- fetching Eurostat quarterly industrial production and retail sales...")
+  for (job in list(
+    list(label = "industrial_production", fetch = fetch_eurostat_industrial_production),
+    list(label = "retail_sales_volume", fetch = fetch_eurostat_retail_sales)
+  )) {
+    fresh <- job$fetch(country, start_period = start_period, frequency = "Q")
+    if (is.null(fresh)) {
+      message("Eurostat unavailable for ", job$label, " this run -- keeping the FRED-mirror series, if any.")
+      next
+    }
+    old <- if (job$label %in% names(panel)) panel[, c("date", job$label)] else NULL
+    panel <- panel %>% dplyr::select(-dplyr::any_of(job$label)) %>%
+      dplyr::full_join(splice_prefer(fresh[, c("date", job$label)], old, by = "date"),
+                       by = "date")
+    concept_source[[job$label]] <- list(
+      provider = "EUROSTAT_STS",
+      key = paste0(attr(fresh, "source_col"),
+                   if (is.null(old)) "" else
+                     " (OECD MEI mirror's earlier history spliced on, rescaled to this base)")
+    )
+  }
+}
+
+## =====================================================================
 ## 4f. EU-specific override: unit labor cost from Eurostat's labour
 ##     productivity and unit-labour-cost dataflow, where it publishes an
 ##     index-level series (a closer match to FRED-QD's ULCNFB than the
@@ -577,6 +645,7 @@ provider_display_names <- c(
   GPR = "Geopolitical Risk Index (Caldara-Iacoviello)",
   EUROSTAT_CHDD = "Eurostat (nrg_chdd_m, degree days)",
   EUROSTAT_NA = "Eurostat (namq_10_a10_e, national accounts by activity)",
+  EUROSTAT_STS = "Eurostat short-term statistics (sts_inpr_q / sts_trtu_q)",
   FRED = "FRED (series published by FRED itself, not an OECD/BIS mirror)",
   OPEN_METEO = "ERA5 reanalysis (via the Open-Meteo archive API)"
 )
