@@ -210,3 +210,70 @@ fetch_other_groups <- function(fred_country2, country3, frequency = "Q") {
   names(results) <- wanted$label
   purrr::compact(results)
 }
+
+## ---------------------------------------------------------------
+## A national consumer price INDEX, for countries with no Eurostat HICP
+##
+## The OECD MEI family has no index-valued CPI mirror at all. What it
+## has is CPALTT01{cc2}{freq}657N, a period-on-period GROWTH RATE
+## (confirmed live 2026-09-25: CPALTT01ATM657N runs -2.36 to 5.12 with
+## 160 negative observations), and CPALTT01{cc2}M659N, a year-on-year
+## growth rate. The index-shaped mnemonic one would expect by analogy
+## with the other OECD MEI series, CPALTT01{cc2}M661N, does not exist --
+## confirmed by real 404s for AT, DE and US alike.
+##
+## That left `cpi_index` holding an index level for EU members, from the
+## Eurostat HICP override, and a percent change for everyone else. Both
+## constructions were accommodated by giving the concept a plausibility
+## category wide enough for both, which is documented and tested -- but
+## a column that is one statistic for some countries and another for the
+## rest is not a column anyone can write cross-country code against, and
+## docs/data_sources.csv has always documented the intended US source as
+## the INDEX, CPIAUCSL. The panel now matches its own documentation.
+##
+## This is deliberately a small, explicit, per-country table rather than
+## a template. There is no cross-country convention to exploit: each
+## national statistical office's index reaches FRED under its own
+## mnemonic, base year and seasonal-adjustment choice, and guessing one
+## from a country code is how a plausible-looking wrong series gets into
+## a panel. A country not listed here, and not covered by the Eurostat
+## HICP, resolves to NA -- which is the honest answer and is visible in
+## the coverage report, where a mislabelled series would not be.
+national_cpi_index <- tibble::tribble(
+  ~country3, ~fred_id,    ~note,
+  "USA",     "CPIAUCSL",  "Consumer Price Index for All Urban Consumers: All Items in U.S. City Average, index 1982-1984 = 100, seasonally adjusted, monthly from 1947-01. This is FRED-QD's own cpi_index series, which docs/data_sources.csv already names as the US reference."
+)
+
+#' Fetch a country's own consumer price index from FRED, or NULL
+#'
+#' The last-resort route for `cpi_index`, tried only where the Eurostat
+#' HICP does not apply. `frequency` says what the panel wants; the
+#' source is monthly and is averaged down for a quarterly panel, as
+#' every other monthly FRED source here is.
+fetch_national_cpi_index <- function(country3, label = "cpi_index",
+                                     start_period = "1960-Q1",
+                                     frequency = "Q") {
+  check_frequency(frequency)
+  row <- national_cpi_index[national_cpi_index$country3 == country3, ]
+  if (nrow(row) != 1) return(NULL)
+
+  df <- get_fred_series(row$fred_id[1])
+  if (is.null(df)) {
+    warning(sprintf("[%s] FRED fetch failed for %s", label, row$fred_id[1]))
+    return(NULL)
+  }
+
+  names(df)[2] <- label
+  out <- aggregate_to(df, label, frequency)
+  out[[label]][is.nan(out[[label]])] <- NA_real_
+  out <- out[!is.na(out[[label]]), ]
+  out <- out[out$date >= period_to_date(start_period), ]
+
+  if (nrow(out) == 0) {
+    warning(sprintf("[%s] %s returned no usable observations", label, row$fred_id[1]))
+    return(NULL)
+  }
+
+  attr(out, "source_col") <- row$fred_id[1]
+  out
+}

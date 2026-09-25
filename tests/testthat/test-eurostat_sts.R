@@ -1,4 +1,4 @@
-## R/eurostat_monthly.R -- the monthly-only Eurostat short-term statistics,
+## R/eurostat_sts.R -- Eurostat's short-term statistics at both frequencies,
 ## and the frequency argument the shared fetchers grew for the monthly panel.
 ##
 ## The keys are the whole point of this module: every one of the three
@@ -166,4 +166,79 @@ test_that("the shared fetchers keep monthly dates when asked for them", {
   expect_equal(nrow(quarterly), 4)
   expect_equal(monthly$geopolitical_risk, seq_along(months) * 10)
   expect_equal(quarterly$geopolitical_risk[1], mean(c(10, 20, 30)))
+})
+
+test_that("the quarterly siblings use the same dimension order with a Q", {
+  quarterly <- paste(c(
+    "DATAFLOW,LAST UPDATE,freq,indic_bt,nace_r2,s_adj,unit,geo,TIME_PERIOD,OBS_VALUE,OBS_FLAG,CONF_STATUS",
+    "ESTAT:STS_INPR_Q(1.0),17/09/26,Q,PRD,B-D,SCA,I21,AT,2024-Q1,102.4,,",
+    "ESTAT:STS_INPR_Q(1.0),17/09/26,Q,PRD,B-D,SCA,I21,AT,2024-Q2,101.1,,"
+  ), collapse = "
+")
+
+  spy <- capture_url(quarterly)
+  with_mock_fetch_text(spy$fn, {
+    out <- fetch_eurostat_industrial_production("AUT", start_period = "1995-Q1",
+                                                frequency = "Q")
+  })
+
+  expect_match(spy$seen$url, "sts_inpr_q/Q.PRD.B-D.SCA.I21.AT", fixed = TRUE)
+  expect_match(spy$seen$url, "startPeriod=1995-Q1", fixed = TRUE)
+
+  # Eurostat writes a quarterly period as "2024-Q1" and a monthly one as
+  # "2024-01"; only the first is what period_to_date() reads, so the two
+  # are converted by different branches and both are checked.
+  expect_equal(out$date, as.Date(c("2024-01-01", "2024-04-01")))
+  expect_equal(out$industrial_production, c(102.4, 101.1))
+
+  spy <- capture_url(quarterly)
+  with_mock_fetch_text(spy$fn, {
+    fetch_eurostat_retail_sales("AUT", start_period = "1995-Q1", frequency = "Q")
+  })
+  expect_match(spy$seen$url, "sts_trtu_q/Q.VOL_SLS.G47.SCA.I21.AT", fixed = TRUE)
+})
+
+test_that("the unemployment rate refuses a quarterly request rather than 400ing", {
+  # une_rt_q exists as a dataflow but not with this key -- confirmed live, it
+  # returns a SOAP fault. Refusing here says so; letting it through would
+  # produce a warning about a missing key and a silent NA column.
+  expect_error(fetch_eurostat_unemployment("AUT", frequency = "Q"),
+               "published monthly only")
+})
+
+test_that("a national CPI index is an index, and only for a country on the list", {
+  fixture <- paste(c("observation_date,CPIAUCSL",
+                     "2020-01-01,100.0", "2020-02-01,101.0", "2020-03-01,102.0",
+                     "2020-04-01,104.0"), collapse = "
+")
+
+  with_mock_fetch_text(const_fetch_text(fixture), {
+    monthly <- fetch_national_cpi_index("USA", start_period = "2020-M01", frequency = "M")
+    quarterly <- fetch_national_cpi_index("USA", start_period = "2020-Q1", frequency = "Q")
+    # A country with no verified national index resolves to NULL, not to
+    # whatever the last country fetched.
+    expect_null(fetch_national_cpi_index("AUT"))
+    expect_null(fetch_national_cpi_index("FRA"))
+  })
+
+  expect_equal(monthly$cpi_index, c(100, 101, 102, 104))
+  expect_equal(quarterly$cpi_index, c(101, 104))
+  expect_identical(attr(monthly, "source_col"), "CPIAUCSL")
+})
+
+test_that("no OECD MEI growth rate can reach cpi_index by either route", {
+  # The 657 suffix is a period-on-period growth rate and 659 a year-on-year
+  # one. Neither belongs in a column of index levels, and the mistake is
+  # invisible once it is in a CSV -- a CPI growth rate and a confidence
+  # balance look alike.
+  expect_false(any(grepl("657|659", other_groups$m_id_template[
+    !is.na(other_groups$m_id_template)])))
+  expect_false("cpi_index" %in% other_groups$label[!is.na(other_groups$m_id_template)])
+
+  # And the national table names a real index, not a template to be
+  # guessed at from a country code.
+  expect_true(all(c("country3", "fred_id", "note") %in% names(national_cpi_index)))
+  expect_false(any(grepl("[{]cc", national_cpi_index$fred_id)))
+  expect_equal(national_cpi_index$fred_id[national_cpi_index$country3 == "USA"],
+               "CPIAUCSL")
 })

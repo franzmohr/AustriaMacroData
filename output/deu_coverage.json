@@ -1,6 +1,6 @@
 {
   "country": "DEU",
-  "generated_at": "2026-09-24T19:27:25Z",
+  "generated_at": "2026-09-25T06:29:35Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -36,7 +36,7 @@
     {
       "fred_qd_group": "Industrial Production",
       "label": "industrial_production",
-      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [DEUPROINDQISMEI]"
+      "source": "Eurostat short-term statistics (sts_inpr_q / sts_trtu_q) [sts_inpr_q:Q.PRD.B-D.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)]"
     },
     {
       "fred_qd_group": "Industrial Production",
@@ -76,7 +76,7 @@
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
       "label": "retail_sales_volume",
-      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [DEUSARTQISMEI]"
+      "source": "Eurostat short-term statistics (sts_inpr_q / sts_trtu_q) [sts_trtu_q:Q.VOL_SLS.G47.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)]"
     },
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
@@ -351,9 +351,9 @@
     },
     {
       "label": "cpi_index",
-      "category": "balance",
+      "category": "level",
       "status": "PASS",
-      "detail": "All 120 values within [-150, 250]."
+      "detail": "Positive throughout; largest quarter-over-quarter change 3%."
     },
     {
       "label": "core_cpi_index",

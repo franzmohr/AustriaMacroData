@@ -1,7 +1,7 @@
 {
   "country": "USA",
   "frequency": "monthly",
-  "generated_at": "2026-09-25T05:29:02Z",
+  "generated_at": "2026-09-25T06:30:00Z",
   "start_period": "1960-M01",
   "concepts_published_monthly": 27,
   "concepts_quarterly_only": 20,
@@ -20,6 +20,11 @@
       "fred_qd_group": "Inventories, Orders, and Sales",
       "label": "retail_sales_volume",
       "source": "OECD MEI (via FRED mirror), monthly [USASARTMISMEI]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "cpi_index",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [CPIAUCSL]"
     },
     {
       "fred_qd_group": "Interest Rates",
@@ -83,10 +88,6 @@
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
       "label": "retail_confidence"
-    },
-    {
-      "fred_qd_group": "Prices",
-      "label": "cpi_index"
     },
     {
       "fred_qd_group": "Prices",
@@ -256,9 +257,9 @@
     },
     {
       "label": "cpi_index",
-      "category": "balance",
-      "status": "NO_DATA",
-      "detail": "No non-NA observations."
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 2%."
     },
     {
       "label": "core_cpi_index",

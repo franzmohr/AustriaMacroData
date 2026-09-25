@@ -86,6 +86,11 @@ test_that("check_one_concept still flags a non-positive value for a level_event_
   expect_match(out$detail, "Non-positive value")
 })
 
+## unit_labor_cost still has the dual construction cpi_index has just shed:
+## an index for countries where Eurostat publishes NULC_HW, a percent change
+## from the OECD mirror elsewhere. The same criticism applies to it, and the
+## same fix would be a verified national index per country -- which nobody
+## has yet found for unit labour costs the way CPIAUCSL exists for prices.
 test_that("check_one_concept accepts both constructions of unit_labor_cost (index level or % change)", {
   ## Austria: an index level around 90-155 (Eurostat NULC_HW override)
   expect_equal(check_one_concept("unit_labor_cost", c(120, 122, 121, 123, 125))$status, "PASS")
@@ -93,13 +98,30 @@ test_that("check_one_concept accepts both constructions of unit_labor_cost (inde
   expect_equal(check_one_concept("unit_labor_cost", c(1.2, -0.35, 0.8, -0.1, 0.5))$status, "PASS")
 })
 
-test_that("check_one_concept accepts both constructions of cpi_index (index level or % change)", {
-  ## EU members: a genuine index level (Eurostat HICP override)
+test_that("cpi_index is an index level for every country, and is checked as one", {
+  ## It was not always. Until 2026-09-25 this concept held a genuine index
+  ## for EU members (the Eurostat HICP override) and a quarter-on-quarter
+  ## PERCENT CHANGE for everyone else, because the only CPI series in the
+  ## OECD MEI family are growth rates -- CPALTT01{cc2}Q657N runs -2.83 to
+  ## 3.95 for the US. The category was widened to "balance" so that both
+  ## constructions would pass, which is why this test used to assert that
+  ## c(0.5, 0, 0.3, ...) was acceptable here.
+  ##
+  ## That accommodation had a cost the widened band could not see: a
+  ## MIXTURE of the two inside one column passes too. Building the monthly
+  ## panel spliced the growth rate onto the HICP index and produced a
+  ## cpi_index reaching -377 without a single FLAG. Non-EU countries now
+  ## take a real national index instead (R/fred_mirror.R's
+  ## national_cpi_index), so the concept is one statistic everywhere and
+  ## the strict "level" rules apply again.
   expect_equal(check_one_concept("cpi_index", c(150, 152, 151, 153, 155))$status, "PASS")
-  ## Non-EU countries: a quarterly % change, including a real 0% quarter
-  ## (confirmed live 2026-08-30 for the US FRED-mirror default) -- must
-  ## NOT be flagged as a non-positive level/index value.
-  expect_equal(check_one_concept("cpi_index", c(0.5, 0, 0.3, 1.1, 0.8))$status, "PASS")
+  ## CPIAUCSL is on 1982-1984 = 100 and is past 330, well outside the old
+  ## band -- which is what surfaced the category being wrong for it.
+  expect_equal(check_one_concept("cpi_index", c(330, 331, 332, 333, 334))$status, "PASS")
+  ## And a growth rate, were one ever to reach this column again, is now
+  ## caught on its first non-positive value rather than passing quietly.
+  expect_equal(check_one_concept("cpi_index", c(0.5, 0, 0.3, 1.1, 0.8))$status, "FLAG")
+  expect_equal(check_one_concept("cpi_index", c(0.5, -0.2, 0.3, 1.1, 0.8))$status, "FLAG")
 })
 
 test_that("check_one_concept does not flag a large but plausible level swing (e.g. COVID-era)", {

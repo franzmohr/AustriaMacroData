@@ -1,7 +1,7 @@
 {
   "country": "AUT",
   "frequency": "monthly",
-  "generated_at": "2026-09-25T05:28:19Z",
+  "generated_at": "2026-09-25T06:29:17Z",
   "start_period": "1960-M01",
   "concepts_published_monthly": 27,
   "concepts_quarterly_only": 20,
@@ -270,9 +270,9 @@
     },
     {
       "label": "cpi_index",
-      "category": "balance",
+      "category": "level",
       "status": "PASS",
-      "detail": "All 360 values within [-150, 250]."
+      "detail": "Positive throughout; largest quarter-over-quarter change 3%."
     },
     {
       "label": "core_cpi_index",
