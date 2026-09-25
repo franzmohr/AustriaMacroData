@@ -255,10 +255,11 @@ ec_survey_indicators <- tibble::tribble(
 fetch_ec_consumer_confidence <- function(country3, label = "consumer_confidence",
                                           start_period = "1995-Q1",
                                           reference_date = Sys.Date(),
-                                          landing_dir = ec_survey_landing_dir) {
+                                          landing_dir = ec_survey_landing_dir,
+                                          frequency = "Q") {
   fetch_ec_survey_indicator(country3, label, indicator = "CONS",
                              start_period = start_period, reference_date = reference_date,
-                             landing_dir = landing_dir)
+                             landing_dir = landing_dir, frequency = frequency)
 }
 
 #' Fetch any one of the EC Business and Consumer Survey's seven
@@ -285,7 +286,8 @@ fetch_ec_consumer_confidence <- function(country3, label = "consumer_confidence"
 fetch_ec_survey_indicator <- function(country3, label, indicator = "CONS",
                                        start_period = "1995-Q1",
                                        reference_date = Sys.Date(),
-                                       landing_dir = ec_survey_landing_dir) {
+                                       landing_dir = ec_survey_landing_dir,
+                                       frequency = "Q") {
   if (!country3 %in% eu_member_countries) {
     warning(sprintf("[%s] EC Business and Consumer Survey only covers EU member states -- '%s' is not one", label, country3))
     return(NULL)
@@ -302,7 +304,7 @@ fetch_ec_survey_indicator <- function(country3, label, indicator = "CONS",
   monthly_df <- parse_ec_survey_indicator(found$path, ec_country2, label, indicator = indicator)
   if (is.null(monthly_df)) return(NULL)
 
-  monthly_to_quarterly(monthly_df, label) %>%
+  aggregate_to(monthly_df, label, frequency) %>%
     dplyr::filter(.data$date >= period_to_date(start_period))
 }
 
@@ -357,7 +359,8 @@ fetch_ec_construction_weather_constraint <- function(country3,
                                                       label = "construction_weather_constraint",
                                                       start_period = "1995-Q1",
                                                       reference_date = Sys.Date(),
-                                                      landing_dir = ec_survey_landing_dir) {
+                                                      landing_dir = ec_survey_landing_dir,
+                                                      frequency = "Q") {
   if (!country3 %in% eu_member_countries) {
     warning(sprintf("[%s] EC Business and Consumer Survey only covers EU member states -- '%s' is not one", label, country3))
     return(NULL)
@@ -374,6 +377,6 @@ fetch_ec_construction_weather_constraint <- function(country3,
   monthly_df <- parse_ec_survey_building_factor(found$path, ec_country2, label)
   if (is.null(monthly_df)) return(NULL)
 
-  monthly_to_quarterly(monthly_df, label) %>%
+  aggregate_to(monthly_df, label, frequency) %>%
     dplyr::filter(.data$date >= period_to_date(start_period))
 }

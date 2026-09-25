@@ -52,7 +52,8 @@ oil_price_fred_id <- "WTISPLC"
 #' price ever replaces the world price for some panel.
 fetch_oil_price <- function(country3 = NULL, label = "oil_price",
                             start_period = "1960-Q1",
-                            fred_id = oil_price_fred_id) {
+                            fred_id = oil_price_fred_id,
+                            frequency = "Q") {
   df <- get_fred_series(fred_id)
   if (is.null(df)) {
     warning(sprintf("[%s] FRED fetch failed for %s", label, fred_id))
@@ -60,7 +61,7 @@ fetch_oil_price <- function(country3 = NULL, label = "oil_price",
   }
 
   names(df)[2] <- label
-  out <- monthly_to_quarterly(df, label)
+  out <- aggregate_to(df, label, frequency)
 
   # A quarter whose months were all missing averages to NaN rather than
   # dropping out, and a NaN reaching the panel would be written to the CSV

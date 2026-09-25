@@ -1,0 +1,392 @@
+{
+  "country": "AUT",
+  "frequency": "monthly",
+  "generated_at": "2026-09-25T05:28:19Z",
+  "start_period": "1960-M01",
+  "concepts_published_monthly": 27,
+  "concepts_quarterly_only": 20,
+  "resolved": [
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industrial_production",
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [sts_inpr_m:M.PRD.B-D.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industrial_confidence",
+      "source": "European Commission Business and Consumer Survey [AT.INDU]"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "unemployment_rate",
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [une_rt_m:M.SA.TOTAL.PC_ACT.T.AT (OECD MEI mirror fills earlier months unchanged, same units)]"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "employment_expectations",
+      "source": "European Commission Business and Consumer Survey [AT.EEI]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_confidence",
+      "source": "European Commission Business and Consumer Survey [AT.BUIL]"
+    },
+    {
+      "fred_qd_group": "Inventories, Orders, and Sales",
+      "label": "retail_sales_volume",
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [sts_trtu_m:M.VOL_SLS.G47.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)]"
+    },
+    {
+      "fred_qd_group": "Inventories, Orders, and Sales",
+      "label": "retail_confidence",
+      "source": "European Commission Business and Consumer Survey [AT.RETA]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "cpi_index",
+      "source": "Eurostat (prc_hicp_midx, HICP), monthly [prc_hicp_midx:M.I05.CP00.AT]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "core_cpi_index",
+      "source": "Eurostat (prc_hicp_midx, HICP), monthly [prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.AT]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "food_price_index",
+      "source": "Eurostat (prc_hicp_midx, HICP), monthly [prc_hicp_midx:M.I05.CP01.AT]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "energy_price_index",
+      "source": "Eurostat (prc_hicp_midx, HICP), monthly [prc_hicp_midx:M.I05.NRG.AT]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "services_price_index",
+      "source": "Eurostat (prc_hicp_midx, HICP), monthly [prc_hicp_midx:M.I05.SERV.AT]"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "long_term_rate",
+      "source": "OECD MEI (via FRED mirror), monthly [IRLTLT01ATM156N]"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "short_term_rate",
+      "source": "OECD MEI (via FRED mirror), monthly [IR3TIB01ATM156N]"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "mortgage_rate",
+      "source": "ECB MFI Interest Rate Statistics (MIR) [MIR]"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "household_mortgage_loans",
+      "source": "ECB MFI Balance Sheet Items (BSI) [BSI]"
+    },
+    {
+      "fred_qd_group": "Exchange Rates",
+      "label": "fx_rate_to_usd",
+      "source": "OECD MEI (via FRED mirror), monthly [CCUSMA02ATM618N]"
+    },
+    {
+      "fred_qd_group": "Exchange Rates",
+      "label": "real_effective_exchange_rate",
+      "source": "OECD MEI (via FRED mirror), monthly [CCRETT01ATM661N]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_confidence",
+      "source": "European Commission Business and Consumer Survey [AT.CONS (OECD MEI mirror dropped: it measures a different statistic)]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "economic_sentiment_indicator",
+      "source": "European Commission Business and Consumer Survey [AT.ESI]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_confidence",
+      "source": "European Commission Business and Consumer Survey [AT.SERV]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "oil_price",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [WTISPLC]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "geopolitical_risk",
+      "source": "Geopolitical Risk Index (Caldara-Iacoviello) [GPR]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "global_activity",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [IGREA]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "financial_stress",
+      "source": "ECB Composite Indicator of Systemic Stress (CISS) [CISS (daily, averaged within the month)]"
+    },
+    {
+      "fred_qd_group": "Stock Markets",
+      "label": "share_price_index",
+      "source": "OECD MEI (via FRED mirror), monthly [SPASTT01ATM661N]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_weather_constraint",
+      "source": "European Commission Business and Consumer Survey [AT.BUIL weather factor]"
+    }
+  ],
+  "skipped": [],
+  "quarterly_only": [
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_gdp"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_household_consumption"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_govt_consumption"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_gfcf_total"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_exports"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_imports"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_household_disposable_income"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "employment_rate"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "hours_worked"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "house_price_real"
+    },
+    {
+      "fred_qd_group": "Earnings and Productivity",
+      "label": "unit_labor_cost"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "credit_to_private_nonfin_sector"
+    },
+    {
+      "fred_qd_group": "Household Balance Sheets",
+      "label": "euro_area_household_net_worth_growth"
+    },
+    {
+      "fred_qd_group": "Household Balance Sheets",
+      "label": "household_credit_to_gdp"
+    },
+    {
+      "fred_qd_group": "Non-Household Balance Sheets",
+      "label": "corporate_credit_to_gdp"
+    },
+    {
+      "fred_qd_group": "Non-Household Balance Sheets",
+      "label": "government_debt_to_gdp"
+    },
+    {
+      "fred_qd_group": "Non-Household Balance Sheets",
+      "label": "government_primary_balance_to_gdp"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "world_uncertainty_index"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "heating_degree_days"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "cooling_degree_days"
+    }
+  ],
+  "plausibility_checks": [
+    {
+      "label": "industrial_production",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -16%."
+    },
+    {
+      "label": "industrial_confidence",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 500 values within [-150, 250]."
+    },
+    {
+      "label": "unemployment_rate",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 403 values within [-10, 400]."
+    },
+    {
+      "label": "employment_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 368 values within [-150, 250]."
+    },
+    {
+      "label": "construction_confidence",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 368 values within [-150, 250]."
+    },
+    {
+      "label": "retail_sales_volume",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 26%."
+    },
+    {
+      "label": "retail_confidence",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 368 values within [-150, 250]."
+    },
+    {
+      "label": "cpi_index",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 360 values within [-150, 250]."
+    },
+    {
+      "label": "core_cpi_index",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 2%."
+    },
+    {
+      "label": "food_price_index",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -3%."
+    },
+    {
+      "label": "energy_price_index",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 15%."
+    },
+    {
+      "label": "services_price_index",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 2%."
+    },
+    {
+      "label": "long_term_rate",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 440 values within [-10, 400]."
+    },
+    {
+      "label": "short_term_rate",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 447 values within [-10, 400]."
+    },
+    {
+      "label": "mortgage_rate",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 319 values within [-10, 400]."
+    },
+    {
+      "label": "household_mortgage_loans",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 3%."
+    },
+    {
+      "label": "fx_rate_to_usd",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -9%."
+    },
+    {
+      "label": "real_effective_exchange_rate",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 3%."
+    },
+    {
+      "label": "consumer_confidence",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 371 values within [-150, 250]."
+    },
+    {
+      "label": "economic_sentiment_indicator",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 500 values within [-150, 250]."
+    },
+    {
+      "label": "services_confidence",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 359 values within [-150, 250]."
+    },
+    {
+      "label": "oil_price",
+      "category": "level_event_driven",
+      "status": "PASS",
+      "detail": "Positive throughout (800 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
+      "label": "geopolitical_risk",
+      "category": "level_event_driven",
+      "status": "PASS",
+      "detail": "Positive throughout (499 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
+      "label": "global_activity",
+      "category": "deviation",
+      "status": "PASS",
+      "detail": "All 703 values within [-300, 300]."
+    },
+    {
+      "label": "financial_stress",
+      "category": "level_event_driven",
+      "status": "PASS",
+      "detail": "Positive throughout (333 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+    },
+    {
+      "label": "share_price_index",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -33%."
+    },
+    {
+      "label": "construction_weather_constraint",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 500 values within [-150, 250]."
+    }
+  ]
+}

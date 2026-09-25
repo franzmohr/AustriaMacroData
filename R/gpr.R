@@ -92,7 +92,8 @@ fetch_gpr_bulk <- function(landing_dir = gpr_landing_dir) {
 #' global GPR index (see module header for which countries have their own)
 fetch_geopolitical_risk <- function(country3, label = "geopolitical_risk",
                                      start_period = "1995-Q1",
-                                     landing_dir = gpr_landing_dir) {
+                                     landing_dir = gpr_landing_dir,
+                                     frequency = "Q") {
   bulk <- fetch_gpr_bulk(landing_dir)
   if (is.null(bulk)) return(NULL)
 
@@ -108,7 +109,7 @@ fetch_geopolitical_risk <- function(country3, label = "geopolitical_risk",
   }
   names(monthly)[2] <- label
 
-  out <- monthly_to_quarterly(monthly, label) %>%
+  out <- aggregate_to(monthly, label, frequency) %>%
     dplyr::filter(.data$date >= period_to_date(start_period))
   attr(out, "source_col") <- source_col
   out

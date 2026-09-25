@@ -114,7 +114,8 @@ ecb_mir_dims <- c("FREQ", "REF_AREA", "BS_REP_SECTOR", "BS_ITEM", "MATURITY_NOT_
 #' Returns NULL (with a warning) if `country3` is not a euro-area member
 #' or has no FRED 2-letter code known (reused as the ECB REF_AREA code,
 #' confirmed identical for AT/DE).
-fetch_ecb_mortgage_rate <- function(country3, label = "mortgage_rate", start_period = "1995-Q1") {
+fetch_ecb_mortgage_rate <- function(country3, label = "mortgage_rate", start_period = "1995-Q1",
+                                    frequency = "Q") {
   if (!(country3 %in% euro_area_countries)) {
     warning(sprintf("[%s] ECB mortgage rate: %s is not a euro-area country -- skipping", label, country3))
     return(NULL)
@@ -161,7 +162,7 @@ fetch_ecb_mortgage_rate <- function(country3, label = "mortgage_rate", start_per
     dplyr::distinct(date, .keep_all = TRUE)
   names(monthly)[2] <- label
 
-  monthly_to_quarterly(monthly, label) %>%
+  aggregate_to(monthly, label, frequency) %>%
     dplyr::filter(.data$date >= period_to_date(start_period))
 }
 
@@ -222,7 +223,8 @@ ecb_bsi_dims <- c("FREQ", "REF_AREA", "ADJUSTMENT", "BS_REP_SECTOR", "BS_ITEM",
 #'
 #' Returns NULL (with a warning) if `country3` is not a euro-area member.
 fetch_ecb_household_mortgage_loans <- function(country3, label = "household_mortgage_loans",
-                                                start_period = "1995-Q1") {
+                                                start_period = "1995-Q1",
+                                                frequency = "Q") {
   if (!(country3 %in% euro_area_countries)) {
     warning(sprintf("[%s] ECB household mortgage loans: %s is not a euro-area country -- skipping", label, country3))
     return(NULL)
@@ -266,7 +268,7 @@ fetch_ecb_household_mortgage_loans <- function(country3, label = "household_mort
     dplyr::distinct(date, .keep_all = TRUE)
   names(monthly)[2] <- label
 
-  monthly_to_quarterly(monthly, label) %>%
+  aggregate_to(monthly, label, frequency) %>%
     dplyr::filter(.data$date >= period_to_date(start_period))
 }
 
@@ -303,7 +305,8 @@ ecb_ciss_dims <- c("FREQ", "REF_AREA", "CURRENCY", "PROVIDER_FM", "INSTRUMENT_FM
 #' quarters, or NULL if the ECB publishes none for it
 #'
 #' The SDMX key is attached as attribute "key", for the coverage report.
-fetch_ecb_ciss <- function(country3, label = "financial_stress", start_period = "1995-Q1") {
+fetch_ecb_ciss <- function(country3, label = "financial_stress", start_period = "1995-Q1",
+                           frequency = "Q") {
   country2 <- lookup_country2(country3)
   if (is.na(country2)) return(NULL)
 
@@ -344,7 +347,7 @@ fetch_ecb_ciss <- function(country3, label = "financial_stress", start_period = 
   }
   names(daily)[2] <- label
 
-  out <- monthly_to_quarterly(daily, label) %>%
+  out <- aggregate_to(daily, label, frequency) %>%
     dplyr::filter(.data$date >= period_to_date(start_period))
   attr(out, "key") <- key
   out
