@@ -1,6 +1,6 @@
 {
   "country": "USA",
-  "generated_at": "2026-09-25T06:29:57Z",
+  "generated_at": "2026-09-26T11:36:53Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -26,12 +26,17 @@
     {
       "fred_qd_group": "Output and Income",
       "label": "real_exports",
-      "source": "IMF QNEA [P6]"
+      "source": "OECD QNA [S1.P6]"
     },
     {
       "fred_qd_group": "Output and Income",
       "label": "real_imports",
-      "source": "IMF QNEA [P7]"
+      "source": "OECD QNA [S1.P7]"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "inventory_change_to_gdp",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [A014RE1Q156NBEA]"
     },
     {
       "fred_qd_group": "Industrial Production",
@@ -47,6 +52,11 @@
       "fred_qd_group": "Employment and Unemployment",
       "label": "employment_rate",
       "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [LREM64TTUSQ156S]"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "population",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [POPTHM]"
     },
     {
       "fred_qd_group": "Housing",
@@ -263,7 +273,13 @@
       "label": "real_imports",
       "category": "level",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change 23%."
+      "detail": "Positive throughout; largest quarter-over-quarter change 20%."
+    },
+    {
+      "label": "inventory_change_to_gdp",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 266 values within [-150, 250]."
     },
     {
       "label": "real_household_disposable_income",
@@ -300,6 +316,12 @@
       "category": "level",
       "status": "NO_DATA",
       "detail": "No non-NA observations."
+    },
+    {
+      "label": "population",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 1%."
     },
     {
       "label": "employment_expectations",

@@ -1,6 +1,6 @@
 {
   "country": "DEU",
-  "generated_at": "2026-09-25T06:29:35Z",
+  "generated_at": "2026-09-26T11:36:43Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -34,6 +34,11 @@
       "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P7 (extended pre-1995 with level-spliced OECD_QNA:S1.P7)]"
     },
     {
+      "fred_qd_group": "Output and Income",
+      "label": "inventory_change_to_gdp",
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:Q.PC_GDP.SCA.P52.DE]"
+    },
+    {
       "fred_qd_group": "Industrial Production",
       "label": "industrial_production",
       "source": "Eurostat short-term statistics (sts_inpr_q / sts_trtu_q) [sts_inpr_q:Q.PRD.B-D.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)]"
@@ -57,6 +62,11 @@
       "fred_qd_group": "Employment and Unemployment",
       "label": "hours_worked",
       "source": "Eurostat (namq_10_a10_e, national accounts by activity) [namq_10_a10_e:Q.THS_HW.TOTAL.SCA.EMP_DC.DE]"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "population",
+      "source": "Eurostat (namq_10_pe, national accounts population) [namq_10_pe:Q.THS_PER.SCA.POP_NC.DE]"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
@@ -284,6 +294,12 @@
       "detail": "Positive throughout; largest quarter-over-quarter change -17%."
     },
     {
+      "label": "inventory_change_to_gdp",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 142 values within [-150, 250]."
+    },
+    {
       "label": "real_household_disposable_income",
       "category": "level",
       "status": "NO_DATA",
@@ -318,6 +334,12 @@
       "category": "level",
       "status": "PASS",
       "detail": "Positive throughout; largest quarter-over-quarter change -6%."
+    },
+    {
+      "label": "population",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 1%."
     },
     {
       "label": "employment_expectations",

@@ -56,7 +56,7 @@ dir.create(opt$output_dir, showWarnings = FALSE, recursive = TRUE)
 country2 <- if (!is.null(opt$fred_country2)) opt$fred_country2 else lookup_country2(country)
 
 ## ---- FRED-QD group taxonomy + ground-truth reference ----------------
-## 47 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
+## 49 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
 ## groups on 2026-08-30; grew via several same-day extension passes -- see
 ## R/fred_mirror.R and R/bis.R header comments for what was added and how
 ## each addition was verified).
@@ -551,7 +551,7 @@ if (!is.null(degree_days)) {
 panel <- dplyr::arrange(panel, date)
 
 ## =====================================================================
-## 4k. Three concepts with no OECD/FRED-mirror route of their own
+## 4k. Five concepts with no OECD/FRED-mirror route of their own
 ##
 ##     Two of them are unconditional -- the world oil price and Kilian's
 ##     index of global real economic activity are the same numbers in
@@ -561,9 +561,15 @@ panel <- dplyr::arrange(panel, date)
 ##     carries one without the other cannot separate an oil supply
 ##     disturbance from an oil demand one. Total hours worked is the
 ##     third, and is EU-only, since FRED's OECD mirror carries hours per
-##     worker for some countries and total hours for none.
+##     worker for some countries and total hours for none. Total
+##     population is the fourth: Eurostat's quarterly national accounts
+##     for EU members, an explicit per-country FRED series otherwise (the
+##     OECD mirror has population only annually) -- see R/population.R.
+##     The change in inventories is the fifth, as a percent of GDP rather
+##     than a real level, from the same two kinds of route -- see
+##     R/inventories.R for why no real level exists to fetch.
 ## =====================================================================
-oil <- fetch_oil_price(country, start_period = start_period)
+oil <-fetch_oil_price(country, start_period = start_period)
 if (!is.null(oil)) {
   panel <- dplyr::full_join(panel, oil, by = "date")
   concept_source[["oil_price"]] <- list(provider = "FRED", key = attr(oil, "source_col"))
@@ -586,6 +592,27 @@ if (country %in% eu_member_countries) {
   } else {
     message("Eurostat hours unavailable for ", country, " this run -- hours_worked stays NA.")
   }
+}
+
+message("Fetching the change in inventories (% of GDP) for ", country, "...")
+inventories <- fetch_inventory_change(country, start_period = start_period)
+if (!is.null(inventories)) {
+  panel <- dplyr::full_join(panel, inventories, by = "date")
+  concept_source[["inventory_change_to_gdp"]] <- list(provider = attr(inventories, "provider"),
+                                                      key = attr(inventories, "source_col"))
+} else {
+  message("No inventory-change source for ", country, " -- inventory_change_to_gdp stays NA.")
+}
+
+message("Fetching total population for ", country, "...")
+population <- fetch_population(country, start_period = start_period)
+if (!is.null(population)) {
+  panel <- dplyr::full_join(panel, population, by = "date")
+  concept_source[["population"]] <- list(provider = attr(population, "provider"),
+                                         key = attr(population, "source_col"))
+} else {
+  message("No quarterly population source for ", country,
+          " -- population stays NA (see R/population.R for why it is not interpolated from annual data).")
 }
 
 ## =====================================================================
@@ -645,6 +672,7 @@ provider_display_names <- c(
   GPR = "Geopolitical Risk Index (Caldara-Iacoviello)",
   EUROSTAT_CHDD = "Eurostat (nrg_chdd_m, degree days)",
   EUROSTAT_NA = "Eurostat (namq_10_a10_e, national accounts by activity)",
+  EUROSTAT_POP = "Eurostat (namq_10_pe, national accounts population)",
   EUROSTAT_STS = "Eurostat short-term statistics (sts_inpr_q / sts_trtu_q)",
   FRED = "FRED (series published by FRED itself, not an OECD/BIS mirror)",
   OPEN_METEO = "ERA5 reanalysis (via the Open-Meteo archive API)"

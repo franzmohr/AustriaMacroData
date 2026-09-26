@@ -1,6 +1,6 @@
 ## ---------------------------------------------------------------
 ## concept_dictionary.R -- the single authored source of metadata for
-## every one of this project's 47 FRED-QD-style concepts
+## every one of this project's 49 FRED-QD-style concepts
 ##
 ## MOTIVATION: before this file existed, the same concept-level facts
 ## (which FRED-QD group a concept belongs to, its FRED-QD mnemonic, its
@@ -93,6 +93,9 @@ concept_dictionary <- tibble::tribble(
   "real_imports",                          "Output and Income",              "IMPGSC1",         NA,
     NA,
     "level", FALSE,
+  "inventory_change_to_gdp",               "Output and Income",              "A014RE1Q156NBEA", NA,
+    "Change in inventories as a PERCENT OF GDP (both nominal), signed -- not a real level like the other expenditure components, because Eurostat publishes no chain-linked volume for it (a signed flow that crosses zero, for which chain-linked volumes are not additive; see R/inventories.R). EU member states: Eurostat namq_10_gdp, NA_ITEM=P52 (excluding valuables, P53), UNIT=PC_GDP, seasonally and calendar adjusted -- the same construction as FRED-QD's A014RE1Q156NBEA, except that P52 covers inventories of all sectors where FRED-QD's covers private inventories only. From 1995 for Austria (1991 for Germany). Outside the EU only the United States resolves (FRED-QD's own series); NA elsewhere.",
+    "balance", FALSE,
   "real_household_disposable_income",      "Output and Income",              "DPIC96",          NA,
     "OECD's quarterly household disposable income (DF_QNA_INC_SAV) is published for only 11 countries (AUS, BRA, CAN, CHL, EST, GRC, HUN, LTU, LUX, LVA, ZAF); absent for most others, confirmed absent for DEU/AUT/USA/FRA/GBR.",
     "level", FALSE,
@@ -113,6 +116,10 @@ concept_dictionary <- tibble::tribble(
   "hours_worked",                          "Employment and Unemployment",    "HOANBS",          
     "HOANBS is hours of all persons in the NONFARM BUSINESS sector; the series here is the total economy, which additionally includes general government, households as employers and the farm sector. The broader coverage is what the national-accounts source publishes and what pairs with this panel's own total-economy real_gdp.",
     "EU member states only: Eurostat namq_10_a10_e, total hours worked, domestic concept (NA_ITEM=EMP_DC, employees and self-employed together), seasonally and calendar adjusted -- see R/eurostat.R. No FRED-mirror fallback exists: FRED's OECD mirror carries hours PER WORKER for some countries and total hours for none, so this resolves to NA outside the EU.",
+    "level", FALSE,
+  "population",                            "Employment and Unemployment",    NA,
+    "No FRED-QD equivalent; none of FRED-QD's 245 series is a population count. A live --country USA run resolves this concept to the BEA's total population including armed forces overseas (FRED POPTHM, monthly, averaged within the quarter) -- see R/population.R.",
+    "Total resident population in THOUSANDS OF PERSONS, the per-capita denominator for real_gdp, real_household_consumption and hours_worked. EU member states: Eurostat namq_10_pe, total population, national concept (NA_ITEM=POP_NC, UNIT=THS_PER, S_ADJ=SCA) -- the population figure of the quarterly national accounts themselves, so a per-capita ratio against this panel's real_gdp is internally consistent. Quarterly from 1995 for Austria (1991 for Germany); the annual series that reaches further back is not interpolated onto quarters. Outside the EU only countries with an explicit entry in R/population.R's national_population table resolve (currently the United States); FRED mirrors population for most other countries only annually, so this is NA for them rather than an interpolation.",
     "level", FALSE,
   "employment_expectations",               "Employment and Unemployment",    NA,
     "No FRED-QD equivalent; DG ECFIN's own purpose-built leading indicator for employment turning points (introduced 2013 specifically because the surveys' employment sub-components lead employment growth).",

@@ -26,16 +26,16 @@
 ## R/concept_dictionary.R rather than from a hand-written list, and this
 ## one asks it for `available_monthly`.
 ##
-## WHAT IS NOT HERE, AND WHY IT IS NOT INTERPOLATED. Twenty of the 47
+## WHAT IS NOT HERE, AND WHY IT IS NOT INTERPOLATED. Twenty-two of the 49
 ## concepts are quarterly at source -- every national-accounts concept,
 ## the BIS credit series, government debt and the primary balance, hours
-## worked, unit labour cost, the employment rate, real house prices, the
-## World Uncertainty Index and the two degree-day series. They are
-## absent from this panel rather than spread across three months each.
-## A quarterly figure repeated or smoothed into monthly cells is an
-## invention that is indistinguishable from data once it is in a CSV,
-## and anyone who wants one can make it from the quarterly panel knowing
-## that they did.
+## worked, population, the change in inventories, unit labour cost, the
+## employment rate, real house prices, the World Uncertainty Index and
+## the two degree-day series. They are absent from this panel rather
+## than spread across three months each. A quarterly figure repeated or
+## smoothed into monthly cells is an invention that is indistinguishable
+## from data once it is in a CSV, and anyone who wants one can make it
+## from the quarterly panel knowing that they did.
 ##
 ## THE TWO PANELS SHARE LABELS, NOT SERIES. Where a concept is in both,
 ## it often comes from a different source at the two frequencies --
