@@ -64,7 +64,7 @@
 ## wrong -- it is a prioritized to-do list.
 ## ---------------------------------------------------------------
 
-## Category assignment for all 47 concepts, derived from
+## Category assignment for all 49 concepts, derived from
 ## R/concept_dictionary.R's `plausibility_category` column -- the single
 ## authored source for this and every other piece of concept-level
 ## metadata (see that file's header for why this used to be its own

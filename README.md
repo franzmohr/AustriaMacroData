@@ -67,7 +67,7 @@ R/                          Fetcher library used by build_country_panel.R,
                              live API (see header comments for verification
                              notes and corrections vs. earlier guesses)
   concept_dictionary.R      The single authored source of metadata for all
-                             47 concepts (FRED-QD group, mnemonic, notes,
+                             49 concepts (FRED-QD group, mnemonic, notes,
                              plausibility category) -- scripts/build_country_panel.R,
                              R/fred_qd_validation.R and R/plausibility_checks.R
                              all derive their working tables from this one
@@ -120,6 +120,15 @@ R/                          Fetcher library used by build_country_panel.R,
                              population-weighted city set; works for any
                              country with rows in weather_city_weights,
                              plus Eurostat-only for other EU members
+  inventories.R             Change in inventories in % of GDP (Eurostat
+                             namq_10_gdp P52 for EU members, FRED-QD's own
+                             A014RE1Q156NBEA for the USA) -- a share, not a
+                             real level, since none is published
+  population.R              Total population, quarterly: Eurostat
+                             namq_10_pe (national-accounts population) for
+                             EU members, an explicit per-country FRED series
+                             otherwise (POPTHM for the USA); never
+                             interpolated from annual data
   gpr.R                     Geopolitical Risk (GPR) Index (Caldara and
                              Iacoviello, 2022) -- country-specific for 44
                              countries, global index otherwise; downloaded
@@ -171,7 +180,7 @@ docs/
                              instead of keeping its own hand-copied table
   data_sources.csv           The data-sources registry -- see below
   candidate_indicators_austria.csv  Proposed (UNVERIFIED) Austrian sources
-                             for the 245 - 47 FRED-QD series not yet
+                             for the 245 - 49 FRED-QD series not yet
                              implemented -- see below
   generate_candidate_indicators.py  Regenerates the file above from
                              docs/Mohr_AUSTRIA-QD.tex + a hand-built
@@ -258,11 +267,11 @@ panel, standing to it as FRED-MD stands to FRED-QD. It writes
 same canonical-schema contract: every country's monthly file has the same
 columns in the same order, whether or not each one resolved.
 
-**27 of the 47 concepts are published monthly.** The other 20 are quarterly at
+**27 of the 49 concepts are published monthly.** The other 22 are quarterly at
 source -- every national-accounts concept, the BIS credit series, government
-debt and the primary balance, hours worked, unit labour cost, the employment
-rate, real house prices, the World Uncertainty Index and the two degree-day
-series. They are **absent** from the monthly panel rather than interpolated
+debt and the primary balance, hours worked, population, the change in
+inventories, unit labour cost, the employment rate, real house prices, the
+World Uncertainty Index and the two degree-day series. They are **absent** from the monthly panel rather than interpolated
 across its months. A quarterly figure smoothed into three monthly cells is an
 invention that looks exactly like data once it is in a CSV; anyone who wants
 one can build it from the quarterly panel knowing that they did.
@@ -445,7 +454,7 @@ and EC survey/geopolitical-risk concepts):
 
 ## Candidate indicators (proposed, unverified)
 
-The 47 implemented concepts are representative anchors, not a 1:1
+The 49 implemented concepts are representative anchors, not a 1:1
 replication of FRED-QD's 245 series (see Overview above -- most of those
 245 are U.S.-specific and have no cross-country equivalent at all).
 [docs/candidate_indicators_austria.csv](docs/candidate_indicators_austria.csv)
@@ -643,7 +652,7 @@ just "made the warning go away"):
 
 ### FRED-QD group coverage
 
-47 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
+49 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
 groups on 2026-08-30; grew via several same-day extension passes -- see
 `R/fred_mirror.R`, `R/bis.R`, `R/eurostat.R`, `R/ecb.R`, `R/ec_survey.R`
 and `R/yahoo_finance.R` header comments for the full trail, including one
