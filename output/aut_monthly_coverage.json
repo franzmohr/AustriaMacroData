@@ -1,10 +1,10 @@
 {
   "country": "AUT",
   "frequency": "monthly",
-  "generated_at": "2026-09-25T06:29:17Z",
+  "generated_at": "2026-09-27T11:01:33Z",
   "start_period": "1960-M01",
-  "concepts_published_monthly": 27,
-  "concepts_quarterly_only": 20,
+  "concepts_published_monthly": 38,
+  "concepts_quarterly_only": 24,
   "resolved": [
     {
       "fred_qd_group": "Industrial Production",
@@ -103,6 +103,61 @@
     },
     {
       "fred_qd_group": "Other",
+      "label": "consumer_financial_situation_past",
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.1.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_financial_situation_expected",
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.2.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_economic_situation_past",
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.3.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_economic_situation_expected",
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.4.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_price_trends_past",
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.5.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_price_expectations",
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.6.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_unemployment_expectations",
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.7.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_major_purchases_now",
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.8.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_major_purchases_expected",
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.9.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_savings_expected",
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.11.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_household_finances_now",
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.12.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
       "label": "economic_sentiment_indicator",
       "source": "European Commission Business and Consumer Survey [AT.ESI]"
     },
@@ -170,6 +225,10 @@
     },
     {
       "fred_qd_group": "Output and Income",
+      "label": "inventory_change_to_gdp"
+    },
+    {
+      "fred_qd_group": "Output and Income",
       "label": "real_household_disposable_income"
     },
     {
@@ -179,6 +238,10 @@
     {
       "fred_qd_group": "Employment and Unemployment",
       "label": "hours_worked"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "population"
     },
     {
       "fred_qd_group": "Housing",
@@ -211,6 +274,14 @@
     {
       "fred_qd_group": "Non-Household Balance Sheets",
       "label": "government_primary_balance_to_gdp"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_home_purchase_intentions"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_home_improvement_intentions"
     },
     {
       "fred_qd_group": "Other",
@@ -336,6 +407,72 @@
     },
     {
       "label": "consumer_confidence",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 371 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_financial_situation_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 371 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_financial_situation_expected",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 371 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_economic_situation_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 371 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_economic_situation_expected",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 371 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_price_trends_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 371 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_price_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 371 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_unemployment_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 371 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_major_purchases_now",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 371 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_major_purchases_expected",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 371 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_savings_expected",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 371 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_household_finances_now",
       "category": "balance",
       "status": "PASS",
       "detail": "All 371 values within [-150, 250]."
