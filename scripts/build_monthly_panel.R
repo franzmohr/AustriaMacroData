@@ -236,7 +236,7 @@ if (!"cpi_index" %in% names(concept_source)) {
 }
 
 ## =====================================================================
-## 4. European Commission Business and Consumer Survey -- seven
+## 4. European Commission Business and Consumer Survey -- seven headline
 ##    concepts, monthly at source and published within the month they
 ##    refer to, which makes them the timeliest thing in this panel.
 ## =====================================================================
@@ -256,6 +256,17 @@ if (country %in% eu_member_countries) {
                                                         frequency = FREQ),
                "construction_weather_constraint", "EC_BCS",
                paste0(lookup_ec_country2(country), ".BUIL weather factor"))
+  ## The consumer survey's monthly questions; the two quarterly ones
+  ## (home purchase and improvement intentions) are quarterly-only
+  ## concepts and not in this panel.
+  monthly_questions <- ec_consumer_questions[ec_consumer_questions$frequency == "M", ]
+  for (i in seq_len(nrow(monthly_questions))) {
+    lbl <- monthly_questions$label[i]
+    question <- monthly_questions$question[i]
+    join_concept(fetch_ec_consumer_question(country, label = lbl, question = question,
+                                            start_period = start_period, frequency = FREQ),
+                 lbl, "EC_BCS", ec_consumer_question_column(lookup_ec_country2(country), question))
+  }
 }
 
 ## =====================================================================

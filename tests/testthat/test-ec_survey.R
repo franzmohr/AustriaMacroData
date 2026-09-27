@@ -304,3 +304,130 @@ test_that("fetch_ec_construction_weather_constraint refuses non-EU countries wit
   expect_null(out)
   expect_false(called)
 })
+
+## ---- Consumer survey archive: the individual questions -----------------
+
+test_that("the consumer archive has its own URL and cache file", {
+  expect_equal(
+    ec_survey_zip_url(2026, 8, archive = "consumer"),
+    "https://ec.europa.eu/economy_finance/db_indicators/surveys/documents/series/nace2_ecfin_2608/consumer_total_sa_nace2.zip"
+  )
+  expect_equal(
+    ec_survey_landing_path(2026, 8, "data/landing", archive = "consumer"),
+    file.path("data/landing", "ec_bcs_consumer_2608.xlsx")
+  )
+})
+
+test_that("ec_consumer_question_column builds the consumer survey's series code", {
+  expect_equal(ec_consumer_question_column("AT", "2"), "CONS.AT.TOT.2.BS.M")
+  expect_equal(ec_consumer_question_column("AT", "14", "Q"), "CONS.AT.TOT.14.BS.Q")
+})
+
+test_that("ec_consumer_questions leaves out COF, which is consumer_confidence, and the withdrawn 10 and 13", {
+  expect_false(any(ec_consumer_questions$question %in% c("COF", "10", "13")))
+  expect_equal(nrow(ec_consumer_questions), length(unique(ec_consumer_questions$label)))
+  expect_setequal(ec_consumer_questions$question[ec_consumer_questions$frequency == "Q"], c("14", "15"))
+  ## Every question is a concept, so the panel builders keep its column
+  expect_true(all(ec_consumer_questions$label %in% concept_dictionary$label))
+})
+
+build_consumer_fixture_zip_bytes <- function() {
+  skip_if_not_installed("writexl")
+  tmp_xlsx <- tempfile(fileext = ".xlsx")
+  on.exit(unlink(tmp_xlsx), add = TRUE)
+
+  ## Q1 sits beside Q2 and COF, so a parser that picked by position
+  ## rather than by name would read the wrong question.
+  monthly <- data.frame(
+    c1 = c(NA, "1985-01-31", "1985-02-28", "1985-03-31", "1985-04-30"),
+    c2 = c("CONS.AT.TOT.COF.BS.M", "-5.0", "-6.0", "-7.0", "-8.0"),
+    c3 = c("CONS.AT.TOT.1.BS.M", "-10.0", "-11.0", "-12.0", "-13.0"),
+    c4 = c("CONS.AT.TOT.2.BS.M", "3.0", "6.0", "9.0", "12.0"),
+    stringsAsFactors = FALSE
+  )
+  quarterly <- data.frame(
+    c1 = c(NA, "1985-Q1", "1985-Q2"),
+    c2 = c("CONS.AT.TOT.14.BS.Q", "-80.0", "-82.5"),
+    c3 = c("CONS.AT.TOT.15.BS.Q", "-40.0", "-41.0"),
+    stringsAsFactors = FALSE
+  )
+  writexl::write_xlsx(
+    list(Index = data.frame(x = 1), INFO = data.frame(x = 1),
+         `CONSUMER MONTHLY` = monthly, `CONSUMER QUARTERLY` = quarterly),
+    tmp_xlsx, col_names = FALSE
+  )
+
+  tmp_zip <- tempfile(fileext = ".zip")
+  old_wd <- setwd(dirname(tmp_xlsx))
+  on.exit(setwd(old_wd), add = TRUE)
+  utils::zip(tmp_zip, basename(tmp_xlsx), flags = "-q")
+  readBin(tmp_zip, "raw", file.info(tmp_zip)$size)
+}
+
+test_that("fetch_ec_consumer_question quarterly-averages a monthly question, picked by name", {
+  zip_bytes <- build_consumer_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  landing_dir <- tempfile()
+  on.exit(unlink(landing_dir, recursive = TRUE), add = TRUE)
+
+  urls <- character()
+  with_mock_fetch_binary(function(url, ...) { urls <<- c(urls, url); zip_bytes }, {
+    out <- fetch_ec_consumer_question("AUT", "consumer_financial_situation_expected", "2",
+                                      start_period = "1985-Q1", reference_date = as.Date("2026-08-30"),
+                                      landing_dir = landing_dir)
+  })
+  expect_true(grepl("consumer_total_sa_nace2\\.zip", urls[1]))
+  expect_equal(names(out), c("date", "consumer_financial_situation_expected"))
+  expect_equal(out$date, as.Date(c("1985-01-01", "1985-04-01")))
+  expect_equal(out$consumer_financial_situation_expected, c(mean(c(3, 6, 9)), 12))
+})
+
+test_that("fetch_ec_consumer_question keeps the months for a monthly panel", {
+  zip_bytes <- build_consumer_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  landing_dir <- tempfile()
+  on.exit(unlink(landing_dir, recursive = TRUE), add = TRUE)
+
+  with_mock_fetch_binary(const_fetch_binary(zip_bytes), {
+    out <- fetch_ec_consumer_question("AUT", "consumer_financial_situation_past", "1",
+                                      start_period = "1985-M01", reference_date = as.Date("2026-08-30"),
+                                      landing_dir = landing_dir, frequency = "M")
+  })
+  expect_equal(out$date, as.Date(c("1985-01-01", "1985-02-01", "1985-03-01", "1985-04-01")))
+  expect_equal(out$consumer_financial_situation_past, c(-10, -11, -12, -13))
+})
+
+test_that("fetch_ec_consumer_question reads a quarterly question off the quarterly sheet", {
+  zip_bytes <- build_consumer_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  landing_dir <- tempfile()
+  on.exit(unlink(landing_dir, recursive = TRUE), add = TRUE)
+
+  with_mock_fetch_binary(const_fetch_binary(zip_bytes), {
+    out <- fetch_ec_consumer_question("AUT", "consumer_home_purchase_intentions", "14",
+                                      start_period = "1985-Q1", reference_date = as.Date("2026-08-30"),
+                                      landing_dir = landing_dir)
+  })
+  expect_equal(out$date, as.Date(c("1985-01-01", "1985-04-01")))
+  expect_equal(out$consumer_home_purchase_intentions, c(-80, -82.5))
+})
+
+test_that("a quarterly-only question is absent from a monthly panel, without a network call", {
+  called <- FALSE
+  with_mock_fetch_binary(function(url, ...) { called <<- TRUE; NULL }, {
+    out <- fetch_ec_consumer_question("AUT", "consumer_home_purchase_intentions", "14",
+                                      start_period = "1985-M01", frequency = "M")
+  })
+  expect_null(out)
+  expect_false(called)
+})
+
+test_that("an unknown consumer question is an error, and a non-EU country is refused", {
+  expect_error(fetch_ec_consumer_question("AUT", "x", "COF"), "Unknown EC consumer survey question")
+  called <- FALSE
+  with_mock_fetch_binary(function(url, ...) { called <<- TRUE; NULL }, {
+    expect_warning(out <- fetch_ec_consumer_question("USA", "x", "2"), "EU member states")
+  })
+  expect_null(out)
+  expect_false(called)
+})

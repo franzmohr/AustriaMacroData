@@ -2,6 +2,17 @@ country,variable,provider,key
 AUT,construction_confidence,EC_BCS,AT.BUIL
 AUT,construction_weather_constraint,EC_BCS,AT.BUIL weather factor
 AUT,consumer_confidence,EC_BCS,AT.CONS (OECD MEI mirror dropped: it measures a different statistic)
+AUT,consumer_economic_situation_expected,EC_BCS,CONS.AT.TOT.4.BS.M
+AUT,consumer_economic_situation_past,EC_BCS,CONS.AT.TOT.3.BS.M
+AUT,consumer_financial_situation_expected,EC_BCS,CONS.AT.TOT.2.BS.M
+AUT,consumer_financial_situation_past,EC_BCS,CONS.AT.TOT.1.BS.M
+AUT,consumer_household_finances_now,EC_BCS,CONS.AT.TOT.12.BS.M
+AUT,consumer_major_purchases_expected,EC_BCS,CONS.AT.TOT.9.BS.M
+AUT,consumer_major_purchases_now,EC_BCS,CONS.AT.TOT.8.BS.M
+AUT,consumer_price_expectations,EC_BCS,CONS.AT.TOT.6.BS.M
+AUT,consumer_price_trends_past,EC_BCS,CONS.AT.TOT.5.BS.M
+AUT,consumer_savings_expected,EC_BCS,CONS.AT.TOT.11.BS.M
+AUT,consumer_unemployment_expectations,EC_BCS,CONS.AT.TOT.7.BS.M
 AUT,core_cpi_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.AT
 AUT,cpi_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP00.AT
 AUT,economic_sentiment_indicator,EC_BCS,AT.ESI

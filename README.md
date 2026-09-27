@@ -67,7 +67,7 @@ R/                          Fetcher library used by build_country_panel.R,
                              live API (see header comments for verification
                              notes and corrections vs. earlier guesses)
   concept_dictionary.R      The single authored source of metadata for all
-                             49 concepts (FRED-QD group, mnemonic, notes,
+                             62 concepts (FRED-QD group, mnemonic, notes,
                              plausibility category) -- scripts/build_country_panel.R,
                              R/fred_qd_validation.R and R/plausibility_checks.R
                              all derive their working tables from this one
@@ -267,11 +267,12 @@ panel, standing to it as FRED-MD stands to FRED-QD. It writes
 same canonical-schema contract: every country's monthly file has the same
 columns in the same order, whether or not each one resolved.
 
-**27 of the 49 concepts are published monthly.** The other 22 are quarterly at
+**38 of the 62 concepts are published monthly.** The other 24 are quarterly at
 source -- every national-accounts concept, the BIS credit series, government
 debt and the primary balance, hours worked, population, the change in
 inventories, unit labour cost, the employment rate, real house prices, the
-World Uncertainty Index and the two degree-day series. They are **absent** from the monthly panel rather than interpolated
+World Uncertainty Index, the two degree-day series and the consumer survey's
+two quarterly questions on housing. They are **absent** from the monthly panel rather than interpolated
 across its months. A quarterly figure smoothed into three monthly cells is an
 invention that looks exactly like data once it is in a CSV; anyone who wants
 one can build it from the quarterly panel knowing that they did.
@@ -432,6 +433,17 @@ and EC survey/geopolitical-risk concepts):
   it is the counterpart to the meteorological degree-day concepts above:
   weather measured by what firms say it cost them, rather than by
   temperature.
+- **EU members, 13 new concepts**: the individual questions of the EC
+  consumer survey (`consumer_*`, e.g. `consumer_price_expectations`,
+  `consumer_major_purchases_now`, `consumer_unemployment_expectations`),
+  from a third archive in the same monthly folder,
+  `consumer_total_sa_nace2.zip` (series `CONS.AT.TOT.<Q>.BS.M`, verified
+  live 2026-09-27: balances of all consumers, seasonally adjusted, from
+  1995-10 for Austria). `consumer_confidence` is the average of four of
+  them (Q1, Q2, Q4, Q9); the questions say which part of household
+  sentiment moved. Eleven are monthly; the two on buying or improving a
+  home are asked quarterly and so are quarterly-only concepts. See
+  `R/ec_survey.R`.
 - **Every country, new concept**: geopolitical risk (`geopolitical_risk`)
   from Caldara and Iacoviello's (2022) GPR index -- downloaded directly
   from the authors' own published data file. Genuinely country-specific
@@ -454,7 +466,7 @@ and EC survey/geopolitical-risk concepts):
 
 ## Candidate indicators (proposed, unverified)
 
-The 49 implemented concepts are representative anchors, not a 1:1
+The 62 implemented concepts are representative anchors, not a 1:1
 replication of FRED-QD's 245 series (see Overview above -- most of those
 245 are U.S.-specific and have no cross-country equivalent at all).
 [docs/candidate_indicators_austria.csv](docs/candidate_indicators_austria.csv)
@@ -652,7 +664,7 @@ just "made the warning go away"):
 
 ### FRED-QD group coverage
 
-49 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
+62 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
 groups on 2026-08-30; grew via several same-day extension passes -- see
 `R/fred_mirror.R`, `R/bis.R`, `R/eurostat.R`, `R/ecb.R`, `R/ec_survey.R`
 and `R/yahoo_finance.R` header comments for the full trail, including one

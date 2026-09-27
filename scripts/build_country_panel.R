@@ -525,6 +525,31 @@ if (country %in% eu_member_countries) {
 }
 
 ## =====================================================================
+## 4i2. EU-specific: the individual questions of the EC CONSUMER survey
+##      (a third archive, `consumer_total_sa_nace2.zip` -- see
+##      R/ec_survey.R). consumer_confidence above is the average of four
+##      of them; these say which part of household sentiment moved. New
+##      concepts with no FRED-mirror fallback, so NA for non-EU countries.
+## =====================================================================
+if (country %in% eu_member_countries) {
+  message("Country is an EU member -- fetching the EC consumer survey questions...")
+  for (i in seq_len(nrow(ec_consumer_questions))) {
+    lbl <- ec_consumer_questions$label[i]
+    question <- ec_consumer_questions$question[i]
+    consumer_q <- fetch_ec_consumer_question(country, label = lbl, question = question,
+                                             start_period = start_period)
+    if (!is.null(consumer_q)) {
+      panel <- dplyr::full_join(panel, consumer_q, by = "date")
+      concept_source[[lbl]] <- list(
+        provider = "EC_BCS",
+        key = ec_consumer_question_column(lookup_ec_country2(country), question,
+                                          ec_consumer_questions$frequency[i])
+      )
+    }
+  }
+}
+
+## =====================================================================
 ## 4j. Heating and cooling degree days -- Eurostat's official monthly
 ##     series spliced with a level-calibrated ERA5/Open-Meteo series that
 ##     carries the pre-1980 history and the recent quarters Eurostat runs

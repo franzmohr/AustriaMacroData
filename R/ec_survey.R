@@ -83,6 +83,11 @@ ec_survey_archives <- list(
     zip_name   = "building_total_sa_nace2.zip",
     cache_stem = "ec_bcs_building",
     sheet      = "BUILDING MONTHLY"
+  ),
+  consumer = list(
+    zip_name   = "consumer_total_sa_nace2.zip",
+    cache_stem = "ec_bcs_consumer",
+    sheet      = "CONSUMER MONTHLY"
   )
 )
 
@@ -379,4 +384,137 @@ fetch_ec_construction_weather_constraint <- function(country3,
 
   aggregate_to(monthly_df, label, frequency) %>%
     dplyr::filter(.data$date >= period_to_date(start_period))
+}
+
+## ---------------------------------------------------------------
+## Consumer survey: the individual questions behind consumer confidence
+## ---------------------------------------------------------------
+## ADDED 2026-09-27. `consumer_total_sa_nace2.zip` (confirmed live: HTTP
+## 200, application/zip, 1.1 MB for month "2608") sits in the same
+## monthly folder as the two archives above and walks back the same way.
+## Its one .xlsx has two data sheets with the building archive's naming
+## scheme, `<SECTOR>.<COUNTRY>.<SUBSECTOR>.<QUESTION>.<ANSWER>.<FREQ>`:
+##   "CONSUMER MONTHLY"    e.g. "CONS.AT.TOT.2.BS.M", column 1 a month-end
+##                         date, like every other monthly sheet here;
+##   "CONSUMER QUARTERLY"  e.g. "CONS.AT.TOT.14.BS.Q", column 1 a
+##                         "YYYY-Qn" period string rather than a date.
+## Every answer is "BS", the balance (positive minus negative answers),
+## seasonally adjusted -- read off the workbook's Index sheet, as are the
+## question numbers below. "TOT" is all consumers; the archive also
+## splits them by income quartile, age, education and occupation, which
+## this project does not fetch.
+##
+## Confirmed live for Austria: every monthly question from 1995-10 to
+## 2026-08 (371 months), the two quarterly questions likewise from
+## 1995-Q4. Question numbers skip 10 and 13 because the Commission
+## withdrew them from dissemination in July 2024 (INFO sheet).
+##
+## "COF", the confidence indicator (Q1 + Q2 + Q4 + Q9) / 4, is the same
+## series as the main archive's "AT.CONS" (checked: identical for
+## Austria), so it is NOT fetched again here -- `consumer_confidence`
+## stays the one concept for it. The questions are fetched because they
+## say which part of household sentiment moved, which the composite
+## cannot: e.g. price expectations (Q6) and major purchases (Q8) went in
+## opposite directions in 2022.
+##
+## The INFO sheet notes that Q7 (unemployment expectations) was not
+## seasonally adjusted up to June 2009 across the archive; the Austrian
+## series is published as s.a. throughout and is used as published.
+ec_consumer_questions <- tibble::tribble(
+  ~label,                                   ~question, ~frequency,
+  "consumer_financial_situation_past",      "1",       "M",
+  "consumer_financial_situation_expected",  "2",       "M",
+  "consumer_economic_situation_past",       "3",       "M",
+  "consumer_economic_situation_expected",   "4",       "M",
+  "consumer_price_trends_past",             "5",       "M",
+  "consumer_price_expectations",            "6",       "M",
+  "consumer_unemployment_expectations",     "7",       "M",
+  "consumer_major_purchases_now",           "8",       "M",
+  "consumer_major_purchases_expected",      "9",       "M",
+  "consumer_savings_expected",              "11",      "M",
+  "consumer_household_finances_now",        "12",      "M",
+  "consumer_home_purchase_intentions",      "14",      "Q",
+  "consumer_home_improvement_intentions",   "15",      "Q"
+)
+
+#' Build the consumer-survey column name for one country's balance on one
+#' question, e.g. "CONS.AT.TOT.2.BS.M"
+ec_consumer_question_column <- function(ec_country2, question, frequency = "M") {
+  sprintf("CONS.%s.TOT.%s.BS.%s", ec_country2, question, frequency)
+}
+
+#' Extract one country's balance on one quarterly consumer question
+#'
+#' The quarterly sheet labels its rows "YYYY-Qn" rather than with dates,
+#' so it cannot go through `parse_ec_survey_column()`'s date parsing; the
+#' periods are turned into the quarter's first day, the panel's own date
+#' convention.
+parse_ec_survey_quarterly_column <- function(xlsx_path, sheet, col_name, label) {
+  quarterly <- tryCatch(
+    suppressMessages(readxl::read_excel(xlsx_path, sheet = sheet, col_names = FALSE)),
+    error = function(e) NULL
+  )
+  if (is.null(quarterly)) {
+    warning(sprintf("[%s] Could not read the '%s' sheet from the EC survey archive", label, sheet))
+    return(NULL)
+  }
+  header <- as.character(quarterly[1, ])
+  col_idx <- which(header == col_name)
+  if (length(col_idx) == 0) {
+    warning(sprintf("[%s] Column '%s' not found in the EC survey archive", label, col_name))
+    return(NULL)
+  }
+  out <- tibble::tibble(
+    date = period_to_date(as.character(quarterly[[1]][-1])),
+    value = suppressWarnings(as.numeric(quarterly[[col_idx[1]]][-1]))
+  ) %>%
+    dplyr::filter(!is.na(.data$date), !is.na(.data$value))
+  names(out)[2] <- label
+  out
+}
+
+#' Fetch one consumer-survey question's balance for an EU country
+#'
+#' `question` is one of `ec_consumer_questions$question`. A monthly
+#' question is averaged to the panel's frequency like every other survey
+#' balance; a quarterly question is only asked quarterly and so returns
+#' NULL, without a warning, for a monthly panel. Returns NULL (with a
+#' warning) if the country isn't an EU member, the consumer archive can't
+#' be found within the lookback window, or the country's column isn't in
+#' it.
+fetch_ec_consumer_question <- function(country3, label, question,
+                                        start_period = "1995-Q1",
+                                        reference_date = Sys.Date(),
+                                        landing_dir = ec_survey_landing_dir,
+                                        frequency = "Q") {
+  row <- ec_consumer_questions[ec_consumer_questions$question == question, ]
+  if (nrow(row) != 1) {
+    stop(sprintf("Unknown EC consumer survey question '%s' -- known: %s", question,
+                 paste(ec_consumer_questions$question, collapse = ", ")), call. = FALSE)
+  }
+  asked <- row$frequency
+  if (identical(asked, "Q") && identical(frequency, "M")) return(NULL)
+
+  if (!country3 %in% eu_member_countries) {
+    warning(sprintf("[%s] EC Business and Consumer Survey only covers EU member states -- '%s' is not one", label, country3))
+    return(NULL)
+  }
+  ec_country2 <- lookup_ec_country2(country3)
+  if (is.na(ec_country2)) return(NULL)
+
+  found <- get_ec_survey_xlsx(reference_date, landing_dir = landing_dir, archive = "consumer")
+  if (is.null(found)) {
+    warning(sprintf("[%s] Could not find a published EC consumer survey archive (cached or live) within the lookback window", label))
+    return(NULL)
+  }
+
+  col_name <- ec_consumer_question_column(ec_country2, question, asked)
+  if (identical(asked, "Q")) {
+    out <- parse_ec_survey_quarterly_column(found$path, "CONSUMER QUARTERLY", col_name, label)
+  } else {
+    out <- parse_ec_survey_column(found$path, ec_survey_archives$consumer$sheet, col_name, label)
+    if (!is.null(out)) out <- aggregate_to(out, label, frequency)
+  }
+  if (is.null(out)) return(NULL)
+  dplyr::filter(out, .data$date >= period_to_date(start_period))
 }
