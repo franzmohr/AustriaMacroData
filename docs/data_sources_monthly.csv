@@ -1,5 +1,15 @@
 country,variable,provider,key
+AUT,construction_activity_past,EC_BCS,BUIL.AT.TOT.1.BS.M
 AUT,construction_confidence,EC_BCS,AT.BUIL
+AUT,construction_employment_expectations,EC_BCS,BUIL.AT.TOT.4.BS.M
+AUT,construction_limits_demand,EC_BCS,BUIL.AT.TOT.2.F2S.M
+AUT,construction_limits_financial,EC_BCS,BUIL.AT.TOT.2.F7S.M
+AUT,construction_limits_labour,EC_BCS,BUIL.AT.TOT.2.F4S.M
+AUT,construction_limits_material_equipment,EC_BCS,BUIL.AT.TOT.2.F5S.M
+AUT,construction_limits_none,EC_BCS,BUIL.AT.TOT.2.F1S.M
+AUT,construction_limits_other,EC_BCS,BUIL.AT.TOT.2.F6S.M
+AUT,construction_order_books,EC_BCS,BUIL.AT.TOT.3.BS.M
+AUT,construction_price_expectations,EC_BCS,BUIL.AT.TOT.5.BS.M
 AUT,construction_weather_constraint,EC_BCS,AT.BUIL weather factor
 AUT,consumer_confidence,EC_BCS,AT.CONS (OECD MEI mirror dropped: it measures a different statistic)
 AUT,consumer_economic_situation_expected,EC_BCS,CONS.AT.TOT.4.BS.M
@@ -26,13 +36,31 @@ AUT,global_activity,FRED,IGREA
 AUT,household_mortgage_loans,ECB_BSI,BSI
 AUT,industrial_confidence,EC_BCS,AT.INDU
 AUT,industrial_production,EUROSTAT_STS,"sts_inpr_m:M.PRD.B-D.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)"
+AUT,industry_employment_expectations,EC_BCS,INDU.AT.TOT.7.BS.M
+AUT,industry_export_order_books,EC_BCS,INDU.AT.TOT.3.BS.M
+AUT,industry_order_books,EC_BCS,INDU.AT.TOT.2.BS.M
+AUT,industry_production_expectations,EC_BCS,INDU.AT.TOT.5.BS.M
+AUT,industry_production_past,EC_BCS,INDU.AT.TOT.1.BS.M
+AUT,industry_selling_price_expectations,EC_BCS,INDU.AT.TOT.6.BS.M
+AUT,industry_stocks_finished_products,EC_BCS,INDU.AT.TOT.4.BS.M
 AUT,long_term_rate,FRED_MIRROR,IRLTLT01ATM156N
 AUT,mortgage_rate,ECB_MIR,MIR
 AUT,oil_price,FRED,WTISPLC
 AUT,real_effective_exchange_rate,FRED_MIRROR,CCRETT01ATM661N
+AUT,retail_business_activity_expected,EC_BCS,RETA.AT.TOT.4.BS.M
+AUT,retail_business_activity_past,EC_BCS,RETA.AT.TOT.1.BS.M
 AUT,retail_confidence,EC_BCS,AT.RETA
+AUT,retail_employment_expectations,EC_BCS,RETA.AT.TOT.5.BS.M
+AUT,retail_orders_expected,EC_BCS,RETA.AT.TOT.3.BS.M
+AUT,retail_price_expectations,EC_BCS,RETA.AT.TOT.6.BS.M
 AUT,retail_sales_volume,EUROSTAT_STS,"sts_trtu_m:M.VOL_SLS.G47.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)"
+AUT,retail_stocks,EC_BCS,RETA.AT.TOT.2.BS.M
+AUT,services_business_situation_past,EC_BCS,SERV.AT.TOT.1.BS.M
 AUT,services_confidence,EC_BCS,AT.SERV
+AUT,services_demand_expected,EC_BCS,SERV.AT.TOT.3.BS.M
+AUT,services_demand_past,EC_BCS,SERV.AT.TOT.2.BS.M
+AUT,services_employment_expectations,EC_BCS,SERV.AT.TOT.5.BS.M
+AUT,services_price_expectations,EC_BCS,SERV.AT.TOT.6.BS.M
 AUT,services_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.SERV.AT
 AUT,share_price_index,FRED_MIRROR,SPASTT01ATM661N
 AUT,short_term_rate,FRED_MIRROR,IR3TIB01ATM156N

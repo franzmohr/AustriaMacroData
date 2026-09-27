@@ -209,8 +209,8 @@ test_that("the two archives cache to different files, so one cannot be served fo
 })
 
 test_that("an unknown archive name is an error, not a silent fall back to the main one", {
-  expect_error(ec_survey_zip_url(2026, 8, archive = "services"), "Unknown EC survey archive")
-  expect_error(get_ec_survey_xlsx(archive = "services"), "Unknown EC survey archive")
+  expect_error(ec_survey_zip_url(2026, 8, archive = "financial_services"), "Unknown EC survey archive")
+  expect_error(get_ec_survey_xlsx(archive = "financial_services"), "Unknown EC survey archive")
 })
 
 test_that("ec_building_factor_column builds the construction survey's series code", {
@@ -430,4 +430,143 @@ test_that("an unknown consumer question is an error, and a non-EU country is ref
   })
   expect_null(out)
   expect_false(called)
+})
+
+## ---- Business surveys: industry, services, retail, construction --------
+
+test_that("industry, services and retail come out of the one all-surveys bundle", {
+  for (archive in c("industry", "services", "retail")) {
+    expect_equal(
+      ec_survey_zip_url(2026, 8, archive = archive),
+      "https://ec.europa.eu/economy_finance/db_indicators/surveys/documents/series/nace2_ecfin_2608/all_surveys_total_sa_nace2.zip"
+    )
+  }
+  expect_equal(ec_survey_landing_path(2026, 8, "data/landing", archive = "services"),
+               file.path("data/landing", "ec_bcs_services_2608.xlsx"))
+})
+
+test_that("ec_business_question_key builds the survey's own series codes", {
+  expect_equal(ec_business_question_key("industry_order_books", "AT"), "INDU.AT.TOT.2.BS.M")
+  expect_equal(ec_business_question_key("industry_capacity_utilization", "AT"), "INDU.AT.TOT.13.QPS.Q")
+  ## "Financial" is F5S in services but F6S in industry -- read off each
+  ## workbook's Index sheet, not assumed to line up.
+  expect_equal(ec_business_question_key("services_limits_financial", "AT"), "SERV.AT.TOT.7.F5S.Q")
+  expect_equal(ec_business_question_key("industry_limits_financial", "AT"), "INDU.AT.TOT.8.F6S.Q")
+  expect_equal(ec_business_question_key("construction_limits_financial", "EL"), "BUIL.EL.TOT.2.F7S.M")
+})
+
+test_that("ec_business_questions leaves out the confidence composites and the weather answer", {
+  expect_false(any(ec_business_questions$question == "COF"))
+  expect_false(any(ec_business_questions$sector == "BUIL" & ec_business_questions$answer == "F3S"))
+  expect_equal(nrow(ec_business_questions), length(unique(ec_business_questions$label)))
+  expect_true(all(ec_business_questions$archive %in% names(ec_survey_archives)))
+  ## A quarterly question needs a quarterly sheet to be read from
+  quarterly_archives <- unique(ec_business_questions$archive[ec_business_questions$frequency == "Q"])
+  for (a in quarterly_archives) expect_false(is.null(ec_survey_archives[[a]]$quarterly_sheet))
+  expect_true(all(ec_business_questions$label %in% concept_dictionary$label))
+})
+
+build_all_surveys_fixture_zip_bytes <- function() {
+  skip_if_not_installed("writexl")
+  dir <- tempfile()
+  dir.create(dir)
+  on.exit(unlink(dir, recursive = TRUE), add = TRUE)
+
+  ## Q1 sits between COF and Q2, so a parser that picked by position
+  ## rather than by name would read the wrong question.
+  industry_monthly <- data.frame(
+    c1 = c(NA, "1985-01-31", "1985-02-28", "1985-03-31", "1985-04-30"),
+    c2 = c("INDU.AT.TOT.COF.BS.M", "-5.0", "-6.0", "-7.0", "-8.0"),
+    c3 = c("INDU.AT.TOT.1.BS.M", "1.0", "2.0", "3.0", "4.0"),
+    c4 = c("INDU.AT.TOT.2.BS.M", "-20.0", "-21.0", "-22.0", "-23.0"),
+    stringsAsFactors = FALSE
+  )
+  industry_quarterly <- data.frame(
+    c1 = c(NA, "1985-Q1", "1985-Q2"),
+    c2 = c("INDU.AT.TOT.8.F2S.Q", "30.0", "31.0"),
+    c3 = c("INDU.AT.TOT.13.QPS.Q", "82.5", "83.1"),
+    stringsAsFactors = FALSE
+  )
+  services_monthly <- data.frame(
+    c1 = c(NA, "1985-01-31"),
+    c2 = c("SERV.AT.TOT.1.BS.M", "7.0"),
+    stringsAsFactors = FALSE
+  )
+  writexl::write_xlsx(list(Index = data.frame(x = 1), `INDUSTRY MONTHLY` = industry_monthly,
+                           `INDUSTRY QUARTERLY` = industry_quarterly),
+                      file.path(dir, "industry_total_sa_nace2.xlsx"), col_names = FALSE)
+  writexl::write_xlsx(list(Index = data.frame(x = 1), `SERVICES MONTHLY` = services_monthly),
+                      file.path(dir, "services_total_sa_nace2.xlsx"), col_names = FALSE)
+  ## The bundle's other workbooks; the first in the archive, so a reader
+  ## that took the first .xlsx rather than the named member would fail.
+  writexl::write_xlsx(list(MONTHLY = data.frame(x = 1)),
+                      file.path(dir, "building_total_sa_nace2.xlsx"), col_names = FALSE)
+
+  tmp_zip <- tempfile(fileext = ".zip")
+  old_wd <- setwd(dir)
+  on.exit(setwd(old_wd), add = TRUE)
+  utils::zip(tmp_zip, c("building_total_sa_nace2.xlsx", "industry_total_sa_nace2.xlsx",
+                        "services_total_sa_nace2.xlsx"), flags = "-q")
+  readBin(tmp_zip, "raw", file.info(tmp_zip)$size)
+}
+
+test_that("fetch_ec_business_question reads a monthly question by name and averages it", {
+  zip_bytes <- build_all_surveys_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  landing_dir <- tempfile()
+  on.exit(unlink(landing_dir, recursive = TRUE), add = TRUE)
+
+  urls <- character()
+  with_mock_fetch_binary(function(url, ...) { urls <<- c(urls, url); zip_bytes }, {
+    out <- fetch_ec_business_question("AUT", "industry_production_past", start_period = "1985-Q1",
+                                      reference_date = as.Date("2026-08-30"), landing_dir = landing_dir)
+  })
+  expect_true(grepl("all_surveys_total_sa_nace2\\.zip", urls[1]))
+  expect_equal(out$date, as.Date(c("1985-01-01", "1985-04-01")))
+  expect_equal(out$industry_production_past, c(2, 4))
+})
+
+test_that("fetch_ec_business_question reads a quarterly answer off the quarterly sheet", {
+  zip_bytes <- build_all_surveys_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  landing_dir <- tempfile()
+  on.exit(unlink(landing_dir, recursive = TRUE), add = TRUE)
+
+  with_mock_fetch_binary(const_fetch_binary(zip_bytes), {
+    out <- fetch_ec_business_question("AUT", "industry_capacity_utilization", start_period = "1985-Q1",
+                                      reference_date = as.Date("2026-08-30"), landing_dir = landing_dir)
+  })
+  expect_equal(out$date, as.Date(c("1985-01-01", "1985-04-01")))
+  expect_equal(out$industry_capacity_utilization, c(82.5, 83.1))
+})
+
+test_that("one download of the bundle serves every sector in it", {
+  zip_bytes <- build_all_surveys_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  landing_dir <- tempfile()
+  on.exit(unlink(landing_dir, recursive = TRUE), add = TRUE)
+
+  calls <- 0
+  with_mock_fetch_binary(function(url, ...) { calls <<- calls + 1; zip_bytes }, {
+    fetch_ec_business_question("AUT", "industry_order_books", start_period = "1985-Q1",
+                               reference_date = as.Date("2026-08-30"), landing_dir = landing_dir)
+    out <- fetch_ec_business_question("AUT", "services_business_situation_past",
+                                      start_period = "1985-M01", frequency = "M",
+                                      reference_date = as.Date("2026-08-30"), landing_dir = landing_dir)
+  })
+  expect_equal(calls, 1)
+  expect_equal(out$services_business_situation_past, 7)
+})
+
+test_that("a quarterly business question is absent from a monthly panel, and non-EU is refused", {
+  called <- FALSE
+  with_mock_fetch_binary(function(url, ...) { called <<- TRUE; NULL }, {
+    expect_null(fetch_ec_business_question("AUT", "industry_capacity_utilization",
+                                           start_period = "1985-M01", frequency = "M"))
+    expect_warning(out <- fetch_ec_business_question("USA", "industry_order_books"), "EU member states")
+  })
+  expect_null(out)
+  expect_false(called)
+  expect_error(fetch_ec_business_question("AUT", "industry_confidence_composite"),
+               "Unknown EC business survey question")
 })

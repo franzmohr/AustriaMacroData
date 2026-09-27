@@ -67,7 +67,7 @@ R/                          Fetcher library used by build_country_panel.R,
                              live API (see header comments for verification
                              notes and corrections vs. earlier guesses)
   concept_dictionary.R      The single authored source of metadata for all
-                             62 concepts (FRED-QD group, mnemonic, notes,
+                             108 concepts (FRED-QD group, mnemonic, notes,
                              plausibility category) -- scripts/build_country_panel.R,
                              R/fred_qd_validation.R and R/plausibility_checks.R
                              all derive their working tables from this one
@@ -111,7 +111,11 @@ R/                          Fetcher library used by build_country_panel.R,
                              survey archive for the share of building firms
                              naming weather as a factor limiting their
                              activity -- weather measured by its reported
-                             economic effect
+                             economic effect -- and the question-level
+                             series of the consumer survey and of the
+                             industry, services, retail and construction
+                             surveys (industry, services and retail from
+                             one all-surveys bundle)
   weather.R                 Heating and cooling degree days: Eurostat
                              nrg_chdd_m (official, but ~9 months behind)
                              spliced with a level-calibrated ERA5 series
@@ -267,12 +271,14 @@ panel, standing to it as FRED-MD stands to FRED-QD. It writes
 same canonical-schema contract: every country's monthly file has the same
 columns in the same order, whether or not each one resolved.
 
-**38 of the 62 concepts are published monthly.** The other 24 are quarterly at
+**66 of the 108 concepts are published monthly.** The other 42 are quarterly at
 source -- every national-accounts concept, the BIS credit series, government
 debt and the primary balance, hours worked, population, the change in
 inventories, unit labour cost, the employment rate, real house prices, the
-World Uncertainty Index, the two degree-day series and the consumer survey's
-two quarterly questions on housing. They are **absent** from the monthly panel rather than interpolated
+World Uncertainty Index, the two degree-day series, the consumer survey's
+two quarterly questions on housing, and the industry and services surveys'
+quarterly questions (factors limiting activity, capacity utilisation,
+competitive position). They are **absent** from the monthly panel rather than interpolated
 across its months. A quarterly figure smoothed into three monthly cells is an
 invention that looks exactly like data once it is in a CSV; anyone who wants
 one can build it from the quarterly panel knowing that they did.
@@ -444,6 +450,24 @@ and EC survey/geopolitical-risk concepts):
   sentiment moved. Eleven are monthly; the two on buying or improving a
   home are asked quarterly and so are quarterly-only concepts. See
   `R/ec_survey.R`.
+- **EU members, 46 new concepts**: the individual questions of the EC
+  business surveys -- industry (`industry_*`, 18), services
+  (`services_*`, 12), retail trade (`retail_*`, 6) and construction
+  (`construction_*`, 10) -- e.g. `industry_selling_price_expectations`,
+  `industry_limits_material_equipment`, `services_limits_labour`,
+  `industry_capacity_utilization`. Industry, services and retail come from
+  `all_surveys_total_sa_nace2.zip` (verified live 2026-09-27: HTTP 200,
+  5.2 MB, one workbook per sector), downloaded once and cached per sector;
+  construction from the building archive already read for the weather
+  constraint. Series are `<SECTOR>.AT.TOT.<Q>.<ANSWER>.<FREQ>`: balances
+  (`BS`), shares of firms naming a limiting factor (`F<n>S`, whose
+  numbering differs by sector and is read off each workbook's Index
+  sheet) and capacity utilisation in per cent (`QPS`), all seasonally
+  adjusted. Twenty-eight are monthly; the eighteen quarterly questions are
+  quarterly-only concepts. `industry_capacity_utilization` is the survey
+  counterpart of FRED-QD's `CUMFNS`. The sector confidence indicators
+  already in the panel are composites of some of these questions and are
+  not fetched twice. See `R/ec_survey.R`.
 - **Every country, new concept**: geopolitical risk (`geopolitical_risk`)
   from Caldara and Iacoviello's (2022) GPR index -- downloaded directly
   from the authors' own published data file. Genuinely country-specific
@@ -466,7 +490,7 @@ and EC survey/geopolitical-risk concepts):
 
 ## Candidate indicators (proposed, unverified)
 
-The 62 implemented concepts are representative anchors, not a 1:1
+The 108 implemented concepts are representative anchors, not a 1:1
 replication of FRED-QD's 245 series (see Overview above -- most of those
 245 are U.S.-specific and have no cross-country equivalent at all).
 [docs/candidate_indicators_austria.csv](docs/candidate_indicators_austria.csv)
@@ -664,7 +688,7 @@ just "made the warning go away"):
 
 ### FRED-QD group coverage
 
-62 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
+108 concepts across all 14 FRED-QD groups (started at 18 concepts / 12
 groups on 2026-08-30; grew via several same-day extension passes -- see
 `R/fred_mirror.R`, `R/bis.R`, `R/eurostat.R`, `R/ecb.R`, `R/ec_survey.R`
 and `R/yahoo_finance.R` header comments for the full trail, including one
@@ -681,6 +705,7 @@ override exists -- see the fallback chain earlier in this README.
 | Output and Income | Household disposable income | OECD `DF_QNA_INC_SAV`, IMF QNEA fallback | Verified absent for USA/DEU/FRA/GBR/AUT (checked against Eurostat too: no valid quarterly NA_ITEM either); available for 11 smaller economies only (see below) |
 | Industrial Production | Industrial production index | OECD MEI via FRED (`{cc3}PROINDQISMEI`) | Verified -- AUT + DEU + USA |
 | Industrial Production | Industrial confidence indicator | **EC Business and Consumer Survey** (`AT.INDU`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent. Documented leading-indicator value (OECD Composite Leading Indicators input) |
+| Industrial Production | Industry survey questions (18): production, order books, stocks, price and employment expectations monthly; limiting factors, capacity, new orders, capacity utilisation, competitive position quarterly | **EC Business and Consumer Survey** (`INDU.AT.TOT.<Q>.<ANSWER>.<FREQ>`, all-surveys bundle) | Verified -- AUT; EU-only. Capacity utilisation (`QPS`) is the survey counterpart of FRED-QD's `CUMFNS` |
 | Employment and Unemployment | Unemployment rate | OECD MEI via FRED (`LRHUTTTT{cc}Q156S`) | Verified -- AUT + DEU + USA |
 | Employment and Unemployment | Employment rate (15-64) | OECD MEI via FRED (`LREM64TT{cc}Q156S`) | Verified -- AUT + DEU + USA; no direct FRED-QD equivalent |
 | Employment and Unemployment | Employment expectations indicator | **EC Business and Consumer Survey** (`AT.EEI`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent. DG ECFIN's own purpose-built leading indicator for employment turning points |
@@ -707,6 +732,8 @@ override exists -- see the fallback chain earlier in this README.
 | Other | Consumer confidence | **EC Business and Consumer Survey** (EU members, live/current), else OECD MEI via FRED (`CSCICP03{cc}M665S`, stale) | Verified -- AUT + DEU via EC survey (current through 2026-Q3); USA via the stale FRED mirror (no EU-survey equivalent exists for non-EU countries) |
 | Other | Economic sentiment indicator | **EC Business and Consumer Survey** (`AT.ESI`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent. DG ECFIN's flagship composite, empirically validated to track/lead euro-area GDP growth |
 | Other | Services confidence indicator | **EC Business and Consumer Survey** (`AT.SERV`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent |
+| Other | Services survey questions (12) and retail trade survey questions (6) | **EC Business and Consumer Survey** (`SERV.AT.TOT...`, `RETA.AT.TOT...`, all-surveys bundle) | Verified -- AUT; EU-only, no FRED-QD equivalent |
+| Housing | Construction survey questions (10): activity, order books, employment and price expectations, and six limiting factors besides weather | **EC Business and Consumer Survey** (`BUIL.AT.TOT...`, building archive) | Verified -- AUT; EU-only, no FRED-QD equivalent |
 | Housing | Weather as a factor limiting building activity | **EC Business and Consumer Survey**, construction survey Q2 answer F3S (`BUIL.AT.TOT.2.F3S.M`) | Verified -- AUT + DEU; EU-only, no FRED-mirror equivalent. Seasonally adjusted at source, so it reads as a weather anomaly; 500 monthly observations for AUT from 1985-01 |
 | Other | Heating degree days | **Eurostat** `nrg_chdd_m` (official, ~9 months behind) spliced with level-calibrated **ERA5 via Open-Meteo** (~5 days behind, back to 1940) | Verified -- AUT + DEU via both sources; USA via Open-Meteo alone (uncalibrated -- Eurostat publishes no cross-check for it). ERA5-vs-Eurostat correlation 0.996 (AUT) / 0.999 (DEU) over 552 months. Not resolved for countries with neither a city set nor Eurostat coverage |
 | Other | Cooling degree days | Same sources as heating degree days | Verified -- ERA5-vs-Eurostat correlation 0.975 (AUT) / 0.970 (DEU) over 552 months; legitimately 0.00 for whole winters, which is why both degree-day concepts get their own plausibility category |
