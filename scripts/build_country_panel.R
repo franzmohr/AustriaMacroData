@@ -550,6 +550,29 @@ if (country %in% eu_member_countries) {
 }
 
 ## =====================================================================
+## 4i3. EU-specific: the individual questions of the EC BUSINESS surveys
+##      -- industry, services, retail trade and construction. Industry,
+##      services and retail come from one bundle,
+##      `all_surveys_total_sa_nace2.zip`; construction from the building
+##      archive above (see R/ec_survey.R). The sector confidence
+##      indicators above are composites of some of them; these say which
+##      part moved. No FRED-mirror fallback, so NA for non-EU countries.
+## =====================================================================
+if (country %in% eu_member_countries) {
+  message("Country is an EU member -- fetching the EC business survey questions...")
+  for (lbl in ec_business_questions$label) {
+    business_q <- fetch_ec_business_question(country, label = lbl, start_period = start_period)
+    if (!is.null(business_q)) {
+      panel <- dplyr::full_join(panel, business_q, by = "date")
+      concept_source[[lbl]] <- list(
+        provider = "EC_BCS",
+        key = ec_business_question_key(lbl, lookup_ec_country2(country))
+      )
+    }
+  }
+}
+
+## =====================================================================
 ## 4j. Heating and cooling degree days -- Eurostat's official monthly
 ##     series spliced with a level-calibrated ERA5/Open-Meteo series that
 ##     carries the pre-1980 history and the recent quarters Eurostat runs

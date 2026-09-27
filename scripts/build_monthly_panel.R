@@ -267,6 +267,15 @@ if (country %in% eu_member_countries) {
                                             start_period = start_period, frequency = FREQ),
                  lbl, "EC_BCS", ec_consumer_question_column(lookup_ec_country2(country), question))
   }
+  ## The business surveys' monthly questions; the quarterly ones (factors
+  ## limiting production or business, capacity, competitiveness) are
+  ## quarterly-only concepts and not in this panel.
+  monthly_business <- ec_business_questions$label[ec_business_questions$frequency == "M"]
+  for (lbl in monthly_business) {
+    join_concept(fetch_ec_business_question(country, label = lbl, start_period = start_period,
+                                            frequency = FREQ),
+                 lbl, "EC_BCS", ec_business_question_key(lbl, lookup_ec_country2(country)))
+  }
 }
 
 ## =====================================================================

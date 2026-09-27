@@ -88,6 +88,31 @@ ec_survey_archives <- list(
     zip_name   = "consumer_total_sa_nace2.zip",
     cache_stem = "ec_bcs_consumer",
     sheet      = "CONSUMER MONTHLY"
+  ),
+  ## The three business surveys this project reads question by question
+  ## come out of ONE download, `all_surveys_total_sa_nace2.zip`, which
+  ## bundles every sector's workbook (see "Business surveys" below). A
+  ## `member` names the workbook inside it, and a download caches every
+  ## member of that archive at once, so the three cost one request.
+  industry = list(
+    zip_name         = "all_surveys_total_sa_nace2.zip",
+    member           = "industry_total_sa_nace2.xlsx",
+    cache_stem       = "ec_bcs_industry",
+    sheet            = "INDUSTRY MONTHLY",
+    quarterly_sheet  = "INDUSTRY QUARTERLY"
+  ),
+  services = list(
+    zip_name         = "all_surveys_total_sa_nace2.zip",
+    member           = "services_total_sa_nace2.xlsx",
+    cache_stem       = "ec_bcs_services",
+    sheet            = "SERVICES MONTHLY",
+    quarterly_sheet  = "SERVICES QUARTERLY"
+  ),
+  retail = list(
+    zip_name         = "all_surveys_total_sa_nace2.zip",
+    member           = "retail_total_sa_nace2.xlsx",
+    cache_stem       = "ec_bcs_retail",
+    sheet            = "RETAIL TRADE MONTHLY"
   )
 )
 
@@ -117,7 +142,11 @@ ec_survey_landing_path <- function(year, month, landing_dir = ec_survey_landing_
 }
 
 #' Unzip archive bytes and return the path to the .xlsx inside, or NULL
-extract_ec_survey_xlsx <- function(zip_bytes) {
+#'
+#' A single-workbook archive returns its one .xlsx. For a multi-workbook
+#' archive, `member` names the workbook wanted; NULL is returned if it is
+#' not in the archive rather than falling back to whichever came first.
+extract_ec_survey_xlsx <- function(zip_bytes, member = NULL) {
   tmp_zip <- tempfile(fileext = ".zip")
   on.exit(unlink(tmp_zip), add = TRUE)
   writeBin(zip_bytes, tmp_zip)
@@ -126,11 +155,35 @@ extract_ec_survey_xlsx <- function(zip_bytes) {
   dir.create(tmp_dir)
   extracted <- tryCatch(utils::unzip(tmp_zip, exdir = tmp_dir), error = function(e) character(0))
   xlsx_path <- extracted[stringr::str_detect(extracted, stringr::regex("\\.xlsx$", ignore_case = TRUE))]
+  if (!is.null(member)) {
+    xlsx_path <- xlsx_path[tolower(basename(xlsx_path)) == tolower(member)]
+  }
   if (length(xlsx_path) == 0) {
     unlink(tmp_dir, recursive = TRUE)
     return(NULL)
   }
   xlsx_path[1]
+}
+
+#' Cache every registered member of a multi-workbook archive
+#'
+#' Called once a multi-workbook archive has been downloaded for one of its
+#' members: the other members registered in `ec_survey_archives` with the
+#' same `zip_name` are written into the cache as well, so fetching the
+#' industry questions and then the services questions downloads the
+#' bundle once, not twice.
+cache_ec_survey_siblings <- function(zip_bytes, zip_name, year, month, landing_dir) {
+  for (name in names(ec_survey_archives)) {
+    spec <- ec_survey_archives[[name]]
+    if (is.null(spec$member) || !identical(spec$zip_name, zip_name)) next
+    cached_path <- ec_survey_landing_path(year, month, landing_dir, name)
+    if (file.exists(cached_path)) next
+    extracted_path <- extract_ec_survey_xlsx(zip_bytes, member = spec$member)
+    if (is.null(extracted_path)) next
+    dir.create(landing_dir, showWarnings = FALSE, recursive = TRUE)
+    file.copy(extracted_path, cached_path, overwrite = TRUE)
+    unlink(dirname(extracted_path), recursive = TRUE)
+  }
 }
 
 #' Get a local path to the EC survey workbook for the most recent
@@ -158,6 +211,14 @@ get_ec_survey_xlsx <- function(reference_date = Sys.Date(), max_lookback = 3,
 
     bytes <- fetch_binary(ec_survey_zip_url(year, month, archive))
     if (!is.null(bytes)) {
+      spec <- ec_survey_archive(archive)
+      if (!is.null(spec$member)) {
+        cache_ec_survey_siblings(bytes, spec$zip_name, year, month, landing_dir)
+        if (file.exists(cached_path)) {
+          return(list(path = cached_path, year = year, month = month, cached = FALSE))
+        }
+        next
+      }
       extracted_path <- extract_ec_survey_xlsx(bytes)
       if (!is.null(extracted_path)) {
         dir.create(landing_dir, showWarnings = FALSE, recursive = TRUE)
@@ -513,6 +574,156 @@ fetch_ec_consumer_question <- function(country3, label, question,
     out <- parse_ec_survey_quarterly_column(found$path, "CONSUMER QUARTERLY", col_name, label)
   } else {
     out <- parse_ec_survey_column(found$path, ec_survey_archives$consumer$sheet, col_name, label)
+    if (!is.null(out)) out <- aggregate_to(out, label, frequency)
+  }
+  if (is.null(out)) return(NULL)
+  dplyr::filter(out, .data$date >= period_to_date(start_period))
+}
+
+## ---------------------------------------------------------------
+## Business surveys: the individual questions of industry, services,
+## retail trade and construction
+## ---------------------------------------------------------------
+## ADDED 2026-09-27. `all_surveys_total_sa_nace2.zip` (confirmed live:
+## HTTP 200, application/zip, 5.2 MB for month "2608") sits in the same
+## monthly folder as the archives above and walks back the same way. It
+## bundles six workbooks -- the main indicators and one per sector,
+## including the building and consumer workbooks this project already
+## reads from their own archives -- and is read here for the three it
+## does not: industry, services and retail trade (registered above as
+## members of it, so one download caches all three). The construction
+## questions below come from the building archive already cached.
+##
+## Every workbook uses the naming scheme of the building and consumer
+## ones, `<SECTOR>.<COUNTRY>.TOT.<QUESTION>.<ANSWER>.<FREQ>`, with
+## monthly questions on a "<SECTOR> MONTHLY" sheet (month-end dates) and
+## quarterly ones on "<SECTOR> QUARTERLY" ("YYYY-Qn" periods). Question
+## numbers and answer codes are read off each workbook's Index sheet --
+## the same trap as the building archive's weather answer applies, e.g.
+## "Financial" is F6S in industry but F5S in services:
+##   BS     balance (positive minus negative answers), seasonally adjusted
+##   F<n>S  % of firms naming factor n as limiting activity, s.a.
+##   QPS    capacity utilisation in %, s.a.
+##
+## Confirmed live for Austria in month 2608: industry monthly Q1-Q7 and
+## quarterly Q8 (six factors), Q9, Q11, Q13, Q15, Q16; services monthly
+## Q1, Q2, Q3, Q5, Q6 and quarterly Q7 (six factors), Q8; retail monthly
+## Q1-Q6; construction monthly Q1, Q2 (seven factors), Q3, Q4, Q5. The
+## Index sheets also list industry Q10 and construction Q6 (months of
+## production or work assured, QMS), which are not published for Austria
+## and are left out.
+##
+## "COF", each sector's confidence indicator, is the main archive's
+## INDU/SERV/RETA/BUIL (industrial_confidence, services_confidence,
+## retail_confidence, construction_confidence) and is not fetched again,
+## as with the consumer survey. Construction question 2's weather answer
+## (F3S) stays construction_weather_constraint above.
+ec_business_questions <- tibble::tribble(
+  ~label,                                       ~archive,   ~sector, ~question, ~answer, ~frequency,
+  "industry_production_past",                   "industry", "INDU",  "1",       "BS",    "M",
+  "industry_order_books",                       "industry", "INDU",  "2",       "BS",    "M",
+  "industry_export_order_books",                "industry", "INDU",  "3",       "BS",    "M",
+  "industry_stocks_finished_products",          "industry", "INDU",  "4",       "BS",    "M",
+  "industry_production_expectations",           "industry", "INDU",  "5",       "BS",    "M",
+  "industry_selling_price_expectations",        "industry", "INDU",  "6",       "BS",    "M",
+  "industry_employment_expectations",           "industry", "INDU",  "7",       "BS",    "M",
+  "industry_limits_none",                       "industry", "INDU",  "8",       "F1S",   "Q",
+  "industry_limits_demand",                     "industry", "INDU",  "8",       "F2S",   "Q",
+  "industry_limits_labour",                     "industry", "INDU",  "8",       "F3S",   "Q",
+  "industry_limits_material_equipment",         "industry", "INDU",  "8",       "F4S",   "Q",
+  "industry_limits_other",                      "industry", "INDU",  "8",       "F5S",   "Q",
+  "industry_limits_financial",                  "industry", "INDU",  "8",       "F6S",   "Q",
+  "industry_production_capacity",               "industry", "INDU",  "9",       "BS",    "Q",
+  "industry_new_orders_past",                   "industry", "INDU",  "11",      "BS",    "Q",
+  "industry_capacity_utilization",              "industry", "INDU",  "13",      "QPS",   "Q",
+  "industry_competitive_position_eu",           "industry", "INDU",  "15",      "BS",    "Q",
+  "industry_competitive_position_outside_eu",   "industry", "INDU",  "16",      "BS",    "Q",
+  "services_business_situation_past",           "services", "SERV",  "1",       "BS",    "M",
+  "services_demand_past",                       "services", "SERV",  "2",       "BS",    "M",
+  "services_demand_expected",                   "services", "SERV",  "3",       "BS",    "M",
+  "services_employment_expectations",           "services", "SERV",  "5",       "BS",    "M",
+  "services_price_expectations",                "services", "SERV",  "6",       "BS",    "M",
+  "services_limits_none",                       "services", "SERV",  "7",       "F1S",   "Q",
+  "services_limits_demand",                     "services", "SERV",  "7",       "F2S",   "Q",
+  "services_limits_labour",                     "services", "SERV",  "7",       "F3S",   "Q",
+  "services_limits_equipment_space",            "services", "SERV",  "7",       "F4S",   "Q",
+  "services_limits_financial",                  "services", "SERV",  "7",       "F5S",   "Q",
+  "services_limits_other",                      "services", "SERV",  "7",       "F6S",   "Q",
+  "services_capacity_utilization",              "services", "SERV",  "8",       "QPS",   "Q",
+  "retail_business_activity_past",              "retail",   "RETA",  "1",       "BS",    "M",
+  "retail_stocks",                              "retail",   "RETA",  "2",       "BS",    "M",
+  "retail_orders_expected",                     "retail",   "RETA",  "3",       "BS",    "M",
+  "retail_business_activity_expected",          "retail",   "RETA",  "4",       "BS",    "M",
+  "retail_employment_expectations",             "retail",   "RETA",  "5",       "BS",    "M",
+  "retail_price_expectations",                  "retail",   "RETA",  "6",       "BS",    "M",
+  "construction_activity_past",                 "building", "BUIL",  "1",       "BS",    "M",
+  "construction_limits_none",                   "building", "BUIL",  "2",       "F1S",   "M",
+  "construction_limits_demand",                 "building", "BUIL",  "2",       "F2S",   "M",
+  "construction_limits_labour",                 "building", "BUIL",  "2",       "F4S",   "M",
+  "construction_limits_material_equipment",     "building", "BUIL",  "2",       "F5S",   "M",
+  "construction_limits_other",                  "building", "BUIL",  "2",       "F6S",   "M",
+  "construction_limits_financial",              "building", "BUIL",  "2",       "F7S",   "M",
+  "construction_order_books",                   "building", "BUIL",  "3",       "BS",    "M",
+  "construction_employment_expectations",       "building", "BUIL",  "4",       "BS",    "M",
+  "construction_price_expectations",            "building", "BUIL",  "5",       "BS",    "M"
+)
+
+#' Build a business-survey column name, e.g. "INDU.AT.TOT.8.F2S.Q"
+ec_business_question_column <- function(ec_country2, sector, question, answer, frequency) {
+  sprintf("%s.%s.TOT.%s.%s.%s", sector, ec_country2, question, answer, frequency)
+}
+
+#' The column one concept of `ec_business_questions` is read from
+ec_business_question_key <- function(label, ec_country2) {
+  row <- ec_business_questions[ec_business_questions$label == label, ]
+  if (nrow(row) != 1) {
+    stop(sprintf("Unknown EC business survey question '%s'", label), call. = FALSE)
+  }
+  ec_business_question_column(ec_country2, row$sector, row$question, row$answer, row$frequency)
+}
+
+#' Fetch one business-survey question for an EU country
+#'
+#' `label` is one of `ec_business_questions$label`. A monthly question is
+#' averaged to the panel's frequency like every other survey series; a
+#' quarterly one is only asked quarterly and so returns NULL, without a
+#' warning, for a monthly panel. Returns NULL (with a warning) if the
+#' country isn't an EU member, the archive can't be found within the
+#' lookback window, or the country's column isn't in it -- the last a
+#' real case: several countries' services and retail surveys start late
+#' or are suspended (each workbook's INFO sheet).
+fetch_ec_business_question <- function(country3, label,
+                                        start_period = "1995-Q1",
+                                        reference_date = Sys.Date(),
+                                        landing_dir = ec_survey_landing_dir,
+                                        frequency = "Q") {
+  row <- ec_business_questions[ec_business_questions$label == label, ]
+  if (nrow(row) != 1) {
+    stop(sprintf("Unknown EC business survey question '%s' -- known: %s", label,
+                 paste(ec_business_questions$label, collapse = ", ")), call. = FALSE)
+  }
+  if (identical(row$frequency, "Q") && identical(frequency, "M")) return(NULL)
+
+  if (!country3 %in% eu_member_countries) {
+    warning(sprintf("[%s] EC Business and Consumer Survey only covers EU member states -- '%s' is not one", label, country3))
+    return(NULL)
+  }
+  ec_country2 <- lookup_ec_country2(country3)
+  if (is.na(ec_country2)) return(NULL)
+
+  found <- get_ec_survey_xlsx(reference_date, landing_dir = landing_dir, archive = row$archive)
+  if (is.null(found)) {
+    warning(sprintf("[%s] Could not find a published EC %s survey archive (cached or live) within the lookback window",
+                    label, row$archive))
+    return(NULL)
+  }
+
+  spec <- ec_survey_archive(row$archive)
+  col_name <- ec_business_question_key(label, ec_country2)
+  if (identical(row$frequency, "Q")) {
+    out <- parse_ec_survey_quarterly_column(found$path, spec$quarterly_sheet, col_name, label)
+  } else {
+    out <- parse_ec_survey_column(found$path, spec$sheet, col_name, label)
     if (!is.null(out)) out <- aggregate_to(out, label, frequency)
   }
   if (is.null(out)) return(NULL)

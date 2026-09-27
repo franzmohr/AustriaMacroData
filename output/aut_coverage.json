@@ -1,6 +1,6 @@
 {
   "country": "AUT",
-  "generated_at": "2026-09-27T11:00:33Z",
+  "generated_at": "2026-09-27T13:15:04Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -252,6 +252,236 @@
       "fred_qd_group": "Other",
       "label": "consumer_home_improvement_intentions",
       "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.15.BS.Q]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_production_past",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.1.BS.M]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_order_books",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.2.BS.M]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_export_order_books",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.3.BS.M]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_stocks_finished_products",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.4.BS.M]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_production_expectations",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.5.BS.M]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_selling_price_expectations",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.6.BS.M]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_employment_expectations",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.7.BS.M]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_none",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.8.F1S.Q]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_demand",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.8.F2S.Q]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_labour",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.8.F3S.Q]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_material_equipment",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.8.F4S.Q]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_other",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.8.F5S.Q]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_financial",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.8.F6S.Q]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_production_capacity",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.9.BS.Q]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_new_orders_past",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.11.BS.Q]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_capacity_utilization",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.13.QPS.Q]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_competitive_position_eu",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.15.BS.Q]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_competitive_position_outside_eu",
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.16.BS.Q]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_business_situation_past",
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.1.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_demand_past",
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.2.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_demand_expected",
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.3.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_employment_expectations",
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.5.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_price_expectations",
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.6.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_none",
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.7.F1S.Q]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_demand",
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.7.F2S.Q]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_labour",
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.7.F3S.Q]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_equipment_space",
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.7.F4S.Q]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_financial",
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.7.F5S.Q]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_other",
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.7.F6S.Q]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_capacity_utilization",
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.8.QPS.Q]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_business_activity_past",
+      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.1.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_stocks",
+      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.2.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_orders_expected",
+      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.3.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_business_activity_expected",
+      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.4.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_employment_expectations",
+      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.5.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_price_expectations",
+      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.6.BS.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_activity_past",
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.1.BS.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_none",
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F1S.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_demand",
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F2S.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_labour",
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F4S.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_material_equipment",
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F5S.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_other",
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F6S.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_financial",
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F7S.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_order_books",
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.3.BS.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_employment_expectations",
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.4.BS.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_price_expectations",
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.5.BS.M]"
     },
     {
       "fred_qd_group": "Other",
@@ -627,6 +857,282 @@
       "category": "balance",
       "status": "PASS",
       "detail": "All 124 values within [-150, 250]."
+    },
+    {
+      "label": "industry_production_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 167 values within [-150, 250]."
+    },
+    {
+      "label": "industry_order_books",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 167 values within [-150, 250]."
+    },
+    {
+      "label": "industry_export_order_books",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 167 values within [-150, 250]."
+    },
+    {
+      "label": "industry_stocks_finished_products",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 167 values within [-150, 250]."
+    },
+    {
+      "label": "industry_production_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 167 values within [-150, 250]."
+    },
+    {
+      "label": "industry_selling_price_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 167 values within [-150, 250]."
+    },
+    {
+      "label": "industry_employment_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 123 values within [-150, 250]."
+    },
+    {
+      "label": "industry_limits_none",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 123 values within [-10, 400]."
+    },
+    {
+      "label": "industry_limits_demand",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 123 values within [-10, 400]."
+    },
+    {
+      "label": "industry_limits_labour",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 123 values within [-10, 400]."
+    },
+    {
+      "label": "industry_limits_material_equipment",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 123 values within [-10, 400]."
+    },
+    {
+      "label": "industry_limits_other",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 123 values within [-10, 400]."
+    },
+    {
+      "label": "industry_limits_financial",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 93 values within [-10, 400]."
+    },
+    {
+      "label": "industry_production_capacity",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 123 values within [-150, 250]."
+    },
+    {
+      "label": "industry_new_orders_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 123 values within [-150, 250]."
+    },
+    {
+      "label": "industry_capacity_utilization",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 123 values within [-10, 400]."
+    },
+    {
+      "label": "industry_competitive_position_eu",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 123 values within [-150, 250]."
+    },
+    {
+      "label": "industry_competitive_position_outside_eu",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 123 values within [-150, 250]."
+    },
+    {
+      "label": "services_business_situation_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 120 values within [-150, 250]."
+    },
+    {
+      "label": "services_demand_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 120 values within [-150, 250]."
+    },
+    {
+      "label": "services_demand_expected",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 120 values within [-150, 250]."
+    },
+    {
+      "label": "services_employment_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 119 values within [-150, 250]."
+    },
+    {
+      "label": "services_price_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 94 values within [-150, 250]."
+    },
+    {
+      "label": "services_limits_none",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 93 values within [-10, 400]."
+    },
+    {
+      "label": "services_limits_demand",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 93 values within [-10, 400]."
+    },
+    {
+      "label": "services_limits_labour",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 93 values within [-10, 400]."
+    },
+    {
+      "label": "services_limits_equipment_space",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 93 values within [-10, 400]."
+    },
+    {
+      "label": "services_limits_financial",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 93 values within [-10, 400]."
+    },
+    {
+      "label": "services_limits_other",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 93 values within [-10, 400]."
+    },
+    {
+      "label": "services_capacity_utilization",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 61 values within [-10, 400]."
+    },
+    {
+      "label": "retail_business_activity_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 123 values within [-150, 250]."
+    },
+    {
+      "label": "retail_stocks",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 123 values within [-150, 250]."
+    },
+    {
+      "label": "retail_orders_expected",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 123 values within [-150, 250]."
+    },
+    {
+      "label": "retail_business_activity_expected",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 123 values within [-150, 250]."
+    },
+    {
+      "label": "retail_employment_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 123 values within [-150, 250]."
+    },
+    {
+      "label": "retail_price_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 94 values within [-150, 250]."
+    },
+    {
+      "label": "construction_activity_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 123 values within [-150, 250]."
+    },
+    {
+      "label": "construction_limits_none",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 167 values within [-10, 400]."
+    },
+    {
+      "label": "construction_limits_demand",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 167 values within [-10, 400]."
+    },
+    {
+      "label": "construction_limits_labour",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 167 values within [-10, 400]."
+    },
+    {
+      "label": "construction_limits_material_equipment",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 167 values within [-10, 400]."
+    },
+    {
+      "label": "construction_limits_other",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 167 values within [-10, 400]."
+    },
+    {
+      "label": "construction_limits_financial",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 94 values within [-10, 400]."
+    },
+    {
+      "label": "construction_order_books",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 123 values within [-150, 250]."
+    },
+    {
+      "label": "construction_employment_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 123 values within [-150, 250]."
+    },
+    {
+      "label": "construction_price_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 167 values within [-150, 250]."
     },
     {
       "label": "economic_sentiment_indicator",
