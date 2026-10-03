@@ -279,7 +279,7 @@ if (country %in% eu_member_countries) {
 }
 
 ## =====================================================================
-## 5. ECB: two monthly series and one daily one. The CISS is averaged
+## 5. ECB: four monthly series and one daily one. The CISS is averaged
 ##    within the month exactly as the quarterly panel averages it within
 ##    the quarter.
 ## =====================================================================
@@ -289,6 +289,11 @@ join_concept(fetch_ecb_mortgage_rate(country, start_period = start_period, frequ
 join_concept(fetch_ecb_household_mortgage_loans(country, start_period = start_period,
                                                 frequency = FREQ),
              "household_mortgage_loans", "ECB_BSI", "BSI")
+join_concept(fetch_ecb_mortgage_rate_pure_new(country, start_period = start_period,
+                                              frequency = FREQ),
+             "mortgage_rate_pure_new_loans", "ECB_MIR", "A2C.R.A.2250.EUR.P")
+join_concept(fetch_ecb_mortgage_new_lending(country, start_period = start_period, frequency = FREQ),
+             "mortgage_new_lending", "ECB_MIR", "A2C.B.A.2250.EUR.P")
 join_concept(fetch_ecb_ciss(country, start_period = start_period, frequency = FREQ),
              "financial_stress", "ECB_CISS", "CISS (daily, averaged within the month)")
 

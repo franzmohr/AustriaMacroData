@@ -1,9 +1,9 @@
 {
   "country": "AUT",
   "frequency": "monthly",
-  "generated_at": "2026-09-27T13:16:47Z",
+  "generated_at": "2026-10-03T17:21:14Z",
   "start_period": "1960-M01",
-  "concepts_published_monthly": 66,
+  "concepts_published_monthly": 68,
   "concepts_quarterly_only": 42,
   "resolved": [
     {
@@ -82,9 +82,19 @@
       "source": "ECB MFI Interest Rate Statistics (MIR) [MIR]"
     },
     {
+      "fred_qd_group": "Interest Rates",
+      "label": "mortgage_rate_pure_new_loans",
+      "source": "ECB MFI Interest Rate Statistics (MIR) [A2C.R.A.2250.EUR.P]"
+    },
+    {
       "fred_qd_group": "Money and Credit",
       "label": "household_mortgage_loans",
       "source": "ECB MFI Balance Sheet Items (BSI) [BSI]"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "mortgage_new_lending",
+      "source": "ECB MFI Interest Rate Statistics (MIR) [A2C.B.A.2250.EUR.P]"
     },
     {
       "fred_qd_group": "Exchange Rates",
@@ -519,25 +529,25 @@
       "label": "industrial_confidence",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 500 values within [-150, 250]."
+      "detail": "All 501 values within [-150, 250]."
     },
     {
       "label": "unemployment_rate",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 403 values within [-10, 400]."
+      "detail": "All 404 values within [-10, 400]."
     },
     {
       "label": "employment_expectations",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 368 values within [-150, 250]."
+      "detail": "All 369 values within [-150, 250]."
     },
     {
       "label": "construction_confidence",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 368 values within [-150, 250]."
+      "detail": "All 369 values within [-150, 250]."
     },
     {
       "label": "retail_sales_volume",
@@ -549,7 +559,7 @@
       "label": "retail_confidence",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 368 values within [-150, 250]."
+      "detail": "All 369 values within [-150, 250]."
     },
     {
       "label": "cpi_index",
@@ -597,13 +607,25 @@
       "label": "mortgage_rate",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 319 values within [-10, 400]."
+      "detail": "All 320 values within [-10, 400]."
+    },
+    {
+      "label": "mortgage_rate_pure_new_loans",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 109 values within [-10, 400]."
     },
     {
       "label": "household_mortgage_loans",
       "category": "level",
       "status": "PASS",
       "detail": "Positive throughout; largest quarter-over-quarter change 3%."
+    },
+    {
+      "label": "mortgage_new_lending",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -52%."
     },
     {
       "label": "fx_rate_to_usd",
@@ -621,253 +643,253 @@
       "label": "consumer_confidence",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 371 values within [-150, 250]."
+      "detail": "All 372 values within [-150, 250]."
     },
     {
       "label": "consumer_financial_situation_past",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 371 values within [-150, 250]."
+      "detail": "All 372 values within [-150, 250]."
     },
     {
       "label": "consumer_financial_situation_expected",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 371 values within [-150, 250]."
+      "detail": "All 372 values within [-150, 250]."
     },
     {
       "label": "consumer_economic_situation_past",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 371 values within [-150, 250]."
+      "detail": "All 372 values within [-150, 250]."
     },
     {
       "label": "consumer_economic_situation_expected",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 371 values within [-150, 250]."
+      "detail": "All 372 values within [-150, 250]."
     },
     {
       "label": "consumer_price_trends_past",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 371 values within [-150, 250]."
+      "detail": "All 372 values within [-150, 250]."
     },
     {
       "label": "consumer_price_expectations",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 371 values within [-150, 250]."
+      "detail": "All 372 values within [-150, 250]."
     },
     {
       "label": "consumer_unemployment_expectations",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 371 values within [-150, 250]."
+      "detail": "All 372 values within [-150, 250]."
     },
     {
       "label": "consumer_major_purchases_now",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 371 values within [-150, 250]."
+      "detail": "All 372 values within [-150, 250]."
     },
     {
       "label": "consumer_major_purchases_expected",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 371 values within [-150, 250]."
+      "detail": "All 372 values within [-150, 250]."
     },
     {
       "label": "consumer_savings_expected",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 371 values within [-150, 250]."
+      "detail": "All 372 values within [-150, 250]."
     },
     {
       "label": "consumer_household_finances_now",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 371 values within [-150, 250]."
+      "detail": "All 372 values within [-150, 250]."
     },
     {
       "label": "industry_production_past",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 500 values within [-150, 250]."
+      "detail": "All 501 values within [-150, 250]."
     },
     {
       "label": "industry_order_books",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 500 values within [-150, 250]."
+      "detail": "All 501 values within [-150, 250]."
     },
     {
       "label": "industry_export_order_books",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 500 values within [-150, 250]."
+      "detail": "All 501 values within [-150, 250]."
     },
     {
       "label": "industry_stocks_finished_products",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 500 values within [-150, 250]."
+      "detail": "All 501 values within [-150, 250]."
     },
     {
       "label": "industry_production_expectations",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 500 values within [-150, 250]."
+      "detail": "All 501 values within [-150, 250]."
     },
     {
       "label": "industry_selling_price_expectations",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 500 values within [-150, 250]."
+      "detail": "All 501 values within [-150, 250]."
     },
     {
       "label": "industry_employment_expectations",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 368 values within [-150, 250]."
+      "detail": "All 369 values within [-150, 250]."
     },
     {
       "label": "services_business_situation_past",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 359 values within [-150, 250]."
+      "detail": "All 360 values within [-150, 250]."
     },
     {
       "label": "services_demand_past",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 359 values within [-150, 250]."
+      "detail": "All 360 values within [-150, 250]."
     },
     {
       "label": "services_demand_expected",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 359 values within [-150, 250]."
+      "detail": "All 360 values within [-150, 250]."
     },
     {
       "label": "services_employment_expectations",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 355 values within [-150, 250]."
+      "detail": "All 356 values within [-150, 250]."
     },
     {
       "label": "services_price_expectations",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 280 values within [-150, 250]."
+      "detail": "All 281 values within [-150, 250]."
     },
     {
       "label": "retail_business_activity_past",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 368 values within [-150, 250]."
+      "detail": "All 369 values within [-150, 250]."
     },
     {
       "label": "retail_stocks",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 368 values within [-150, 250]."
+      "detail": "All 369 values within [-150, 250]."
     },
     {
       "label": "retail_orders_expected",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 368 values within [-150, 250]."
+      "detail": "All 369 values within [-150, 250]."
     },
     {
       "label": "retail_business_activity_expected",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 368 values within [-150, 250]."
+      "detail": "All 369 values within [-150, 250]."
     },
     {
       "label": "retail_employment_expectations",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 368 values within [-150, 250]."
+      "detail": "All 369 values within [-150, 250]."
     },
     {
       "label": "retail_price_expectations",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 280 values within [-150, 250]."
+      "detail": "All 281 values within [-150, 250]."
     },
     {
       "label": "construction_activity_past",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 368 values within [-150, 250]."
+      "detail": "All 369 values within [-150, 250]."
     },
     {
       "label": "construction_limits_none",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 500 values within [-10, 400]."
+      "detail": "All 501 values within [-10, 400]."
     },
     {
       "label": "construction_limits_demand",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 500 values within [-10, 400]."
+      "detail": "All 501 values within [-10, 400]."
     },
     {
       "label": "construction_limits_labour",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 500 values within [-10, 400]."
+      "detail": "All 501 values within [-10, 400]."
     },
     {
       "label": "construction_limits_material_equipment",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 500 values within [-10, 400]."
+      "detail": "All 501 values within [-10, 400]."
     },
     {
       "label": "construction_limits_other",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 500 values within [-10, 400]."
+      "detail": "All 501 values within [-10, 400]."
     },
     {
       "label": "construction_limits_financial",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 280 values within [-10, 400]."
+      "detail": "All 281 values within [-10, 400]."
     },
     {
       "label": "construction_order_books",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 368 values within [-150, 250]."
+      "detail": "All 369 values within [-150, 250]."
     },
     {
       "label": "construction_employment_expectations",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 368 values within [-150, 250]."
+      "detail": "All 369 values within [-150, 250]."
     },
     {
       "label": "construction_price_expectations",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 500 values within [-150, 250]."
+      "detail": "All 501 values within [-150, 250]."
     },
     {
       "label": "economic_sentiment_indicator",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 500 values within [-150, 250]."
+      "detail": "All 501 values within [-150, 250]."
     },
     {
       "label": "services_confidence",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 359 values within [-150, 250]."
+      "detail": "All 360 values within [-150, 250]."
     },
     {
       "label": "oil_price",
@@ -903,7 +925,7 @@
       "label": "construction_weather_constraint",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 500 values within [-150, 250]."
+      "detail": "All 501 values within [-150, 250]."
     }
   ]
 }

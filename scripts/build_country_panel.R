@@ -304,6 +304,19 @@ if (!is.null(mortgage_loans)) {
   concept_source[["household_mortgage_loans"]] <- list(provider = "ECB_BSI", key = "A22T.A.1.U6.2250.Z01.E")
 }
 
+mortgage_rate_pure <- fetch_ecb_mortgage_rate_pure_new(country, start_period = start_period)
+if (!is.null(mortgage_rate_pure)) {
+  panel <- dplyr::full_join(panel, mortgage_rate_pure, by = "date")
+  concept_source[["mortgage_rate_pure_new_loans"]] <- list(provider = "ECB_MIR", key = "A2C.R.A.2250.EUR.P")
+}
+
+## A flow: the fetcher sums complete quarters rather than averaging them.
+new_lending <- fetch_ecb_mortgage_new_lending(country, start_period = start_period)
+if (!is.null(new_lending)) {
+  panel <- dplyr::full_join(panel, new_lending, by = "date")
+  concept_source[["mortgage_new_lending"]] <- list(provider = "ECB_MIR", key = "A2C.B.A.2250.EUR.P")
+}
+
 ## =====================================================================
 ## 4. FRED/OECD-MEI/BIS mirror groups
 ## =====================================================================

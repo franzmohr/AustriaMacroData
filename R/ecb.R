@@ -108,24 +108,61 @@ fetch_ecb_household_networth <- function(country3, start_period = "1995-Q1") {
 ecb_mir_dims <- c("FREQ", "REF_AREA", "BS_REP_SECTOR", "BS_ITEM", "MATURITY_NOT_IRATE",
                    "DATA_TYPE_MIR", "AMOUNT_CAT", "BS_COUNT_SECTOR", "CURRENCY_TRANS", "IR_BUS_COV")
 
-#' Fetch the mortgage interest rate (new business, loans to households
-#' for house purchase) for one euro-area country
+## ---------------------------------------------------------------
+## Pure new loans for house purchase -- the same MIR dataflow and the
+## same loan category as `mortgage_rate`, at IR_BUS_COV=P ("pure new
+## loans") instead of N ("new business").
+##
+## STATUS: VERIFIED 2026-10-03. Both keys were confirmed live against
+## data-api.ecb.europa.eu with real, current monthly observations for AT
+## (2017-08 to 2026-08), the series titles reading "Bank business volumes
+## - loans to households for house purchase (pure new loans)" and "Bank
+## interest rates - loans to households for house purchase (pure new
+## loans)" -- and for DE with only REF_AREA changed (2026-08: EUR
+## 15,113 million at 4.02%, against AT's EUR 1,284 million at 3.64%):
+##   MIR.M.AT.B.A2C.A.B.A.2250.EUR.P  volume, DATA_TYPE_MIR=B, EUR millions
+##                                    (UNIT=EUR, UNIT_MULT=6), COLLECTION=S
+##   MIR.M.AT.B.A2C.A.R.A.2250.EUR.P  rate, DATA_TYPE_MIR=R, percent p.a.,
+##                                    COLLECTION=A
+##
+## WHY "PURE". New business (N) counts every contract whose terms were
+## agreed in the month, including renegotiations of loans already on the
+## books, and refinancing waves move those independently of house
+## purchases. Pure new loans (P) leave
+## renegotiations out, so the volume is the closest monthly measure of
+## new mortgage lending there is for a euro-area country. The history is
+## short: the P series start in 2017-08 for Austria, against 2003 for N.
+##
+## THE VOLUME IS A FLOW. COLLECTION=S says it: each month's figure is the
+## sum of the contracts agreed in that month. A quarter's figure is
+## therefore the SUM of its three months, not their average, and a
+## quarter that is not yet complete is left out rather than summed over
+## the months it has -- a two-month sum would show up as a one-third
+## collapse in lending that never happened. The rate is a period average
+## (COLLECTION=A) and is averaged like `mortgage_rate`.
+## ---------------------------------------------------------------
+
+#' Fetch one monthly MIR series for house-purchase loans to households
 #'
-#' Returns NULL (with a warning) if `country3` is not a euro-area member
-#' or has no FRED 2-letter code known (reused as the ECB REF_AREA code,
-#' confirmed identical for AT/DE).
-fetch_ecb_mortgage_rate <- function(country3, label = "mortgage_rate", start_period = "1995-Q1",
-                                    frequency = "Q") {
+#' Shared by `fetch_ecb_mortgage_rate()`, `fetch_ecb_mortgage_rate_pure_new()`
+#' and `fetch_ecb_mortgage_new_lending()`, which differ only in two key
+#' segments, in how a quarter is formed, and in what their warnings call
+#' the series. `aggregate = "sum"` sums complete quarters (for a flow);
+#' "mean" averages, as every other monthly source in this project does.
+fetch_ecb_mir_house_purchase <- function(country3, label, data_type, bus_cov, what,
+                                         start_period = "1995-Q1", frequency = "Q",
+                                         aggregate = c("mean", "sum")) {
+  aggregate <- match.arg(aggregate)
   if (!(country3 %in% euro_area_countries)) {
-    warning(sprintf("[%s] ECB mortgage rate: %s is not a euro-area country -- skipping", label, country3))
+    warning(sprintf("[%s] ECB %s: %s is not a euro-area country -- skipping", label, what, country3))
     return(NULL)
   }
   country2 <- lookup_country2(country3)
   if (is.na(country2)) return(NULL)
 
   dims <- c(FREQ = "M", REF_AREA = country2, BS_REP_SECTOR = "B", BS_ITEM = "A2C",
-            MATURITY_NOT_IRATE = "A", DATA_TYPE_MIR = "R", AMOUNT_CAT = "A",
-            BS_COUNT_SECTOR = "2250", CURRENCY_TRANS = "EUR", IR_BUS_COV = "N")
+            MATURITY_NOT_IRATE = "A", DATA_TYPE_MIR = data_type, AMOUNT_CAT = "A",
+            BS_COUNT_SECTOR = "2250", CURRENCY_TRANS = "EUR", IR_BUS_COV = bus_cov)
   key <- build_sdmx_key(dims[ecb_mir_dims])
 
   ## MIR is monthly (FREQ=M); start_period here is a "YYYY-Qn" string like
@@ -139,17 +176,17 @@ fetch_ecb_mortgage_rate <- function(country3, label = "mortgage_rate", start_per
 
   txt <- fetch_text(url, httr::add_headers(Accept = "text/csv"))
   if (is.null(txt)) {
-    warning(sprintf("[%s] ECB mortgage rate fetch failed for %s -- verify manually at https://data.ecb.europa.eu", label, country3))
+    warning(sprintf("[%s] ECB %s fetch failed for %s -- verify manually at https://data.ecb.europa.eu", label, what, country3))
     return(NULL)
   }
   if (stringr::str_detect(txt, stringr::regex('"status":\\s*404|No Series was returned', ignore_case = TRUE))) {
-    warning(sprintf("[%s] ECB has no mortgage-rate observations for %s", label, country3))
+    warning(sprintf("[%s] ECB has no %s observations for %s", label, gsub(" ", "-", what), country3))
     return(NULL)
   }
 
   df <- suppressWarnings(readr::read_csv(txt, show_col_types = FALSE))
   if (!all(c("TIME_PERIOD", "OBS_VALUE") %in% names(df))) {
-    warning(sprintf("[%s] ECB mortgage rate: unexpected response shape, inspect manually", label))
+    warning(sprintf("[%s] ECB %s: unexpected response shape, inspect manually", label, what))
     return(NULL)
   }
 
@@ -162,8 +199,44 @@ fetch_ecb_mortgage_rate <- function(country3, label = "mortgage_rate", start_per
     dplyr::distinct(date, .keep_all = TRUE)
   names(monthly)[2] <- label
 
-  aggregate_to(monthly, label, frequency) %>%
-    dplyr::filter(.data$date >= period_to_date(start_period))
+  out <- if (identical(aggregate, "sum") && identical(check_frequency(frequency), "Q")) {
+    monthly_to_quarterly_sum(monthly, label)
+  } else {
+    aggregate_to(monthly, label, frequency)
+  }
+  out %>% dplyr::filter(.data$date >= period_to_date(start_period))
+}
+
+#' Fetch the mortgage interest rate (new business, loans to households
+#' for house purchase) for one euro-area country
+#'
+#' Returns NULL (with a warning) if `country3` is not a euro-area member
+#' or has no FRED 2-letter code known (reused as the ECB REF_AREA code,
+#' confirmed identical for AT/DE).
+fetch_ecb_mortgage_rate <- function(country3, label = "mortgage_rate", start_period = "1995-Q1",
+                                    frequency = "Q") {
+  fetch_ecb_mir_house_purchase(country3, label, data_type = "R", bus_cov = "N",
+                               what = "mortgage rate", start_period = start_period,
+                               frequency = frequency)
+}
+
+#' Fetch the interest rate on PURE new loans to households for house
+#' purchase (renegotiations excluded) for one euro-area country
+fetch_ecb_mortgage_rate_pure_new <- function(country3, label = "mortgage_rate_pure_new_loans",
+                                             start_period = "1995-Q1", frequency = "Q") {
+  fetch_ecb_mir_house_purchase(country3, label, data_type = "R", bus_cov = "P",
+                               what = "pure-new-loan mortgage rate", start_period = start_period,
+                               frequency = frequency)
+}
+
+#' Fetch the volume of PURE new loans to households for house purchase
+#' (millions of EUR per period, renegotiations excluded) for one
+#' euro-area country -- summed, not averaged, into quarters
+fetch_ecb_mortgage_new_lending <- function(country3, label = "mortgage_new_lending",
+                                           start_period = "1995-Q1", frequency = "Q") {
+  fetch_ecb_mir_house_purchase(country3, label, data_type = "B", bus_cov = "P",
+                               what = "new mortgage lending", start_period = start_period,
+                               frequency = frequency, aggregate = "sum")
 }
 
 ## ---------------------------------------------------------------
