@@ -74,7 +74,7 @@ R/                          Fetcher library used by build_panels.R,
                              live API (see header comments for verification
                              notes and corrections vs. earlier guesses)
   concept_dictionary.R      The single authored source of metadata for all
-                             110 concepts (FRED-QD group, mnemonic, notes,
+                             112 concepts (FRED-QD group, mnemonic, notes,
                              plausibility category) -- scripts/build_panels.R,
                              R/fred_qd_validation.R and R/plausibility_checks.R
                              all derive their working tables from this one
@@ -115,6 +115,9 @@ R/                          Fetcher library used by build_panels.R,
                              country-specific, euro-area members), and MFI
                              Balance Sheet Items (household mortgage loans
                              outstanding, a different ECB dataflow entirely)
+  oenb.R                    OeNB data service (Austria only): new loans for
+                             housing purposes from 2009 and their new-business
+                             rate from 1995, longer than the ECB MIR series
   ec_survey.R                European Commission Business and Consumer
                              Survey -- PREFERRED consumer-confidence source
                              for EU member states (fresher than the FRED
@@ -228,9 +231,9 @@ it, and writes all of the following for that country:
 
 | File | Style | Contents |
 |---|---|---|
-| `output/<country>_monthly_panel.csv` | FRED-MD | The 70 concepts that are monthly at source, one row per month |
-| `output/<country>_panel.csv` | FRED-QD | All 110 concepts, one row per quarter: the 40 quarterly ones as published, the 70 monthly ones aggregated to quarters |
-| `output/<country>_mixed_panel.csv` | EA-MD-QD | All 110 concepts on one monthly date index, quarterly values in the first month of their quarter and `NA` in the other two |
+| `output/<country>_monthly_panel.csv` | FRED-MD | The 72 concepts that are monthly at source, one row per month |
+| `output/<country>_panel.csv` | FRED-QD | All 112 concepts, one row per quarter: the 40 quarterly ones as published, the 72 monthly ones aggregated to quarters |
+| `output/<country>_mixed_panel.csv` | EA-MD-QD | All 112 concepts on one monthly date index, quarterly values in the first month of their quarter and `NA` in the other two |
 | `output/<country>_metadata.csv` | | One row per concept: frequency, aggregation rule, unit, seasonal adjustment, class, transformation codes, source, first and last period |
 | `output/<country>_dummies_monthly.csv`, `_dummies_quarterly.csv` | | Policy-event dummies, see [Dummy variables](#dummy-variables) |
 | `output/<country>_coverage.json`, `_monthly_coverage.json` | | What resolved, from where, and the plausibility checks, per frequency |
@@ -301,7 +304,7 @@ the mixed-frequency panel it sits in the first month of its quarter with
 `NA` in the other two. A quarterly figure smoothed into three monthly cells
 is an invention that looks exactly like data once it is in a CSV.
 
-**70 of the 110 concepts are monthly at source.** The other 40 are
+**72 of the 112 concepts are monthly at source.** The other 40 are
 quarterly -- every national-accounts concept, the BIS credit series,
 government debt and the primary balance, hours worked, population, the
 change in inventories, unit labour cost, the employment rate, real house
@@ -578,7 +581,7 @@ and EC survey/geopolitical-risk concepts):
 
 ## Candidate indicators (proposed, unverified)
 
-The 108 implemented concepts are representative anchors, not a 1:1
+The 112 implemented concepts are representative anchors, not a 1:1
 replication of FRED-QD's 245 series (see Overview above -- most of those
 245 are U.S.-specific and have no cross-country equivalent at all).
 [docs/candidate_indicators_austria.csv](docs/candidate_indicators_austria.csv)
@@ -809,9 +812,11 @@ override exists -- see the fallback chain earlier in this README.
 | Interest Rates | Short-term (3-month interbank) rate | OECD MEI via FRED (`IR3TIB01{cc}Q156N`) | Verified -- AUT + DEU + USA |
 | Interest Rates | Mortgage rate (new business, loans to households) | **ECB** `MIR` (euro-area members) | Verified -- AUT + DE, genuinely country-specific; no source for non-euro-area countries (incl. USA -- FRED-QD's own MORTGAGE30US is US-specific too) |
 | Interest Rates | Mortgage rate on pure new loans (renegotiations excluded) | **ECB** `MIR`, `A2C.R.A.2250.EUR.P` (euro-area members) | Verified 2026-10-03 -- AUT (3.64%) + DE (4.02%) for 2026-08; published from 2017-08 for AUT, computed back to 2017-01 as new business less renegotiations |
+| Interest Rates | Mortgage rate, new business (`mortgage_rate_oenb`) | **OeNB** data service, data set 23, `VDBZSBSZN10010` (**Austria only**) | Verified 2026-10-03 -- 3.61% for 2026-08; identical to the ECB `mortgage_rate` in every month since 2000-01, and reaches back to 1995-12 |
 | Money and Credit | Credit to private non-financial sector, % of GDP | BIS `WS_TC` v2.0, `TC_BORROWERS=P` (all countries in one bulk pull, cached) | Verified -- AUT + DE + US |
 | Money and Credit | Household mortgage loans, outstanding stock (EUR millions) | **ECB** `BSI` (euro-area members) | Verified -- AUT (EUR 133.0bn) + DE (EUR 1,658.4bn) as of 2026-07; pairs with the mortgage-rate row above (same loan category, different ECB dataflow entirely); no source for non-euro-area countries |
 | Money and Credit | New lending for house purchase, pure new loans (EUR millions per period; a flow, so quarters are the SUM of complete months) | **ECB** `MIR`, `A2C.B.A.2250.EUR.P` (euro-area members) | Verified 2026-10-03 -- AUT (EUR 1,284mn) + DE (EUR 15,113mn) for 2026-08; published from 2017-08 for AUT, computed back to 2014-12 as new business less renegotiations; the flow counterpart to the stock above |
+| Money and Credit | New loans for housing purposes, excl. revolving loans (`mortgage_new_lending_oenb`; EUR millions per period, a flow) | **OeNB** data service, data set 100140002, `VDBMSKNWOHNBAU` (**Austria only**) | Verified 2026-10-03 -- EUR 1,218mn for 2026-08; from 2009-01, eight years longer than the ECB series above, whose monthly changes it tracks at a correlation of 0.994 |
 | Household Balance Sheets | Household net worth (growth rate) | ECB `QSA_PUB` | Verified, but **euro-area aggregate only** -- no per-country series exists (see below) |
 | Household Balance Sheets | Household credit, % of GDP | BIS `WS_TC` v2.0, `TC_BORROWERS=H` | Verified -- AUT + DE + US; **country-specific**, unlike the ECB series above |
 | Non-Household Balance Sheets | Nonfinancial-corporation credit, % of GDP | BIS `WS_TC` v2.0, `TC_BORROWERS=N` | Verified -- AUT + DE + US |

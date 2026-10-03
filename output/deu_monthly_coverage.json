@@ -1,9 +1,9 @@
 {
   "country": "DEU",
   "frequency": "monthly",
-  "generated_at": "2026-10-03T20:32:11Z",
+  "generated_at": "2026-10-03T21:41:29Z",
   "start_period": "1960-M01",
-  "concepts_published_monthly": 70,
+  "concepts_published_monthly": 72,
   "concepts_quarterly_only": 40,
   "resolved": [
     {
@@ -357,7 +357,16 @@
       "source": "ERA5 reanalysis (via the Open-Meteo archive API) [ERA5, 8-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x0.698, corr 0.971 over 552 months)]"
     }
   ],
-  "skipped": [],
+  "skipped": [
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "mortgage_rate_oenb"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "mortgage_new_lending_oenb"
+    }
+  ],
   "quarterly_only": [
     {
       "fred_qd_group": "Output and Income",
@@ -618,6 +627,12 @@
       "detail": "All 141 values within [-10, 400]."
     },
     {
+      "label": "mortgage_rate_oenb",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
       "label": "household_mortgage_loans",
       "category": "level",
       "status": "PASS",
@@ -628,6 +643,12 @@
       "category": "level",
       "status": "PASS",
       "detail": "Positive throughout; largest quarter-over-quarter change 29%."
+    },
+    {
+      "label": "mortgage_new_lending_oenb",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
     },
     {
       "label": "fx_rate_to_usd",

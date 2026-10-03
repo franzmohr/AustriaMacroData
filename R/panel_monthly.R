@@ -234,12 +234,19 @@ fetch_monthly_concepts <- function(country, start_period, country2 = lookup_coun
 
   ## ===================================================================
   ## 6. Austria: the ATX in place of the OECD "all shares" mirror, as the
-  ##    quarterly builder has always done. Monthly closes at source.
+  ##    quarterly builder has always done. Monthly closes at source. And
+  ##    the OeNB's new lending for housing and its rate (R/oenb.R), which
+  ##    reach back further than the ECB's MIR series.
   ## ===================================================================
   if (country == "AUT") {
     message("Country is Austria -- trying the ATX index (Yahoo Finance) for share_price_index...")
     combine_in(fetch_atx_monthly(start_period = start_period), "share_price_index",
                "YAHOO_FINANCE", "^ATX (monthly close)", mode = "replace")
+    message("Country is Austria -- fetching new lending for housing and its rate from the OeNB...")
+    for (lbl in oenb_series$label) {
+      join_concept(fetch_oenb_series(country, lbl, start_period = start_period, frequency = freq),
+                   lbl, "OENB", oenb_key(lbl))
+    }
   }
 
   ## ===================================================================

@@ -1,6 +1,6 @@
 {
   "country": "DEU",
-  "generated_at": "2026-10-03T20:32:11Z",
+  "generated_at": "2026-10-03T21:41:29Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -553,6 +553,14 @@
     {
       "fred_qd_group": "Output and Income",
       "label": "real_household_disposable_income"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "mortgage_rate_oenb"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "mortgage_new_lending_oenb"
     }
   ],
   "groups_not_attempted": [
@@ -737,6 +745,12 @@
       "detail": "All 48 values within [-10, 400]."
     },
     {
+      "label": "mortgage_rate_oenb",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
       "label": "credit_to_private_nonfin_sector",
       "category": "percent",
       "status": "PASS",
@@ -753,6 +767,12 @@
       "category": "level",
       "status": "PASS",
       "detail": "Positive throughout; largest quarter-over-quarter change -27%."
+    },
+    {
+      "label": "mortgage_new_lending_oenb",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
     },
     {
       "label": "euro_area_household_net_worth_growth",

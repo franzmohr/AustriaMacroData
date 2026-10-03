@@ -1,9 +1,9 @@
 {
   "country": "USA",
   "frequency": "monthly",
-  "generated_at": "2026-10-03T18:06:15Z",
+  "generated_at": "2026-10-03T21:25:47Z",
   "start_period": "1960-M01",
-  "concepts_published_monthly": 70,
+  "concepts_published_monthly": 72,
   "concepts_quarterly_only": 40,
   "resolved": [
     {
@@ -124,12 +124,20 @@
       "label": "mortgage_rate_pure_new_loans"
     },
     {
+      "fred_qd_group": "Interest Rates",
+      "label": "mortgage_rate_oenb"
+    },
+    {
       "fred_qd_group": "Money and Credit",
       "label": "household_mortgage_loans"
     },
     {
       "fred_qd_group": "Money and Credit",
       "label": "mortgage_new_lending"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "mortgage_new_lending_oenb"
     },
     {
       "fred_qd_group": "Exchange Rates",
@@ -564,6 +572,12 @@
       "detail": "No non-NA observations."
     },
     {
+      "label": "mortgage_rate_oenb",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
       "label": "household_mortgage_loans",
       "category": "level",
       "status": "NO_DATA",
@@ -571,6 +585,12 @@
     },
     {
       "label": "mortgage_new_lending",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "mortgage_new_lending_oenb",
       "category": "level",
       "status": "NO_DATA",
       "detail": "No non-NA observations."

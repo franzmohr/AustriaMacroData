@@ -18,19 +18,21 @@ house_price_real,Housing,Q,mean,index,NSA,R,5,2,2,USSTHPI,FRED_MIRROR,QUSR628BIS
 construction_confidence,Housing,M,mean,balance,SA,C,1,0,0,,,,,,0
 retail_sales_volume,"Inventories, Orders, and Sales",M,mean,index 2021=100,SCA,R,5,2,2,RSAFSx,FRED_MIRROR,USASARTMISMEI,1960-M01,2023-M12,768
 retail_confidence,"Inventories, Orders, and Sales",M,mean,balance,SA,C,1,0,0,,,,,,0
-cpi_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,CPIAUCSL,FRED,CPIAUCSL,1960-M01,2026-M08,799
-core_cpi_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,CPILFESL,,,,,0
-food_price_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,,,,,,0
-energy_price_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,,,,,,0
-services_price_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,CUSR0000SAS,,,,,0
+cpi_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,CPIAUCSL,FRED,CPIAUCSL,1960-M01,2026-M08,799
+core_cpi_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,CPILFESL,,,,,0
+food_price_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,,,,,,0
+energy_price_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,,,,,,0
+services_price_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,CUSR0000SAS,,,,,0
 unit_labor_cost,Earnings and Productivity,Q,mean,index 2010=100,SCA,N,5,2,3,ULCNFB,FRED_MIRROR,ULQEUL01USQ657S,1955-Q2,2025-Q3,282
 long_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,GS10,FRED_MIRROR,IRLTLT01USM156N,1960-M01,2026-M08,800
 short_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,TB3MS,FRED_MIRROR,IR3TIB01USM156N,1964-M06,2026-M08,746
 mortgage_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,MORTGAGE30US,,,,,0
 mortgage_rate_pure_new_loans,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,,,,,0
+mortgage_rate_oenb,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,,,,,0
 credit_to_private_nonfin_sector,Money and Credit,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.US.P.A.M.770.A,1960-Q1,2025-Q4,264
 household_mortgage_loans,Money and Credit,M,mean,"EUR mn, outstanding",NSA,N,5,2,3,REALLNx,,,,,0
 mortgage_new_lending,Money and Credit,M,sum,EUR mn per period,NSA,N,5,2,2,,,,,,0
+mortgage_new_lending_oenb,Money and Credit,M,sum,EUR mn per period,NSA,N,5,2,2,,,,,,0
 euro_area_household_net_worth_growth,Household Balance Sheets,Q,mean,% change,NSA,F,1,0,0,TNWBSHNOx,,,,,0
 household_credit_to_gdp,Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.US.H.A.M.770.A,1960-Q1,2025-Q4,264
 corporate_credit_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.US.N.A.M.770.A,1960-Q1,2025-Q4,264

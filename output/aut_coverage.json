@@ -1,6 +1,6 @@
 {
   "country": "AUT",
-  "generated_at": "2026-10-03T20:25:31Z",
+  "generated_at": "2026-10-03T21:30:48Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -144,6 +144,11 @@
       "source": "ECB MFI Interest Rate Statistics (MIR) [A2C.R.A.2250.EUR.P] -- quarterly average of its months"
     },
     {
+      "fred_qd_group": "Interest Rates",
+      "label": "mortgage_rate_oenb",
+      "source": "OeNB data service (Oesterreichische Nationalbank) [23/VDBZSBSZN10010] -- quarterly average of its months"
+    },
+    {
       "fred_qd_group": "Money and Credit",
       "label": "credit_to_private_nonfin_sector",
       "source": "BIS WS_TC [Q.AT.P.A.M.770.A]"
@@ -157,6 +162,11 @@
       "fred_qd_group": "Money and Credit",
       "label": "mortgage_new_lending",
       "source": "ECB MFI Interest Rate Statistics (MIR) [A2C.B.A.2250.EUR.P] -- quarterly total of complete months"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "mortgage_new_lending_oenb",
+      "source": "OeNB data service (Oesterreichische Nationalbank) [100140002/VDBMSKNWOHNBAU] -- quarterly total of complete months"
     },
     {
       "fred_qd_group": "Household Balance Sheets",
@@ -737,6 +747,12 @@
       "detail": "All 39 values within [-10, 400]."
     },
     {
+      "label": "mortgage_rate_oenb",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 124 values within [-10, 400]."
+    },
+    {
       "label": "credit_to_private_nonfin_sector",
       "category": "percent",
       "status": "PASS",
@@ -753,6 +769,12 @@
       "category": "level",
       "status": "PASS",
       "detail": "Positive throughout; largest quarter-over-quarter change -38%."
+    },
+    {
+      "label": "mortgage_new_lending_oenb",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -37%."
     },
     {
       "label": "euro_area_household_net_worth_growth",

@@ -1,6 +1,6 @@
 ## ---------------------------------------------------------------
 ## concept_dictionary.R -- the single authored source of metadata for
-## every one of this project's 108 FRED-QD-style concepts
+## every one of this project's 112 FRED-QD-style concepts
 ##
 ## MOTIVATION: before this file existed, the same concept-level facts
 ## (which FRED-QD group a concept belongs to, its FRED-QD mnemonic, its
@@ -174,6 +174,10 @@ concept_dictionary <- tibble::tribble(
     "No FRED-QD equivalent: MORTGAGE30US (see mortgage_rate) is a survey rate for one fixed-rate product, and the US has no published split of mortgage pricing into new loans and renegotiations.",
     "ECB MFI Interest Rate Statistics (MIR), key A2C.R.A.2250.EUR.P: the rate on PURE new loans to households for house purchase (IR_BUS_COV=P), i.e. mortgage_rate without renegotiations of existing loans, all initial rate fixation periods combined. Euro-area members only. Published from 2017-08 for Austria; earlier months back to 2017-01 are computed from the MIR identity, r_P = (r_N * N - r_R * R) / (N - R), new business less renegotiations, which reproduces every published month to within 0.012 pp -- see R/ecb.R.",
     "percent", TRUE,
+  "mortgage_rate_oenb",                    "Interest Rates",                 NA,
+    "No FRED-QD equivalent beyond mortgage_rate's MORTGAGE30US: this is the same new-business rate as mortgage_rate, from the Austrian national central bank, and exists for Austria only.",
+    "OeNB data service, data set 23, position VDBZSBSZN10010: interest rate on new business in loans to households for housing purposes, all initial rate fixation periods combined, % p.a. AUSTRIA ONLY (NA for every other country). From 2000-01 on it is the ECB's mortgage_rate (MIR A2C.R.A.2250.EUR.N) to the last decimal in every month; it reaches back to 1995-12, before the harmonised MIR statistics -- see R/oenb.R.",
+    "percent", TRUE,
   "credit_to_private_nonfin_sector",       "Money and Credit",               NA,
     "FRED-QD tracks credit by purpose/level (BUSLOANSx, TOTALSLx, REALLNx, ...), not one combined %GDP series like BIS's.",
     "BIS reports this as a stock, % of GDP (private non-financial sector = households + nonfinancial corporations combined).",
@@ -185,6 +189,10 @@ concept_dictionary <- tibble::tribble(
   "mortgage_new_lending",                  "Money and Credit",               NA,
     "No FRED-QD equivalent: FRED-QD tracks credit as outstanding stocks (REALLNx and the like), and no US source publishes a monthly flow of new mortgage loans comparable to the ECB's.",
     "ECB MFI Interest Rate Statistics (MIR), key A2C.B.A.2250.EUR.P: the business volume of PURE new loans to households for house purchase (renegotiations excluded), millions of EUR, NOMINAL and not seasonally adjusted. A FLOW, so the quarterly panel holds the SUM of the quarter's three months, and only complete quarters, where every other monthly concept is averaged. The flow counterpart to household_mortgage_loans' stock; euro-area members only. Published from 2017-08 for Austria; earlier months back to 2014-12 are new business less renegotiations (IR_BUS_COV N minus R), an identity that reproduces every published month exactly -- see R/ecb.R.",
+    "level", TRUE,
+  "mortgage_new_lending_oenb",             "Money and Credit",               NA,
+    "No FRED-QD equivalent: as for mortgage_new_lending, no US source publishes a monthly flow of new mortgage loans.",
+    "OeNB data service, data set 100140002, position VDBMSKNWOHNBAU: new loans (excluding revolving loans) to households for housing purposes, millions of EUR per month, NOMINAL and not seasonally adjusted, from 2009-01. AUSTRIA ONLY (NA for every other country). The OeNB's monthly statistics rather than the MIR sample, but the same concept as mortgage_new_lending (pure new loans): over their overlap the monthly changes of the two correlate at 0.994, and this series is eight years longer. A FLOW, so the quarterly panel holds the SUM of complete quarters -- see R/oenb.R.",
     "level", TRUE,
   "euro_area_household_net_worth_growth",  "Household Balance Sheets",       "TNWBSHNOx",       NA,
     "ECB QSA_PUB publishes household net worth only for the euro-area AGGREGATE (REF_AREA=I8) -- every euro-area country gets this same figure; it is not country-specific.",
@@ -571,9 +579,11 @@ concept_metadata <- tibble::tribble(
   "short_term_rate",                         "mean",       "% p.a.",                      "NSA", 2L, "F",
   "mortgage_rate",                           "mean",       "% p.a.",                      "NSA", 2L, "F",
   "mortgage_rate_pure_new_loans",            "mean",       "% p.a.",                      "NSA", 2L, "F",
+  "mortgage_rate_oenb",                      "mean",       "% p.a.",                      "NSA", 2L, "F",
   "credit_to_private_nonfin_sector",         "mean",       "% of GDP",                    "NSA", 2L, "N",
   "household_mortgage_loans",                "mean",       "EUR mn, outstanding",         "NSA", 5L, "N",
   "mortgage_new_lending",                    "sum",        "EUR mn per period",           "NSA", 5L, "N",
+  "mortgage_new_lending_oenb",               "sum",        "EUR mn per period",           "NSA", 5L, "N",
   "euro_area_household_net_worth_growth",    "mean",       "% change",                    "NSA", 1L, "F",
   "household_credit_to_gdp",                 "mean",       "% of GDP",                    "NSA", 2L, "N",
   "corporate_credit_to_gdp",                 "mean",       "% of GDP",                    "NSA", 2L, "N",

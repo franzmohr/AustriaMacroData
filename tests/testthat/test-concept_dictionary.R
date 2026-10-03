@@ -28,7 +28,7 @@ test_that("the flows are summed and nothing else is", {
   # A summed concept that is a stock would triple every quarter; an
   # averaged flow would show a third of it. Both look like plausible data.
   expect_setequal(concept_dictionary$label[concept_dictionary$aggregation == "sum"],
-                  c("mortgage_new_lending", "heating_degree_days", "cooling_degree_days"))
+                  c("mortgage_new_lending", "mortgage_new_lending_oenb", "heating_degree_days", "cooling_degree_days"))
 })
 
 test_that("FRED-QD's own transformation codes are kept for the concepts that map to it", {

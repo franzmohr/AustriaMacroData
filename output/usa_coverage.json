@@ -1,6 +1,6 @@
 {
   "country": "USA",
-  "generated_at": "2026-10-03T18:06:15Z",
+  "generated_at": "2026-10-03T21:25:47Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -209,12 +209,20 @@
       "label": "mortgage_rate_pure_new_loans"
     },
     {
+      "fred_qd_group": "Interest Rates",
+      "label": "mortgage_rate_oenb"
+    },
+    {
       "fred_qd_group": "Money and Credit",
       "label": "household_mortgage_loans"
     },
     {
       "fred_qd_group": "Money and Credit",
       "label": "mortgage_new_lending"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "mortgage_new_lending_oenb"
     },
     {
       "fred_qd_group": "Household Balance Sheets",
@@ -659,6 +667,12 @@
       "detail": "No non-NA observations."
     },
     {
+      "label": "mortgage_rate_oenb",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
       "label": "credit_to_private_nonfin_sector",
       "category": "percent",
       "status": "PASS",
@@ -672,6 +686,12 @@
     },
     {
       "label": "mortgage_new_lending",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "mortgage_new_lending_oenb",
       "category": "level",
       "status": "NO_DATA",
       "detail": "No non-NA observations."

@@ -47,7 +47,9 @@ AUT,industry_selling_price_expectations,EC_BCS,INDU.AT.TOT.6.BS.M
 AUT,industry_stocks_finished_products,EC_BCS,INDU.AT.TOT.4.BS.M
 AUT,long_term_rate,FRED_MIRROR,IRLTLT01ATM156N
 AUT,mortgage_new_lending,ECB_MIR,A2C.B.A.2250.EUR.P
+AUT,mortgage_new_lending_oenb,OENB,100140002/VDBMSKNWOHNBAU
 AUT,mortgage_rate,ECB_MIR,A2C.R.A.2250.EUR.N
+AUT,mortgage_rate_oenb,OENB,23/VDBZSBSZN10010
 AUT,mortgage_rate_pure_new_loans,ECB_MIR,A2C.R.A.2250.EUR.P
 AUT,oil_price,FRED,WTISPLC
 AUT,real_effective_exchange_rate,FRED_MIRROR,CCRETT01ATM661N

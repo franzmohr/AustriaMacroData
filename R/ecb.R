@@ -264,13 +264,20 @@ mir_pure_new_backcast <- function(monthly, country3, label, data_type, start_per
       start_period = as_period(start_period, "M"), frequency = "M"))
     if (is.null(out) || nrow(out) == 0) NULL else out
   }
+  ## A failed component request leaves the series at its published months
+  ## only; say so, as the shorter series is otherwise indistinguishable.
+  give_up <- function() {
+    warning(sprintf("[%s] MIR back-calculation components unavailable for %s -- series starts at its first published month",
+                    label, country3))
+    monthly
+  }
   vN <- component("B", "N"); vR <- component("B", "R")
-  if (is.null(vN) || is.null(vR)) return(monthly)
+  if (is.null(vN) || is.null(vR)) return(give_up())
   calc <- dplyr::inner_join(vN, vR, by = "date", suffix = c("_vN", "_vR"))
   calc$value <- calc$value_vN - calc$value_vR
   if (identical(data_type, "R")) {
     rN <- component("R", "N"); rR <- component("R", "R")
-    if (is.null(rN) || is.null(rR)) return(monthly)
+    if (is.null(rN) || is.null(rR)) return(give_up())
     calc <- calc %>%
       dplyr::inner_join(dplyr::rename(rN, value_rN = "value"), by = "date") %>%
       dplyr::inner_join(dplyr::rename(rR, value_rR = "value"), by = "date")
