@@ -24,13 +24,13 @@ AUT,consumer_price_trends_past,EC_BCS,CONS.AT.TOT.5.BS.M
 AUT,consumer_savings_expected,EC_BCS,CONS.AT.TOT.11.BS.M
 AUT,consumer_unemployment_expectations,EC_BCS,CONS.AT.TOT.7.BS.M
 AUT,cooling_degree_days,OPEN_METEO,"ERA5, 6-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x0.340, corr 0.975 over 552 months)"
-AUT,core_cpi_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.AT
-AUT,cpi_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP00.AT
+AUT,core_cpi_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.TOT_X_NRG_FOOD.AT
+AUT,cpi_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.TOTAL.AT
 AUT,economic_sentiment_indicator,EC_BCS,AT.ESI
 AUT,employment_expectations,EC_BCS,AT.EEI
-AUT,energy_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.NRG.AT
+AUT,energy_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.NRG.AT
 AUT,financial_stress,ECB_CISS,"D.AT.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)"
-AUT,food_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP01.AT
+AUT,food_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.CP01.AT
 AUT,fx_rate_to_usd,FRED_MIRROR,CCUSMA02ATM618N
 AUT,geopolitical_risk,GPR,GPR
 AUT,global_activity,FRED,IGREA
@@ -65,7 +65,7 @@ AUT,services_demand_expected,EC_BCS,SERV.AT.TOT.3.BS.M
 AUT,services_demand_past,EC_BCS,SERV.AT.TOT.2.BS.M
 AUT,services_employment_expectations,EC_BCS,SERV.AT.TOT.5.BS.M
 AUT,services_price_expectations,EC_BCS,SERV.AT.TOT.6.BS.M
-AUT,services_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.SERV.AT
+AUT,services_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.SERV.AT
 AUT,share_price_index,YAHOO_FINANCE,^ATX (monthly close) (OECD MEI mirror dropped: it measures a different statistic)
 AUT,short_term_rate,FRED_MIRROR,IR3TIB01ATM156N
 AUT,unemployment_rate,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.AT (OECD MEI mirror fills earlier months unchanged, same units)"
@@ -94,13 +94,13 @@ DEU,consumer_price_trends_past,EC_BCS,CONS.DE.TOT.5.BS.M
 DEU,consumer_savings_expected,EC_BCS,CONS.DE.TOT.11.BS.M
 DEU,consumer_unemployment_expectations,EC_BCS,CONS.DE.TOT.7.BS.M
 DEU,cooling_degree_days,OPEN_METEO,"ERA5, 8-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x0.698, corr 0.971 over 552 months)"
-DEU,core_cpi_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.DE
-DEU,cpi_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP00.DE
+DEU,core_cpi_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.TOT_X_NRG_FOOD.DE
+DEU,cpi_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.TOTAL.DE
 DEU,economic_sentiment_indicator,EC_BCS,DE.ESI
 DEU,employment_expectations,EC_BCS,DE.EEI
-DEU,energy_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.NRG.DE
+DEU,energy_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.NRG.DE
 DEU,financial_stress,ECB_CISS,"D.DE.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)"
-DEU,food_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP01.DE
+DEU,food_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.CP01.DE
 DEU,fx_rate_to_usd,FRED_MIRROR,CCUSMA02DEM618N
 DEU,geopolitical_risk,GPR,GPRC_DEU
 DEU,global_activity,FRED,IGREA
@@ -135,7 +135,7 @@ DEU,services_demand_expected,EC_BCS,SERV.DE.TOT.3.BS.M
 DEU,services_demand_past,EC_BCS,SERV.DE.TOT.2.BS.M
 DEU,services_employment_expectations,EC_BCS,SERV.DE.TOT.5.BS.M
 DEU,services_price_expectations,EC_BCS,SERV.DE.TOT.6.BS.M
-DEU,services_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.SERV.DE
+DEU,services_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.SERV.DE
 DEU,share_price_index,FRED_MIRROR,SPASTT01DEM661N
 DEU,short_term_rate,FRED_MIRROR,IR3TIB01DEM156N
 DEU,unemployment_rate,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.DE (OECD MEI mirror fills earlier months unchanged, same units)"

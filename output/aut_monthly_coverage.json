@@ -1,7 +1,7 @@
 {
   "country": "AUT",
   "frequency": "monthly",
-  "generated_at": "2026-10-03T17:50:01Z",
+  "generated_at": "2026-10-03T19:45:04Z",
   "start_period": "1960-M01",
   "concepts_published_monthly": 70,
   "concepts_quarterly_only": 40,
@@ -44,27 +44,27 @@
     {
       "fred_qd_group": "Prices",
       "label": "cpi_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.CP00.AT]"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.TOTAL.AT]"
     },
     {
       "fred_qd_group": "Prices",
       "label": "core_cpi_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.AT]"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.TOT_X_NRG_FOOD.AT]"
     },
     {
       "fred_qd_group": "Prices",
       "label": "food_price_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.CP01.AT]"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.CP01.AT]"
     },
     {
       "fred_qd_group": "Prices",
       "label": "energy_price_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.NRG.AT]"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.NRG.AT]"
     },
     {
       "fred_qd_group": "Prices",
       "label": "services_price_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.SERV.AT]"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.SERV.AT]"
     },
     {
       "fred_qd_group": "Interest Rates",

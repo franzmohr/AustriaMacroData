@@ -1,6 +1,6 @@
 {
   "country": "DEU",
-  "generated_at": "2026-10-03T18:14:27Z",
+  "generated_at": "2026-10-03T19:51:56Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -96,27 +96,27 @@
     {
       "fred_qd_group": "Prices",
       "label": "cpi_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.CP00.DE] -- quarterly average of its months"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.TOTAL.DE] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Prices",
       "label": "core_cpi_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.DE] -- quarterly average of its months"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.TOT_X_NRG_FOOD.DE] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Prices",
       "label": "food_price_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.CP01.DE] -- quarterly average of its months"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.CP01.DE] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Prices",
       "label": "energy_price_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.NRG.DE] -- quarterly average of its months"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.NRG.DE] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Prices",
       "label": "services_price_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.SERV.DE] -- quarterly average of its months"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.SERV.DE] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Earnings and Productivity",

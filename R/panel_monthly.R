@@ -153,7 +153,7 @@ fetch_monthly_concepts <- function(country, start_period, country2 = lookup_coun
       got <- fetch_eurostat_hicp(country, label = lbl, start_period = start_period,
                                  coicop = coicop, frequency = freq)
       combine_in(got, lbl, "EUROSTAT_HICP",
-                 sprintf("prc_hicp_midx:M.%s.%s.%s", eurostat_hicp_unit, coicop,
+                 sprintf("%s:M.%s.%s.%s", eurostat_hicp_dataflow, eurostat_hicp_unit, coicop,
                          lookup_ec_country2(country)), mode = "replace")
     }
   }

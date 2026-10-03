@@ -77,16 +77,19 @@ test_that("fetch_eurostat_anchors never attempts real_household_disposable_incom
 })
 
 ## Fixture mirrors the real shape confirmed live against
-## ec.europa.eu/eurostat's SDMX 2.1 API on 2026-08-30
-## (prc_hicp_midx, format=SDMX-CSV, key M.I05.CP00.AT): monthly
-## TIME_PERIOD values ("YYYY-MM"), same TIME_PERIOD/OBS_VALUE columns as
+## ec.europa.eu/eurostat's SDMX 2.1 API on 2026-10-03
+## (PRC_HICP_MINR, format=SDMX-CSV, key M.I25.TOTAL.AT): monthly
+## TIME_PERIOD values ("YYYY-MM"), a `coicop18` column where the frozen
+## prc_hicp_midx had `coicop`, and the flash estimate for the latest month
+## flagged "e" in OBS_FLAG. Same TIME_PERIOD/OBS_VALUE columns as
 ## namq_10_gdp, parsed by the same parse_time_value_csv().
 eurostat_hicp_fixture <- paste(
-  "DATAFLOW,LAST UPDATE,freq,unit,coicop,geo,TIME_PERIOD,OBS_VALUE,OBS_FLAG,CONF_STATUS",
-  "ESTAT:PRC_HICP_MIDX(1.0),06/02/26 23:00:00,M,I05,CP00,AT,2025-10,170.19,,",
-  "ESTAT:PRC_HICP_MIDX(1.0),06/02/26 23:00:00,M,I05,CP00,AT,2025-11,170.56,,",
-  "ESTAT:PRC_HICP_MIDX(1.0),06/02/26 23:00:00,M,I05,CP00,AT,2025-12,171.44,,",
-  sep = "\n"
+  "DATAFLOW,LAST UPDATE,freq,unit,coicop18,geo,TIME_PERIOD,OBS_VALUE,OBS_FLAG,CONF_STATUS",
+  "ESTAT:PRC_HICP_MINR(1.0),02/10/26 11:00:00,M,I25,TOTAL,AT,2026-07,102.59,,",
+  "ESTAT:PRC_HICP_MINR(1.0),02/10/26 11:00:00,M,I25,TOTAL,AT,2026-08,103.15,,",
+  "ESTAT:PRC_HICP_MINR(1.0),02/10/26 11:00:00,M,I25,TOTAL,AT,2026-09,103.81,e,",
+  sep = "
+"
 )
 
 test_that("fetch_eurostat_hicp aggregates the monthly fixture to one quarterly observation", {
@@ -94,8 +97,17 @@ test_that("fetch_eurostat_hicp aggregates the monthly fixture to one quarterly o
     out <- fetch_eurostat_hicp("AUT")
   })
   expect_equal(names(out), c("date", "cpi_index"))
-  expect_equal(out$date, as.Date("2025-10-01"))
-  expect_equal(out$cpi_index, mean(c(170.19, 170.56, 171.44)))
+  expect_equal(out$date, as.Date("2026-07-01"))
+  expect_equal(out$cpi_index, mean(c(102.59, 103.15, 103.81)))
+})
+
+test_that("fetch_eurostat_hicp keeps the flash-estimated latest month at monthly frequency", {
+  with_mock_fetch_text(const_fetch_text(eurostat_hicp_fixture), {
+    out <- fetch_eurostat_hicp("AUT", frequency = "M")
+  })
+  expect_equal(nrow(out), 3)
+  expect_equal(max(out$date), as.Date("2026-09-01"))
+  expect_equal(out$cpi_index[out$date == as.Date("2026-09-01")], 103.81)
 })
 
 test_that("fetch_eurostat_hicp returns NULL for a non-EU country without any network call", {
@@ -107,17 +119,27 @@ test_that("fetch_eurostat_hicp returns NULL for a non-EU country without any net
   expect_false(called)
 })
 
-test_that("fetch_eurostat_hicp builds the confirmed 4-segment key order (FREQ.UNIT.COICOP.GEO)", {
+test_that("fetch_eurostat_hicp builds the confirmed 4-segment key order (FREQ.UNIT.COICOP18.GEO)", {
   captured_url <- NULL
   with_mock_fetch_text(function(url, ...) { captured_url <<- url; eurostat_hicp_fixture }, {
     fetch_eurostat_hicp("AUT")
   })
-  expect_true(grepl("prc_hicp_midx/M.I05.CP00.AT", captured_url, fixed = TRUE))
+  expect_true(grepl("prc_hicp_minr/M.I25.TOTAL.AT", captured_url, fixed = TRUE))
 })
 
-test_that("fetch_eurostat_hicp warns and returns NULL on a SOAP Fault (e.g. wrong UNIT code)", {
+test_that("the HICP defaults point at the current 2025=100 dataflow, not the one frozen at 2025-12", {
+  ## prc_hicp_midx ends at 2025-12 in every unit, rejects I25, and its
+  ## all-items code CP00 is a SOAP Fault in prc_hicp_minr (all confirmed
+  ## live 2026-10-03; see R/eurostat.R). Reverting any one of the three
+  ## either freezes the panels at 2025-12 again or fails every request.
+  expect_equal(eurostat_hicp_dataflow, "prc_hicp_minr")
+  expect_equal(eurostat_hicp_unit, "I25")
+  expect_equal(eurostat_hicp_coicop, "TOTAL")
+})
+
+test_that("fetch_eurostat_hicp warns and returns NULL on a SOAP Fault (e.g. the old CP00 code)", {
   with_mock_fetch_text(const_fetch_text(eurostat_fault_fixture), {
-    expect_warning(out <- fetch_eurostat_hicp("AUT"), "no observations")
+    expect_warning(out <- fetch_eurostat_hicp("AUT", coicop = "CP00"), "no observations")
   })
   expect_null(out)
 })
@@ -129,12 +151,13 @@ test_that("fetch_eurostat_hicp warns and returns NULL when the request fails out
   expect_null(out)
 })
 
-## Fixture mirrors the real shape confirmed live for a non-default COICOP
-## category (core inflation, TOT_X_NRG_FOOD) on 2026-08-30.
+## Fixture mirrors the real shape confirmed live for a non-default COICOP18
+## category (core inflation, TOT_X_NRG_FOOD) on 2026-10-03.
 eurostat_hicp_core_fixture <- paste(
-  "DATAFLOW,LAST UPDATE,freq,unit,coicop,geo,TIME_PERIOD,OBS_VALUE,OBS_FLAG,CONF_STATUS",
-  "ESTAT:PRC_HICP_MIDX(1.0),06/02/26 23:00:00,M,I05,TOT_X_NRG_FOOD,AT,2025-12,165.24,,",
-  sep = "\n"
+  "DATAFLOW,LAST UPDATE,freq,unit,coicop18,geo,TIME_PERIOD,OBS_VALUE,OBS_FLAG,CONF_STATUS",
+  "ESTAT:PRC_HICP_MINR(1.0),02/10/26 11:00:00,M,I25,TOT_X_NRG_FOOD,AT,2026-09,103.34,e,",
+  sep = "
+"
 )
 
 test_that("fetch_eurostat_hicp's coicop parameter selects a different sub-category series", {
@@ -142,9 +165,9 @@ test_that("fetch_eurostat_hicp's coicop parameter selects a different sub-catego
   with_mock_fetch_text(function(url, ...) { captured_url <<- url; eurostat_hicp_core_fixture }, {
     out <- fetch_eurostat_hicp("AUT", label = "core_cpi_index", coicop = "TOT_X_NRG_FOOD")
   })
-  expect_true(grepl("prc_hicp_midx/M.I05.TOT_X_NRG_FOOD.AT", captured_url, fixed = TRUE))
+  expect_true(grepl("prc_hicp_minr/M.I25.TOT_X_NRG_FOOD.AT", captured_url, fixed = TRUE))
   expect_equal(names(out), c("date", "core_cpi_index"))
-  expect_equal(out$core_cpi_index, 165.24)
+  expect_equal(out$core_cpi_index, 103.34)
 })
 
 test_that("eurostat_hicp_subcategories lists the four confirmed-live sub-categories with their COICOP codes", {

@@ -18,11 +18,11 @@ house_price_real,Housing,Q,mean,index,NSA,R,5,2,2,USSTHPI,FRED_MIRROR,QDER628BIS
 construction_confidence,Housing,M,mean,balance,SA,C,1,0,0,,EC_BCS,DE.BUIL,1985-M01,2026-M09,501
 retail_sales_volume,"Inventories, Orders, and Sales",M,mean,index 2021=100,SCA,R,5,2,2,RSAFSx,EUROSTAT_STS,"sts_trtu_m:M.VOL_SLS.G47.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)",1960-M01,2026-M08,800
 retail_confidence,"Inventories, Orders, and Sales",M,mean,balance,SA,C,1,0,0,,EC_BCS,DE.RETA,1985-M01,2026-M09,501
-cpi_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,CPIAUCSL,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP00.DE,1996-M01,2025-M12,360
-core_cpi_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,CPILFESL,EUROSTAT_HICP,prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.DE,1996-M01,2025-M12,360
-food_price_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP01.DE,1996-M01,2025-M12,360
-energy_price_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,,EUROSTAT_HICP,prc_hicp_midx:M.I05.NRG.DE,1996-M01,2025-M12,360
-services_price_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,CUSR0000SAS,EUROSTAT_HICP,prc_hicp_midx:M.I05.SERV.DE,1996-M01,2025-M12,360
+cpi_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,CPIAUCSL,EUROSTAT_HICP,prc_hicp_minr:M.I25.TOTAL.DE,1996-M01,2026-M09,369
+core_cpi_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,CPILFESL,EUROSTAT_HICP,prc_hicp_minr:M.I25.TOT_X_NRG_FOOD.DE,1996-M01,2026-M09,369
+food_price_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,,EUROSTAT_HICP,prc_hicp_minr:M.I25.CP01.DE,1996-M01,2026-M08,368
+energy_price_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,,EUROSTAT_HICP,prc_hicp_minr:M.I25.NRG.DE,1996-M01,2026-M09,369
+services_price_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,CUSR0000SAS,EUROSTAT_HICP,prc_hicp_minr:M.I25.SERV.DE,1996-M01,2026-M09,369
 unit_labor_cost,Earnings and Productivity,Q,mean,index 2010=100,SCA,N,5,2,3,ULCNFB,EUROSTAT_ULC,namq_10_lp_ulc:Q.I10.SCA.NULC_HW.DE,1991-Q1,2026-Q2,142
 long_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,GS10,FRED_MIRROR,IRLTLT01DEM156N,1960-M01,2026-M08,800
 short_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,TB3MS,FRED_MIRROR,IR3TIB01DEM156N,1960-M01,2026-M08,800

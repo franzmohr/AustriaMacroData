@@ -168,7 +168,7 @@ provider_display_names <- c(
   ECB_CISS = "ECB Composite Indicator of Systemic Stress (CISS)",
   FRED_MIRROR = "OECD MEI / BIS / World Uncertainty Index (via FRED mirror)",
   EC_BCS = "European Commission Business and Consumer Survey",
-  EUROSTAT_HICP = "Eurostat (prc_hicp_midx, HICP)",
+  EUROSTAT_HICP = "Eurostat (prc_hicp_minr, HICP 2025=100)",
   EUROSTAT_ULC = "Eurostat (namq_10_lp_ulc, hours-based ULC)",
   EUROSTAT_GOV = "Eurostat (gov_10q_ggnfa, government finance statistics)",
   EUROSTAT_STS = "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m)",

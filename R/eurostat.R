@@ -127,27 +127,53 @@ fetch_eurostat_anchors <- function(country3, start_period = "1995-Q1", labels = 
 }
 
 ## ---------------------------------------------------------------
-## Harmonised Index of Consumer Prices (prc_hicp_midx), EU-specific
+## Harmonised Index of Consumer Prices (PRC_HICP_MINR), EU-specific
 ## override for `cpi_index` -- fresher than the frozen OECD-MEI-via-FRED
 ## CPI mirror in R/fred_mirror.R.
 ##
-## STATUS: VERIFIED 2026-08-30 against Eurostat's SDMX 2.1 API, real 200
-## response with current data for AT. Dimension order (4 key segments
-## before TIME_PERIOD) confirmed via a live structure query
-## (datastructure/ESTAT/prc_hicp_midx): FREQ.UNIT.COICOP.GEO.
+## STATUS: VERIFIED 2026-10-03 against Eurostat's SDMX 2.1 API, real 200
+## responses with data through 2026-09 for AT and DE. Dimension order (4
+## key segments before TIME_PERIOD) confirmed via a live structure query
+## (dataflow/ESTAT/PRC_HICP_MINR/latest?references=descendants):
+## FREQ.UNIT.COICOP18.GEO.
 ##
-## UNIT: the shared Eurostat UNIT codelist has 700+ entries, but only a
-## handful validate for THIS dataflow -- the same "shared codelist,
-## narrow per-dataflow subset" trap already documented above for
-## NA_ITEM. Querying with UNIT left as a wildcard (confirmed live) shows
-## the values that actually return data are index-base-year variants
-## (I05, I96, I15, ...), NOT the "HICP2015"/"HICP2025"-named codes that
-## look like the obvious choice from the codelist's own labels (those
-## return HTTP 400 INVALID_QUERY_DIMENSION_VALUE). "I05" (Index,
-## 2005=100) is used here, confirmed to return a complete, gap-free
-## series back to well before this project's earliest anchor concepts.
+## WHAT WAS WRONG (found 2026-10-03): until then this module read
+## prc_hicp_midx with UNIT="I05" (index 2005=100), and every HICP concept
+## in every panel stopped at 2025-12 while the other monthly series ran to
+## 2026-08/09. Eurostat moved the HICP to ECOICOP ver.2 and the 2025=100
+## base in early 2026 and froze the old dataflow: its own dataflow list
+## (dataflow/ESTAT/all) now labels it "HICP - monthly data (index)
+## (1996-2025)", and both of its index units (I05, I15) end at 2025-12 for
+## AT and DE. UNIT="I25" is rejected there as an invalid dimension value --
+## the new base was never added to the old dataflow.
 ##
-## COICOP: "CP00" = All-items HICP -- the closest match to FRED-QD's
+## HOW IT WAS FOUND: the same dataflow list shows the successor,
+## PRC_HICP_MINR ("HICP - ECOICOP ver.2 - indices and rates of change,
+## monthly data"). Its structure query gives a UNIT codelist of exactly
+## I25, I15 and three rates of change, and a COICOP18 dimension in place
+## of COICOP. Data queries, each a real 200 response for both AT and DE:
+##   I25 (Index, 2025=100) -- 1996-01 through 2026-09 (2026-08 for CP01);
+##   I15 (Index, 2015=100) -- also published, but one month behind I25.
+## So I25 is used. Two traps for anyone extending this:
+##   - All-items is COICOP18="TOTAL". The old "CP00" is not in the new
+##     codelist and returns a SOAP Fault (HTTP 400) for both units.
+##   - The latest month may be a flash estimate, OBS_FLAG "e" (2026-09
+##     for TOTAL/TOT_X_NRG_FOOD/NRG/SERV; food has no flash). It is kept,
+##     like the other flash-estimated monthly series, and is revised at
+##     the next release.
+##
+## NO SPLICE NEEDED: the new dataflow carries the whole history at the new
+## base, back to the same first month the old one had (1996-01; 1999-12
+## for AT core and services), so there is no earlier old-base history to
+## rescale onto it with splice_prefer(). Compared month by month over
+## 1996-2025, the I25 series is the I05 series rebased: the ratio is
+## constant to 3-4 digits for headline, core, energy and services. Food
+## (CP01) differs by up to 0.3 percentage points in a monthly rate,
+## because ECOICOP ver.2 classifies some food items differently. Eurostat
+## flags the history before 2017 "d" (definition differs, a back-cast to
+## the new classification) and 2017-01 "b" (break in series).
+##
+## COICOP: "TOTAL" = All-items HICP -- the closest match to FRED-QD's
 ## CPIAUCSL (overall CPI, not a COICOP sub-category breakdown).
 ##
 ## Frequency: monthly, aggregated to quarterly by simple mean (same
@@ -156,29 +182,25 @@ fetch_eurostat_anchors <- function(country3, start_period = "1995-Q1", labels = 
 ##
 ## MOTIVATION: FRED's OECD-MEI mirror (`CPALTT01{cc2}Q657N`, used for
 ## every country including the US) was confirmed live 2026-08-30 to be
-## frozen at 2023-Q4 for Austria -- this Eurostat series extends to
-## 2025-Q4 for the same country, a ~2-year improvement for EU member
-## states. Not available for non-EU countries (e.g. the US), which keep
-## the FRED-mirror value; scripts/build_country_panel.R tries this
-## FIRST for EU members and falls back to the FRED mirror on failure,
-## the same override pattern as consumer_confidence and share_price_index.
+## frozen at 2023-Q4 for Austria. Not available for non-EU countries
+## (e.g. the US), which keep their national index; R/panel_monthly.R
+## tries this FIRST for EU members, the same override pattern as
+## consumer_confidence and share_price_index.
 ##
-## EXTENDED 2026-08-30: `fetch_eurostat_hicp()` gained a `coicop`
-## parameter so the same verified dataflow/key can also pull the
-## standard sub-category breakdown of headline inflation -- core
-## (excl. energy/food), food, energy, and services -- confirmed live for
-## AT and DE with the same UNIT="I05": TOT_X_NRG_FOOD, CP01, NRG, SERV
-## respectively (see `eurostat_hicp_subcategories` below). These give
-## the Prices group its first sub-index breakdown; core inflation
-## (TOT_X_NRG_FOOD) is the closest match to FRED-QD's CPILFESL. Food and
-## energy have no direct FRED-QD mnemonic (FRED-QD's own list has no
-## standalone CPI-food or CPI-energy series); services maps to
-## CUSR0000SAS.
+## SUB-CATEGORIES: `fetch_eurostat_hicp()`'s `coicop` parameter pulls the
+## standard breakdown of headline inflation -- core (excl. energy/food),
+## food, energy, and services. The codes are unchanged in COICOP18 and
+## were re-confirmed live 2026-10-03 against PRC_HICP_MINR/I25 for AT and
+## DE: TOT_X_NRG_FOOD, CP01, NRG, SERV (see `eurostat_hicp_subcategories`
+## below). Core inflation (TOT_X_NRG_FOOD) is the closest match to
+## FRED-QD's CPILFESL. Food and energy have no direct FRED-QD mnemonic
+## (FRED-QD's own list has no standalone CPI-food or CPI-energy series);
+## services maps to CUSR0000SAS.
 ## ---------------------------------------------------------------
 
-eurostat_hicp_dataflow <- "prc_hicp_midx"
-eurostat_hicp_unit <- "I05"
-eurostat_hicp_coicop <- "CP00"
+eurostat_hicp_dataflow <- "prc_hicp_minr"
+eurostat_hicp_unit <- "I25"
+eurostat_hicp_coicop <- "TOTAL"
 
 eurostat_hicp_subcategories <- tibble::tribble(
   ~label,                 ~coicop,
