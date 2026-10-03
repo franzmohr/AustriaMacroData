@@ -7,17 +7,39 @@
 #' Never throws: network errors, timeouts and non-2xx statuses all
 #' result in NULL plus a warning naming the URL, so callers can log
 #' and move on to the next series instead of aborting a whole run.
-safe_get <- function(url, ..., timeout_seconds = 30) {
-  resp <- tryCatch(
-    httr::GET(url, httr::timeout(timeout_seconds), ...),
-    error = function(e) {
-      warning(sprintf("Request failed for %s: %s", url, conditionMessage(e)))
-      NULL
-    }
-  )
-  if (is.null(resp)) return(NULL)
-  if (httr::status_code(resp) >= 300) {
-    warning(sprintf("HTTP %s for %s", httr::status_code(resp), url))
+#'
+#' A transient failure -- a timeout, a dropped connection, HTTP 429 or
+#' any 5xx -- is retried up to `attempts` times, waiting
+#' `retry_pause_seconds` times the attempt number in between. Added
+#' 2026-10-03, when the ECB's data API answered HTTP 504 or timed out for
+#' a different series on each of three AUT/DEU rebuilds in one afternoon
+#' (CISS, then new mortgage lending, then the mortgage rate and household
+#' net worth), each time while the same request succeeded seconds later:
+#' without a retry every such blip published that month's panel with one
+#' column empty. A 4xx other than 429 is not retried, since the SDMX
+#' sources answer "no such series" that way and asking again cannot help.
+safe_get <- function(url, ..., timeout_seconds = 30, attempts = 3,
+                     retry_pause_seconds = getOption("austriamacrodata.retry_pause", 5)) {
+  for (attempt in seq_len(attempts)) {
+    failure <- NULL
+    resp <- tryCatch(
+      httr::GET(url, httr::timeout(timeout_seconds), ...),
+      error = function(e) {
+        failure <<- conditionMessage(e)
+        NULL
+      }
+    )
+    status <- if (is.null(resp)) NA_integer_ else httr::status_code(resp)
+    transient <- is.null(resp) || status == 429 || status >= 500
+    if (!transient || attempt == attempts) break
+    Sys.sleep(retry_pause_seconds * attempt)
+  }
+  if (is.null(resp)) {
+    warning(sprintf("Request failed for %s: %s", url, failure))
+    return(NULL)
+  }
+  if (status >= 300) {
+    warning(sprintf("HTTP %s for %s", status, url))
     return(NULL)
   }
   resp
