@@ -385,6 +385,12 @@ of 13 June 2024 and [WKO](https://www.wko.at/bank-versicherung/kim-verordnung-wi
 on its expiry on 30 June 2025. Only the month of the FMSG recommendation is
 confirmed, which is all a monthly impulse needs.
 
+For Germany, BaFin's sectoral systemic risk buffer on loans secured by
+residential real estate: `syrb_rre_order` (impulse, 2022-04, ordered),
+`syrb_rre` (step from 2023-02, binding at 2%) and `syrb_rre_cut` (step from
+2025-05, lowered to 1%) -- a capital-based measure aimed at the same lending,
+which matters wherever Germany serves as the control for KIM-V.
+
 ## Automated updates
 
 [.github/workflows/monthly-update.yml](.github/workflows/monthly-update.yml)

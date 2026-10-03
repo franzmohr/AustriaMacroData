@@ -42,3 +42,11 @@ test_that("a country without events gets no dummies rather than an empty file", 
   expect_null(make_monthly_dummies("USA", as.Date("2020-01-01"), as.Date("2020-12-01")))
   expect_null(make_quarterly_dummies(NULL))
 })
+
+test_that("Germany's residential real estate buffer is a step from February 2023, cut from May 2025", {
+  m <- make_monthly_dummies("DEU", as.Date("2022-01-01"), as.Date("2025-12-01"))
+  expect_equal(min(m$date[m$syrb_rre == 1]), as.Date("2023-02-01"))
+  expect_equal(m$syrb_rre[m$date == as.Date("2025-12-01")], 1)
+  expect_equal(min(m$date[m$syrb_rre_cut == 1]), as.Date("2025-05-01"))
+  expect_equal(m$date[m$syrb_rre_order == 1], as.Date("2022-04-01"))
+})
