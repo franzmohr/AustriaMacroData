@@ -1,10 +1,10 @@
 {
   "country": "DEU",
   "frequency": "monthly",
-  "generated_at": "2026-09-25T06:29:51Z",
+  "generated_at": "2026-10-03T18:14:27Z",
   "start_period": "1960-M01",
-  "concepts_published_monthly": 27,
-  "concepts_quarterly_only": 20,
+  "concepts_published_monthly": 70,
+  "concepts_quarterly_only": 40,
   "resolved": [
     {
       "fred_qd_group": "Industrial Production",
@@ -44,62 +44,267 @@
     {
       "fred_qd_group": "Prices",
       "label": "cpi_index",
-      "source": "Eurostat (prc_hicp_midx, HICP), monthly [prc_hicp_midx:M.I05.CP00.DE]"
+      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.CP00.DE]"
     },
     {
       "fred_qd_group": "Prices",
       "label": "core_cpi_index",
-      "source": "Eurostat (prc_hicp_midx, HICP), monthly [prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.DE]"
+      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.DE]"
     },
     {
       "fred_qd_group": "Prices",
       "label": "food_price_index",
-      "source": "Eurostat (prc_hicp_midx, HICP), monthly [prc_hicp_midx:M.I05.CP01.DE]"
+      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.CP01.DE]"
     },
     {
       "fred_qd_group": "Prices",
       "label": "energy_price_index",
-      "source": "Eurostat (prc_hicp_midx, HICP), monthly [prc_hicp_midx:M.I05.NRG.DE]"
+      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.NRG.DE]"
     },
     {
       "fred_qd_group": "Prices",
       "label": "services_price_index",
-      "source": "Eurostat (prc_hicp_midx, HICP), monthly [prc_hicp_midx:M.I05.SERV.DE]"
+      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.SERV.DE]"
     },
     {
       "fred_qd_group": "Interest Rates",
       "label": "long_term_rate",
-      "source": "OECD MEI (via FRED mirror), monthly [IRLTLT01DEM156N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IRLTLT01DEM156N]"
     },
     {
       "fred_qd_group": "Interest Rates",
       "label": "short_term_rate",
-      "source": "OECD MEI (via FRED mirror), monthly [IR3TIB01DEM156N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IR3TIB01DEM156N]"
     },
     {
       "fred_qd_group": "Interest Rates",
       "label": "mortgage_rate",
-      "source": "ECB MFI Interest Rate Statistics (MIR) [MIR]"
+      "source": "ECB MFI Interest Rate Statistics (MIR) [A2C.R.A.2250.EUR.N]"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "mortgage_rate_pure_new_loans",
+      "source": "ECB MFI Interest Rate Statistics (MIR) [A2C.R.A.2250.EUR.P]"
     },
     {
       "fred_qd_group": "Money and Credit",
       "label": "household_mortgage_loans",
-      "source": "ECB MFI Balance Sheet Items (BSI) [BSI]"
+      "source": "ECB MFI Balance Sheet Items (BSI) [A22T.A.1.U6.2250.Z01.E]"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "mortgage_new_lending",
+      "source": "ECB MFI Interest Rate Statistics (MIR) [A2C.B.A.2250.EUR.P]"
     },
     {
       "fred_qd_group": "Exchange Rates",
       "label": "fx_rate_to_usd",
-      "source": "OECD MEI (via FRED mirror), monthly [CCUSMA02DEM618N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CCUSMA02DEM618N]"
     },
     {
       "fred_qd_group": "Exchange Rates",
       "label": "real_effective_exchange_rate",
-      "source": "OECD MEI (via FRED mirror), monthly [CCRETT01DEM661N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CCRETT01DEM661N]"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_confidence",
       "source": "European Commission Business and Consumer Survey [DE.CONS (OECD MEI mirror dropped: it measures a different statistic)]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_financial_situation_past",
+      "source": "European Commission Business and Consumer Survey [CONS.DE.TOT.1.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_financial_situation_expected",
+      "source": "European Commission Business and Consumer Survey [CONS.DE.TOT.2.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_economic_situation_past",
+      "source": "European Commission Business and Consumer Survey [CONS.DE.TOT.3.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_economic_situation_expected",
+      "source": "European Commission Business and Consumer Survey [CONS.DE.TOT.4.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_price_trends_past",
+      "source": "European Commission Business and Consumer Survey [CONS.DE.TOT.5.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_price_expectations",
+      "source": "European Commission Business and Consumer Survey [CONS.DE.TOT.6.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_unemployment_expectations",
+      "source": "European Commission Business and Consumer Survey [CONS.DE.TOT.7.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_major_purchases_now",
+      "source": "European Commission Business and Consumer Survey [CONS.DE.TOT.8.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_major_purchases_expected",
+      "source": "European Commission Business and Consumer Survey [CONS.DE.TOT.9.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_savings_expected",
+      "source": "European Commission Business and Consumer Survey [CONS.DE.TOT.11.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_household_finances_now",
+      "source": "European Commission Business and Consumer Survey [CONS.DE.TOT.12.BS.M]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_production_past",
+      "source": "European Commission Business and Consumer Survey [INDU.DE.TOT.1.BS.M]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_order_books",
+      "source": "European Commission Business and Consumer Survey [INDU.DE.TOT.2.BS.M]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_export_order_books",
+      "source": "European Commission Business and Consumer Survey [INDU.DE.TOT.3.BS.M]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_stocks_finished_products",
+      "source": "European Commission Business and Consumer Survey [INDU.DE.TOT.4.BS.M]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_production_expectations",
+      "source": "European Commission Business and Consumer Survey [INDU.DE.TOT.5.BS.M]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_selling_price_expectations",
+      "source": "European Commission Business and Consumer Survey [INDU.DE.TOT.6.BS.M]"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_employment_expectations",
+      "source": "European Commission Business and Consumer Survey [INDU.DE.TOT.7.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_business_situation_past",
+      "source": "European Commission Business and Consumer Survey [SERV.DE.TOT.1.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_demand_past",
+      "source": "European Commission Business and Consumer Survey [SERV.DE.TOT.2.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_demand_expected",
+      "source": "European Commission Business and Consumer Survey [SERV.DE.TOT.3.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_employment_expectations",
+      "source": "European Commission Business and Consumer Survey [SERV.DE.TOT.5.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_price_expectations",
+      "source": "European Commission Business and Consumer Survey [SERV.DE.TOT.6.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_business_activity_past",
+      "source": "European Commission Business and Consumer Survey [RETA.DE.TOT.1.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_stocks",
+      "source": "European Commission Business and Consumer Survey [RETA.DE.TOT.2.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_orders_expected",
+      "source": "European Commission Business and Consumer Survey [RETA.DE.TOT.3.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_business_activity_expected",
+      "source": "European Commission Business and Consumer Survey [RETA.DE.TOT.4.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_employment_expectations",
+      "source": "European Commission Business and Consumer Survey [RETA.DE.TOT.5.BS.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_price_expectations",
+      "source": "European Commission Business and Consumer Survey [RETA.DE.TOT.6.BS.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_activity_past",
+      "source": "European Commission Business and Consumer Survey [BUIL.DE.TOT.1.BS.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_none",
+      "source": "European Commission Business and Consumer Survey [BUIL.DE.TOT.2.F1S.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_demand",
+      "source": "European Commission Business and Consumer Survey [BUIL.DE.TOT.2.F2S.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_labour",
+      "source": "European Commission Business and Consumer Survey [BUIL.DE.TOT.2.F4S.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_material_equipment",
+      "source": "European Commission Business and Consumer Survey [BUIL.DE.TOT.2.F5S.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_other",
+      "source": "European Commission Business and Consumer Survey [BUIL.DE.TOT.2.F6S.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_financial",
+      "source": "European Commission Business and Consumer Survey [BUIL.DE.TOT.2.F7S.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_order_books",
+      "source": "European Commission Business and Consumer Survey [BUIL.DE.TOT.3.BS.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_employment_expectations",
+      "source": "European Commission Business and Consumer Survey [BUIL.DE.TOT.4.BS.M]"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_price_expectations",
+      "source": "European Commission Business and Consumer Survey [BUIL.DE.TOT.5.BS.M]"
     },
     {
       "fred_qd_group": "Other",
@@ -129,17 +334,27 @@
     {
       "fred_qd_group": "Other",
       "label": "financial_stress",
-      "source": "ECB Composite Indicator of Systemic Stress (CISS) [CISS (daily, averaged within the month)]"
+      "source": "ECB Composite Indicator of Systemic Stress (CISS) [D.DE.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)]"
     },
     {
       "fred_qd_group": "Stock Markets",
       "label": "share_price_index",
-      "source": "OECD MEI (via FRED mirror), monthly [SPASTT01DEM661N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [SPASTT01DEM661N]"
     },
     {
       "fred_qd_group": "Housing",
       "label": "construction_weather_constraint",
-      "source": "European Commission Business and Consumer Survey [DE.BUIL weather factor]"
+      "source": "European Commission Business and Consumer Survey [BUIL.DE.TOT.2.F3S.M]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "heating_degree_days",
+      "source": "ERA5 reanalysis (via the Open-Meteo archive API) [ERA5, 8-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x1.029, corr 0.999 over 552 months)]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "cooling_degree_days",
+      "source": "ERA5 reanalysis (via the Open-Meteo archive API) [ERA5, 8-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x0.698, corr 0.971 over 552 months)]"
     }
   ],
   "skipped": [],
@@ -170,6 +385,10 @@
     },
     {
       "fred_qd_group": "Output and Income",
+      "label": "inventory_change_to_gdp"
+    },
+    {
+      "fred_qd_group": "Output and Income",
       "label": "real_household_disposable_income"
     },
     {
@@ -179,6 +398,10 @@
     {
       "fred_qd_group": "Employment and Unemployment",
       "label": "hours_worked"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "population"
     },
     {
       "fred_qd_group": "Housing",
@@ -214,15 +437,87 @@
     },
     {
       "fred_qd_group": "Other",
+      "label": "consumer_home_purchase_intentions"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_home_improvement_intentions"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_none"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_demand"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_labour"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_material_equipment"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_other"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_financial"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_production_capacity"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_new_orders_past"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_capacity_utilization"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_competitive_position_eu"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_competitive_position_outside_eu"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_none"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_demand"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_labour"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_equipment_space"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_financial"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_other"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_capacity_utilization"
+    },
+    {
+      "fred_qd_group": "Other",
       "label": "world_uncertainty_index"
-    },
-    {
-      "fred_qd_group": "Other",
-      "label": "heating_degree_days"
-    },
-    {
-      "fred_qd_group": "Other",
-      "label": "cooling_degree_days"
     }
   ],
   "plausibility_checks": [
@@ -236,25 +531,25 @@
       "label": "industrial_confidence",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 500 values within [-150, 250]."
+      "detail": "All 501 values within [-150, 250]."
     },
     {
       "label": "unemployment_rate",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 427 values within [-10, 400]."
+      "detail": "All 428 values within [-10, 400]."
     },
     {
       "label": "employment_expectations",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 422 values within [-150, 250]."
+      "detail": "All 423 values within [-150, 250]."
     },
     {
       "label": "construction_confidence",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 500 values within [-150, 250]."
+      "detail": "All 501 values within [-150, 250]."
     },
     {
       "label": "retail_sales_volume",
@@ -266,7 +561,7 @@
       "label": "retail_confidence",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 500 values within [-150, 250]."
+      "detail": "All 501 values within [-150, 250]."
     },
     {
       "label": "cpi_index",
@@ -314,13 +609,25 @@
       "label": "mortgage_rate",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 319 values within [-10, 400]."
+      "detail": "All 320 values within [-10, 400]."
+    },
+    {
+      "label": "mortgage_rate_pure_new_loans",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 109 values within [-10, 400]."
     },
     {
       "label": "household_mortgage_loans",
       "category": "level",
       "status": "PASS",
       "detail": "Positive throughout; largest quarter-over-quarter change 1%."
+    },
+    {
+      "label": "mortgage_new_lending",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 29%."
     },
     {
       "label": "fx_rate_to_usd",
@@ -338,19 +645,253 @@
       "label": "consumer_confidence",
       "category": "balance",
       "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_financial_situation_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_financial_situation_expected",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_economic_situation_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_economic_situation_expected",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_price_trends_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_price_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_unemployment_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_major_purchases_now",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_major_purchases_expected",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_savings_expected",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_household_finances_now",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "industry_production_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "industry_order_books",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "industry_export_order_books",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "industry_stocks_finished_products",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "industry_production_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "industry_selling_price_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "industry_employment_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 423 values within [-150, 250]."
+    },
+    {
+      "label": "services_business_situation_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 378 values within [-150, 250]."
+    },
+    {
+      "label": "services_demand_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 378 values within [-150, 250]."
+    },
+    {
+      "label": "services_demand_expected",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 378 values within [-150, 250]."
+    },
+    {
+      "label": "services_employment_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 308 values within [-150, 250]."
+    },
+    {
+      "label": "services_price_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 282 values within [-150, 250]."
+    },
+    {
+      "label": "retail_business_activity_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "retail_stocks",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "retail_orders_expected",
+      "category": "balance",
+      "status": "PASS",
       "detail": "All 500 values within [-150, 250]."
+    },
+    {
+      "label": "retail_business_activity_expected",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "retail_employment_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 498 values within [-150, 250]."
+    },
+    {
+      "label": "retail_price_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 429 values within [-150, 250]."
+    },
+    {
+      "label": "construction_activity_past",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "construction_limits_none",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 429 values within [-10, 400]."
+    },
+    {
+      "label": "construction_limits_demand",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 369 values within [-10, 400]."
+    },
+    {
+      "label": "construction_limits_labour",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 429 values within [-10, 400]."
+    },
+    {
+      "label": "construction_limits_material_equipment",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 429 values within [-10, 400]."
+    },
+    {
+      "label": "construction_limits_other",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 429 values within [-10, 400]."
+    },
+    {
+      "label": "construction_limits_financial",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 429 values within [-10, 400]."
+    },
+    {
+      "label": "construction_order_books",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "construction_employment_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
+    },
+    {
+      "label": "construction_price_expectations",
+      "category": "balance",
+      "status": "PASS",
+      "detail": "All 501 values within [-150, 250]."
     },
     {
       "label": "economic_sentiment_indicator",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 500 values within [-150, 250]."
+      "detail": "All 501 values within [-150, 250]."
     },
     {
       "label": "services_confidence",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 377 values within [-150, 250]."
+      "detail": "All 378 values within [-150, 250]."
     },
     {
       "label": "oil_price",
@@ -386,7 +927,19 @@
       "label": "construction_weather_constraint",
       "category": "balance",
       "status": "PASS",
-      "detail": "All 428 values within [-150, 250]."
+      "detail": "All 429 values within [-150, 250]."
+    },
+    {
+      "label": "heating_degree_days",
+      "category": "nonneg_seasonal",
+      "status": "PASS",
+      "detail": "All 801 values within [0, 4000]."
+    },
+    {
+      "label": "cooling_degree_days",
+      "category": "nonneg_seasonal",
+      "status": "PASS",
+      "detail": "All 801 values within [0, 4000]."
     }
   ]
 }

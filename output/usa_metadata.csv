@@ -1,0 +1,111 @@
+label,fred_qd_group,frequency,aggregation,unit,sa,class,tcode_fred,tcode_lt,tcode_ht,fred_qd_mnemonic,provider,key,first,last,n_obs
+real_gdp,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,GDPC1,OECD_QNA,S1.B1GQ,1960-Q1,2026-Q2,266
+real_household_consumption,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,PCECC96,OECD_QNA,S1M.P3,1960-Q1,2026-Q2,266
+real_govt_consumption,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,GCEC1,OECD_QNA,S13.P3,1960-Q1,2026-Q2,266
+real_gfcf_total,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,FPIx,OECD_QNA,.P51G,1960-Q1,2026-Q2,266
+real_exports,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,EXPGSC1,OECD_QNA,S1.P6,1960-Q1,2026-Q2,266
+real_imports,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,IMPGSC1,OECD_QNA,S1.P7,1960-Q1,2026-Q2,266
+inventory_change_to_gdp,Output and Income,Q,mean,% of GDP,SCA,R,1,0,0,A014RE1Q156NBEA,FRED,A014RE1Q156NBEA,1960-Q1,2026-Q2,266
+real_household_disposable_income,Output and Income,Q,mean,"national currency, volume",SCA,R,5,2,2,DPIC96,,,,,0
+industrial_production,Industrial Production,M,mean,index 2021=100,SCA,R,5,2,2,INDPRO,FRED_MIRROR,USAPROINDMISMEI,1960-M01,2024-M04,772
+industrial_confidence,Industrial Production,M,mean,balance,SA,C,1,0,0,,,,,,0
+unemployment_rate,Employment and Unemployment,M,mean,% of labour force,SA,R,2,4,4,UNRATE,FRED_MIRROR,LRHUTTTTUSM156S,1960-M01,2025-M09,789
+employment_rate,Employment and Unemployment,Q,mean,% of population 15-64,SA,R,2,4,4,,FRED_MIRROR,LREM64TTUSQ156S,1977-Q1,2026-Q2,198
+hours_worked,Employment and Unemployment,Q,mean,mn hours,SCA,R,5,2,2,HOANBS,,,,,0
+population,Employment and Unemployment,Q,mean,thousand persons,SCA,R,5,2,2,,FRED,POPTHM,1960-Q1,2026-Q3,267
+employment_expectations,Employment and Unemployment,M,mean,index,SA,C,1,0,0,,,,,,0
+house_price_real,Housing,Q,mean,index,NSA,R,5,2,2,USSTHPI,FRED_MIRROR,QUSR628BIS,1970-Q1,2026-Q1,225
+construction_confidence,Housing,M,mean,balance,SA,C,1,0,0,,,,,,0
+retail_sales_volume,"Inventories, Orders, and Sales",M,mean,index 2021=100,SCA,R,5,2,2,RSAFSx,FRED_MIRROR,USASARTMISMEI,1960-M01,2023-M12,768
+retail_confidence,"Inventories, Orders, and Sales",M,mean,balance,SA,C,1,0,0,,,,,,0
+cpi_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,CPIAUCSL,FRED,CPIAUCSL,1960-M01,2026-M08,799
+core_cpi_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,CPILFESL,,,,,0
+food_price_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,,,,,,0
+energy_price_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,,,,,,0
+services_price_index,Prices,M,mean,index 2005=100,NSA,N,6,2,3,CUSR0000SAS,,,,,0
+unit_labor_cost,Earnings and Productivity,Q,mean,index 2010=100,SCA,N,5,2,3,ULCNFB,FRED_MIRROR,ULQEUL01USQ657S,1955-Q2,2025-Q3,282
+long_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,GS10,FRED_MIRROR,IRLTLT01USM156N,1960-M01,2026-M08,800
+short_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,TB3MS,FRED_MIRROR,IR3TIB01USM156N,1964-M06,2026-M08,746
+mortgage_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,MORTGAGE30US,,,,,0
+mortgage_rate_pure_new_loans,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,,,,,0
+credit_to_private_nonfin_sector,Money and Credit,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.US.P.A.M.770.A,1960-Q1,2025-Q4,264
+household_mortgage_loans,Money and Credit,M,mean,"EUR mn, outstanding",NSA,N,5,2,3,REALLNx,,,,,0
+mortgage_new_lending,Money and Credit,M,sum,EUR mn per period,NSA,N,5,2,2,,,,,,0
+euro_area_household_net_worth_growth,Household Balance Sheets,Q,mean,% change,NSA,F,1,0,0,TNWBSHNOx,,,,,0
+household_credit_to_gdp,Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.US.H.A.M.770.A,1960-Q1,2025-Q4,264
+corporate_credit_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.US.N.A.M.770.A,1960-Q1,2025-Q4,264
+government_debt_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,GFDEGDQ188S,BIS_WSTC,Q.US.G.A.N.770.A,1960-Q1,2025-Q4,264
+government_primary_balance_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,1,0,0,,,,,,0
+fx_rate_to_usd,Exchange Rates,M,mean,national currency per USD,NSA,F,5,2,2,,,,,,0
+real_effective_exchange_rate,Exchange Rates,M,mean,index 2015=100,NSA,F,5,2,2,TWEXAFEGSMTHx,FRED_MIRROR,CCRETT01USM661N,1970-M01,2026-M08,680
+consumer_confidence,Other,M,mean,balance,SA,C,1,0,0,UMCSENTx,FRED_MIRROR,CSCICP03USM665S,1960-M01,2024-M01,769
+consumer_financial_situation_past,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+consumer_financial_situation_expected,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+consumer_economic_situation_past,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+consumer_economic_situation_expected,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+consumer_price_trends_past,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+consumer_price_expectations,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+consumer_unemployment_expectations,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+consumer_major_purchases_now,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+consumer_major_purchases_expected,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+consumer_savings_expected,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+consumer_household_finances_now,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+consumer_home_purchase_intentions,Other,Q,mean,balance,SA,C,1,0,0,,,,,,0
+consumer_home_improvement_intentions,Other,Q,mean,balance,SA,C,1,0,0,,,,,,0
+industry_production_past,Industrial Production,M,mean,balance,SA,C,1,0,0,,,,,,0
+industry_order_books,Industrial Production,M,mean,balance,SA,C,1,0,0,,,,,,0
+industry_export_order_books,Industrial Production,M,mean,balance,SA,C,1,0,0,,,,,,0
+industry_stocks_finished_products,Industrial Production,M,mean,balance,SA,C,1,0,0,,,,,,0
+industry_production_expectations,Industrial Production,M,mean,balance,SA,C,1,0,0,,,,,,0
+industry_selling_price_expectations,Industrial Production,M,mean,balance,SA,C,1,0,0,,,,,,0
+industry_employment_expectations,Industrial Production,M,mean,balance,SA,C,1,0,0,,,,,,0
+industry_limits_none,Industrial Production,Q,mean,% of firms,SA,C,1,0,0,,,,,,0
+industry_limits_demand,Industrial Production,Q,mean,% of firms,SA,C,1,0,0,,,,,,0
+industry_limits_labour,Industrial Production,Q,mean,% of firms,SA,C,1,0,0,,,,,,0
+industry_limits_material_equipment,Industrial Production,Q,mean,% of firms,SA,C,1,0,0,,,,,,0
+industry_limits_other,Industrial Production,Q,mean,% of firms,SA,C,1,0,0,,,,,,0
+industry_limits_financial,Industrial Production,Q,mean,% of firms,SA,C,1,0,0,,,,,,0
+industry_production_capacity,Industrial Production,Q,mean,balance,SA,C,1,0,0,,,,,,0
+industry_new_orders_past,Industrial Production,Q,mean,balance,SA,C,1,0,0,,,,,,0
+industry_capacity_utilization,Industrial Production,Q,mean,% of capacity,SA,C,1,0,0,CUMFNS,,,,,0
+industry_competitive_position_eu,Industrial Production,Q,mean,balance,SA,C,1,0,0,,,,,,0
+industry_competitive_position_outside_eu,Industrial Production,Q,mean,balance,SA,C,1,0,0,,,,,,0
+services_business_situation_past,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+services_demand_past,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+services_demand_expected,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+services_employment_expectations,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+services_price_expectations,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+services_limits_none,Other,Q,mean,% of firms,SA,C,1,0,0,,,,,,0
+services_limits_demand,Other,Q,mean,% of firms,SA,C,1,0,0,,,,,,0
+services_limits_labour,Other,Q,mean,% of firms,SA,C,1,0,0,,,,,,0
+services_limits_equipment_space,Other,Q,mean,% of firms,SA,C,1,0,0,,,,,,0
+services_limits_financial,Other,Q,mean,% of firms,SA,C,1,0,0,,,,,,0
+services_limits_other,Other,Q,mean,% of firms,SA,C,1,0,0,,,,,,0
+services_capacity_utilization,Other,Q,mean,% of capacity,SA,C,1,0,0,,,,,,0
+retail_business_activity_past,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+retail_stocks,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+retail_orders_expected,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+retail_business_activity_expected,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+retail_employment_expectations,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+retail_price_expectations,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+construction_activity_past,Housing,M,mean,balance,SA,C,1,0,0,,,,,,0
+construction_limits_none,Housing,M,mean,% of firms,SA,C,1,0,0,,,,,,0
+construction_limits_demand,Housing,M,mean,% of firms,SA,C,1,0,0,,,,,,0
+construction_limits_labour,Housing,M,mean,% of firms,SA,C,1,0,0,,,,,,0
+construction_limits_material_equipment,Housing,M,mean,% of firms,SA,C,1,0,0,,,,,,0
+construction_limits_other,Housing,M,mean,% of firms,SA,C,1,0,0,,,,,,0
+construction_limits_financial,Housing,M,mean,% of firms,SA,C,1,0,0,,,,,,0
+construction_order_books,Housing,M,mean,balance,SA,C,1,0,0,,,,,,0
+construction_employment_expectations,Housing,M,mean,balance,SA,C,1,0,0,,,,,,0
+construction_price_expectations,Housing,M,mean,balance,SA,C,1,0,0,,,,,,0
+economic_sentiment_indicator,Other,M,mean,"index, long-term mean = 100",SA,C,1,0,0,,,,,,0
+services_confidence,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
+oil_price,Prices,M,mean,USD per barrel,NSA,N,5,2,3,OILPRICEx,FRED,WTISPLC,1960-M01,2026-M08,800
+geopolitical_risk,Other,M,mean,index,NSA,C,1,0,0,,GPR,GPRC_USA,1985-M01,2026-M07,499
+global_activity,Other,M,mean,deviation from trend,NSA,R,1,0,0,,FRED,IGREA,1968-M01,2026-M07,703
+financial_stress,Other,M,mean,index 0-1,NSA,F,1,0,0,,ECB_CISS,"D.US.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)",1980-M01,2026-M09,561
+world_uncertainty_index,Other,Q,mean,index,NSA,C,1,0,0,,FRED_MIRROR,WUIUSA,1952-Q1,2026-Q2,298
+share_price_index,Stock Markets,M,mean,index points,NSA,F,5,2,2,S&P 500,FRED_MIRROR,SPASTT01USM661N,1960-M01,2026-M08,800
+construction_weather_constraint,Housing,M,mean,% of firms,SA,C,1,0,0,,,,,,0
+heating_degree_days,Other,M,sum,degree days,NSA,R,1,0,0,,OPEN_METEO,"ERA5, 15-city population-weighted (USA); UNCALIBRATED -- Eurostat nrg_chdd_m publishes no cross-check for this country",1960-M01,2026-M09,801
+cooling_degree_days,Other,M,sum,degree days,NSA,R,1,0,0,,OPEN_METEO,"ERA5, 15-city population-weighted (USA); UNCALIBRATED -- Eurostat nrg_chdd_m publishes no cross-check for this country",1960-M01,2026-M09,801

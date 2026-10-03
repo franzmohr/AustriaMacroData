@@ -1,25 +1,25 @@
 {
   "country": "USA",
   "frequency": "monthly",
-  "generated_at": "2026-09-25T06:30:00Z",
+  "generated_at": "2026-10-03T18:06:15Z",
   "start_period": "1960-M01",
-  "concepts_published_monthly": 27,
-  "concepts_quarterly_only": 20,
+  "concepts_published_monthly": 70,
+  "concepts_quarterly_only": 40,
   "resolved": [
     {
       "fred_qd_group": "Industrial Production",
       "label": "industrial_production",
-      "source": "OECD MEI (via FRED mirror), monthly [USAPROINDMISMEI]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [USAPROINDMISMEI]"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
       "label": "unemployment_rate",
-      "source": "OECD MEI (via FRED mirror), monthly [LRHUTTTTUSM156S]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [LRHUTTTTUSM156S]"
     },
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
       "label": "retail_sales_volume",
-      "source": "OECD MEI (via FRED mirror), monthly [USASARTMISMEI]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [USASARTMISMEI]"
     },
     {
       "fred_qd_group": "Prices",
@@ -29,22 +29,22 @@
     {
       "fred_qd_group": "Interest Rates",
       "label": "long_term_rate",
-      "source": "OECD MEI (via FRED mirror), monthly [IRLTLT01USM156N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IRLTLT01USM156N]"
     },
     {
       "fred_qd_group": "Interest Rates",
       "label": "short_term_rate",
-      "source": "OECD MEI (via FRED mirror), monthly [IR3TIB01USM156N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IR3TIB01USM156N]"
     },
     {
       "fred_qd_group": "Exchange Rates",
       "label": "real_effective_exchange_rate",
-      "source": "OECD MEI (via FRED mirror), monthly [CCRETT01USM661N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CCRETT01USM661N]"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_confidence",
-      "source": "OECD MEI (via FRED mirror), monthly [CSCICP03USM665S]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CSCICP03USM665S]"
     },
     {
       "fred_qd_group": "Prices",
@@ -64,12 +64,22 @@
     {
       "fred_qd_group": "Other",
       "label": "financial_stress",
-      "source": "ECB Composite Indicator of Systemic Stress (CISS) [CISS (daily, averaged within the month)]"
+      "source": "ECB Composite Indicator of Systemic Stress (CISS) [D.US.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)]"
     },
     {
       "fred_qd_group": "Stock Markets",
       "label": "share_price_index",
-      "source": "OECD MEI (via FRED mirror), monthly [SPASTT01USM661N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [SPASTT01USM661N]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "heating_degree_days",
+      "source": "ERA5 reanalysis (via the Open-Meteo archive API) [ERA5, 15-city population-weighted (USA); UNCALIBRATED -- Eurostat nrg_chdd_m publishes no cross-check for this country]"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "cooling_degree_days",
+      "source": "ERA5 reanalysis (via the Open-Meteo archive API) [ERA5, 15-city population-weighted (USA); UNCALIBRATED -- Eurostat nrg_chdd_m publishes no cross-check for this country]"
     }
   ],
   "skipped": [
@@ -110,12 +120,176 @@
       "label": "mortgage_rate"
     },
     {
+      "fred_qd_group": "Interest Rates",
+      "label": "mortgage_rate_pure_new_loans"
+    },
+    {
       "fred_qd_group": "Money and Credit",
       "label": "household_mortgage_loans"
     },
     {
+      "fred_qd_group": "Money and Credit",
+      "label": "mortgage_new_lending"
+    },
+    {
       "fred_qd_group": "Exchange Rates",
       "label": "fx_rate_to_usd"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_financial_situation_past"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_financial_situation_expected"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_economic_situation_past"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_economic_situation_expected"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_price_trends_past"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_price_expectations"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_unemployment_expectations"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_major_purchases_now"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_major_purchases_expected"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_savings_expected"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_household_finances_now"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_production_past"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_order_books"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_export_order_books"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_stocks_finished_products"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_production_expectations"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_selling_price_expectations"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_employment_expectations"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_business_situation_past"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_demand_past"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_demand_expected"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_employment_expectations"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_price_expectations"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_business_activity_past"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_stocks"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_orders_expected"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_business_activity_expected"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_employment_expectations"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "retail_price_expectations"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_activity_past"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_none"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_demand"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_labour"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_material_equipment"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_other"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_limits_financial"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_order_books"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_employment_expectations"
+    },
+    {
+      "fred_qd_group": "Housing",
+      "label": "construction_price_expectations"
     },
     {
       "fred_qd_group": "Other",
@@ -157,6 +331,10 @@
     },
     {
       "fred_qd_group": "Output and Income",
+      "label": "inventory_change_to_gdp"
+    },
+    {
+      "fred_qd_group": "Output and Income",
       "label": "real_household_disposable_income"
     },
     {
@@ -166,6 +344,10 @@
     {
       "fred_qd_group": "Employment and Unemployment",
       "label": "hours_worked"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "population"
     },
     {
       "fred_qd_group": "Housing",
@@ -201,15 +383,87 @@
     },
     {
       "fred_qd_group": "Other",
+      "label": "consumer_home_purchase_intentions"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "consumer_home_improvement_intentions"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_none"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_demand"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_labour"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_material_equipment"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_other"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_limits_financial"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_production_capacity"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_new_orders_past"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_capacity_utilization"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_competitive_position_eu"
+    },
+    {
+      "fred_qd_group": "Industrial Production",
+      "label": "industry_competitive_position_outside_eu"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_none"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_demand"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_labour"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_equipment_space"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_financial"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_limits_other"
+    },
+    {
+      "fred_qd_group": "Other",
+      "label": "services_capacity_utilization"
+    },
+    {
+      "fred_qd_group": "Other",
       "label": "world_uncertainty_index"
-    },
-    {
-      "fred_qd_group": "Other",
-      "label": "heating_degree_days"
-    },
-    {
-      "fred_qd_group": "Other",
-      "label": "cooling_degree_days"
     }
   ],
   "plausibility_checks": [
@@ -304,7 +558,19 @@
       "detail": "No non-NA observations."
     },
     {
+      "label": "mortgage_rate_pure_new_loans",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
       "label": "household_mortgage_loans",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "mortgage_new_lending",
       "category": "level",
       "status": "NO_DATA",
       "detail": "No non-NA observations."
@@ -326,6 +592,240 @@
       "category": "balance",
       "status": "PASS",
       "detail": "All 769 values within [-150, 250]."
+    },
+    {
+      "label": "consumer_financial_situation_past",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "consumer_financial_situation_expected",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "consumer_economic_situation_past",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "consumer_economic_situation_expected",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "consumer_price_trends_past",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "consumer_price_expectations",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "consumer_unemployment_expectations",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "consumer_major_purchases_now",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "consumer_major_purchases_expected",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "consumer_savings_expected",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "consumer_household_finances_now",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "industry_production_past",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "industry_order_books",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "industry_export_order_books",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "industry_stocks_finished_products",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "industry_production_expectations",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "industry_selling_price_expectations",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "industry_employment_expectations",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "services_business_situation_past",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "services_demand_past",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "services_demand_expected",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "services_employment_expectations",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "services_price_expectations",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "retail_business_activity_past",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "retail_stocks",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "retail_orders_expected",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "retail_business_activity_expected",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "retail_employment_expectations",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "retail_price_expectations",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "construction_activity_past",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "construction_limits_none",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "construction_limits_demand",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "construction_limits_labour",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "construction_limits_material_equipment",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "construction_limits_other",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "construction_limits_financial",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "construction_order_books",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "construction_employment_expectations",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "construction_price_expectations",
+      "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
     },
     {
       "label": "economic_sentiment_indicator",
@@ -374,6 +874,18 @@
       "category": "balance",
       "status": "NO_DATA",
       "detail": "No non-NA observations."
+    },
+    {
+      "label": "heating_degree_days",
+      "category": "nonneg_seasonal",
+      "status": "PASS",
+      "detail": "All 801 values within [0, 4000]."
+    },
+    {
+      "label": "cooling_degree_days",
+      "category": "nonneg_seasonal",
+      "status": "PASS",
+      "detail": "All 801 values within [0, 4000]."
     }
   ]
 }
