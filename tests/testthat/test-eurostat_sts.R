@@ -138,7 +138,12 @@ test_that("the monthly concept list comes from the dictionary, not a second list
   # concept in this list would be interpolated somewhere or empty everywhere.
   expect_false(any(c("real_gdp", "real_household_consumption", "hours_worked",
                      "credit_to_private_nonfin_sector", "government_debt_to_gdp",
-                     "unit_labor_cost", "heating_degree_days") %in% monthly))
+                     "unit_labor_cost") %in% monthly))
+
+  # The degree days are monthly at source (Eurostat nrg_chdd_m, and ERA5
+  # daily data totalled by month) and have been monthly concepts since
+  # 2026-10; their quarters are the totals of complete months.
+  expect_true(all(c("heating_degree_days", "cooling_degree_days") %in% monthly))
 })
 
 test_that("the shared fetchers keep monthly dates when asked for them", {

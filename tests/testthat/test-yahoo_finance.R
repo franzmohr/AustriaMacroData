@@ -64,3 +64,12 @@ test_that("fetch_atx_quarterly averages monthly closes into quarters and filters
   expect_equal(out$date, as.Date("2025-01-01"))
   expect_equal(out$share_price_index, mean(c(5613.4, 5900.1, 6100.2)))
 })
+
+test_that("fetch_atx_monthly keeps the monthly closes and filters by start_period", {
+  with_mock_fetch_text(const_fetch_text(yahoo_atx_fixture), {
+    out <- fetch_atx_monthly(start_period = "2025-M02")
+  })
+  expect_equal(names(out), c("date", "share_price_index"))
+  expect_equal(out$date, as.Date(c("2025-02-01", "2025-03-01")))
+  expect_equal(out$share_price_index, c(5900.1, 6100.2))
+})

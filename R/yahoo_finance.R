@@ -97,3 +97,14 @@ fetch_atx_quarterly <- function(label = "share_price_index", start_period = "199
   monthly_to_quarterly(monthly, label) %>%
     dplyr::filter(.data$date >= period_to_date(start_period))
 }
+
+#' Fetch monthly ATX levels (monthly closes) for use as Austria's
+#' `share_price_index` in the monthly panel, from which the quarterly
+#' panel takes the same within-quarter average `fetch_atx_quarterly()` forms
+fetch_atx_monthly <- function(label = "share_price_index", start_period = "1995-M01") {
+  monthly <- fetch_yahoo_finance_monthly("^ATX", label, range = "max")
+  if (is.null(monthly)) return(NULL)
+  monthly %>%
+    dplyr::filter(.data$date >= period_to_date(start_period)) %>%
+    dplyr::distinct(.data$date, .keep_all = TRUE)
+}

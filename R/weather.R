@@ -508,7 +508,8 @@ monthly_to_quarterly_total <- function(df, cols) {
     dplyr::arrange(.data$date)
 }
 
-#' Fetch quarterly heating and cooling degree days for one country
+#' Fetch heating and cooling degree days for one country, as quarterly
+#' totals (`frequency = "Q"`, the default) or as months (`"M"`)
 #'
 #' Splices Eurostat's official monthly series (preferred wherever it
 #' publishes) with a level-calibrated Open-Meteo/ERA5 series covering the
@@ -526,7 +527,9 @@ fetch_degree_days <- function(country3, start_period = "1960-Q1",
                                landing_dir = weather_landing_dir,
                                pause_seconds = 5,
                                max_attempts = 4,
-                               retry_pause_seconds = 30) {
+                               retry_pause_seconds = 30,
+                               frequency = "Q") {
+  check_frequency(frequency)
   start_date <- max(period_to_date(start_period), open_meteo_earliest_date)
   ## Last day of the month BEFORE the current one: the current month is
   ## always partial, and ERA5's own few-day lag means even the previous
@@ -624,6 +627,18 @@ fetch_degree_days <- function(country3, start_period = "1960-Q1",
   present <- intersect(labels, names(monthly))
   present <- present[vapply(present, function(l) any(!is.na(monthly[[l]])), logical(1))]
   if (length(present) == 0) return(NULL)
+
+  ## The monthly panel takes the months themselves; the quarterly panel
+  ## derives its complete-quarter totals from them (R/panel_derive.R),
+  ## which is what the quarterly path below computes directly.
+  if (identical(frequency, "M")) {
+    out <- monthly[, c("date", present)] %>%
+      dplyr::filter(.data$date >= period_to_date(start_period)) %>%
+      dplyr::arrange(.data$date)
+    if (nrow(out) == 0) return(NULL)
+    attr(out, "sources") <- sources[present]
+    return(out)
+  }
 
   quarterly <- monthly_to_quarterly_total(monthly[, c("date", present)], present) %>%
     dplyr::filter(.data$date >= period_to_date(start_period))

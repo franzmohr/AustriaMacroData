@@ -1,0 +1,5 @@
+country,name,type,start,end,description,source
+AUT,kimv_announcement,impulse,2021-12-01,,"FMSG recommends legally binding borrower-based measures for residential real estate lending, which the FMA implements as KIM-V.",https://www.wko.at/oe/bank-versicherung/newsline-dezember-2022.pdf
+AUT,kimv,step,2022-08-01,2025-06-30,"KIM-V in force: LTV at most 90% (20% exemption), DSTI at most 40% (10%), maturity at most 35 years (5%) for new residential real estate loans to households.",https://www.esrb.europa.eu/pub/pdf/other/Esrb.notification240613_BBMs_AT~037e4af1e2.en.pdf
+AUT,kimv_bridging_exemption,step,2023-04-01,2025-06-30,"KIM-V amendment: bridging loans and non-repayable government grants excluded; de minimis threshold for couples raised to EUR 100,000.",https://www.esrb.europa.eu/pub/pdf/other/Esrb.notification240613_BBMs_AT~037e4af1e2.en.pdf
+AUT,kimv_single_exemption_bucket,step,2024-07-01,2025-06-30,KIM-V amendment: the separate exemption buckets merged into one institution-specific bucket of 20% of new lending volume.,https://www.esrb.europa.eu/pub/pdf/other/Esrb.notification240613_BBMs_AT~037e4af1e2.en.pdf

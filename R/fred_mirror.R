@@ -182,7 +182,7 @@ fetch_other_group_series <- function(id_template, source_frequency, cc2, cc3, la
 #' `country3` is the ISO-3166 alpha-3 code (e.g. "DEU") also used for
 #' OECD/IMF. These are DIFFERENT coding conventions from different
 #' sources -- do not swap them.
-fetch_other_groups <- function(fred_country2, country3, frequency = "Q") {
+fetch_other_groups <- function(fred_country2, country3, frequency = "Q", labels = NULL) {
   check_frequency(frequency)
 
   # Not every OECD MEI concept has a monthly counterpart, and the ones that
@@ -198,6 +198,10 @@ fetch_other_groups <- function(fred_country2, country3, frequency = "Q") {
   } else {
     other_groups
   }
+  ## `labels` restricts the fetch to some concepts -- scripts/build_panels.R
+  ## asks the quarterly mirrors only for the concepts that are quarterly at
+  ## source, the rest coming from the monthly panel.
+  if (!is.null(labels)) wanted <- dplyr::filter(wanted, .data$label %in% labels)
   templates <- if (identical(frequency, "M")) wanted$m_id_template else wanted$id_template
 
   results <- purrr::pmap(
