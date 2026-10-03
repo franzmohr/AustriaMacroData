@@ -151,7 +151,7 @@ ecb_mir_dims <- c("FREQ", "REF_AREA", "BS_REP_SECTOR", "BS_ITEM", "MATURITY_NOT_
 #' "mean" averages, as every other monthly source in this project does.
 fetch_ecb_mir_house_purchase <- function(country3, label, data_type, bus_cov, what,
                                          start_period = "1995-Q1", frequency = "Q",
-                                         aggregate = c("mean", "sum")) {
+                                         aggregate = c("mean", "sum"), extend = NULL) {
   aggregate <- match.arg(aggregate)
   if (!(country3 %in% euro_area_countries)) {
     warning(sprintf("[%s] ECB %s: %s is not a euro-area country -- skipping", label, what, country3))
@@ -198,6 +198,10 @@ fetch_ecb_mir_house_purchase <- function(country3, label, data_type, bus_cov, wh
     dplyr::filter(!is.na(.data$date), !is.na(.data$value)) %>%
     dplyr::distinct(date, .keep_all = TRUE)
   names(monthly)[2] <- label
+  ## `extend`, if given, adds months the published series does not have, at
+  ## monthly frequency and before any aggregation -- see
+  ## mir_pure_new_backcast() below for the one use.
+  if (!is.null(extend)) monthly <- extend(monthly)
 
   out <- if (identical(aggregate, "sum") && identical(check_frequency(frequency), "Q")) {
     monthly_to_quarterly_sum(monthly, label)
@@ -226,7 +230,59 @@ fetch_ecb_mortgage_rate_pure_new <- function(country3, label = "mortgage_rate_pu
                                              start_period = "1995-Q1", frequency = "Q") {
   fetch_ecb_mir_house_purchase(country3, label, data_type = "R", bus_cov = "P",
                                what = "pure-new-loan mortgage rate", start_period = start_period,
-                               frequency = frequency)
+                               frequency = frequency,
+                               extend = function(m) mir_pure_new_backcast(m, country3, label, "R", start_period))
+}
+
+## ---------------------------------------------------------------
+## Pure new loans before the ECB published them, from the MIR identity
+##
+## New business is pure new loans plus renegotiated loans (IR_BUS_COV
+## N = P + R), and MIR rates are volume-weighted averages, so
+##   volume  P = N - R
+##   rate    r_P = (r_N * N - r_R * R) / (N - R).
+## Verified 2026-10-03 for AT over all 109 months in which P is published
+## (2017-08 to 2026-08): the volume identity holds to the euro million in
+## every month, the rate to within 0.012 percentage points (mean 0.004),
+## i.e. to the rounding of the published two-decimal rates.
+##
+## For Austria the renegotiated VOLUME starts in 2014-12 and the
+## renegotiated RATE in 2017-01, so the pure-new-loan volume reaches back to
+## 2014-12 and its rate to 2017-01; before that the rate is left missing
+## rather than approximated by the new-business rate, which includes the
+## renegotiations it is meant to exclude. Only months BEFORE the first
+## published observation are filled; the published series is never
+## overwritten.
+## ---------------------------------------------------------------
+
+#' Months of a pure-new-loan MIR series computed from new business minus
+#' renegotiations, added before the first published observation
+mir_pure_new_backcast <- function(monthly, country3, label, data_type, start_period) {
+  component <- function(type, cov) {
+    out <- suppressWarnings(fetch_ecb_mir_house_purchase(
+      country3, "value", data_type = type, bus_cov = cov, what = "component",
+      start_period = as_period(start_period, "M"), frequency = "M"))
+    if (is.null(out) || nrow(out) == 0) NULL else out
+  }
+  vN <- component("B", "N"); vR <- component("B", "R")
+  if (is.null(vN) || is.null(vR)) return(monthly)
+  calc <- dplyr::inner_join(vN, vR, by = "date", suffix = c("_vN", "_vR"))
+  calc$value <- calc$value_vN - calc$value_vR
+  if (identical(data_type, "R")) {
+    rN <- component("R", "N"); rR <- component("R", "R")
+    if (is.null(rN) || is.null(rR)) return(monthly)
+    calc <- calc %>%
+      dplyr::inner_join(dplyr::rename(rN, value_rN = "value"), by = "date") %>%
+      dplyr::inner_join(dplyr::rename(rR, value_rR = "value"), by = "date")
+    calc$value <- (calc$value_rN * calc$value_vN - calc$value_rR * calc$value_vR) / calc$value
+  }
+  first_published <- if (nrow(monthly)) min(monthly$date) else as.Date("9999-12-01")
+  calc <- calc[calc$date < first_published & is.finite(calc$value) & calc$value > 0, c("date", "value")]
+  if (nrow(calc) == 0) return(monthly)
+  names(calc)[2] <- label
+  out <- dplyr::arrange(dplyr::bind_rows(calc, monthly), .data$date)
+  attr(out, "backcast_months") <- nrow(calc)
+  out
 }
 
 #' Fetch the volume of PURE new loans to households for house purchase
@@ -236,7 +292,8 @@ fetch_ecb_mortgage_new_lending <- function(country3, label = "mortgage_new_lendi
                                            start_period = "1995-Q1", frequency = "Q") {
   fetch_ecb_mir_house_purchase(country3, label, data_type = "B", bus_cov = "P",
                                what = "new mortgage lending", start_period = start_period,
-                               frequency = frequency, aggregate = "sum")
+                               frequency = frequency, aggregate = "sum",
+                               extend = function(m) mir_pure_new_backcast(m, country3, label, "B", start_period))
 }
 
 ## ---------------------------------------------------------------

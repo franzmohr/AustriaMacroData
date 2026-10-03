@@ -27,10 +27,10 @@ unit_labor_cost,Earnings and Productivity,Q,mean,index 2010=100,SCA,N,5,2,3,ULCN
 long_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,GS10,FRED_MIRROR,IRLTLT01ATM156N,1990-M01,2026-M08,440
 short_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,TB3MS,FRED_MIRROR,IR3TIB01ATM156N,1989-M06,2026-M08,447
 mortgage_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,MORTGAGE30US,ECB_MIR,A2C.R.A.2250.EUR.N,2000-M01,2026-M08,320
-mortgage_rate_pure_new_loans,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,ECB_MIR,A2C.R.A.2250.EUR.P,2017-M08,2026-M08,109
+mortgage_rate_pure_new_loans,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,ECB_MIR,A2C.R.A.2250.EUR.P,2017-M01,2026-M08,116
 credit_to_private_nonfin_sector,Money and Credit,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.AT.P.A.M.770.A,1960-Q4,2025-Q4,261
 household_mortgage_loans,Money and Credit,M,mean,"EUR mn, outstanding",NSA,N,5,2,3,REALLNx,ECB_BSI,A22T.A.1.U6.2250.Z01.E,2014-M12,2026-M08,141
-mortgage_new_lending,Money and Credit,M,sum,EUR mn per period,NSA,N,5,2,2,,ECB_MIR,A2C.B.A.2250.EUR.P,2017-M08,2026-M08,109
+mortgage_new_lending,Money and Credit,M,sum,EUR mn per period,NSA,N,5,2,2,,ECB_MIR,A2C.B.A.2250.EUR.P,2014-M12,2026-M08,141
 euro_area_household_net_worth_growth,Household Balance Sheets,Q,mean,% change,NSA,F,1,0,0,TNWBSHNOx,ECB_QSA_PUB,I8,2000-Q1,2022-Q4,92
 household_credit_to_gdp,Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.AT.H.A.M.770.A,1995-Q4,2025-Q4,121
 corporate_credit_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.AT.N.A.M.770.A,1995-Q4,2025-Q4,121

@@ -1,6 +1,6 @@
 {
   "country": "AUT",
-  "generated_at": "2026-10-03T19:45:04Z",
+  "generated_at": "2026-10-03T20:25:31Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -734,7 +734,7 @@
       "label": "mortgage_rate_pure_new_loans",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 37 values within [-10, 400]."
+      "detail": "All 39 values within [-10, 400]."
     },
     {
       "label": "credit_to_private_nonfin_sector",

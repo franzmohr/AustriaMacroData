@@ -1,7 +1,7 @@
 {
   "country": "AUT",
   "frequency": "monthly",
-  "generated_at": "2026-10-03T19:45:04Z",
+  "generated_at": "2026-10-03T20:25:31Z",
   "start_period": "1960-M01",
   "concepts_published_monthly": 70,
   "concepts_quarterly_only": 40,
@@ -615,7 +615,7 @@
       "label": "mortgage_rate_pure_new_loans",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 109 values within [-10, 400]."
+      "detail": "All 116 values within [-10, 400]."
     },
     {
       "label": "household_mortgage_loans",
