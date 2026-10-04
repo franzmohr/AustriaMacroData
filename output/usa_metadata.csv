@@ -26,6 +26,8 @@ services_price_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,CUSR0000SAS,,,,,0
 unit_labor_cost,Earnings and Productivity,Q,mean,index 2010=100,SCA,N,5,2,3,ULCNFB,FRED_MIRROR,ULQEUL01USQ657S,1955-Q2,2025-Q3,282
 long_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,GS10,FRED_MIRROR,IRLTLT01USM156N,1960-M01,2026-M08,800
 short_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,TB3MS,FRED_MIRROR,IR3TIB01USM156N,1964-M06,2026-M08,746
+government_bond_yield_2y,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,FRED,GS2,1976-M06,2026-M09,604
+government_bond_yield_5y,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,GS5,FRED,GS5,1960-M01,2026-M09,801
 mortgage_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,MORTGAGE30US,,,,,0
 mortgage_rate_pure_new_loans,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,,,,,0
 mortgage_rate_oenb,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,,,,,0

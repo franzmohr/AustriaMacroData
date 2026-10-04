@@ -1,6 +1,6 @@
 {
   "country": "DEU",
-  "generated_at": "2026-10-03T21:41:29Z",
+  "generated_at": "2026-10-04T09:13:36Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -37,6 +37,11 @@
       "fred_qd_group": "Output and Income",
       "label": "inventory_change_to_gdp",
       "source": "Eurostat (namq_10_gdp) [namq_10_gdp:Q.PC_GDP.SCA.P52.DE]"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_household_disposable_income",
+      "source": "Eurostat (namq_10_gdp) [nasq_10_nf_tr:Q.CP_MEUR.RECV.S14_S15.B6G.SCA.DE deflated by namq_10_gdp:P31_S14_S15]"
     },
     {
       "fred_qd_group": "Industrial Production",
@@ -132,6 +137,16 @@
       "fred_qd_group": "Interest Rates",
       "label": "short_term_rate",
       "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IR3TIB01DEM156N] -- quarterly average of its months"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "government_bond_yield_2y",
+      "source": "Deutsche Bundesbank (term structure of listed Federal securities) [BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R02XX.R.A.A._Z._Z.A (daily, averaged within the month; end-of-month values from the monthly series before 1997-08)] -- quarterly average of its months"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "government_bond_yield_5y",
+      "source": "Deutsche Bundesbank (term structure of listed Federal securities) [BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R05XX.R.A.A._Z._Z.A (daily, averaged within the month; end-of-month values from the monthly series before 1997-08)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Interest Rates",
@@ -551,10 +566,6 @@
   ],
   "skipped": [
     {
-      "fred_qd_group": "Output and Income",
-      "label": "real_household_disposable_income"
-    },
-    {
       "fred_qd_group": "Interest Rates",
       "label": "mortgage_rate_oenb"
     },
@@ -615,8 +626,8 @@
     {
       "label": "real_household_disposable_income",
       "category": "level",
-      "status": "NO_DATA",
-      "detail": "No non-NA observations."
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 4%."
     },
     {
       "label": "industrial_production",
@@ -731,6 +742,18 @@
       "category": "percent",
       "status": "PASS",
       "detail": "All 267 values within [-10, 400]."
+    },
+    {
+      "label": "government_bond_yield_2y",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 218 values within [-10, 400]."
+    },
+    {
+      "label": "government_bond_yield_5y",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 218 values within [-10, 400]."
     },
     {
       "label": "mortgage_rate",

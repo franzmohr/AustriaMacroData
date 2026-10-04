@@ -74,7 +74,7 @@ R/                          Fetcher library used by build_panels.R,
                              live API (see header comments for verification
                              notes and corrections vs. earlier guesses)
   concept_dictionary.R      The single authored source of metadata for all
-                             112 concepts (FRED-QD group, mnemonic, notes,
+                             114 concepts (FRED-QD group, mnemonic, notes,
                              plausibility category) -- scripts/build_panels.R,
                              R/fred_qd_validation.R and R/plausibility_checks.R
                              all derive their working tables from this one
@@ -118,6 +118,8 @@ R/                          Fetcher library used by build_panels.R,
   oenb.R                    OeNB data service (Austria only): new loans for
                              housing purposes from 2009 and their new-business
                              rate from 1995, longer than the ECB MIR series
+  gov_yields.R              2- and 5-year government bond yields: Bundesbank
+                             term structure (Germany), FRED GS2/GS5 (USA)
   ec_survey.R                European Commission Business and Consumer
                              Survey -- PREFERRED consumer-confidence source
                              for EU member states (fresher than the FRED
@@ -231,9 +233,9 @@ it, and writes all of the following for that country:
 
 | File | Style | Contents |
 |---|---|---|
-| `output/<country>_monthly_panel.csv` | FRED-MD | The 72 concepts that are monthly at source, one row per month |
-| `output/<country>_panel.csv` | FRED-QD | All 112 concepts, one row per quarter: the 40 quarterly ones as published, the 72 monthly ones aggregated to quarters |
-| `output/<country>_mixed_panel.csv` | EA-MD-QD | All 112 concepts on one monthly date index, quarterly values in the first month of their quarter and `NA` in the other two |
+| `output/<country>_monthly_panel.csv` | FRED-MD | The 74 concepts that are monthly at source, one row per month |
+| `output/<country>_panel.csv` | FRED-QD | All 114 concepts, one row per quarter: the 40 quarterly ones as published, the 74 monthly ones aggregated to quarters |
+| `output/<country>_mixed_panel.csv` | EA-MD-QD | All 114 concepts on one monthly date index, quarterly values in the first month of their quarter and `NA` in the other two |
 | `output/<country>_metadata.csv` | | One row per concept: frequency, aggregation rule, unit, seasonal adjustment, class, transformation codes, source, first and last period |
 | `output/<country>_dummies_monthly.csv`, `_dummies_quarterly.csv` | | Policy-event dummies, see [Dummy variables](#dummy-variables) |
 | `output/<country>_coverage.json`, `_monthly_coverage.json` | | What resolved, from where, and the plausibility checks, per frequency |
@@ -304,7 +306,7 @@ the mixed-frequency panel it sits in the first month of its quarter with
 `NA` in the other two. A quarterly figure smoothed into three monthly cells
 is an invention that looks exactly like data once it is in a CSV.
 
-**72 of the 112 concepts are monthly at source.** The other 40 are
+**74 of the 114 concepts are monthly at source.** The other 40 are
 quarterly -- every national-accounts concept, the BIS credit series,
 government debt and the primary balance, hours worked, population, the
 change in inventories, unit labour cost, the employment rate, real house
@@ -581,7 +583,7 @@ and EC survey/geopolitical-risk concepts):
 
 ## Candidate indicators (proposed, unverified)
 
-The 112 implemented concepts are representative anchors, not a 1:1
+The 114 implemented concepts are representative anchors, not a 1:1
 replication of FRED-QD's 245 series (see Overview above -- most of those
 245 are U.S.-specific and have no cross-country equivalent at all).
 [docs/candidate_indicators_austria.csv](docs/candidate_indicators_austria.csv)
@@ -713,7 +715,10 @@ just "made the warning go away"):
   quarterly disposable-income dataflow (`DF_QNA_INC_SAV`) publishes it for
   only 11 countries (AUS, BRA, CAN, CHL, EST, GRC, HUN, LTU, LUX, LVA, ZAF),
   confirmed via zero-observation responses for USA, DEU, FRA, GBR and AUT
-  specifically -- a checked absence, not a guess.
+  specifically -- a checked absence, not a guess. Re-checked 2026-10-04:
+  that dataflow covers the total economy (`S1`) only, with no household
+  sector, so EU members now take this concept from Eurostat's quarterly
+  sector accounts instead (`nasq_10_nf_tr`, see `R/eurostat.R`).
 - **IMF**: the prototype's dataflow ID `NEA` no longer exists (IMF's March
   2025 platform restructuring renamed it to `QNEA`, agency `IMF.STA`,
   version `7.0.0`), and its indicator codes are standard SNA transaction
@@ -793,7 +798,7 @@ override exists -- see the fallback chain earlier in this README.
 | FRED-QD Group | Concept(s) | Source | Status |
 |---|---|---|---|
 | Output and Income | Real GDP, household consumption, govt. consumption, GFCF, exports, imports | **Eurostat** `namq_10_gdp` (EU members), else OECD QNA `DF_QNA` | Verified -- real current (2026-Q2) data, AUT + DEU via Eurostat, USA via OECD |
-| Output and Income | Household disposable income | OECD `DF_QNA_INC_SAV`, IMF QNEA fallback | Verified absent for USA/DEU/FRA/GBR/AUT (checked against Eurostat too: no valid quarterly NA_ITEM either); available for 11 smaller economies only (see below) |
+| Output and Income | Real household disposable income | **Eurostat** sector accounts `nasq_10_nf_tr`, B6G for S14_S15 (EU members), deflated by the `namq_10_gdp` P31_S14_S15 implicit deflator; else OECD `DF_QNA_INC_SAV` | Verified 2026-10-04 -- AUT (from 1999-Q1) + DEU (from 1999-Q1); quarterly growth matches Eurostat's own real per-capita indicator at correlation 0.998 (AUT) / 0.974 (DEU). USA: NA (the OECD dataflow has no household sector) |
 | Industrial Production | Industrial production index | OECD MEI via FRED (`{cc3}PROINDQISMEI`) | Verified -- AUT + DEU + USA |
 | Industrial Production | Industrial confidence indicator | **EC Business and Consumer Survey** (`AT.INDU`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent. Documented leading-indicator value (OECD Composite Leading Indicators input) |
 | Industrial Production | Industry survey questions (18): production, order books, stocks, price and employment expectations monthly; limiting factors, capacity, new orders, capacity utilisation, competitive position quarterly | **EC Business and Consumer Survey** (`INDU.AT.TOT.<Q>.<ANSWER>.<FREQ>`, all-surveys bundle) | Verified -- AUT; EU-only. Capacity utilisation (`QPS`) is the survey counterpart of FRED-QD's `CUMFNS` |
@@ -810,6 +815,7 @@ override exists -- see the fallback chain earlier in this README.
 | Earnings and Productivity | Unit labor cost | **Eurostat labour productivity/ULC** `namq_10_lp_ulc` (EU members, where an index-level series is published), else OECD MEI via FRED (`ULQEUL01{cc}Q657S`) | Verified -- AUT via Eurostat (hours-based index, matching FRED-QD's ULCNFB construction); DEU + USA via the OECD-mirror proxy (employment-based % change, confirmed absent in index form for Germany) |
 | Interest Rates | Long-term interest rate | OECD MEI via FRED (`IRLTLT01{cc}Q156N`) | Verified -- AUT + DEU + USA |
 | Interest Rates | Short-term (3-month interbank) rate | OECD MEI via FRED (`IR3TIB01{cc}Q156N`) | Verified -- AUT + DEU + USA |
+| Interest Rates | 2-year and 5-year government bond yields (`government_bond_yield_2y`, `_5y`) | **Deutsche Bundesbank** Svensson term structure, `BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R02XX/R05XX.R.A.A._Z._Z.A` (Germany); FRED `GS2` / `GS5` (USA) | Verified 2026-10-04 -- DEU from 1972-09 (daily values averaged within the month from 1997-08, end-of-month values before), USA from 1976-06 (2y) and 1953-04 (5y). **AUT: NA** -- no Austrian yield at a fixed 2- or 5-year maturity is published (OeNB data set 24 holds issue yields and the all-bond average only; the ECB's FM benchmarks are euro-area aggregates) |
 | Interest Rates | Mortgage rate (new business, loans to households) | **ECB** `MIR` (euro-area members) | Verified -- AUT + DE, genuinely country-specific; no source for non-euro-area countries (incl. USA -- FRED-QD's own MORTGAGE30US is US-specific too) |
 | Interest Rates | Mortgage rate on pure new loans (renegotiations excluded) | **ECB** `MIR`, `A2C.R.A.2250.EUR.P` (euro-area members) | Verified 2026-10-03 -- AUT (3.64%) + DE (4.02%) for 2026-08; published from 2017-08 for AUT, computed back to 2017-01 as new business less renegotiations |
 | Interest Rates | Mortgage rate, new business (`mortgage_rate_oenb`) | **OeNB** data service, data set 23, `VDBZSBSZN10010` (**Austria only**) | Verified 2026-10-03 -- 3.61% for 2026-08; identical to the ECB `mortgage_rate` in every month since 2000-01, and reaches back to 1995-12 |

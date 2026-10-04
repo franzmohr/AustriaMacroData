@@ -173,6 +173,7 @@ provider_display_names <- c(
   EUROSTAT_GOV = "Eurostat (gov_10q_ggnfa, government finance statistics)",
   EUROSTAT_STS = "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m)",
   OENB = "OeNB data service (Oesterreichische Nationalbank)",
+  BUNDESBANK = "Deutsche Bundesbank (term structure of listed Federal securities)",
   YAHOO_FINANCE = "Yahoo Finance",
   GPR = "Geopolitical Risk Index (Caldara-Iacoviello)",
   EUROSTAT_CHDD = "Eurostat (nrg_chdd_m, degree days)",

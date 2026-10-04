@@ -1,9 +1,9 @@
 {
   "country": "DEU",
   "frequency": "monthly",
-  "generated_at": "2026-10-03T21:41:29Z",
+  "generated_at": "2026-10-04T09:13:36Z",
   "start_period": "1960-M01",
-  "concepts_published_monthly": 72,
+  "concepts_published_monthly": 74,
   "concepts_quarterly_only": 40,
   "resolved": [
     {
@@ -75,6 +75,16 @@
       "fred_qd_group": "Interest Rates",
       "label": "short_term_rate",
       "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IR3TIB01DEM156N]"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "government_bond_yield_2y",
+      "source": "Deutsche Bundesbank (term structure of listed Federal securities) [BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R02XX.R.A.A._Z._Z.A (daily, averaged within the month; end-of-month values from the monthly series before 1997-08)]"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "government_bond_yield_5y",
+      "source": "Deutsche Bundesbank (term structure of listed Federal securities) [BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R05XX.R.A.A._Z._Z.A (daily, averaged within the month; end-of-month values from the monthly series before 1997-08)]"
     },
     {
       "fred_qd_group": "Interest Rates",
@@ -613,6 +623,18 @@
       "category": "percent",
       "status": "PASS",
       "detail": "All 800 values within [-10, 400]."
+    },
+    {
+      "label": "government_bond_yield_2y",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 650 values within [-10, 400]."
+    },
+    {
+      "label": "government_bond_yield_5y",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 650 values within [-10, 400]."
     },
     {
       "label": "mortgage_rate",

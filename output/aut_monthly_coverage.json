@@ -1,9 +1,9 @@
 {
   "country": "AUT",
   "frequency": "monthly",
-  "generated_at": "2026-10-03T21:30:48Z",
+  "generated_at": "2026-10-04T08:59:48Z",
   "start_period": "1960-M01",
-  "concepts_published_monthly": 72,
+  "concepts_published_monthly": 74,
   "concepts_quarterly_only": 40,
   "resolved": [
     {
@@ -367,7 +367,16 @@
       "source": "ERA5 reanalysis (via the Open-Meteo archive API) [ERA5, 6-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x0.340, corr 0.975 over 552 months)]"
     }
   ],
-  "skipped": [],
+  "skipped": [
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "government_bond_yield_2y"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "government_bond_yield_5y"
+    }
+  ],
   "quarterly_only": [
     {
       "fred_qd_group": "Output and Income",
@@ -614,6 +623,18 @@
       "category": "percent",
       "status": "PASS",
       "detail": "All 447 values within [-10, 400]."
+    },
+    {
+      "label": "government_bond_yield_2y",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "government_bond_yield_5y",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
     },
     {
       "label": "mortgage_rate",

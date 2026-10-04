@@ -106,6 +106,8 @@ DEU,food_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.CP01.DE
 DEU,fx_rate_to_usd,FRED_MIRROR,CCUSMA02DEM618N
 DEU,geopolitical_risk,GPR,GPRC_DEU
 DEU,global_activity,FRED,IGREA
+DEU,government_bond_yield_2y,BUNDESBANK,"BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R02XX.R.A.A._Z._Z.A (daily, averaged within the month; end-of-month values from the monthly series before 1997-08)"
+DEU,government_bond_yield_5y,BUNDESBANK,"BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R05XX.R.A.A._Z._Z.A (daily, averaged within the month; end-of-month values from the monthly series before 1997-08)"
 DEU,heating_degree_days,OPEN_METEO,"ERA5, 8-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x1.029, corr 0.999 over 552 months)"
 DEU,household_mortgage_loans,ECB_BSI,A22T.A.1.U6.2250.Z01.E
 DEU,industrial_confidence,EC_BCS,DE.INDU
@@ -147,6 +149,8 @@ USA,cpi_index,FRED,CPIAUCSL
 USA,financial_stress,ECB_CISS,"D.US.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)"
 USA,geopolitical_risk,GPR,GPRC_USA
 USA,global_activity,FRED,IGREA
+USA,government_bond_yield_2y,FRED,GS2
+USA,government_bond_yield_5y,FRED,GS5
 USA,heating_degree_days,OPEN_METEO,"ERA5, 15-city population-weighted (USA); UNCALIBRATED -- Eurostat nrg_chdd_m publishes no cross-check for this country"
 USA,industrial_production,FRED_MIRROR,USAPROINDMISMEI
 USA,long_term_rate,FRED_MIRROR,IRLTLT01USM156N

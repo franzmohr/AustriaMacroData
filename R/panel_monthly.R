@@ -233,6 +233,16 @@ fetch_monthly_concepts <- function(country, start_period, country2 = lookup_coun
                paste0(attr(ciss, "key") %||% "CISS", " (daily, averaged within the month)"))
 
   ## ===================================================================
+  ## 5b. 2- and 5-year government bond yields: the Bundesbank's curve for
+  ##     Germany, FRED's Treasury yields for the USA, NA elsewhere -- see
+  ##     R/gov_yields.R.
+  ## ===================================================================
+  for (lbl in gov_yield_concepts$label) {
+    yld <- fetch_gov_yield(country, lbl, start_period = start_period, frequency = freq)
+    if (!is.null(yld)) join_concept(yld, lbl, attr(yld, "provider"), attr(yld, "source_col"))
+  }
+
+  ## ===================================================================
   ## 6. Austria: the ATX in place of the OECD "all shares" mirror, as the
   ##    quarterly builder has always done. Monthly closes at source. And
   ##    the OeNB's new lending for housing and its rate (R/oenb.R), which
