@@ -10,7 +10,7 @@ AUT,construction_limits_none,EC_BCS,BUIL.AT.TOT.2.F1S.M
 AUT,construction_limits_other,EC_BCS,BUIL.AT.TOT.2.F6S.M
 AUT,construction_order_books,EC_BCS,BUIL.AT.TOT.3.BS.M
 AUT,construction_price_expectations,EC_BCS,BUIL.AT.TOT.5.BS.M
-AUT,construction_weather_constraint,EC_BCS,AT.BUIL weather factor
+AUT,construction_weather_constraint,EC_BCS,BUIL.AT.TOT.2.F3S.M
 AUT,consumer_confidence,EC_BCS,AT.CONS (OECD MEI mirror dropped: it measures a different statistic)
 AUT,consumer_economic_situation_expected,EC_BCS,CONS.AT.TOT.4.BS.M
 AUT,consumer_economic_situation_past,EC_BCS,CONS.AT.TOT.3.BS.M
@@ -23,17 +23,19 @@ AUT,consumer_price_expectations,EC_BCS,CONS.AT.TOT.6.BS.M
 AUT,consumer_price_trends_past,EC_BCS,CONS.AT.TOT.5.BS.M
 AUT,consumer_savings_expected,EC_BCS,CONS.AT.TOT.11.BS.M
 AUT,consumer_unemployment_expectations,EC_BCS,CONS.AT.TOT.7.BS.M
-AUT,core_cpi_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.AT
-AUT,cpi_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP00.AT
+AUT,cooling_degree_days,OPEN_METEO,"ERA5, 6-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x0.340, corr 0.975 over 552 months)"
+AUT,core_cpi_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.TOT_X_NRG_FOOD.AT
+AUT,cpi_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.TOTAL.AT
 AUT,economic_sentiment_indicator,EC_BCS,AT.ESI
 AUT,employment_expectations,EC_BCS,AT.EEI
-AUT,energy_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.NRG.AT
-AUT,financial_stress,ECB_CISS,"CISS (daily, averaged within the month)"
-AUT,food_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP01.AT
+AUT,energy_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.NRG.AT
+AUT,financial_stress,ECB_CISS,"D.AT.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)"
+AUT,food_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.CP01.AT
 AUT,fx_rate_to_usd,FRED_MIRROR,CCUSMA02ATM618N
 AUT,geopolitical_risk,GPR,GPR
 AUT,global_activity,FRED,IGREA
-AUT,household_mortgage_loans,ECB_BSI,BSI
+AUT,heating_degree_days,OPEN_METEO,"ERA5, 6-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x1.220, corr 0.996 over 552 months)"
+AUT,household_mortgage_loans,ECB_BSI,A22T.A.1.U6.2250.Z01.E
 AUT,industrial_confidence,EC_BCS,AT.INDU
 AUT,industrial_production,EUROSTAT_STS,"sts_inpr_m:M.PRD.B-D.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)"
 AUT,industry_employment_expectations,EC_BCS,INDU.AT.TOT.7.BS.M
@@ -44,7 +46,11 @@ AUT,industry_production_past,EC_BCS,INDU.AT.TOT.1.BS.M
 AUT,industry_selling_price_expectations,EC_BCS,INDU.AT.TOT.6.BS.M
 AUT,industry_stocks_finished_products,EC_BCS,INDU.AT.TOT.4.BS.M
 AUT,long_term_rate,FRED_MIRROR,IRLTLT01ATM156N
-AUT,mortgage_rate,ECB_MIR,MIR
+AUT,mortgage_new_lending,ECB_MIR,A2C.B.A.2250.EUR.P
+AUT,mortgage_new_lending_oenb,OENB,100140002/VDBMSKNWOHNBAU
+AUT,mortgage_rate,ECB_MIR,A2C.R.A.2250.EUR.N
+AUT,mortgage_rate_oenb,OENB,23/VDBZSBSZN10010
+AUT,mortgage_rate_pure_new_loans,ECB_MIR,A2C.R.A.2250.EUR.P
 AUT,oil_price,FRED,WTISPLC
 AUT,real_effective_exchange_rate,FRED_MIRROR,CCRETT01ATM661N
 AUT,retail_business_activity_expected,EC_BCS,RETA.AT.TOT.4.BS.M
@@ -61,42 +67,91 @@ AUT,services_demand_expected,EC_BCS,SERV.AT.TOT.3.BS.M
 AUT,services_demand_past,EC_BCS,SERV.AT.TOT.2.BS.M
 AUT,services_employment_expectations,EC_BCS,SERV.AT.TOT.5.BS.M
 AUT,services_price_expectations,EC_BCS,SERV.AT.TOT.6.BS.M
-AUT,services_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.SERV.AT
-AUT,share_price_index,FRED_MIRROR,SPASTT01ATM661N
+AUT,services_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.SERV.AT
+AUT,share_price_index,YAHOO_FINANCE,^ATX (monthly close) (OECD MEI mirror dropped: it measures a different statistic)
 AUT,short_term_rate,FRED_MIRROR,IR3TIB01ATM156N
 AUT,unemployment_rate,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.AT (OECD MEI mirror fills earlier months unchanged, same units)"
+DEU,construction_activity_past,EC_BCS,BUIL.DE.TOT.1.BS.M
 DEU,construction_confidence,EC_BCS,DE.BUIL
-DEU,construction_weather_constraint,EC_BCS,DE.BUIL weather factor
+DEU,construction_employment_expectations,EC_BCS,BUIL.DE.TOT.4.BS.M
+DEU,construction_limits_demand,EC_BCS,BUIL.DE.TOT.2.F2S.M
+DEU,construction_limits_financial,EC_BCS,BUIL.DE.TOT.2.F7S.M
+DEU,construction_limits_labour,EC_BCS,BUIL.DE.TOT.2.F4S.M
+DEU,construction_limits_material_equipment,EC_BCS,BUIL.DE.TOT.2.F5S.M
+DEU,construction_limits_none,EC_BCS,BUIL.DE.TOT.2.F1S.M
+DEU,construction_limits_other,EC_BCS,BUIL.DE.TOT.2.F6S.M
+DEU,construction_order_books,EC_BCS,BUIL.DE.TOT.3.BS.M
+DEU,construction_price_expectations,EC_BCS,BUIL.DE.TOT.5.BS.M
+DEU,construction_weather_constraint,EC_BCS,BUIL.DE.TOT.2.F3S.M
 DEU,consumer_confidence,EC_BCS,DE.CONS (OECD MEI mirror dropped: it measures a different statistic)
-DEU,core_cpi_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.DE
-DEU,cpi_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP00.DE
+DEU,consumer_economic_situation_expected,EC_BCS,CONS.DE.TOT.4.BS.M
+DEU,consumer_economic_situation_past,EC_BCS,CONS.DE.TOT.3.BS.M
+DEU,consumer_financial_situation_expected,EC_BCS,CONS.DE.TOT.2.BS.M
+DEU,consumer_financial_situation_past,EC_BCS,CONS.DE.TOT.1.BS.M
+DEU,consumer_household_finances_now,EC_BCS,CONS.DE.TOT.12.BS.M
+DEU,consumer_major_purchases_expected,EC_BCS,CONS.DE.TOT.9.BS.M
+DEU,consumer_major_purchases_now,EC_BCS,CONS.DE.TOT.8.BS.M
+DEU,consumer_price_expectations,EC_BCS,CONS.DE.TOT.6.BS.M
+DEU,consumer_price_trends_past,EC_BCS,CONS.DE.TOT.5.BS.M
+DEU,consumer_savings_expected,EC_BCS,CONS.DE.TOT.11.BS.M
+DEU,consumer_unemployment_expectations,EC_BCS,CONS.DE.TOT.7.BS.M
+DEU,cooling_degree_days,OPEN_METEO,"ERA5, 8-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x0.698, corr 0.971 over 552 months)"
+DEU,core_cpi_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.TOT_X_NRG_FOOD.DE
+DEU,cpi_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.TOTAL.DE
 DEU,economic_sentiment_indicator,EC_BCS,DE.ESI
 DEU,employment_expectations,EC_BCS,DE.EEI
-DEU,energy_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.NRG.DE
-DEU,financial_stress,ECB_CISS,"CISS (daily, averaged within the month)"
-DEU,food_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.CP01.DE
+DEU,energy_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.NRG.DE
+DEU,financial_stress,ECB_CISS,"D.DE.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)"
+DEU,food_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.CP01.DE
 DEU,fx_rate_to_usd,FRED_MIRROR,CCUSMA02DEM618N
 DEU,geopolitical_risk,GPR,GPRC_DEU
 DEU,global_activity,FRED,IGREA
-DEU,household_mortgage_loans,ECB_BSI,BSI
+DEU,government_bond_yield_2y,BUNDESBANK,"BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R02XX.R.A.A._Z._Z.A (daily, averaged within the month; end-of-month values from the monthly series before 1997-08)"
+DEU,government_bond_yield_5y,BUNDESBANK,"BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R05XX.R.A.A._Z._Z.A (daily, averaged within the month; end-of-month values from the monthly series before 1997-08)"
+DEU,heating_degree_days,OPEN_METEO,"ERA5, 8-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x1.029, corr 0.999 over 552 months)"
+DEU,household_mortgage_loans,ECB_BSI,A22T.A.1.U6.2250.Z01.E
 DEU,industrial_confidence,EC_BCS,DE.INDU
 DEU,industrial_production,EUROSTAT_STS,"sts_inpr_m:M.PRD.B-D.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)"
+DEU,industry_employment_expectations,EC_BCS,INDU.DE.TOT.7.BS.M
+DEU,industry_export_order_books,EC_BCS,INDU.DE.TOT.3.BS.M
+DEU,industry_order_books,EC_BCS,INDU.DE.TOT.2.BS.M
+DEU,industry_production_expectations,EC_BCS,INDU.DE.TOT.5.BS.M
+DEU,industry_production_past,EC_BCS,INDU.DE.TOT.1.BS.M
+DEU,industry_selling_price_expectations,EC_BCS,INDU.DE.TOT.6.BS.M
+DEU,industry_stocks_finished_products,EC_BCS,INDU.DE.TOT.4.BS.M
 DEU,long_term_rate,FRED_MIRROR,IRLTLT01DEM156N
-DEU,mortgage_rate,ECB_MIR,MIR
+DEU,mortgage_new_lending,ECB_MIR,A2C.B.A.2250.EUR.P
+DEU,mortgage_rate,ECB_MIR,A2C.R.A.2250.EUR.N
+DEU,mortgage_rate_pure_new_loans,ECB_MIR,A2C.R.A.2250.EUR.P
 DEU,oil_price,FRED,WTISPLC
 DEU,real_effective_exchange_rate,FRED_MIRROR,CCRETT01DEM661N
+DEU,retail_business_activity_expected,EC_BCS,RETA.DE.TOT.4.BS.M
+DEU,retail_business_activity_past,EC_BCS,RETA.DE.TOT.1.BS.M
 DEU,retail_confidence,EC_BCS,DE.RETA
+DEU,retail_employment_expectations,EC_BCS,RETA.DE.TOT.5.BS.M
+DEU,retail_orders_expected,EC_BCS,RETA.DE.TOT.3.BS.M
+DEU,retail_price_expectations,EC_BCS,RETA.DE.TOT.6.BS.M
 DEU,retail_sales_volume,EUROSTAT_STS,"sts_trtu_m:M.VOL_SLS.G47.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)"
+DEU,retail_stocks,EC_BCS,RETA.DE.TOT.2.BS.M
+DEU,services_business_situation_past,EC_BCS,SERV.DE.TOT.1.BS.M
 DEU,services_confidence,EC_BCS,DE.SERV
-DEU,services_price_index,EUROSTAT_HICP,prc_hicp_midx:M.I05.SERV.DE
+DEU,services_demand_expected,EC_BCS,SERV.DE.TOT.3.BS.M
+DEU,services_demand_past,EC_BCS,SERV.DE.TOT.2.BS.M
+DEU,services_employment_expectations,EC_BCS,SERV.DE.TOT.5.BS.M
+DEU,services_price_expectations,EC_BCS,SERV.DE.TOT.6.BS.M
+DEU,services_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.SERV.DE
 DEU,share_price_index,FRED_MIRROR,SPASTT01DEM661N
 DEU,short_term_rate,FRED_MIRROR,IR3TIB01DEM156N
 DEU,unemployment_rate,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.DE (OECD MEI mirror fills earlier months unchanged, same units)"
 USA,consumer_confidence,FRED_MIRROR,CSCICP03USM665S
+USA,cooling_degree_days,OPEN_METEO,"ERA5, 15-city population-weighted (USA); UNCALIBRATED -- Eurostat nrg_chdd_m publishes no cross-check for this country"
 USA,cpi_index,FRED,CPIAUCSL
-USA,financial_stress,ECB_CISS,"CISS (daily, averaged within the month)"
+USA,financial_stress,ECB_CISS,"D.US.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)"
 USA,geopolitical_risk,GPR,GPRC_USA
 USA,global_activity,FRED,IGREA
+USA,government_bond_yield_2y,FRED,GS2
+USA,government_bond_yield_5y,FRED,GS5
+USA,heating_degree_days,OPEN_METEO,"ERA5, 15-city population-weighted (USA); UNCALIBRATED -- Eurostat nrg_chdd_m publishes no cross-check for this country"
 USA,industrial_production,FRED_MIRROR,USAPROINDMISMEI
 USA,long_term_rate,FRED_MIRROR,IRLTLT01USM156N
 USA,oil_price,FRED,WTISPLC

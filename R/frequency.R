@@ -72,6 +72,29 @@ aggregate_to <- function(df, value_col, frequency = "Q") {
   }
 }
 
+#' Sum a monthly FLOW into quarters, keeping complete quarters only
+#'
+#' The counterpart of `monthly_to_quarterly()` for a series whose monthly
+#' figures add up to the quarter's, such as a volume of new loans. A
+#' quarter with fewer than three months is dropped rather than summed
+#' over the months it has: the latest quarter is usually incomplete, and
+#' a partial sum there would read as a collapse that never happened.
+monthly_to_quarterly_sum <- function(df, value_col) {
+  df %>%
+    dplyr::filter(!is.na(.data[[value_col]])) %>%
+    dplyr::mutate(
+      year = as.integer(format(.data$date, "%Y")),
+      q = (as.integer(format(.data$date, "%m")) - 1) %/% 3 + 1,
+      month = format(.data$date, "%m"),
+      date = as.Date(sprintf("%d-%02d-01", .data$year, (.data$q - 1) * 3 + 1))
+    ) %>%
+    dplyr::group_by(.data$date) %>%
+    dplyr::summarise(n_months = dplyr::n_distinct(.data$month),
+                     !!value_col := sum(.data[[value_col]]), .groups = "drop") %>%
+    dplyr::filter(.data$n_months == 3) %>%
+    dplyr::select("date", dplyr::all_of(value_col))
+}
+
 #' The default first period of a panel at a given frequency
 #'
 #' "1995-Q1" and "1995-M01" are the same instant, but a fetcher's

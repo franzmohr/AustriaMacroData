@@ -29,10 +29,10 @@
 ##   P6       - Exports of goods and services                 -> real_exports
 ##   P7       - Imports of goods and services                 -> real_imports
 ## No quarterly household disposable income code validates against this
-## dataflow (B6G and its variants are whole-economy / per-capita / growth-
-## rate only) -- the same genuine gap already documented in R/oecd.R, not
-## solved by switching sources; real_household_disposable_income is never
-## attempted here and always falls through to OECD/IMF.
+## dataflow ("B6G" returns INVALID_QUERY_DIMENSION_VALUE). Household
+## disposable income lives in the sector accounts, nasq_10_nf_tr, instead
+## -- see `fetch_eurostat_disposable_income()` below, which
+## `fetch_eurostat_anchors()` calls alongside the six rows here.
 ##
 ## GEO uses the same 2-letter codes as everywhere else in this project
 ## EXCEPT Greece ("EL", not "GR") -- reuses R/country_codes.R's
@@ -103,8 +103,7 @@ fetch_eurostat_series_impl <- function(geo, na_item, label, s_adj, unit, start_p
 #'
 #' `labels`, if given, restricts which concepts are attempted (mirrors
 #' R/oecd.R's `fetch_oecd_anchors(..., labels =)`). Returns a tibble with
-#' one `period` column plus one column per concept that returned data
-#' (household disposable income is never included -- see header comment),
+#' one `period` column plus one column per concept that returned data,
 #' or NULL if the country isn't an EU member or nothing resolved.
 fetch_eurostat_anchors <- function(country3, start_period = "1995-Q1", labels = NULL) {
   if (!country3 %in% eu_member_countries) return(NULL)
@@ -113,13 +112,17 @@ fetch_eurostat_anchors <- function(country3, start_period = "1995-Q1", labels = 
 
   concepts <- eurostat_anchor_concepts
   if (!is.null(labels)) concepts <- concepts[concepts$label %in% labels, ]
-  if (nrow(concepts) == 0) return(NULL)
 
   results <- purrr::pmap(
     list(concepts$na_item, concepts$label),
     function(na_item, label) fetch_eurostat_series(geo, na_item, label, start_period = start_period)
   )
   names(results) <- concepts$label
+
+  if (is.null(labels) || "real_household_disposable_income" %in% labels) {
+    results[["real_household_disposable_income"]] <-
+      fetch_eurostat_disposable_income(geo, start_period = start_period)
+  }
   results <- purrr::compact(results)
 
   if (length(results) == 0) return(NULL)
@@ -127,27 +130,119 @@ fetch_eurostat_anchors <- function(country3, start_period = "1995-Q1", labels = 
 }
 
 ## ---------------------------------------------------------------
-## Harmonised Index of Consumer Prices (prc_hicp_midx), EU-specific
+## Real household disposable income, from the quarterly sector accounts
+##
+## STATUS: VERIFIED 2026-10-04 against Eurostat's SDMX 2.1 API, real 200
+## responses for AT (1999-Q1 to 2026-Q1) and DE (1999-Q1 to 2026-Q2).
+##
+## WHY: OECD's DF_QNA_INC_SAV, the only OECD source tried until then,
+## carries the total economy only (SECTOR = S1, no household sector) and
+## returns NoRecordsFound for AUT and DEU, so the column was empty for
+## both. Its availableconstraint lists no B6G for any sector at all.
+##
+## Nominal: nasq_10_nf_tr, key FREQ.UNIT.DIRECT.SECTOR.NA_ITEM.S_ADJ.GEO =
+## Q.CP_MEUR.RECV.S14_S15.B6G.SCA -- gross disposable income of
+## households and NPISH, current prices, seasonally and calendar
+## adjusted. B6G is a balancing item, so DIRECT = RECV and PAID carry
+## identical values; RECV is used.
+##
+## Deflator: the implicit deflator of household and NPISH final
+## consumption, namq_10_gdp P31_S14_S15 at CP_MEUR / CLV20_MEUR -- the
+## same deflator Eurostat uses for its own real household income
+## indicator (nasq_10_ki B6G_R_HAB), and the counterpart of FRED-QD's
+## DPIC96, which deflates by the PCE price index. The result is in
+## million euro at chain-linked 2020 prices, like the other anchors.
+##
+## Sector: S14_S15 includes NPISH, as FRED's personal income does;
+## households alone (S14) are not published quarterly in this dataflow.
+## ---------------------------------------------------------------
+
+eurostat_disposable_income_key <- "Q.CP_MEUR.RECV.S14_S15.B6G.SCA"
+eurostat_consumption_deflator_item <- "P31_S14_S15"
+
+#' Fetch real household disposable income for one EU country (2-letter
+#' Eurostat geo), or NULL if any of its three inputs is unavailable
+fetch_eurostat_disposable_income <- function(geo, start_period = "1995-Q1") {
+  label <- "real_household_disposable_income"
+  key <- paste(eurostat_disposable_income_key, geo, sep = ".")
+  url <- sprintf(
+    "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/nasq_10_nf_tr/%s?format=SDMX-CSV&startPeriod=%s",
+    key, start_period
+  )
+
+  txt <- fetch_text(url)
+  if (is.null(txt)) {
+    warning(sprintf("[%s] Eurostat fetch failed -- URL: %s", label, url))
+    return(NULL)
+  }
+  if (stringr::str_detect(txt, stringr::regex("S:Fault|faultstring", ignore_case = TRUE))) {
+    warning(sprintf("[%s] Eurostat has no observations for key '%s'", label, key))
+    return(NULL)
+  }
+  nominal <- parse_time_value_csv(txt, "nominal")
+
+  item <- eurostat_consumption_deflator_item
+  cp  <- fetch_eurostat_series(geo, item, "cp",  unit = "CP_MEUR",    start_period = start_period)
+  clv <- fetch_eurostat_series(geo, item, "clv", unit = eurostat_unit, start_period = start_period)
+  if (is.null(nominal) || is.null(cp) || is.null(clv)) return(NULL)
+
+  nominal %>%
+    dplyr::inner_join(cp, by = "period") %>%
+    dplyr::inner_join(clv, by = "period") %>%
+    dplyr::transmute(period = .data$period,
+                     !!label := .data$nominal / (.data$cp / .data$clv)) %>%
+    dplyr::filter(!is.na(.data[[label]])) %>%
+    dplyr::arrange(.data$period)
+}
+
+## ---------------------------------------------------------------
+## Harmonised Index of Consumer Prices (PRC_HICP_MINR), EU-specific
 ## override for `cpi_index` -- fresher than the frozen OECD-MEI-via-FRED
 ## CPI mirror in R/fred_mirror.R.
 ##
-## STATUS: VERIFIED 2026-08-30 against Eurostat's SDMX 2.1 API, real 200
-## response with current data for AT. Dimension order (4 key segments
-## before TIME_PERIOD) confirmed via a live structure query
-## (datastructure/ESTAT/prc_hicp_midx): FREQ.UNIT.COICOP.GEO.
+## STATUS: VERIFIED 2026-10-03 against Eurostat's SDMX 2.1 API, real 200
+## responses with data through 2026-09 for AT and DE. Dimension order (4
+## key segments before TIME_PERIOD) confirmed via a live structure query
+## (dataflow/ESTAT/PRC_HICP_MINR/latest?references=descendants):
+## FREQ.UNIT.COICOP18.GEO.
 ##
-## UNIT: the shared Eurostat UNIT codelist has 700+ entries, but only a
-## handful validate for THIS dataflow -- the same "shared codelist,
-## narrow per-dataflow subset" trap already documented above for
-## NA_ITEM. Querying with UNIT left as a wildcard (confirmed live) shows
-## the values that actually return data are index-base-year variants
-## (I05, I96, I15, ...), NOT the "HICP2015"/"HICP2025"-named codes that
-## look like the obvious choice from the codelist's own labels (those
-## return HTTP 400 INVALID_QUERY_DIMENSION_VALUE). "I05" (Index,
-## 2005=100) is used here, confirmed to return a complete, gap-free
-## series back to well before this project's earliest anchor concepts.
+## WHAT WAS WRONG (found 2026-10-03): until then this module read
+## prc_hicp_midx with UNIT="I05" (index 2005=100), and every HICP concept
+## in every panel stopped at 2025-12 while the other monthly series ran to
+## 2026-08/09. Eurostat moved the HICP to ECOICOP ver.2 and the 2025=100
+## base in early 2026 and froze the old dataflow: its own dataflow list
+## (dataflow/ESTAT/all) now labels it "HICP - monthly data (index)
+## (1996-2025)", and both of its index units (I05, I15) end at 2025-12 for
+## AT and DE. UNIT="I25" is rejected there as an invalid dimension value --
+## the new base was never added to the old dataflow.
 ##
-## COICOP: "CP00" = All-items HICP -- the closest match to FRED-QD's
+## HOW IT WAS FOUND: the same dataflow list shows the successor,
+## PRC_HICP_MINR ("HICP - ECOICOP ver.2 - indices and rates of change,
+## monthly data"). Its structure query gives a UNIT codelist of exactly
+## I25, I15 and three rates of change, and a COICOP18 dimension in place
+## of COICOP. Data queries, each a real 200 response for both AT and DE:
+##   I25 (Index, 2025=100) -- 1996-01 through 2026-09 (2026-08 for CP01);
+##   I15 (Index, 2015=100) -- also published, but one month behind I25.
+## So I25 is used. Two traps for anyone extending this:
+##   - All-items is COICOP18="TOTAL". The old "CP00" is not in the new
+##     codelist and returns a SOAP Fault (HTTP 400) for both units.
+##   - The latest month may be a flash estimate, OBS_FLAG "e" (2026-09
+##     for TOTAL/TOT_X_NRG_FOOD/NRG/SERV; food has no flash). It is kept,
+##     like the other flash-estimated monthly series, and is revised at
+##     the next release.
+##
+## NO SPLICE NEEDED: the new dataflow carries the whole history at the new
+## base, back to the same first month the old one had (1996-01; 1999-12
+## for AT core and services), so there is no earlier old-base history to
+## rescale onto it with splice_prefer(). Compared month by month over
+## 1996-2025, the I25 series is the I05 series rebased: the ratio is
+## constant to 3-4 digits for headline, core, energy and services. Food
+## (CP01) differs by up to 0.3 percentage points in a monthly rate,
+## because ECOICOP ver.2 classifies some food items differently. Eurostat
+## flags the history before 2017 "d" (definition differs, a back-cast to
+## the new classification) and 2017-01 "b" (break in series).
+##
+## COICOP: "TOTAL" = All-items HICP -- the closest match to FRED-QD's
 ## CPIAUCSL (overall CPI, not a COICOP sub-category breakdown).
 ##
 ## Frequency: monthly, aggregated to quarterly by simple mean (same
@@ -156,29 +251,25 @@ fetch_eurostat_anchors <- function(country3, start_period = "1995-Q1", labels = 
 ##
 ## MOTIVATION: FRED's OECD-MEI mirror (`CPALTT01{cc2}Q657N`, used for
 ## every country including the US) was confirmed live 2026-08-30 to be
-## frozen at 2023-Q4 for Austria -- this Eurostat series extends to
-## 2025-Q4 for the same country, a ~2-year improvement for EU member
-## states. Not available for non-EU countries (e.g. the US), which keep
-## the FRED-mirror value; scripts/build_country_panel.R tries this
-## FIRST for EU members and falls back to the FRED mirror on failure,
-## the same override pattern as consumer_confidence and share_price_index.
+## frozen at 2023-Q4 for Austria. Not available for non-EU countries
+## (e.g. the US), which keep their national index; R/panel_monthly.R
+## tries this FIRST for EU members, the same override pattern as
+## consumer_confidence and share_price_index.
 ##
-## EXTENDED 2026-08-30: `fetch_eurostat_hicp()` gained a `coicop`
-## parameter so the same verified dataflow/key can also pull the
-## standard sub-category breakdown of headline inflation -- core
-## (excl. energy/food), food, energy, and services -- confirmed live for
-## AT and DE with the same UNIT="I05": TOT_X_NRG_FOOD, CP01, NRG, SERV
-## respectively (see `eurostat_hicp_subcategories` below). These give
-## the Prices group its first sub-index breakdown; core inflation
-## (TOT_X_NRG_FOOD) is the closest match to FRED-QD's CPILFESL. Food and
-## energy have no direct FRED-QD mnemonic (FRED-QD's own list has no
-## standalone CPI-food or CPI-energy series); services maps to
-## CUSR0000SAS.
+## SUB-CATEGORIES: `fetch_eurostat_hicp()`'s `coicop` parameter pulls the
+## standard breakdown of headline inflation -- core (excl. energy/food),
+## food, energy, and services. The codes are unchanged in COICOP18 and
+## were re-confirmed live 2026-10-03 against PRC_HICP_MINR/I25 for AT and
+## DE: TOT_X_NRG_FOOD, CP01, NRG, SERV (see `eurostat_hicp_subcategories`
+## below). Core inflation (TOT_X_NRG_FOOD) is the closest match to
+## FRED-QD's CPILFESL. Food and energy have no direct FRED-QD mnemonic
+## (FRED-QD's own list has no standalone CPI-food or CPI-energy series);
+## services maps to CUSR0000SAS.
 ## ---------------------------------------------------------------
 
-eurostat_hicp_dataflow <- "prc_hicp_midx"
-eurostat_hicp_unit <- "I05"
-eurostat_hicp_coicop <- "CP00"
+eurostat_hicp_dataflow <- "prc_hicp_minr"
+eurostat_hicp_unit <- "I25"
+eurostat_hicp_coicop <- "TOTAL"
 
 eurostat_hicp_subcategories <- tibble::tribble(
   ~label,                 ~coicop,

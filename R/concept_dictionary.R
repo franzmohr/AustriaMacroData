@@ -1,6 +1,6 @@
 ## ---------------------------------------------------------------
 ## concept_dictionary.R -- the single authored source of metadata for
-## every one of this project's 108 FRED-QD-style concepts
+## every one of this project's 114 FRED-QD-style concepts
 ##
 ## MOTIVATION: before this file existed, the same concept-level facts
 ## (which FRED-QD group a concept belongs to, its FRED-QD mnemonic, its
@@ -97,7 +97,7 @@ concept_dictionary <- tibble::tribble(
     "Change in inventories as a PERCENT OF GDP (both nominal), signed -- not a real level like the other expenditure components, because Eurostat publishes no chain-linked volume for it (a signed flow that crosses zero, for which chain-linked volumes are not additive; see R/inventories.R). EU member states: Eurostat namq_10_gdp, NA_ITEM=P52 (excluding valuables, P53), UNIT=PC_GDP, seasonally and calendar adjusted -- the same construction as FRED-QD's A014RE1Q156NBEA, except that P52 covers inventories of all sectors where FRED-QD's covers private inventories only. From 1995 for Austria (1991 for Germany). Outside the EU only the United States resolves (FRED-QD's own series); NA elsewhere.",
     "balance", FALSE,
   "real_household_disposable_income",      "Output and Income",              "DPIC96",          NA,
-    "OECD's quarterly household disposable income (DF_QNA_INC_SAV) is published for only 11 countries (AUS, BRA, CAN, CHL, EST, GRC, HUN, LTU, LUX, LVA, ZAF); absent for most others, confirmed absent for DEU/AUT/USA/FRA/GBR.",
+    "EU member states: Eurostat quarterly sector accounts, nasq_10_nf_tr B6G for households and NPISH (S14_S15), current prices, seasonally and calendar adjusted, deflated by the implicit deflator of household and NPISH final consumption (namq_10_gdp P31_S14_S15, CP_MEUR / CLV20_MEUR), so million euro at chain-linked 2020 prices -- the construction of FRED-QD's DPIC96, which deflates personal disposable income (also including NPISH) by the PCE price index. From 1999-Q1 for Austria and Germany; its quarterly growth matches Eurostat's own real per-capita indicator (nasq_10_ki B6G_R_HAB_GR) at correlation 0.998 for Austria and 0.974 for Germany, the gap being population growth (checked live 2026-10-04). Austria's 2022-Q3/Q4 swing (+6.4%, -5.4% q/q) is real: one-off energy and anti-inflation transfers. Outside the EU the OECD's DF_QNA_INC_SAV is tried, but it carries the total economy (S1) only, so it is NA for most countries, including the USA.",
     "level", FALSE,
   "industrial_production",                 "Industrial Production",          "INDPRO",          NA,
     "EU member states: sourced from Eurostat short-term statistics (sts_inpr_q, NACE B-D, seasonally and calendar adjusted, index 2021 = 100), NOT the OECD-MEI-via-FRED mirror used elsewhere -- see R/eurostat_sts.R. The mirror is frozen: AUTPROINDQISMEI was confirmed live 2026-09-25 to stop at 2024-Q1 while every other concept in the panel ran to the current quarter, which silently truncates any model estimated on it. The mirror earlier history (back to 1955 for Austria) is spliced on, rescaled to the Eurostat base at the overlap. Read that spliced history with care: over the 334 months the two share they correlate 0.896 in log differences, so they are close relatives rather than the same series.",
@@ -140,7 +140,7 @@ concept_dictionary <- tibble::tribble(
     "EU member states only: European Commission Business and Consumer Survey, Retail Trade Confidence Indicator (\"AT.RETA\") -- see R/ec_survey.R. No FRED-mirror fallback exists for this concept.",
     "balance", TRUE,
   "cpi_index",                             "Prices",                         "CPIAUCSL",        NA,
-    "EU member states: sourced from Eurostat's Harmonised Index of Consumer Prices (HICP, all-items, prc_hicp_midx), NOT the frozen OECD-MEI-via-FRED mirror used for non-EU countries -- see R/eurostat.R. Confirmed live 2026-08-30 to extend to 2025-Q4 for Austria, versus the FRED mirror's confirmed freeze at 2023-Q4 -- a roughly 2-year improvement. HICP's basket/methodology differs somewhat from the US CPI-U basket underlying FRED-QD's CPIAUCSL, but is the standard EU consumer-price measure. Countries outside the EU take their own national index instead (R/fred_mirror.R national_cpi_index; CPIAUCSL for the United States) rather than the OECD MEI mirror, whose only CPI series are GROWTH RATES -- CPALTT01{cc2}Q657N runs -2.83 to 3.95 for the US. Until 2026-09-25 this column therefore held an index for EU members and a percent change for everyone else; it is one statistic everywhere now, which is why its plausibility category is the strict 'level' again rather than a band wide enough for both.",
+    "EU member states: sourced from Eurostat's Harmonised Index of Consumer Prices (HICP, all-items, prc_hicp_minr at 2025=100; the older prc_hicp_midx was frozen at 2025-12 when Eurostat rebased in 2026), NOT the frozen OECD-MEI-via-FRED mirror used for non-EU countries -- see R/eurostat.R. Confirmed live 2026-10-03 to run to 2026-09 for Austria and Germany, versus the FRED mirror's confirmed freeze at 2023-Q4. HICP's basket/methodology differs somewhat from the US CPI-U basket underlying FRED-QD's CPIAUCSL, but is the standard EU consumer-price measure. Countries outside the EU take their own national index instead (R/fred_mirror.R national_cpi_index; CPIAUCSL for the United States) rather than the OECD MEI mirror, whose only CPI series are GROWTH RATES -- CPALTT01{cc2}Q657N runs -2.83 to 3.95 for the US. Until 2026-09-25 this column therefore held an index for EU members and a percent change for everyone else; it is one statistic everywhere now, which is why its plausibility category is the strict 'level' again rather than a band wide enough for both.",
     "level", TRUE,
   "core_cpi_index",                        "Prices",                         "CPILFESL",        NA,
     "Eurostat HICP excluding energy, food, alcohol and tobacco (COICOP=TOT_X_NRG_FOOD) -- the standard ECB/Eurostat \"core inflation\" measure. EU member states only; no FRED-mirror fallback exists for this concept.",
@@ -166,9 +166,24 @@ concept_dictionary <- tibble::tribble(
   "short_term_rate",                       "Interest Rates",                 "TB3MS",           NA,
     NA,
     "percent", TRUE,
+  "government_bond_yield_2y",              "Interest Rates",                 NA,
+    "No FRED-QD equivalent: FRED-QD's Treasury yields are GS1, GS5 and GS10, with no 2-year maturity. The US value is FRED's GS2, the 2-year Treasury constant-maturity yield, monthly average of daily values, from 1976-06.",
+    "Germany: Deutsche Bundesbank, zero-coupon yield on listed Federal securities at a residual maturity of 2.0 years (Svensson term structure, BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R02XX.R.A.A._Z._Z.A), averaged over the month's daily values from 1997-08 and end-of-month values back to 1972-09. NA for Austria and every other country: no Austrian yield at a fixed 2-year maturity is published (the OeNB carries issue yields and an all-bond average only, the ECB a euro-area aggregate only) -- see R/gov_yields.R.",
+    "percent", TRUE,
+  "government_bond_yield_5y",              "Interest Rates",                 "GS5",             NA,
+    "Germany: Deutsche Bundesbank, zero-coupon yield on listed Federal securities at a residual maturity of 5.0 years (Svensson term structure, BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R05XX.R.A.A._Z._Z.A), averaged over the month's daily values from 1997-08 and end-of-month values back to 1972-09. A zero-coupon yield, where FRED-QD's GS5 is a par (constant-maturity) yield; at five years the two differ by a few basis points. United States: GS5 itself, from 1953-04. NA for Austria and every other country -- see government_bond_yield_2y.",
+    "percent", TRUE,
   "mortgage_rate",                         "Interest Rates",                 "MORTGAGE30US",
     "FRED-QD's MORTGAGE30US is a 30-year FIXED-rate average; the ECB series used for euro-area countries is a new-business AAR/NDER rate across all initial rate fixation periods (fixed and variable combined) -- related but not an identical construction.",
     "ECB MFI Interest Rate Statistics (MIR): new-business loans to households for house purchase, all initial rate fixation periods combined -- genuinely country-specific (unlike euro_area_household_net_worth_growth above), available for euro-area members only.",
+    "percent", TRUE,
+  "mortgage_rate_pure_new_loans",          "Interest Rates",                 NA,
+    "No FRED-QD equivalent: MORTGAGE30US (see mortgage_rate) is a survey rate for one fixed-rate product, and the US has no published split of mortgage pricing into new loans and renegotiations.",
+    "ECB MFI Interest Rate Statistics (MIR), key A2C.R.A.2250.EUR.P: the rate on PURE new loans to households for house purchase (IR_BUS_COV=P), i.e. mortgage_rate without renegotiations of existing loans, all initial rate fixation periods combined. Euro-area members only. Published from 2017-08 for Austria; earlier months back to 2017-01 are computed from the MIR identity, r_P = (r_N * N - r_R * R) / (N - R), new business less renegotiations, which reproduces every published month to within 0.012 pp -- see R/ecb.R.",
+    "percent", TRUE,
+  "mortgage_rate_oenb",                    "Interest Rates",                 NA,
+    "No FRED-QD equivalent beyond mortgage_rate's MORTGAGE30US: this is the same new-business rate as mortgage_rate, from the Austrian national central bank, and exists for Austria only.",
+    "OeNB data service, data set 23, position VDBZSBSZN10010: interest rate on new business in loans to households for housing purposes, all initial rate fixation periods combined, % p.a. AUSTRIA ONLY (NA for every other country). From 2000-01 on it is the ECB's mortgage_rate (MIR A2C.R.A.2250.EUR.N) to the last decimal in every month; it reaches back to 1995-12, before the harmonised MIR statistics -- see R/oenb.R.",
     "percent", TRUE,
   "credit_to_private_nonfin_sector",       "Money and Credit",               NA,
     "FRED-QD tracks credit by purpose/level (BUSLOANSx, TOTALSLx, REALLNx, ...), not one combined %GDP series like BIS's.",
@@ -177,6 +192,14 @@ concept_dictionary <- tibble::tribble(
   "household_mortgage_loans",              "Money and Credit",               "REALLNx",
     "FRED-QD's REALLNx is REAL (Core-PCE-deflated) dollars; the ECB BSI series used for euro-area countries is a NOMINAL euro-denominated stock of outstanding MFI loans to households for house purchase -- related but not an identical construction, and not deflated here.",
     "ECB MFI Balance Sheet Items (BSI): outstanding amounts (stocks, millions of EUR) of loans to households for house purchase, domestic counterpart -- genuinely country-specific (unlike euro_area_household_net_worth_growth), available for euro-area members only. Same purpose category as mortgage_rate, but a different ECB dataflow with an entirely different dimension structure -- see R/ecb.R.",
+    "level", TRUE,
+  "mortgage_new_lending",                  "Money and Credit",               NA,
+    "No FRED-QD equivalent: FRED-QD tracks credit as outstanding stocks (REALLNx and the like), and no US source publishes a monthly flow of new mortgage loans comparable to the ECB's.",
+    "ECB MFI Interest Rate Statistics (MIR), key A2C.B.A.2250.EUR.P: the business volume of PURE new loans to households for house purchase (renegotiations excluded), millions of EUR, NOMINAL and not seasonally adjusted. A FLOW, so the quarterly panel holds the SUM of the quarter's three months, and only complete quarters, where every other monthly concept is averaged. The flow counterpart to household_mortgage_loans' stock; euro-area members only. Published from 2017-08 for Austria; earlier months back to 2014-12 are new business less renegotiations (IR_BUS_COV N minus R), an identity that reproduces every published month exactly -- see R/ecb.R.",
+    "level", TRUE,
+  "mortgage_new_lending_oenb",             "Money and Credit",               NA,
+    "No FRED-QD equivalent: as for mortgage_new_lending, no US source publishes a monthly flow of new mortgage loans.",
+    "OeNB data service, data set 100140002, position VDBMSKNWOHNBAU: new loans (excluding revolving loans) to households for housing purposes, millions of EUR per month, NOMINAL and not seasonally adjusted, from 2009-01. AUSTRIA ONLY (NA for every other country). The OeNB's monthly statistics rather than the MIR sample, but the same concept as mortgage_new_lending (pure new loans): over their overlap the monthly changes of the two correlate at 0.994, and this series is eight years longer. A FLOW, so the quarterly panel holds the SUM of complete quarters -- see R/oenb.R.",
     "level", TRUE,
   "euro_area_household_net_worth_growth",  "Household Balance Sheets",       "TNWBSHNOx",       NA,
     "ECB QSA_PUB publishes household net worth only for the euro-area AGGREGATE (REF_AREA=I8) -- every euro-area country gets this same figure; it is not country-specific.",
@@ -481,10 +504,199 @@ concept_dictionary <- tibble::tribble(
     "balance", TRUE,
   "heating_degree_days",                    "Other",                          NA,
     "No FRED-QD equivalent; FRED-QD contains no weather variable of any kind. Degree days are the standard quantitative weather input in applied macro (energy demand, gas consumption, construction, the energy trade balance) and are exogenous and essentially never revised, unlike every national-accounts series in this panel.",
-    "Quarterly total of monthly heating degree days on Eurostat's definition (reference 18 C, counted on days with a mean temperature at or below 15 C). Eurostat's own nrg_chdd_m is used wherever it publishes; because that dataflow runs roughly nine months behind, the pre-1980 history and the recent quarters are filled with an ERA5 series (via the Open-Meteo archive) computed over a population-weighted set of representative cities and level-calibrated to Eurostat over the overlap -- see R/weather.R. Countries with neither a city set nor Eurostat coverage resolve to NA.",
-    "nonneg_seasonal", FALSE,
+    "Monthly heating degree days (the quarterly panel holds the total of each complete quarter) on Eurostat's definition (reference 18 C, counted on days with a mean temperature at or below 15 C). Eurostat's own nrg_chdd_m is used wherever it publishes; because that dataflow runs roughly nine months behind, the pre-1980 history and the recent quarters are filled with an ERA5 series (via the Open-Meteo archive) computed over a population-weighted set of representative cities and level-calibrated to Eurostat over the overlap -- see R/weather.R. Countries with neither a city set nor Eurostat coverage resolve to NA.",
+    "nonneg_seasonal", TRUE,
   "cooling_degree_days",                    "Other",                          NA,
     "No FRED-QD equivalent; FRED-QD contains no weather variable of any kind. The cooling-side companion to heating_degree_days, and the more informative of the two for a warming climate.",
-    "Quarterly total of monthly cooling degree days on Eurostat's definition (reference 21 C, counted on days with a mean temperature at or above 24 C -- note the deliberate gap between the reference and threshold temperatures, which is Eurostat's convention and not the single-base-temperature convention common in US work). Same source hierarchy as heating_degree_days; legitimately 0.00 for whole quarters in cooler countries, which is why these two concepts have their own plausibility category.",
-    "nonneg_seasonal", FALSE
+    "Monthly cooling degree days (the quarterly panel holds the total of each complete quarter) on Eurostat's definition (reference 21 C, counted on days with a mean temperature at or above 24 C -- note the deliberate gap between the reference and threshold temperatures, which is Eurostat's convention and not the single-base-temperature convention common in US work). Same source hierarchy as heating_degree_days; legitimately 0.00 for whole quarters in cooler countries, which is why these two concepts have their own plausibility category.",
+    "nonneg_seasonal", TRUE
 )
+
+## ---------------------------------------------------------------
+## Per-series metadata for the monthly and quarterly panels (FRED-MD/QD
+## and EA-MD-QD conventions)
+##
+## Kept as a second, narrow table joined onto `concept_dictionary` rather
+## than as seven more columns in every row above, so that the notes stay
+## readable and a metadata fact is still authored in exactly one place.
+##
+## Columns:
+##   aggregation  How a QUARTER is formed from the months of a monthly
+##                concept: "mean" for stocks, prices, rates, indices and
+##                survey balances; "sum" for flows, whose quarter is the
+##                total of its three months and which is reported only
+##                for complete quarters (monthly_to_quarterly_sum() in
+##                R/frequency.R). EA-MD-QD's rule. Recorded for quarterly
+##                concepts too, for the day one gains a monthly source.
+##   unit         Short unit string as published, before any transformation.
+##   sa           Seasonal adjustment AS PUBLISHED by the source: "SCA"
+##                (seasonally and calendar adjusted), "SA" (seasonally
+##                adjusted) or "NSA". This project adjusts nothing itself.
+##                For Austria; a country whose source differs (a FRED
+##                mirror where Austria has Eurostat) may differ.
+##   tcode_fred   FRED-MD/QD transformation code: 1 level, 2 first
+##                difference, 3 second difference, 4 log, 5 first
+##                difference of logs, 6 second difference of logs, 7 first
+##                difference of the percent change. Where the concept has a
+##                FRED-QD mnemonic this is FRED-QD's own code (2026-07
+##                vintage, read from its "transform" row); otherwise it
+##                follows the same conventions: real and nominal levels 5,
+##                price indices 6, rates and ratios 2, survey balances,
+##                shares and indices that are stationary by construction 1.
+##   class        EA-MD-QD's class: "R" real, "N" nominal, "F" financial,
+##                "C" confidence (surveys and uncertainty indices).
+##
+## The EA-MD-QD codes are DERIVED from `tcode_fred` and `class` by
+## `ea_md_qd_codes()` below rather than authored: 0 level, 1 100*log,
+## 2 100*diff(log), 3 100*diff(diff(log)), 4 diff, 5 diff(diff). The light
+## set never differences twice; the heavy set treats nominal stocks and
+## prices as I(2), as EA-MD-QD's benchmark heavy transformation does.
+## They follow EA-MD-QD's published conventions, not a series-by-series
+## copy of its own codes.
+## ---------------------------------------------------------------
+
+concept_metadata <- tibble::tribble(
+  ~label,                                    ~aggregation, ~unit,                         ~sa,   ~tcode_fred, ~class,
+  "real_gdp",                                "mean",       "EUR mn, chain-linked volume", "SCA", 5L, "R",
+  "real_household_consumption",              "mean",       "EUR mn, chain-linked volume", "SCA", 5L, "R",
+  "real_govt_consumption",                   "mean",       "EUR mn, chain-linked volume", "SCA", 5L, "R",
+  "real_gfcf_total",                         "mean",       "EUR mn, chain-linked volume", "SCA", 5L, "R",
+  "real_exports",                            "mean",       "EUR mn, chain-linked volume", "SCA", 5L, "R",
+  "real_imports",                            "mean",       "EUR mn, chain-linked volume", "SCA", 5L, "R",
+  "inventory_change_to_gdp",                 "mean",       "% of GDP",                    "SCA", 1L, "R",
+  "real_household_disposable_income",        "mean",       "national currency, volume",   "SCA", 5L, "R",
+  "industrial_production",                   "mean",       "index 2021=100",              "SCA", 5L, "R",
+  "industrial_confidence",                   "mean",       "balance",                     "SA",  1L, "C",
+  "unemployment_rate",                       "mean",       "% of labour force",           "SA",  2L, "R",
+  "employment_rate",                         "mean",       "% of population 15-64",       "SA",  2L, "R",
+  "hours_worked",                            "mean",       "mn hours",                    "SCA", 5L, "R",
+  "population",                              "mean",       "thousand persons",            "SCA", 5L, "R",
+  "employment_expectations",                 "mean",       "index",                       "SA",  1L, "C",
+  "house_price_real",                        "mean",       "index",                       "NSA", 5L, "R",
+  "construction_confidence",                 "mean",       "balance",                     "SA",  1L, "C",
+  "retail_sales_volume",                     "mean",       "index 2021=100",              "SCA", 5L, "R",
+  "retail_confidence",                       "mean",       "balance",                     "SA",  1L, "C",
+  "cpi_index",                               "mean",       "index 2025=100",              "NSA", 6L, "N",
+  "core_cpi_index",                          "mean",       "index 2025=100",              "NSA", 6L, "N",
+  "food_price_index",                        "mean",       "index 2025=100",              "NSA", 6L, "N",
+  "energy_price_index",                      "mean",       "index 2025=100",              "NSA", 6L, "N",
+  "services_price_index",                    "mean",       "index 2025=100",              "NSA", 6L, "N",
+  "unit_labor_cost",                         "mean",       "index 2010=100",              "SCA", 5L, "N",
+  "long_term_rate",                          "mean",       "% p.a.",                      "NSA", 2L, "F",
+  "short_term_rate",                         "mean",       "% p.a.",                      "NSA", 2L, "F",
+  "government_bond_yield_2y",                "mean",       "% p.a.",                      "NSA", 2L, "F",
+  "government_bond_yield_5y",                "mean",       "% p.a.",                      "NSA", 2L, "F",
+  "mortgage_rate",                           "mean",       "% p.a.",                      "NSA", 2L, "F",
+  "mortgage_rate_pure_new_loans",            "mean",       "% p.a.",                      "NSA", 2L, "F",
+  "mortgage_rate_oenb",                      "mean",       "% p.a.",                      "NSA", 2L, "F",
+  "credit_to_private_nonfin_sector",         "mean",       "% of GDP",                    "NSA", 2L, "N",
+  "household_mortgage_loans",                "mean",       "EUR mn, outstanding",         "NSA", 5L, "N",
+  "mortgage_new_lending",                    "sum",        "EUR mn per period",           "NSA", 5L, "N",
+  "mortgage_new_lending_oenb",               "sum",        "EUR mn per period",           "NSA", 5L, "N",
+  "euro_area_household_net_worth_growth",    "mean",       "% change",                    "NSA", 1L, "F",
+  "household_credit_to_gdp",                 "mean",       "% of GDP",                    "NSA", 2L, "N",
+  "corporate_credit_to_gdp",                 "mean",       "% of GDP",                    "NSA", 2L, "N",
+  "government_debt_to_gdp",                  "mean",       "% of GDP",                    "NSA", 2L, "N",
+  "government_primary_balance_to_gdp",       "mean",       "% of GDP",                    "NSA", 1L, "N",
+  "fx_rate_to_usd",                          "mean",       "national currency per USD",   "NSA", 5L, "F",
+  "real_effective_exchange_rate",            "mean",       "index 2015=100",              "NSA", 5L, "F",
+  "consumer_confidence",                     "mean",       "balance",                     "SA",  1L, "C",
+  "consumer_financial_situation_past",       "mean",       "balance",                     "SA",  1L, "C",
+  "consumer_financial_situation_expected",   "mean",       "balance",                     "SA",  1L, "C",
+  "consumer_economic_situation_past",        "mean",       "balance",                     "SA",  1L, "C",
+  "consumer_economic_situation_expected",    "mean",       "balance",                     "SA",  1L, "C",
+  "consumer_price_trends_past",              "mean",       "balance",                     "SA",  1L, "C",
+  "consumer_price_expectations",             "mean",       "balance",                     "SA",  1L, "C",
+  "consumer_unemployment_expectations",      "mean",       "balance",                     "SA",  1L, "C",
+  "consumer_major_purchases_now",            "mean",       "balance",                     "SA",  1L, "C",
+  "consumer_major_purchases_expected",       "mean",       "balance",                     "SA",  1L, "C",
+  "consumer_savings_expected",               "mean",       "balance",                     "SA",  1L, "C",
+  "consumer_household_finances_now",         "mean",       "balance",                     "SA",  1L, "C",
+  "consumer_home_purchase_intentions",       "mean",       "balance",                     "SA",  1L, "C",
+  "consumer_home_improvement_intentions",    "mean",       "balance",                     "SA",  1L, "C",
+  "industry_production_past",                "mean",       "balance",                     "SA",  1L, "C",
+  "industry_order_books",                    "mean",       "balance",                     "SA",  1L, "C",
+  "industry_export_order_books",             "mean",       "balance",                     "SA",  1L, "C",
+  "industry_stocks_finished_products",       "mean",       "balance",                     "SA",  1L, "C",
+  "industry_production_expectations",        "mean",       "balance",                     "SA",  1L, "C",
+  "industry_selling_price_expectations",     "mean",       "balance",                     "SA",  1L, "C",
+  "industry_employment_expectations",        "mean",       "balance",                     "SA",  1L, "C",
+  "industry_limits_none",                    "mean",       "% of firms",                  "SA",  1L, "C",
+  "industry_limits_demand",                  "mean",       "% of firms",                  "SA",  1L, "C",
+  "industry_limits_labour",                  "mean",       "% of firms",                  "SA",  1L, "C",
+  "industry_limits_material_equipment",      "mean",       "% of firms",                  "SA",  1L, "C",
+  "industry_limits_other",                   "mean",       "% of firms",                  "SA",  1L, "C",
+  "industry_limits_financial",               "mean",       "% of firms",                  "SA",  1L, "C",
+  "industry_production_capacity",            "mean",       "balance",                     "SA",  1L, "C",
+  "industry_new_orders_past",                "mean",       "balance",                     "SA",  1L, "C",
+  "industry_capacity_utilization",           "mean",       "% of capacity",               "SA",  1L, "C",
+  "industry_competitive_position_eu",        "mean",       "balance",                     "SA",  1L, "C",
+  "industry_competitive_position_outside_eu", "mean",      "balance",                     "SA",  1L, "C",
+  "services_business_situation_past",        "mean",       "balance",                     "SA",  1L, "C",
+  "services_demand_past",                    "mean",       "balance",                     "SA",  1L, "C",
+  "services_demand_expected",                "mean",       "balance",                     "SA",  1L, "C",
+  "services_employment_expectations",        "mean",       "balance",                     "SA",  1L, "C",
+  "services_price_expectations",             "mean",       "balance",                     "SA",  1L, "C",
+  "services_limits_none",                    "mean",       "% of firms",                  "SA",  1L, "C",
+  "services_limits_demand",                  "mean",       "% of firms",                  "SA",  1L, "C",
+  "services_limits_labour",                  "mean",       "% of firms",                  "SA",  1L, "C",
+  "services_limits_equipment_space",         "mean",       "% of firms",                  "SA",  1L, "C",
+  "services_limits_financial",               "mean",       "% of firms",                  "SA",  1L, "C",
+  "services_limits_other",                   "mean",       "% of firms",                  "SA",  1L, "C",
+  "services_capacity_utilization",           "mean",       "% of capacity",               "SA",  1L, "C",
+  "retail_business_activity_past",           "mean",       "balance",                     "SA",  1L, "C",
+  "retail_stocks",                           "mean",       "balance",                     "SA",  1L, "C",
+  "retail_orders_expected",                  "mean",       "balance",                     "SA",  1L, "C",
+  "retail_business_activity_expected",       "mean",       "balance",                     "SA",  1L, "C",
+  "retail_employment_expectations",          "mean",       "balance",                     "SA",  1L, "C",
+  "retail_price_expectations",               "mean",       "balance",                     "SA",  1L, "C",
+  "construction_activity_past",              "mean",       "balance",                     "SA",  1L, "C",
+  "construction_limits_none",                "mean",       "% of firms",                  "SA",  1L, "C",
+  "construction_limits_demand",              "mean",       "% of firms",                  "SA",  1L, "C",
+  "construction_limits_labour",              "mean",       "% of firms",                  "SA",  1L, "C",
+  "construction_limits_material_equipment",  "mean",       "% of firms",                  "SA",  1L, "C",
+  "construction_limits_other",               "mean",       "% of firms",                  "SA",  1L, "C",
+  "construction_limits_financial",           "mean",       "% of firms",                  "SA",  1L, "C",
+  "construction_order_books",                "mean",       "balance",                     "SA",  1L, "C",
+  "construction_employment_expectations",    "mean",       "balance",                     "SA",  1L, "C",
+  "construction_price_expectations",         "mean",       "balance",                     "SA",  1L, "C",
+  "economic_sentiment_indicator",            "mean",       "index, long-term mean = 100", "SA",  1L, "C",
+  "services_confidence",                     "mean",       "balance",                     "SA",  1L, "C",
+  "oil_price",                               "mean",       "USD per barrel",              "NSA", 5L, "N",
+  "geopolitical_risk",                       "mean",       "index",                       "NSA", 1L, "C",
+  "global_activity",                         "mean",       "deviation from trend",        "NSA", 1L, "R",
+  "financial_stress",                        "mean",       "index 0-1",                   "NSA", 1L, "F",
+  "world_uncertainty_index",                 "mean",       "index",                       "NSA", 1L, "C",
+  "share_price_index",                       "mean",       "index points",                "NSA", 5L, "F",
+  "construction_weather_constraint",         "mean",       "% of firms",                  "SA",  1L, "C",
+  "heating_degree_days",                     "sum",        "degree days",                 "NSA", 1L, "R",
+  "cooling_degree_days",                     "sum",        "degree days",                 "NSA", 1L, "R"
+)
+
+#' EA-MD-QD light and heavy transformation codes from a FRED code and class
+#'
+#' Codes: 0 level, 1 100*log, 2 100*diff(log), 3 100*diff(diff(log)),
+#' 4 diff, 5 diff(diff). The two sets differ only where EA-MD-QD's do: the
+#' heavy set takes second log differences of nominal stocks and of prices,
+#' which it treats as I(2), where the light set rules I(2) dynamics out.
+ea_md_qd_codes <- function(tcode_fred, class, aggregation) {
+  base <- c(`1` = 0L, `2` = 4L, `3` = 5L, `4` = 1L, `5` = 2L, `6` = 2L, `7` = 2L)
+  light <- unname(base[as.character(tcode_fred)])
+  heavy <- light
+  i2 <- tcode_fred == 6L | (tcode_fred == 5L & class == "N" & aggregation == "mean")
+  heavy[i2] <- 3L
+  list(light = light, heavy = heavy)
+}
+
+## Native frequency of the source used: "M" concepts are fetched monthly
+## and their quarters derived by `aggregation`; "Q" concepts are fetched
+## quarterly and appear only in the quarterly panel. `available_monthly` above stays the authored
+## flag, so readers of docs/concept_dictionary.csv that use it keep working.
+concept_dictionary <- concept_dictionary %>%
+  dplyr::left_join(concept_metadata, by = "label") %>%
+  dplyr::mutate(frequency = ifelse(.data$available_monthly, "M", "Q"))
+ea_codes <- ea_md_qd_codes(concept_dictionary$tcode_fred, concept_dictionary$class,
+                           concept_dictionary$aggregation)
+concept_dictionary$tcode_lt <- ea_codes$light
+concept_dictionary$tcode_ht <- ea_codes$heavy
+rm(ea_codes)

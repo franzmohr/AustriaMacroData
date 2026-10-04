@@ -48,6 +48,13 @@ oecd_anchor_concepts <- tibble::tribble(
 ## "S1" (not blank) in this dataflow, and PRICE_BASE only has "L"/"V" codes
 ## (not "LR"). Included as a best-effort attempt; expect NULL for most
 ## countries, which is correct behavior, not a bug.
+##
+## Re-checked 2026-10-04: this dataflow has SECTOR = S1 (total economy)
+## only, no household sector, and its availableconstraint lists no B6G at
+## all; AUT returns NoRecordsFound. EU members therefore take this concept
+## from Eurostat's sector accounts (R/eurostat.R
+## fetch_eurostat_disposable_income()), and R/panel_quarterly.R skips
+## this request once Eurostat has resolved it.
 oecd_disposable_income_dims <- list(
   dataflow = "OECD.SDD.NAD,DSD_NAMAIN1@DF_QNA_INC_SAV",
   sector = "S1", counterpart_sector = "S1", transaction = "B6G",

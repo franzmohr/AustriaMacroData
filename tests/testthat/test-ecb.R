@@ -99,6 +99,117 @@ test_that("fetch_ecb_mortgage_rate warns and returns NULL when the request fails
   expect_null(out)
 })
 
+## Pure new loans (IR_BUS_COV=P). Values are the real Austrian business
+## volumes confirmed live on 2026-10-03; 2026-Q3 is deliberately
+## incomplete (July and August only), as the latest quarter usually is.
+ecb_mir_volume_fixture <- paste(
+  "KEY,FREQ,REF_AREA,BS_REP_SECTOR,BS_ITEM,MATURITY_NOT_IRATE,DATA_TYPE_MIR,AMOUNT_CAT,BS_COUNT_SECTOR,CURRENCY_TRANS,IR_BUS_COV,TIME_PERIOD,OBS_VALUE",
+  "MIR.M.AT.B.A2C.A.B.A.2250.EUR.P,M,AT,B,A2C,A,B,A,2250,EUR,P,2026-04,1873",
+  "MIR.M.AT.B.A2C.A.B.A.2250.EUR.P,M,AT,B,A2C,A,B,A,2250,EUR,P,2026-05,1699",
+  "MIR.M.AT.B.A2C.A.B.A.2250.EUR.P,M,AT,B,A2C,A,B,A,2250,EUR,P,2026-06,2107",
+  "MIR.M.AT.B.A2C.A.B.A.2250.EUR.P,M,AT,B,A2C,A,B,A,2250,EUR,P,2026-07,1410",
+  "MIR.M.AT.B.A2C.A.B.A.2250.EUR.P,M,AT,B,A2C,A,B,A,2250,EUR,P,2026-08,1284",
+  sep = "\n"
+)
+
+test_that("fetch_ecb_mortgage_new_lending requests the business volume of pure new loans", {
+  captured_url <- character(0)
+  mock <- function(url, ...) { captured_url <<- c(captured_url, url); ecb_mir_volume_fixture }
+  with_mock_fetch_text(mock, {
+    fetch_ecb_mortgage_new_lending("AUT")
+  })
+  ## The first request is the published series; the next two are the new
+  ## business and renegotiated volumes its earlier months are computed from.
+  expect_match(captured_url[1], "/MIR/M.AT.B.A2C.A.B.A.2250.EUR.P?", fixed = TRUE)
+  expect_true(any(grepl("/MIR/M.AT.B.A2C.A.B.A.2250.EUR.N?", captured_url, fixed = TRUE)))
+  expect_true(any(grepl("/MIR/M.AT.B.A2C.A.B.A.2250.EUR.R?", captured_url, fixed = TRUE)))
+})
+
+## Back-calculation from the MIR identity, N = P + R. The published pure-new-
+## loan series starts in 2017-08 here; new business and renegotiations reach
+## back to 2017-06, so two months are computed and none is overwritten.
+mir_csv <- function(type, cov, months, values) {
+  paste(c("KEY,FREQ,REF_AREA,BS_REP_SECTOR,BS_ITEM,MATURITY_NOT_IRATE,DATA_TYPE_MIR,AMOUNT_CAT,BS_COUNT_SECTOR,CURRENCY_TRANS,IR_BUS_COV,TIME_PERIOD,OBS_VALUE",
+          sprintf("MIR.M.AT.B.A2C.A.%s.A.2250.EUR.%s,M,AT,B,A2C,A,%s,A,2250,EUR,%s,%s,%s",
+                  type, cov, type, cov, months, values)), collapse = "\n")
+}
+mir_identity_mock <- function(url, ...) {
+  m3 <- c("2017-06", "2017-07", "2017-08"); m1 <- "2017-08"
+  switch(regmatches(url, regexpr("[BR][.]A[.]2250[.]EUR[.][NPR]", url)),
+         "B.A.2250.EUR.N" = mir_csv("B", "N", m3, c(2500, 2600, 2800)),
+         "B.A.2250.EUR.R" = mir_csv("B", "R", m3, c(1000, 900, 1100)),
+         "B.A.2250.EUR.P" = mir_csv("B", "P", m1, 1600),
+         "R.A.2250.EUR.N" = mir_csv("R", "N", m3, c(1.90, 1.88, 1.86)),
+         "R.A.2250.EUR.R" = mir_csv("R", "R", m3, c(1.80, 1.85, 1.84)),
+         "R.A.2250.EUR.P" = mir_csv("R", "P", m1, 1.87))
+}
+
+test_that("pure new loans before their first publication are new business minus renegotiations", {
+  with_mock_fetch_text(mir_identity_mock, {
+    vol <- fetch_ecb_mortgage_new_lending("AUT", start_period = "2017-M01", frequency = "M")
+    rate <- fetch_ecb_mortgage_rate_pure_new("AUT", start_period = "2017-M01", frequency = "M")
+  })
+  expect_equal(vol$date, as.Date(c("2017-06-01", "2017-07-01", "2017-08-01")))
+  expect_equal(vol$mortgage_new_lending, c(2500 - 1000, 2600 - 900, 1600))
+  expect_equal(rate$mortgage_rate_pure_new_loans,
+               c((1.90 * 2500 - 1.80 * 1000) / 1500, (1.88 * 2600 - 1.85 * 900) / 1700, 1.87))
+})
+
+test_that("the back-calculation never overwrites a published month", {
+  with_mock_fetch_text(mir_identity_mock, {
+    vol <- fetch_ecb_mortgage_new_lending("AUT", start_period = "2017-M01", frequency = "M")
+  })
+  ## 2017-08 is published as 1600, while N - R gives 2800 - 1100 = 1700.
+  expect_equal(vol$mortgage_new_lending[vol$date == as.Date("2017-08-01")], 1600)
+})
+
+test_that("fetch_ecb_mortgage_new_lending SUMS complete quarters and drops an incomplete one", {
+  with_mock_fetch_text(const_fetch_text(ecb_mir_volume_fixture), {
+    out <- fetch_ecb_mortgage_new_lending("AUT", start_period = "2026-Q1")
+  })
+  expect_equal(names(out), c("date", "mortgage_new_lending"))
+  expect_equal(out$date, as.Date("2026-04-01"))
+  expect_equal(out$mortgage_new_lending, 1873 + 1699 + 2107)
+})
+
+test_that("fetch_ecb_mortgage_new_lending keeps every month in a monthly panel", {
+  with_mock_fetch_text(const_fetch_text(ecb_mir_volume_fixture), {
+    out <- fetch_ecb_mortgage_new_lending("AUT", start_period = "2026-M01", frequency = "M")
+  })
+  expect_equal(out$date, seq(as.Date("2026-04-01"), as.Date("2026-08-01"), by = "month"))
+  expect_equal(out$mortgage_new_lending, c(1873, 1699, 2107, 1410, 1284))
+})
+
+test_that("fetch_ecb_mortgage_rate_pure_new requests the pure-new-loan rate and averages it", {
+  captured_url <- NULL
+  fixture <- gsub("EUR,N,", "EUR,P,", gsub("EUR.N,", "EUR.P,", ecb_mir_fixture, fixed = TRUE), fixed = TRUE)
+  mock <- function(url, ...) { captured_url <<- c(captured_url, url); fixture }
+  with_mock_fetch_text(mock, {
+    out <- fetch_ecb_mortgage_rate_pure_new("AUT", start_period = "2026-Q1")
+  })
+  expect_match(captured_url[1], "/MIR/M.AT.B.A2C.A.R.A.2250.EUR.P?", fixed = TRUE)
+  expect_equal(names(out), c("date", "mortgage_rate_pure_new_loans"))
+  expect_equal(out$mortgage_rate_pure_new_loans, mean(c(3.40, 3.43, 3.45)))
+})
+
+test_that("the pure-new-loan fetchers skip a non-euro-area country without a request", {
+  called <- FALSE
+  mock <- function(url, ...) { called <<- TRUE; ecb_mir_volume_fixture }
+  with_mock_fetch_text(mock, {
+    expect_warning(a <- fetch_ecb_mortgage_new_lending("USA"), "not a euro-area country")
+    expect_warning(b <- fetch_ecb_mortgage_rate_pure_new("USA"), "not a euro-area country")
+  })
+  expect_null(a); expect_null(b)
+  expect_false(called)
+})
+
+test_that("fetch_ecb_mortgage_new_lending warns and returns NULL on a 404", {
+  with_mock_fetch_text(const_fetch_text(ecb_mir_not_found_fixture), {
+    expect_warning(out <- fetch_ecb_mortgage_new_lending("AUT"), "no new-mortgage-lending observations")
+  })
+  expect_null(out)
+})
+
 ## Fixture mirrors the real shape confirmed live against
 ## data-api.ecb.europa.eu (dataflow BSI, format=csvdata) on 2026-08-30 --
 ## found via the ECB Data Portal's own published series list, not

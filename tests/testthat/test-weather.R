@@ -300,6 +300,36 @@ test_that("fetch_degree_days prefers Eurostat, calibrates Open-Meteo, and report
   expect_true(grepl("UNCALIBRATED", sources$cooling_degree_days$key))
 })
 
+test_that("fetch_degree_days returns the months themselves when frequency = 'M'", {
+  landing_dir <- tempfile()
+  on.exit(unlink(landing_dir, recursive = TRUE), add = TRUE)
+  es_months <- seq(as.Date("1990-01-01"), as.Date("1991-12-01"), by = "month")
+  es_periods <- format(es_months, "%Y-%m")
+  es_hdd <- 2 * 13 * days_in_month(es_months)
+
+  with_mock_fetch_text(function(url, ...) {
+    if (grepl("archive-api", url)) {
+      return(om_json_const(5, from = as.Date("1990-01-01"), to = as.Date("1992-06-30")))
+    }
+    if (grepl("M[.]NR[.]HDD[.]AT", url)) return(estat_csv("HDD", "AT", es_periods, es_hdd))
+    if (grepl("M[.]NR[.]CDD[.]AT", url)) {
+      return(estat_csv("CDD", "AT", es_periods, rep(0, length(es_periods))))
+    }
+    NULL
+  }, {
+    out <- fetch_degree_days("AUT", start_period = "1990-M01",
+                              reference_date = as.Date("1992-07-15"),
+                              landing_dir = landing_dir, pause_seconds = 0,
+                              max_attempts = 2, retry_pause_seconds = 0, frequency = "M")
+  })
+
+  expect_equal(range(out$date), as.Date(c("1990-01-01", "1992-06-01")))
+  expect_equal(out$heating_degree_days[1:3], es_hdd[1:3])
+  ## The quarterly path's total is exactly the sum of these months.
+  expect_equal(sum(out$heating_degree_days[1:3]), sum(es_hdd[1:3]))
+  expect_false(is.null(attr(out, "sources")$heating_degree_days))
+})
+
 test_that("fetch_degree_days falls back to Eurostat alone for an EU country with no city set", {
   periods <- format(seq(as.Date("1990-01-01"), as.Date("1990-03-01"), by = "month"), "%Y-%m")
   with_mock_fetch_text(function(url, ...) {

@@ -1,6 +1,6 @@
 {
   "country": "AUT",
-  "generated_at": "2026-09-27T13:15:04Z",
+  "generated_at": "2026-10-04T08:59:48Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -39,19 +39,24 @@
       "source": "Eurostat (namq_10_gdp) [namq_10_gdp:Q.PC_GDP.SCA.P52.AT]"
     },
     {
+      "fred_qd_group": "Output and Income",
+      "label": "real_household_disposable_income",
+      "source": "Eurostat (namq_10_gdp) [nasq_10_nf_tr:Q.CP_MEUR.RECV.S14_S15.B6G.SCA.AT deflated by namq_10_gdp:P31_S14_S15]"
+    },
+    {
       "fred_qd_group": "Industrial Production",
       "label": "industrial_production",
-      "source": "Eurostat short-term statistics (sts_inpr_q / sts_trtu_q) [sts_inpr_q:Q.PRD.B-D.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)]"
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [sts_inpr_m:M.PRD.B-D.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Industrial Production",
       "label": "industrial_confidence",
-      "source": "European Commission Business and Consumer Survey [AT.INDU]"
+      "source": "European Commission Business and Consumer Survey [AT.INDU] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
       "label": "unemployment_rate",
-      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [LRHUTTTTATQ156S]"
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [une_rt_m:M.SA.TOTAL.PC_ACT.T.AT (OECD MEI mirror fills earlier months unchanged, same units)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
@@ -71,7 +76,7 @@
     {
       "fred_qd_group": "Employment and Unemployment",
       "label": "employment_expectations",
-      "source": "European Commission Business and Consumer Survey [AT.EEI]"
+      "source": "European Commission Business and Consumer Survey [AT.EEI] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Housing",
@@ -81,42 +86,42 @@
     {
       "fred_qd_group": "Housing",
       "label": "construction_confidence",
-      "source": "European Commission Business and Consumer Survey [AT.BUIL]"
+      "source": "European Commission Business and Consumer Survey [AT.BUIL] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
       "label": "retail_sales_volume",
-      "source": "Eurostat short-term statistics (sts_inpr_q / sts_trtu_q) [sts_trtu_q:Q.VOL_SLS.G47.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)]"
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [sts_trtu_m:M.VOL_SLS.G47.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
       "label": "retail_confidence",
-      "source": "European Commission Business and Consumer Survey [AT.RETA]"
+      "source": "European Commission Business and Consumer Survey [AT.RETA] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Prices",
       "label": "cpi_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.CP00.AT]"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.TOTAL.AT] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Prices",
       "label": "core_cpi_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.TOT_X_NRG_FOOD.AT]"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.TOT_X_NRG_FOOD.AT] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Prices",
       "label": "food_price_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.CP01.AT]"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.CP01.AT] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Prices",
       "label": "energy_price_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.NRG.AT]"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.NRG.AT] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Prices",
       "label": "services_price_index",
-      "source": "Eurostat (prc_hicp_midx, HICP) [prc_hicp_midx:M.I05.SERV.AT]"
+      "source": "Eurostat (prc_hicp_minr, HICP 2025=100) [prc_hicp_minr:M.I25.SERV.AT] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Earnings and Productivity",
@@ -126,17 +131,27 @@
     {
       "fred_qd_group": "Interest Rates",
       "label": "long_term_rate",
-      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IRLTLT01ATQ156N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IRLTLT01ATM156N] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Interest Rates",
       "label": "short_term_rate",
-      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IR3TIB01ATQ156N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IR3TIB01ATM156N] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Interest Rates",
       "label": "mortgage_rate",
-      "source": "ECB MFI Interest Rate Statistics (MIR) [A2C.R.A.2250.EUR.N]"
+      "source": "ECB MFI Interest Rate Statistics (MIR) [A2C.R.A.2250.EUR.N] -- quarterly average of its months"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "mortgage_rate_pure_new_loans",
+      "source": "ECB MFI Interest Rate Statistics (MIR) [A2C.R.A.2250.EUR.P] -- quarterly average of its months"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "mortgage_rate_oenb",
+      "source": "OeNB data service (Oesterreichische Nationalbank) [23/VDBZSBSZN10010] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Money and Credit",
@@ -146,7 +161,17 @@
     {
       "fred_qd_group": "Money and Credit",
       "label": "household_mortgage_loans",
-      "source": "ECB MFI Balance Sheet Items (BSI) [A22T.A.1.U6.2250.Z01.E]"
+      "source": "ECB MFI Balance Sheet Items (BSI) [A22T.A.1.U6.2250.Z01.E] -- quarterly average of its months"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "mortgage_new_lending",
+      "source": "ECB MFI Interest Rate Statistics (MIR) [A2C.B.A.2250.EUR.P] -- quarterly total of complete months"
+    },
+    {
+      "fred_qd_group": "Money and Credit",
+      "label": "mortgage_new_lending_oenb",
+      "source": "OeNB data service (Oesterreichische Nationalbank) [100140002/VDBMSKNWOHNBAU] -- quarterly total of complete months"
     },
     {
       "fred_qd_group": "Household Balance Sheets",
@@ -176,72 +201,72 @@
     {
       "fred_qd_group": "Exchange Rates",
       "label": "fx_rate_to_usd",
-      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CCUSMA02ATQ618N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CCUSMA02ATM618N] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Exchange Rates",
       "label": "real_effective_exchange_rate",
-      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CCRETT01ATQ661N]"
+      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CCRETT01ATM661N] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_confidence",
-      "source": "European Commission Business and Consumer Survey [AT.CONS]"
+      "source": "European Commission Business and Consumer Survey [AT.CONS (OECD MEI mirror dropped: it measures a different statistic)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_financial_situation_past",
-      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.1.BS.M]"
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.1.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_financial_situation_expected",
-      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.2.BS.M]"
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.2.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_economic_situation_past",
-      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.3.BS.M]"
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.3.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_economic_situation_expected",
-      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.4.BS.M]"
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.4.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_price_trends_past",
-      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.5.BS.M]"
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.5.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_price_expectations",
-      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.6.BS.M]"
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.6.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_unemployment_expectations",
-      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.7.BS.M]"
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.7.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_major_purchases_now",
-      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.8.BS.M]"
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.8.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_major_purchases_expected",
-      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.9.BS.M]"
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.9.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_savings_expected",
-      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.11.BS.M]"
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.11.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "consumer_household_finances_now",
-      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.12.BS.M]"
+      "source": "European Commission Business and Consumer Survey [CONS.AT.TOT.12.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
@@ -256,37 +281,37 @@
     {
       "fred_qd_group": "Industrial Production",
       "label": "industry_production_past",
-      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.1.BS.M]"
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.1.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Industrial Production",
       "label": "industry_order_books",
-      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.2.BS.M]"
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.2.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Industrial Production",
       "label": "industry_export_order_books",
-      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.3.BS.M]"
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.3.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Industrial Production",
       "label": "industry_stocks_finished_products",
-      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.4.BS.M]"
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.4.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Industrial Production",
       "label": "industry_production_expectations",
-      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.5.BS.M]"
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.5.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Industrial Production",
       "label": "industry_selling_price_expectations",
-      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.6.BS.M]"
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.6.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Industrial Production",
       "label": "industry_employment_expectations",
-      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.7.BS.M]"
+      "source": "European Commission Business and Consumer Survey [INDU.AT.TOT.7.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Industrial Production",
@@ -346,27 +371,27 @@
     {
       "fred_qd_group": "Other",
       "label": "services_business_situation_past",
-      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.1.BS.M]"
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.1.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "services_demand_past",
-      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.2.BS.M]"
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.2.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "services_demand_expected",
-      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.3.BS.M]"
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.3.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "services_employment_expectations",
-      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.5.BS.M]"
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.5.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "services_price_expectations",
-      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.6.BS.M]"
+      "source": "European Commission Business and Consumer Survey [SERV.AT.TOT.6.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
@@ -406,112 +431,112 @@
     {
       "fred_qd_group": "Other",
       "label": "retail_business_activity_past",
-      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.1.BS.M]"
+      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.1.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "retail_stocks",
-      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.2.BS.M]"
+      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.2.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "retail_orders_expected",
-      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.3.BS.M]"
+      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.3.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "retail_business_activity_expected",
-      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.4.BS.M]"
+      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.4.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "retail_employment_expectations",
-      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.5.BS.M]"
+      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.5.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "retail_price_expectations",
-      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.6.BS.M]"
+      "source": "European Commission Business and Consumer Survey [RETA.AT.TOT.6.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Housing",
       "label": "construction_activity_past",
-      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.1.BS.M]"
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.1.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Housing",
       "label": "construction_limits_none",
-      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F1S.M]"
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F1S.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Housing",
       "label": "construction_limits_demand",
-      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F2S.M]"
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F2S.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Housing",
       "label": "construction_limits_labour",
-      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F4S.M]"
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F4S.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Housing",
       "label": "construction_limits_material_equipment",
-      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F5S.M]"
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F5S.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Housing",
       "label": "construction_limits_other",
-      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F6S.M]"
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F6S.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Housing",
       "label": "construction_limits_financial",
-      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F7S.M]"
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F7S.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Housing",
       "label": "construction_order_books",
-      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.3.BS.M]"
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.3.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Housing",
       "label": "construction_employment_expectations",
-      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.4.BS.M]"
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.4.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Housing",
       "label": "construction_price_expectations",
-      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.5.BS.M]"
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.5.BS.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "economic_sentiment_indicator",
-      "source": "European Commission Business and Consumer Survey [AT.ESI]"
+      "source": "European Commission Business and Consumer Survey [AT.ESI] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "services_confidence",
-      "source": "European Commission Business and Consumer Survey [AT.SERV]"
+      "source": "European Commission Business and Consumer Survey [AT.SERV] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Prices",
       "label": "oil_price",
-      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [WTISPLC]"
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [WTISPLC] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "geopolitical_risk",
-      "source": "Geopolitical Risk Index (Caldara-Iacoviello) [GPR]"
+      "source": "Geopolitical Risk Index (Caldara-Iacoviello) [GPR] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "global_activity",
-      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [IGREA]"
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [IGREA] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "financial_stress",
-      "source": "ECB Composite Indicator of Systemic Stress (CISS) [D.AT.Z0Z.4F.EC.SS_CIN.IDX]"
+      "source": "ECB Composite Indicator of Systemic Stress (CISS) [D.AT.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
@@ -521,28 +546,32 @@
     {
       "fred_qd_group": "Stock Markets",
       "label": "share_price_index",
-      "source": "Yahoo Finance [^ATX]"
+      "source": "Yahoo Finance [^ATX (monthly close) (OECD MEI mirror dropped: it measures a different statistic)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Housing",
       "label": "construction_weather_constraint",
-      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F3S.M]"
+      "source": "European Commission Business and Consumer Survey [BUIL.AT.TOT.2.F3S.M] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Other",
       "label": "heating_degree_days",
-      "source": "ERA5 reanalysis (via the Open-Meteo archive API) [ERA5, 6-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x1.220, corr 0.996 over 552 months)]"
+      "source": "ERA5 reanalysis (via the Open-Meteo archive API) [ERA5, 6-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x1.220, corr 0.996 over 552 months)] -- quarterly total of complete months"
     },
     {
       "fred_qd_group": "Other",
       "label": "cooling_degree_days",
-      "source": "ERA5 reanalysis (via the Open-Meteo archive API) [ERA5, 6-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x0.340, corr 0.975 over 552 months)]"
+      "source": "ERA5 reanalysis (via the Open-Meteo archive API) [ERA5, 6-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x0.340, corr 0.975 over 552 months)] -- quarterly total of complete months"
     }
   ],
   "skipped": [
     {
-      "fred_qd_group": "Output and Income",
-      "label": "real_household_disposable_income"
+      "fred_qd_group": "Interest Rates",
+      "label": "government_bond_yield_2y"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "government_bond_yield_5y"
     }
   ],
   "groups_not_attempted": [
@@ -562,7 +591,7 @@
       "label": "real_household_consumption",
       "category": "level",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change 12%."
+      "detail": "Positive throughout; largest quarter-over-quarter change 13%."
     },
     {
       "label": "real_govt_consumption",
@@ -580,7 +609,7 @@
       "label": "real_exports",
       "category": "level",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change -19%."
+      "detail": "Positive throughout; largest quarter-over-quarter change -20%."
     },
     {
       "label": "real_imports",
@@ -597,8 +626,8 @@
     {
       "label": "real_household_disposable_income",
       "category": "level",
-      "status": "NO_DATA",
-      "detail": "No non-NA observations."
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 7%."
     },
     {
       "label": "industrial_production",
@@ -616,7 +645,7 @@
       "label": "unemployment_rate",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 134 values within [-10, 400]."
+      "detail": "All 135 values within [-10, 400]."
     },
     {
       "label": "employment_rate",
@@ -706,19 +735,43 @@
       "label": "long_term_rate",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 146 values within [-10, 400]."
+      "detail": "All 147 values within [-10, 400]."
     },
     {
       "label": "short_term_rate",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 148 values within [-10, 400]."
+      "detail": "All 150 values within [-10, 400]."
+    },
+    {
+      "label": "government_bond_yield_2y",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "government_bond_yield_5y",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
     },
     {
       "label": "mortgage_rate",
       "category": "percent",
       "status": "PASS",
       "detail": "All 107 values within [-10, 400]."
+    },
+    {
+      "label": "mortgage_rate_pure_new_loans",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 39 values within [-10, 400]."
+    },
+    {
+      "label": "mortgage_rate_oenb",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 124 values within [-10, 400]."
     },
     {
       "label": "credit_to_private_nonfin_sector",
@@ -731,6 +784,18 @@
       "category": "level",
       "status": "PASS",
       "detail": "Positive throughout; largest quarter-over-quarter change 3%."
+    },
+    {
+      "label": "mortgage_new_lending",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -38%."
+    },
+    {
+      "label": "mortgage_new_lending_oenb",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -37%."
     },
     {
       "label": "euro_area_household_net_worth_growth",
@@ -1192,13 +1257,13 @@
       "label": "heating_degree_days",
       "category": "nonneg_seasonal",
       "status": "PASS",
-      "detail": "All 266 values within [0, 4000]."
+      "detail": "All 267 values within [0, 4000]."
     },
     {
       "label": "cooling_degree_days",
       "category": "nonneg_seasonal",
       "status": "PASS",
-      "detail": "All 266 values within [0, 4000]."
+      "detail": "All 267 values within [0, 4000]."
     }
   ]
 }

@@ -6,8 +6,44 @@ test_that("concept_dictionary has exactly one row per concept, no duplicates", {
 test_that("concept_dictionary has the expected columns", {
   expect_setequal(
     names(concept_dictionary),
-    c("label", "fred_qd_group", "fred_qd_mnemonic", "us_note", "cross_country_note", "plausibility_category", "available_monthly")
+    c("label", "fred_qd_group", "fred_qd_mnemonic", "us_note", "cross_country_note", "plausibility_category", "available_monthly",
+      "aggregation", "unit", "sa", "tcode_fred", "class", "frequency", "tcode_lt", "tcode_ht")
   )
+})
+
+test_that("every concept has complete, valid series metadata", {
+  expect_setequal(concept_metadata$label, concept_dictionary$label)
+  expect_equal(anyDuplicated(concept_metadata$label), 0L)
+  expect_true(all(concept_dictionary$aggregation %in% c("mean", "sum")))
+  expect_true(all(concept_dictionary$sa %in% c("SA", "SCA", "NSA")))
+  expect_true(all(concept_dictionary$class %in% c("R", "N", "F", "C")))
+  expect_true(all(concept_dictionary$tcode_fred %in% 1:7))
+  expect_true(all(concept_dictionary$tcode_lt %in% 0:5))
+  expect_true(all(concept_dictionary$tcode_ht %in% 0:5))
+  expect_true(all(concept_dictionary$frequency %in% c("M", "Q")))
+  expect_false(anyNA(concept_dictionary$unit))
+})
+
+test_that("the flows are summed and nothing else is", {
+  # A summed concept that is a stock would triple every quarter; an
+  # averaged flow would show a third of it. Both look like plausible data.
+  expect_setequal(concept_dictionary$label[concept_dictionary$aggregation == "sum"],
+                  c("mortgage_new_lending", "mortgage_new_lending_oenb", "heating_degree_days", "cooling_degree_days"))
+})
+
+test_that("FRED-QD's own transformation codes are kept for the concepts that map to it", {
+  code <- function(lbl) concept_dictionary$tcode_fred[concept_dictionary$label == lbl]
+  expect_equal(code("real_gdp"), 5L)
+  expect_equal(code("cpi_index"), 6L)
+  expect_equal(code("unemployment_rate"), 2L)
+  expect_equal(code("consumer_confidence"), 1L)
+})
+
+test_that("ea_md_qd_codes differences prices and nominal stocks twice only in the heavy set", {
+  codes <- ea_md_qd_codes(c(6L, 5L, 5L, 5L, 2L, 1L), c("N", "N", "N", "R", "F", "C"),
+                          c("mean", "mean", "sum", "mean", "mean", "mean"))
+  expect_equal(codes$light, c(2L, 2L, 2L, 2L, 4L, 0L))
+  expect_equal(codes$heavy, c(3L, 3L, 2L, 2L, 4L, 0L))
 })
 
 test_that("every row has a non-NA, valid plausibility_category", {
