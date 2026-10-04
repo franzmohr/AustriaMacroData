@@ -6,48 +6,54 @@
 ## here as an explicit, checked mapping rather than a string-slicing
 ## guess (alpha-3[1:2] is wrong for many countries, e.g. AUT -> "AU"
 ## would collide with Australia's real FRED code).
+##
+## `currency` is the ISO 4217 code a country's national accounts are
+## published in today: EUR for every euro-area member over its whole
+## history, as Eurostat and the OECD convert pre-euro figures at the
+## irrevocable rate. It names the currency of monetary levels in
+## <cc>_metadata.csv (source_unit() in R/panel_derive.R).
 ## ---------------------------------------------------------------
 
 country_code_map <- tibble::tribble(
-  ~country3, ~country2, ~country_name,
-  "AUS", "AU", "Australia",
-  "AUT", "AT", "Austria",
-  "BEL", "BE", "Belgium",
-  "CAN", "CA", "Canada",
-  "CHE", "CH", "Switzerland",
-  "CHL", "CL", "Chile",
-  "COL", "CO", "Colombia",
-  "CZE", "CZ", "Czechia",
-  "DEU", "DE", "Germany",
-  "DNK", "DK", "Denmark",
-  "ESP", "ES", "Spain",
-  "EST", "EE", "Estonia",
-  "FIN", "FI", "Finland",
-  "FRA", "FR", "France",
-  "GBR", "GB", "United Kingdom",
-  "GRC", "GR", "Greece",
-  "HUN", "HU", "Hungary",
-  "IRL", "IE", "Ireland",
-  "ISL", "IS", "Iceland",
-  "ISR", "IL", "Israel",
-  "ITA", "IT", "Italy",
-  "JPN", "JP", "Japan",
-  "KOR", "KR", "South Korea",
-  "LTU", "LT", "Lithuania",
-  "LUX", "LU", "Luxembourg",
-  "LVA", "LV", "Latvia",
-  "MEX", "MX", "Mexico",
-  "MLT", "MT", "Malta",
-  "NLD", "NL", "Netherlands",
-  "NOR", "NO", "Norway",
-  "NZL", "NZ", "New Zealand",
-  "POL", "PL", "Poland",
-  "PRT", "PT", "Portugal",
-  "SVK", "SK", "Slovakia",
-  "SVN", "SI", "Slovenia",
-  "SWE", "SE", "Sweden",
-  "TUR", "TR", "Turkey",
-  "USA", "US", "United States"
+  ~country3, ~country2, ~country_name,     ~currency,
+  "AUS", "AU", "Australia",        "AUD",
+  "AUT", "AT", "Austria",          "EUR",
+  "BEL", "BE", "Belgium",          "EUR",
+  "CAN", "CA", "Canada",           "CAD",
+  "CHE", "CH", "Switzerland",      "CHF",
+  "CHL", "CL", "Chile",            "CLP",
+  "COL", "CO", "Colombia",         "COP",
+  "CZE", "CZ", "Czechia",          "CZK",
+  "DEU", "DE", "Germany",          "EUR",
+  "DNK", "DK", "Denmark",          "DKK",
+  "ESP", "ES", "Spain",            "EUR",
+  "EST", "EE", "Estonia",          "EUR",
+  "FIN", "FI", "Finland",          "EUR",
+  "FRA", "FR", "France",           "EUR",
+  "GBR", "GB", "United Kingdom",   "GBP",
+  "GRC", "GR", "Greece",           "EUR",
+  "HUN", "HU", "Hungary",          "HUF",
+  "IRL", "IE", "Ireland",          "EUR",
+  "ISL", "IS", "Iceland",          "ISK",
+  "ISR", "IL", "Israel",           "ILS",
+  "ITA", "IT", "Italy",            "EUR",
+  "JPN", "JP", "Japan",            "JPY",
+  "KOR", "KR", "South Korea",      "KRW",
+  "LTU", "LT", "Lithuania",        "EUR",
+  "LUX", "LU", "Luxembourg",       "EUR",
+  "LVA", "LV", "Latvia",           "EUR",
+  "MEX", "MX", "Mexico",           "MXN",
+  "MLT", "MT", "Malta",            "EUR",
+  "NLD", "NL", "Netherlands",      "EUR",
+  "NOR", "NO", "Norway",           "NOK",
+  "NZL", "NZ", "New Zealand",      "NZD",
+  "POL", "PL", "Poland",           "PLN",
+  "PRT", "PT", "Portugal",         "EUR",
+  "SVK", "SK", "Slovakia",         "EUR",
+  "SVN", "SI", "Slovenia",         "EUR",
+  "SWE", "SE", "Sweden",           "SEK",
+  "TUR", "TR", "Turkey",           "TRY",
+  "USA", "US", "United States",    "USD"
 )
 
 #' Look up the FRED 2-letter code for an ISO-3166 alpha-3 country code
@@ -77,6 +83,12 @@ eu_member_countries <- c(
   "DEU", "GRC", "HUN", "IRL", "ITA", "LVA", "LTU", "LUX", "MLT", "NLD",
   "POL", "PRT", "ROU", "SVK", "SVN", "ESP", "SWE"
 )
+
+#' Look up the ISO 4217 currency of an ISO-3166 alpha-3 country code,
+#' or NA if the country is not in the built-in table
+lookup_currency <- function(country3) {
+  country_code_map$currency[match(country3, country_code_map$country3)]
+}
 
 #' Look up the European Commission's 2-letter country code for its
 #' Business and Consumer Survey column headers (e.g. "AT.CONS")

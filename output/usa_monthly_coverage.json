@@ -1,9 +1,9 @@
 {
   "country": "USA",
   "frequency": "monthly",
-  "generated_at": "2026-10-04T10:57:54Z",
+  "generated_at": "2026-10-04T11:18:30Z",
   "start_period": "1960-M01",
-  "concepts_published_monthly": 74,
+  "concepts_published_monthly": 76,
   "concepts_quarterly_only": 40,
   "resolved": [
     {
@@ -55,6 +55,11 @@
       "fred_qd_group": "Other",
       "label": "consumer_confidence",
       "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [CSCICP03USM665S]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "construction_cost_index",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [WPUIP2311001]"
     },
     {
       "fred_qd_group": "Prices",
@@ -316,6 +321,10 @@
     {
       "fred_qd_group": "Other",
       "label": "services_confidence"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "construction_producer_prices"
     },
     {
       "fred_qd_group": "Housing",
@@ -882,6 +891,18 @@
       "detail": "No non-NA observations."
     },
     {
+      "label": "construction_cost_index",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 4%."
+    },
+    {
+      "label": "construction_producer_prices",
+      "category": "level",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
       "label": "oil_price",
       "category": "level_event_driven",
       "status": "PASS",
@@ -891,7 +912,7 @@
       "label": "geopolitical_risk",
       "category": "level_event_driven",
       "status": "PASS",
-      "detail": "Positive throughout (499 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+      "detail": "Positive throughout (501 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
     },
     {
       "label": "global_activity",

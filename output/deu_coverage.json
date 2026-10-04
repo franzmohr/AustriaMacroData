@@ -1,6 +1,6 @@
 {
   "country": "DEU",
-  "generated_at": "2026-10-04T10:43:49Z",
+  "generated_at": "2026-10-04T11:13:06Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -46,7 +46,7 @@
     {
       "fred_qd_group": "Industrial Production",
       "label": "industrial_production",
-      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [sts_inpr_m:M.PRD.B-D.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)] -- quarterly average of its months"
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [sts_inpr_m:M.PRD.B-D.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Industrial Production",
@@ -56,7 +56,7 @@
     {
       "fred_qd_group": "Employment and Unemployment",
       "label": "unemployment_rate",
-      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [une_rt_m:M.SA.TOTAL.PC_ACT.T.DE (OECD MEI mirror fills earlier months unchanged, same units)] -- quarterly average of its months"
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [une_rt_m:M.SA.TOTAL.PC_ACT.T.DE (OECD MEI mirror fills earlier months unchanged, same units)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
@@ -91,7 +91,7 @@
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
       "label": "retail_sales_volume",
-      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [sts_trtu_m:M.VOL_SLS.G47.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)] -- quarterly average of its months"
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [sts_trtu_m:M.VOL_SLS.G47.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
@@ -520,6 +520,16 @@
     },
     {
       "fred_qd_group": "Prices",
+      "label": "construction_cost_index",
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [sts_copi_q:Q.COST.CPA_F41001_X_410014.NSA.I21.DE] -- quarterly at source: no monthly series for this country"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "construction_producer_prices",
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [sts_copi_q:Q.PRC_PRR.CPA_F41001_X_410014.NSA.I21.DE] -- quarterly at source: no monthly series for this country"
+    },
+    {
+      "fred_qd_group": "Prices",
       "label": "oil_price",
       "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [WTISPLC] -- quarterly average of its months"
     },
@@ -777,7 +787,7 @@
       "label": "credit_to_private_nonfin_sector",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 262 values within [-10, 400]."
+      "detail": "All 261 values within [-10, 400]."
     },
     {
       "label": "household_mortgage_loans",
@@ -807,19 +817,19 @@
       "label": "household_credit_to_gdp",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 222 values within [-10, 400]."
+      "detail": "All 221 values within [-10, 400]."
     },
     {
       "label": "corporate_credit_to_gdp",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 222 values within [-10, 400]."
+      "detail": "All 221 values within [-10, 400]."
     },
     {
       "label": "government_debt_to_gdp",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 105 values within [-10, 400]."
+      "detail": "All 104 values within [-10, 400]."
     },
     {
       "label": "government_primary_balance_to_gdp",
@@ -1210,6 +1220,18 @@
       "category": "balance",
       "status": "PASS",
       "detail": "All 126 values within [-150, 250]."
+    },
+    {
+      "label": "construction_cost_index",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 6%."
+    },
+    {
+      "label": "construction_producer_prices",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 7%."
     },
     {
       "label": "oil_price",

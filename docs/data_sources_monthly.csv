@@ -1,6 +1,7 @@
 country,variable,provider,key
 AUT,construction_activity_past,EC_BCS,BUIL.AT.TOT.1.BS.M
 AUT,construction_confidence,EC_BCS,AT.BUIL
+AUT,construction_cost_index,EUROSTAT_STS,sts_copi_m:M.COST.CPA_F41001_X_410014.NSA.I21.AT
 AUT,construction_employment_expectations,EC_BCS,BUIL.AT.TOT.4.BS.M
 AUT,construction_limits_demand,EC_BCS,BUIL.AT.TOT.2.F2S.M
 AUT,construction_limits_financial,EC_BCS,BUIL.AT.TOT.2.F7S.M
@@ -10,6 +11,7 @@ AUT,construction_limits_none,EC_BCS,BUIL.AT.TOT.2.F1S.M
 AUT,construction_limits_other,EC_BCS,BUIL.AT.TOT.2.F6S.M
 AUT,construction_order_books,EC_BCS,BUIL.AT.TOT.3.BS.M
 AUT,construction_price_expectations,EC_BCS,BUIL.AT.TOT.5.BS.M
+AUT,construction_producer_prices,EUROSTAT_STS,sts_copi_m:M.PRC_PRR.CPA_F41001_X_410014.NSA.I21.AT
 AUT,construction_weather_constraint,EC_BCS,BUIL.AT.TOT.2.F3S.M
 AUT,consumer_confidence,EC_BCS,AT.CONS (OECD MEI mirror dropped: it measures a different statistic)
 AUT,consumer_economic_situation_expected,EC_BCS,CONS.AT.TOT.4.BS.M
@@ -143,6 +145,7 @@ DEU,services_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.SERV.DE
 DEU,share_price_index,FRED_MIRROR,SPASTT01DEM661N
 DEU,short_term_rate,ECB_FM,"FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA (3-month Euribor, from euro adoption) (OECD MEI mirror fills earlier months unchanged, same units)"
 DEU,unemployment_rate,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.DE (OECD MEI mirror fills earlier months unchanged, same units)"
+USA,construction_cost_index,FRED,WPUIP2311001
 USA,consumer_confidence,FRED_MIRROR,CSCICP03USM665S
 USA,cooling_degree_days,OPEN_METEO,"ERA5, 15-city population-weighted (USA); UNCALIBRATED -- Eurostat nrg_chdd_m publishes no cross-check for this country"
 USA,cpi_index,FRED,CPIAUCSL

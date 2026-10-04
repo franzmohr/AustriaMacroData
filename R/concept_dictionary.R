@@ -1,6 +1,6 @@
 ## ---------------------------------------------------------------
 ## concept_dictionary.R -- the single authored source of metadata for
-## every one of this project's 114 FRED-QD-style concepts
+## every one of this project's 116 FRED-QD-style concepts
 ##
 ## MOTIVATION: before this file existed, the same concept-level facts
 ## (which FRED-QD group a concept belongs to, its FRED-QD mnemonic, its
@@ -475,6 +475,14 @@ concept_dictionary <- tibble::tribble(
     "No FRED-QD equivalent; a standard EC sentiment sub-index for the services sector.",
     "EU member states only: European Commission Business and Consumer Survey, Services Confidence Indicator (\"AT.SERV\") -- see R/ec_survey.R. No FRED-mirror fallback exists for this concept.",
     "balance", TRUE,
+  "construction_cost_index",               "Prices",                         NA,
+    "No FRED-QD equivalent; FRED-QD carries no construction cost or price index. The US value is FRED's WPUIP2311001, the BLS producer price index for inputs to residential construction, goods (June 1986 = 100, from 1986-06): it prices materials only and excludes labour, so it is narrower than the Eurostat index the EU members carry.",
+    "EU member states: Eurostat construction cost index for new residential buildings (residential buildings except residences for communities, CPA_F41001_X_410014), indic_bt COST, index 2021 = 100, not seasonally adjusted (the only adjustment published) -- the cost to the builder of materials and labour. Monthly from sts_copi_m where Eurostat publishes it (Austria from 1990-01); a country with a quarterly series only has it from sts_copi_q in the quarterly panel and NA in the monthly one (Germany from 2000-Q1) -- see R/construction_costs.R. Checked live 2026-10-04.",
+    "level", TRUE,
+  "construction_producer_prices",          "Prices",                         NA,
+    "No FRED-QD equivalent; FRED-QD carries no construction cost or price index. No US counterpart on a comparable footing is published, so the US value is NA.",
+    "EU member states: Eurostat producer price index for new residential buildings (CPA_F41001_X_410014), indic_bt PRC_PRR, index 2021 = 100, not seasonally adjusted -- the price the builder charges, where construction_cost_index is what the builder pays; the gap between the two is the builder's margin. Monthly from sts_copi_m where Eurostat publishes it (Austria from 1990-01); a country with a quarterly series only has it from sts_copi_q in the quarterly panel and NA in the monthly one (Germany from 1970-Q1) -- see R/construction_costs.R. Checked live 2026-10-04.",
+    "level", TRUE,
   "oil_price",                             "Prices",                         "OILPRICEx",       
     "FRED-QD's OILPRICEx is the real refiner acquisition cost of crude, deflated by core PCE; the series here is the nominal spot price in US dollars, left undeflated because which deflator and which exchange rate belong in front of it is a modelling decision and the panel already carries cpi_index and fx_rate_to_usd for either.",
     "Not country-specific and not intended to be: a barrel of crude has one world price, so this column is identical in every country's panel, as R/gpr.R's global index is for countries the GPR source does not cover separately. It is here because the world oil price is the classic exogenous supply shifter for a small open economy. FRED WTISPLC (spot West Texas Intermediate, monthly from 1946, averaged within the quarter) -- see R/commodities.R, whose header says why WTI rather than Brent.",
@@ -528,7 +536,14 @@ concept_dictionary <- tibble::tribble(
 ##                for complete quarters (monthly_to_quarterly_sum() in
 ##                R/frequency.R). EA-MD-QD's rule. Recorded for quarterly
 ##                concepts too, for the day one gains a monthly source.
-##   unit         Short unit string as published, before any transformation.
+##   unit         Short unit string as published, before any transformation,
+##                by the source a euro-area member resolves the concept
+##                from. Where another source resolves it for some country
+##                -- the OECD's annualised national accounts for the USA, a
+##                FRED series on its own index base -- `concept_source_units`
+##                below holds that source's unit, and <cc>_metadata.csv
+##                carries the unit of the source that actually resolved
+##                (source_unit() in R/panel_derive.R).
 ##   sa           Seasonal adjustment AS PUBLISHED by the source: "SCA"
 ##                (seasonally and calendar adjusted), "SA" (seasonally
 ##                adjusted) or "NSA". This project adjusts nothing itself.
@@ -557,19 +572,19 @@ concept_dictionary <- tibble::tribble(
 
 concept_metadata <- tibble::tribble(
   ~label,                                    ~aggregation, ~unit,                         ~sa,   ~tcode_fred, ~class,
-  "real_gdp",                                "mean",       "EUR mn, chain-linked volume", "SCA", 5L, "R",
-  "real_household_consumption",              "mean",       "EUR mn, chain-linked volume", "SCA", 5L, "R",
-  "real_govt_consumption",                   "mean",       "EUR mn, chain-linked volume", "SCA", 5L, "R",
-  "real_gfcf_total",                         "mean",       "EUR mn, chain-linked volume", "SCA", 5L, "R",
-  "real_exports",                            "mean",       "EUR mn, chain-linked volume", "SCA", 5L, "R",
-  "real_imports",                            "mean",       "EUR mn, chain-linked volume", "SCA", 5L, "R",
+  "real_gdp",                                "mean",       "EUR mn, chain-linked volume (2020), quarterly level", "SCA", 5L, "R",
+  "real_household_consumption",              "mean",       "EUR mn, chain-linked volume (2020), quarterly level", "SCA", 5L, "R",
+  "real_govt_consumption",                   "mean",       "EUR mn, chain-linked volume (2020), quarterly level", "SCA", 5L, "R",
+  "real_gfcf_total",                         "mean",       "EUR mn, chain-linked volume (2020), quarterly level", "SCA", 5L, "R",
+  "real_exports",                            "mean",       "EUR mn, chain-linked volume (2020), quarterly level", "SCA", 5L, "R",
+  "real_imports",                            "mean",       "EUR mn, chain-linked volume (2020), quarterly level", "SCA", 5L, "R",
   "inventory_change_to_gdp",                 "mean",       "% of GDP",                    "SCA", 1L, "R",
-  "real_household_disposable_income",        "mean",       "national currency, volume",   "SCA", 5L, "R",
+  "real_household_disposable_income",        "mean",       "EUR mn at 2020 prices, quarterly level", "SCA", 5L, "R",
   "industrial_production",                   "mean",       "index 2021=100",              "SCA", 5L, "R",
   "industrial_confidence",                   "mean",       "balance",                     "SA",  1L, "C",
   "unemployment_rate",                       "mean",       "% of labour force",           "SA",  2L, "R",
   "employment_rate",                         "mean",       "% of population 15-64",       "SA",  2L, "R",
-  "hours_worked",                            "mean",       "mn hours",                    "SCA", 5L, "R",
+  "hours_worked",                            "mean",       "thousand hours",              "SCA", 5L, "R",
   "population",                              "mean",       "thousand persons",            "SCA", 5L, "R",
   "employment_expectations",                 "mean",       "index",                       "SA",  1L, "C",
   "house_price_real",                        "mean",       "index",                       "NSA", 5L, "R",
@@ -662,6 +677,8 @@ concept_metadata <- tibble::tribble(
   "construction_price_expectations",         "mean",       "balance",                     "SA",  1L, "C",
   "economic_sentiment_indicator",            "mean",       "index, long-term mean = 100", "SA",  1L, "C",
   "services_confidence",                     "mean",       "balance",                     "SA",  1L, "C",
+  "construction_cost_index",                 "mean",       "index 2021=100",              "NSA", 6L, "N",
+  "construction_producer_prices",            "mean",       "index 2021=100",              "NSA", 6L, "N",
   "oil_price",                               "mean",       "USD per barrel",              "NSA", 5L, "N",
   "geopolitical_risk",                       "mean",       "index",                       "NSA", 1L, "C",
   "global_activity",                         "mean",       "deviation from trend",        "NSA", 1L, "R",
@@ -687,6 +704,70 @@ ea_md_qd_codes <- function(tcode_fred, class, aggregation) {
   heavy[i2] <- 3L
   list(light = light, heavy = heavy)
 }
+
+## ---------------------------------------------------------------
+## concept_source_units -- the unit of a concept as one provider publishes
+## it, where that differs from concept_metadata's `unit`
+##
+## `{currency}` is replaced by the country's ISO 4217 code
+## (lookup_currency() in R/country_codes.R). Every row was read off the
+## source itself:
+##   EUROSTAT   (concept_metadata's own unit, so no rows here) namq_10_gdp
+##              at CLV20_MEUR -- euro for every EU member, euro area or
+##              not -- quarterly levels. The OECD's history spliced on
+##              before 1995 is rescaled to this level (splice_prefer()),
+##              so it carries the same unit. Disposable income is B6G at
+##              CP_MEUR over the consumption deflator CP_MEUR / CLV20_MEUR,
+##              so it is at 2020 prices.
+##   OECD_QNA   DF_QNA at UNIT_MEASURE XDC, PRICE_BASE LR. Checked live
+##              2026-10-04 for AUT, DEU and USA: the only TRANSFORMATION
+##              returned is "LA" (annual levels), UNIT_MULT 6, price
+##              reference year 2020, CURRENCY the national one. A quarter
+##              is therefore a seasonally adjusted annual rate, four times
+##              a Eurostat quarter (USA real_gdp 2024-Q1: 24,359,016.6).
+##              Disposable income comes from DF_QSA instead, where B6G is
+##              a quarterly level (TRANSFORMATION "N"); the deflator's two
+##              parts are both annual rates, which cancel, and its volume
+##              is at 2020 prices (R/oecd.R).
+##   IMF_QNEA   QNEA at TYPE_OF_TRANSFORMATION XDC, PRICE_TYPE Q
+##              (constant prices). Its scale and annualisation differ by
+##              country and are not normalised here.
+##   FRED_MIRROR / FRED   the units FRED publishes on each series page,
+##              checked 2026-10-04 (OECD MEI mirrors share their unit
+##              across countries: USAPROINDMISMEI, USASARTMISMEI and
+##              SPASTT01USM661N are index 2015=100, ULQEUL01USQ657S is a
+##              growth rate on the previous period, CSCICP03USM665S is
+##              normalised to a long-term average of 100, the BIS
+##              Q..R628BIS series are index 2010=100). FRED resolves
+##              cpi_index and construction_cost_index for the USA only,
+##              from CPIAUCSL (index 1982-1984=100) and WPUIP2311001
+##              (index June 1986=100); a country given another FRED
+##              series for either needs its own unit recorded, as
+##              `unit` in its concept_source entry.
+## A provider not listed here publishes the concept in concept_metadata's
+## unit.
+## ---------------------------------------------------------------
+na_volume_labels <- c("real_gdp", "real_household_consumption", "real_govt_consumption",
+                      "real_gfcf_total", "real_exports", "real_imports")
+concept_source_units <- dplyr::bind_rows(
+  tibble::tibble(label = na_volume_labels, provider = "OECD_QNA",
+                 unit = "{currency} mn, chain-linked volume (2020), seasonally adjusted annual rate"),
+  tibble::tibble(label = na_volume_labels, provider = "IMF_QNEA",
+                 unit = "{currency}, constant prices (IMF QNEA; scale and annualisation as published)"),
+  tibble::tribble(
+    ~label,                              ~provider,     ~unit,
+    "real_household_disposable_income",  "OECD_QNA",    "{currency} mn at 2020 prices, quarterly level",
+    "industrial_production",             "FRED_MIRROR", "index 2015=100",
+    "retail_sales_volume",               "FRED_MIRROR", "index 2015=100",
+    "house_price_real",                  "FRED_MIRROR", "index 2010=100",
+    "unit_labor_cost",                   "FRED_MIRROR", "% change on previous quarter",
+    "consumer_confidence",               "FRED_MIRROR", "index, long-term average = 100",
+    "share_price_index",                 "FRED_MIRROR", "index 2015=100",
+    "cpi_index",                         "FRED",        "index 1982-1984=100",
+    "construction_cost_index",           "FRED",        "index June 1986=100"
+  )
+)
+rm(na_volume_labels)
 
 ## Native frequency of the source used: "M" concepts are fetched monthly
 ## and their quarters derived by `aggregation`; "Q" concepts are fetched

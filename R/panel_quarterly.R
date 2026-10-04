@@ -246,3 +246,32 @@ fetch_quarterly_native_concepts <- function(country, start_period, country2 = lo
        concept_source = concept_source[intersect(names(concept_source), quarterly_labels)],
        anchors = anchor_merged)
 }
+
+#' Quarterly series for monthly concepts a country has no monthly series of
+#'
+#' A monthly concept's quarters are normally made from its months
+#' (R/panel_derive.R). Where a country has no monthly series but its
+#' source publishes a quarterly one -- Germany's construction costs and
+#' prices, quarterly only in Eurostat's sts_copi_q -- that quarterly
+#' series goes into the quarterly panel as published, and the monthly
+#' panel keeps the concept NA rather than inventing months.
+#'
+#' `labels` are the monthly concepts that did NOT resolve monthly; only
+#' those with a quarterly fetcher below are tried. Returns the same
+#' `list(panel =, concept_source =)` shape as the other fetchers, each
+#' source marked `quarterly_at_source = TRUE`.
+fetch_quarterly_fallbacks <- function(country, start_period, labels) {
+  start_period <- as_period(start_period, "Q")
+  panel <- tibble::tibble(date = as.Date(character(0)))
+  concept_source <- list()
+  for (lbl in intersect(labels, construction_cost_concepts$label)) {
+    got <- fetch_construction_index(country, lbl, start_period = start_period, frequency = "Q")
+    if (is.null(got)) next
+    message("  ", lbl, ": no monthly series for ", country, " -- its quarterly series goes into the quarterly panel.")
+    panel <- dplyr::full_join(panel, got[, c("date", lbl)], by = "date")
+    concept_source[[lbl]] <- list(provider = attr(got, "provider"),
+                                  key = attr(got, "source_col"),
+                                  quarterly_at_source = TRUE)
+  }
+  list(panel = dplyr::arrange(panel, .data$date), concept_source = concept_source)
+}

@@ -262,6 +262,18 @@ fetch_monthly_concepts <- function(country, start_period, country2 = lookup_coun
   }
 
   ## ===================================================================
+  ## 5c. Construction costs and construction prices for new residential
+  ##     buildings: Eurostat for EU members where it publishes monthly,
+  ##     FRED for the USA's cost index -- see R/construction_costs.R. A
+  ##     country with a quarterly series only (Germany) gets it in the
+  ##     quarterly panel, through fetch_quarterly_fallbacks().
+  ## ===================================================================
+  for (lbl in construction_cost_concepts$label) {
+    idx <- fetch_construction_index(country, lbl, start_period = start_period, frequency = freq)
+    if (!is.null(idx)) join_concept(idx, lbl, attr(idx, "provider"), attr(idx, "source_col"))
+  }
+
+  ## ===================================================================
   ## 6. Austria: the ATX in place of the OECD "all shares" mirror, as the
   ##    quarterly builder has always done. Monthly closes at source. And
   ##    the OeNB's new lending for housing and its rate (R/oenb.R), which

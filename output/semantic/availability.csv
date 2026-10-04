@@ -1,0 +1,349 @@
+country,label,frequency,unit,resolved,provider,key,first,last,n_obs
+AUT,real_gdp,Q,"EUR mn, chain-linked volume (2020), quarterly level",TRUE,EUROSTAT,namq_10_gdp:B1GQ (extended pre-1995 with level-spliced OECD_QNA:S1.B1GQ),1960-Q1,2026-Q2,266
+AUT,real_household_consumption,Q,"EUR mn, chain-linked volume (2020), quarterly level",TRUE,EUROSTAT,namq_10_gdp:P31_S14 (extended pre-1995 with level-spliced OECD_QNA:S1M.P3),1960-Q1,2026-Q2,266
+AUT,real_govt_consumption,Q,"EUR mn, chain-linked volume (2020), quarterly level",TRUE,EUROSTAT,namq_10_gdp:P3_S13 (extended pre-1995 with level-spliced OECD_QNA:S13.P3),1960-Q1,2026-Q2,266
+AUT,real_gfcf_total,Q,"EUR mn, chain-linked volume (2020), quarterly level",TRUE,EUROSTAT,namq_10_gdp:P51G,1995-Q1,2026-Q2,126
+AUT,real_exports,Q,"EUR mn, chain-linked volume (2020), quarterly level",TRUE,EUROSTAT,namq_10_gdp:P6 (extended pre-1995 with level-spliced OECD_QNA:S1.P6),1960-Q1,2026-Q2,266
+AUT,real_imports,Q,"EUR mn, chain-linked volume (2020), quarterly level",TRUE,EUROSTAT,namq_10_gdp:P7,1995-Q1,2026-Q2,126
+AUT,inventory_change_to_gdp,Q,% of GDP,TRUE,EUROSTAT,namq_10_gdp:Q.PC_GDP.SCA.P52.AT,1995-Q1,2026-Q2,126
+AUT,real_household_disposable_income,Q,"EUR mn at 2020 prices, quarterly level",TRUE,EUROSTAT,nasq_10_nf_tr:Q.CP_MEUR.RECV.S14_S15.B6G.SCA.AT deflated by namq_10_gdp:P31_S14_S15,1999-Q1,2026-Q1,109
+AUT,industrial_production,M,index 2021=100,TRUE,EUROSTAT_STS,"sts_inpr_m:M.PRD.B-D.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)",1960-M01,2026-M07,799
+AUT,industrial_confidence,M,balance,TRUE,EC_BCS,AT.INDU,1985-M01,2026-M09,501
+AUT,unemployment_rate,M,% of labour force,TRUE,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.AT (OECD MEI mirror fills earlier months unchanged, same units)",1993-M01,2026-M08,404
+AUT,employment_rate,Q,% of population 15-64,TRUE,FRED_MIRROR,LREM64TTATQ156S,1999-Q1,2026-Q2,110
+AUT,hours_worked,Q,thousand hours,TRUE,EUROSTAT_NA,namq_10_a10_e:Q.THS_HW.TOTAL.SCA.EMP_DC.AT,1995-Q1,2026-Q2,126
+AUT,population,Q,thousand persons,TRUE,EUROSTAT_POP,namq_10_pe:Q.THS_PER.SCA.POP_NC.AT,1995-Q1,2026-Q2,126
+AUT,employment_expectations,M,index,TRUE,EC_BCS,AT.EEI,1996-M01,2026-M09,369
+AUT,house_price_real,Q,index 2010=100,TRUE,FRED_MIRROR,QATR628BIS,1986-Q3,2026-Q1,159
+AUT,construction_confidence,M,balance,TRUE,EC_BCS,AT.BUIL,1996-M01,2026-M09,369
+AUT,retail_sales_volume,M,index 2021=100,TRUE,EUROSTAT_STS,"sts_trtu_m:M.VOL_SLS.G47.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)",1973-M01,2026-M08,644
+AUT,retail_confidence,M,balance,TRUE,EC_BCS,AT.RETA,1996-M01,2026-M09,369
+AUT,cpi_index,M,index 2025=100,TRUE,EUROSTAT_HICP,prc_hicp_minr:M.I25.TOTAL.AT,1996-M01,2026-M09,369
+AUT,core_cpi_index,M,index 2025=100,TRUE,EUROSTAT_HICP,prc_hicp_minr:M.I25.TOT_X_NRG_FOOD.AT,1999-M12,2026-M09,322
+AUT,food_price_index,M,index 2025=100,TRUE,EUROSTAT_HICP,prc_hicp_minr:M.I25.CP01.AT,1996-M01,2026-M08,368
+AUT,energy_price_index,M,index 2025=100,TRUE,EUROSTAT_HICP,prc_hicp_minr:M.I25.NRG.AT,1996-M01,2026-M09,369
+AUT,services_price_index,M,index 2025=100,TRUE,EUROSTAT_HICP,prc_hicp_minr:M.I25.SERV.AT,1999-M12,2026-M09,322
+AUT,unit_labor_cost,Q,index 2010=100,TRUE,EUROSTAT_ULC,namq_10_lp_ulc:Q.I10.SCA.NULC_HW.AT,1995-Q1,2026-Q2,126
+AUT,long_term_rate,M,% p.a.,TRUE,ECB_IRS,"IRS/M.AT.L.L40.CI.0000.EUR.N.Z (10-year government bond yield, convergence criterion) (OECD MEI mirror fills earlier months unchanged, same units)",1990-M01,2026-M08,440
+AUT,short_term_rate,M,% p.a.,TRUE,ECB_FM,"FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA (3-month Euribor, from euro adoption) (OECD MEI mirror fills earlier months unchanged, same units)",1989-M06,2026-M09,448
+AUT,government_bond_yield_2y,M,% p.a.,FALSE,,,,,0
+AUT,government_bond_yield_5y,M,% p.a.,FALSE,,,,,0
+AUT,mortgage_rate,M,% p.a.,TRUE,ECB_MIR,A2C.R.A.2250.EUR.N,2000-M01,2026-M08,320
+AUT,mortgage_rate_pure_new_loans,M,% p.a.,TRUE,ECB_MIR,A2C.R.A.2250.EUR.P,2017-M01,2026-M08,116
+AUT,mortgage_rate_oenb,M,% p.a.,TRUE,OENB,23/VDBZSBSZN10010,1995-M12,2026-M08,369
+AUT,credit_to_private_nonfin_sector,Q,% of GDP,TRUE,BIS_WSTC,Q.AT.P.A.M.770.A,1960-Q4,2026-Q1,262
+AUT,household_mortgage_loans,M,"EUR mn, outstanding",TRUE,ECB_BSI,A22T.A.1.U6.2250.Z01.E,2014-M12,2026-M08,141
+AUT,mortgage_new_lending,M,EUR mn per period,TRUE,ECB_MIR,A2C.B.A.2250.EUR.P,2014-M12,2026-M08,141
+AUT,mortgage_new_lending_oenb,M,EUR mn per period,TRUE,OENB,100140002/VDBMSKNWOHNBAU,2009-M01,2026-M08,212
+AUT,euro_area_household_net_worth_growth,Q,% change,TRUE,ECB_QSA_PUB,I8,2000-Q1,2022-Q4,92
+AUT,household_credit_to_gdp,Q,% of GDP,TRUE,BIS_WSTC,Q.AT.H.A.M.770.A,1995-Q4,2026-Q1,122
+AUT,corporate_credit_to_gdp,Q,% of GDP,TRUE,BIS_WSTC,Q.AT.N.A.M.770.A,1995-Q4,2026-Q1,122
+AUT,government_debt_to_gdp,Q,% of GDP,TRUE,BIS_WSTC,Q.AT.G.A.N.770.A,2000-Q1,2026-Q1,105
+AUT,government_primary_balance_to_gdp,Q,% of GDP,TRUE,EUROSTAT_GOV,gov_10q_ggnfa:Q.PC_GDP.NSA.S13.B9+D41PAY.AT,2001-Q1,2026-Q1,101
+AUT,fx_rate_to_usd,M,EUR per USD,TRUE,FRED_MIRROR,CCUSMA02ATM618N,1960-M01,2026-M08,800
+AUT,real_effective_exchange_rate,M,index 2015=100,TRUE,FRED_MIRROR,CCRETT01ATM661N,1970-M01,2026-M08,680
+AUT,consumer_confidence,M,balance,TRUE,EC_BCS,AT.CONS (OECD MEI mirror dropped: it measures a different statistic),1995-M10,2026-M09,372
+AUT,consumer_financial_situation_past,M,balance,TRUE,EC_BCS,CONS.AT.TOT.1.BS.M,1995-M10,2026-M09,372
+AUT,consumer_financial_situation_expected,M,balance,TRUE,EC_BCS,CONS.AT.TOT.2.BS.M,1995-M10,2026-M09,372
+AUT,consumer_economic_situation_past,M,balance,TRUE,EC_BCS,CONS.AT.TOT.3.BS.M,1995-M10,2026-M09,372
+AUT,consumer_economic_situation_expected,M,balance,TRUE,EC_BCS,CONS.AT.TOT.4.BS.M,1995-M10,2026-M09,372
+AUT,consumer_price_trends_past,M,balance,TRUE,EC_BCS,CONS.AT.TOT.5.BS.M,1995-M10,2026-M09,372
+AUT,consumer_price_expectations,M,balance,TRUE,EC_BCS,CONS.AT.TOT.6.BS.M,1995-M10,2026-M09,372
+AUT,consumer_unemployment_expectations,M,balance,TRUE,EC_BCS,CONS.AT.TOT.7.BS.M,1995-M10,2026-M09,372
+AUT,consumer_major_purchases_now,M,balance,TRUE,EC_BCS,CONS.AT.TOT.8.BS.M,1995-M10,2026-M09,372
+AUT,consumer_major_purchases_expected,M,balance,TRUE,EC_BCS,CONS.AT.TOT.9.BS.M,1995-M10,2026-M09,372
+AUT,consumer_savings_expected,M,balance,TRUE,EC_BCS,CONS.AT.TOT.11.BS.M,1995-M10,2026-M09,372
+AUT,consumer_household_finances_now,M,balance,TRUE,EC_BCS,CONS.AT.TOT.12.BS.M,1995-M10,2026-M09,372
+AUT,consumer_home_purchase_intentions,Q,balance,TRUE,EC_BCS,CONS.AT.TOT.14.BS.Q,1995-Q4,2026-Q3,124
+AUT,consumer_home_improvement_intentions,Q,balance,TRUE,EC_BCS,CONS.AT.TOT.15.BS.Q,1995-Q4,2026-Q3,124
+AUT,industry_production_past,M,balance,TRUE,EC_BCS,INDU.AT.TOT.1.BS.M,1985-M01,2026-M09,501
+AUT,industry_order_books,M,balance,TRUE,EC_BCS,INDU.AT.TOT.2.BS.M,1985-M01,2026-M09,501
+AUT,industry_export_order_books,M,balance,TRUE,EC_BCS,INDU.AT.TOT.3.BS.M,1985-M01,2026-M09,501
+AUT,industry_stocks_finished_products,M,balance,TRUE,EC_BCS,INDU.AT.TOT.4.BS.M,1985-M01,2026-M09,501
+AUT,industry_production_expectations,M,balance,TRUE,EC_BCS,INDU.AT.TOT.5.BS.M,1985-M01,2026-M09,501
+AUT,industry_selling_price_expectations,M,balance,TRUE,EC_BCS,INDU.AT.TOT.6.BS.M,1985-M01,2026-M09,501
+AUT,industry_employment_expectations,M,balance,TRUE,EC_BCS,INDU.AT.TOT.7.BS.M,1996-M01,2026-M09,369
+AUT,industry_limits_none,Q,% of firms,TRUE,EC_BCS,INDU.AT.TOT.8.F1S.Q,1996-Q1,2026-Q3,123
+AUT,industry_limits_demand,Q,% of firms,TRUE,EC_BCS,INDU.AT.TOT.8.F2S.Q,1996-Q1,2026-Q3,123
+AUT,industry_limits_labour,Q,% of firms,TRUE,EC_BCS,INDU.AT.TOT.8.F3S.Q,1996-Q1,2026-Q3,123
+AUT,industry_limits_material_equipment,Q,% of firms,TRUE,EC_BCS,INDU.AT.TOT.8.F4S.Q,1996-Q1,2026-Q3,123
+AUT,industry_limits_other,Q,% of firms,TRUE,EC_BCS,INDU.AT.TOT.8.F5S.Q,1996-Q1,2026-Q3,123
+AUT,industry_limits_financial,Q,% of firms,TRUE,EC_BCS,INDU.AT.TOT.8.F6S.Q,2003-Q3,2026-Q3,93
+AUT,industry_production_capacity,Q,balance,TRUE,EC_BCS,INDU.AT.TOT.9.BS.Q,1996-Q1,2026-Q3,123
+AUT,industry_new_orders_past,Q,balance,TRUE,EC_BCS,INDU.AT.TOT.11.BS.Q,1996-Q1,2026-Q3,123
+AUT,industry_capacity_utilization,Q,% of capacity,TRUE,EC_BCS,INDU.AT.TOT.13.QPS.Q,1996-Q1,2026-Q3,123
+AUT,industry_competitive_position_eu,Q,balance,TRUE,EC_BCS,INDU.AT.TOT.15.BS.Q,1996-Q1,2026-Q3,123
+AUT,industry_competitive_position_outside_eu,Q,balance,TRUE,EC_BCS,INDU.AT.TOT.16.BS.Q,1996-Q1,2026-Q3,123
+AUT,services_business_situation_past,M,balance,TRUE,EC_BCS,SERV.AT.TOT.1.BS.M,1996-M10,2026-M09,360
+AUT,services_demand_past,M,balance,TRUE,EC_BCS,SERV.AT.TOT.2.BS.M,1996-M10,2026-M09,360
+AUT,services_demand_expected,M,balance,TRUE,EC_BCS,SERV.AT.TOT.3.BS.M,1996-M10,2026-M09,360
+AUT,services_employment_expectations,M,balance,TRUE,EC_BCS,SERV.AT.TOT.5.BS.M,1997-M02,2026-M09,356
+AUT,services_price_expectations,M,balance,TRUE,EC_BCS,SERV.AT.TOT.6.BS.M,2003-M05,2026-M09,281
+AUT,services_limits_none,Q,% of firms,TRUE,EC_BCS,SERV.AT.TOT.7.F1S.Q,2003-Q3,2026-Q3,93
+AUT,services_limits_demand,Q,% of firms,TRUE,EC_BCS,SERV.AT.TOT.7.F2S.Q,2003-Q3,2026-Q3,93
+AUT,services_limits_labour,Q,% of firms,TRUE,EC_BCS,SERV.AT.TOT.7.F3S.Q,2003-Q3,2026-Q3,93
+AUT,services_limits_equipment_space,Q,% of firms,TRUE,EC_BCS,SERV.AT.TOT.7.F4S.Q,2003-Q3,2026-Q3,93
+AUT,services_limits_financial,Q,% of firms,TRUE,EC_BCS,SERV.AT.TOT.7.F5S.Q,2003-Q3,2026-Q3,93
+AUT,services_limits_other,Q,% of firms,TRUE,EC_BCS,SERV.AT.TOT.7.F6S.Q,2003-Q3,2026-Q3,93
+AUT,services_capacity_utilization,Q,% of capacity,TRUE,EC_BCS,SERV.AT.TOT.8.QPS.Q,2011-Q3,2026-Q3,61
+AUT,retail_business_activity_past,M,balance,TRUE,EC_BCS,RETA.AT.TOT.1.BS.M,1996-M01,2026-M09,369
+AUT,retail_stocks,M,balance,TRUE,EC_BCS,RETA.AT.TOT.2.BS.M,1996-M01,2026-M09,369
+AUT,retail_orders_expected,M,balance,TRUE,EC_BCS,RETA.AT.TOT.3.BS.M,1996-M01,2026-M09,369
+AUT,retail_business_activity_expected,M,balance,TRUE,EC_BCS,RETA.AT.TOT.4.BS.M,1996-M01,2026-M09,369
+AUT,retail_employment_expectations,M,balance,TRUE,EC_BCS,RETA.AT.TOT.5.BS.M,1996-M01,2026-M09,369
+AUT,retail_price_expectations,M,balance,TRUE,EC_BCS,RETA.AT.TOT.6.BS.M,2003-M05,2026-M09,281
+AUT,construction_activity_past,M,balance,TRUE,EC_BCS,BUIL.AT.TOT.1.BS.M,1996-M01,2026-M09,369
+AUT,construction_limits_none,M,% of firms,TRUE,EC_BCS,BUIL.AT.TOT.2.F1S.M,1985-M01,2026-M09,501
+AUT,construction_limits_demand,M,% of firms,TRUE,EC_BCS,BUIL.AT.TOT.2.F2S.M,1985-M01,2026-M09,501
+AUT,construction_limits_labour,M,% of firms,TRUE,EC_BCS,BUIL.AT.TOT.2.F4S.M,1985-M01,2026-M09,501
+AUT,construction_limits_material_equipment,M,% of firms,TRUE,EC_BCS,BUIL.AT.TOT.2.F5S.M,1985-M01,2026-M09,501
+AUT,construction_limits_other,M,% of firms,TRUE,EC_BCS,BUIL.AT.TOT.2.F6S.M,1985-M01,2026-M09,501
+AUT,construction_limits_financial,M,% of firms,TRUE,EC_BCS,BUIL.AT.TOT.2.F7S.M,2003-M05,2026-M09,281
+AUT,construction_order_books,M,balance,TRUE,EC_BCS,BUIL.AT.TOT.3.BS.M,1996-M01,2026-M09,369
+AUT,construction_employment_expectations,M,balance,TRUE,EC_BCS,BUIL.AT.TOT.4.BS.M,1996-M01,2026-M09,369
+AUT,construction_price_expectations,M,balance,TRUE,EC_BCS,BUIL.AT.TOT.5.BS.M,1985-M01,2026-M09,501
+AUT,economic_sentiment_indicator,M,"index, long-term mean = 100",TRUE,EC_BCS,AT.ESI,1985-M01,2026-M09,501
+AUT,services_confidence,M,balance,TRUE,EC_BCS,AT.SERV,1996-M10,2026-M09,360
+AUT,construction_cost_index,M,index 2021=100,TRUE,EUROSTAT_STS,sts_copi_m:M.COST.CPA_F41001_X_410014.NSA.I21.AT,1990-M01,2026-M08,440
+AUT,construction_producer_prices,M,index 2021=100,TRUE,EUROSTAT_STS,sts_copi_m:M.PRC_PRR.CPA_F41001_X_410014.NSA.I21.AT,1990-M01,2026-M08,440
+AUT,oil_price,M,USD per barrel,TRUE,FRED,WTISPLC,1960-M01,2026-M08,800
+AUT,geopolitical_risk,M,index,TRUE,GPR,GPR,1985-M01,2026-M09,501
+AUT,global_activity,M,deviation from trend,TRUE,FRED,IGREA,1968-M01,2026-M07,703
+AUT,financial_stress,M,index 0-1,TRUE,ECB_CISS,"D.AT.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)",1999-M01,2026-M09,333
+AUT,world_uncertainty_index,Q,index,TRUE,FRED_MIRROR,WUIAUT,1963-Q4,2026-Q2,251
+AUT,share_price_index,M,index points,TRUE,YAHOO_FINANCE,^ATX (monthly close) (OECD MEI mirror dropped: it measures a different statistic),1992-M11,2026-M10,408
+AUT,construction_weather_constraint,M,% of firms,TRUE,EC_BCS,BUIL.AT.TOT.2.F3S.M,1985-M01,2026-M09,501
+AUT,heating_degree_days,M,degree days,TRUE,OPEN_METEO,"ERA5, 6-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x1.220, corr 0.996 over 552 months)",1960-M01,2026-M09,801
+AUT,cooling_degree_days,M,degree days,TRUE,OPEN_METEO,"ERA5, 6-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x0.340, corr 0.975 over 552 months)",1960-M01,2026-M09,801
+DEU,real_gdp,Q,"EUR mn, chain-linked volume (2020), quarterly level",TRUE,EUROSTAT,namq_10_gdp:B1GQ (extended pre-1995 with level-spliced OECD_QNA:S1.B1GQ),1960-Q1,2026-Q2,266
+DEU,real_household_consumption,Q,"EUR mn, chain-linked volume (2020), quarterly level",TRUE,EUROSTAT,namq_10_gdp:P31_S14 (extended pre-1995 with level-spliced OECD_QNA:S1M.P3),1960-Q1,2026-Q2,266
+DEU,real_govt_consumption,Q,"EUR mn, chain-linked volume (2020), quarterly level",TRUE,EUROSTAT,namq_10_gdp:P3_S13 (extended pre-1995 with level-spliced OECD_QNA:S13.P3),1960-Q1,2026-Q2,266
+DEU,real_gfcf_total,Q,"EUR mn, chain-linked volume (2020), quarterly level",TRUE,EUROSTAT,namq_10_gdp:P51G (extended pre-1995 with level-spliced OECD_QNA:.P51G),1960-Q1,2026-Q2,266
+DEU,real_exports,Q,"EUR mn, chain-linked volume (2020), quarterly level",TRUE,EUROSTAT,namq_10_gdp:P6 (extended pre-1995 with level-spliced OECD_QNA:S1.P6),1960-Q1,2026-Q2,266
+DEU,real_imports,Q,"EUR mn, chain-linked volume (2020), quarterly level",TRUE,EUROSTAT,namq_10_gdp:P7 (extended pre-1995 with level-spliced OECD_QNA:S1.P7),1960-Q1,2026-Q2,266
+DEU,inventory_change_to_gdp,Q,% of GDP,TRUE,EUROSTAT,namq_10_gdp:Q.PC_GDP.SCA.P52.DE,1991-Q1,2026-Q2,142
+DEU,real_household_disposable_income,Q,"EUR mn at 2020 prices, quarterly level",TRUE,EUROSTAT,nasq_10_nf_tr:Q.CP_MEUR.RECV.S14_S15.B6G.SCA.DE deflated by namq_10_gdp:P31_S14_S15,1999-Q1,2026-Q2,110
+DEU,industrial_production,M,index 2021=100,TRUE,EUROSTAT_STS,"sts_inpr_m:M.PRD.B-D.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)",1960-M01,2026-M07,799
+DEU,industrial_confidence,M,balance,TRUE,EC_BCS,DE.INDU,1985-M01,2026-M09,501
+DEU,unemployment_rate,M,% of labour force,TRUE,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.DE (OECD MEI mirror fills earlier months unchanged, same units)",1991-M01,2026-M08,428
+DEU,employment_rate,Q,% of population 15-64,TRUE,FRED_MIRROR,LREM64TTDEQ156S,2005-Q1,2026-Q2,86
+DEU,hours_worked,Q,thousand hours,TRUE,EUROSTAT_NA,namq_10_a10_e:Q.THS_HW.TOTAL.SCA.EMP_DC.DE,1991-Q1,2026-Q2,142
+DEU,population,Q,thousand persons,TRUE,EUROSTAT_POP,namq_10_pe:Q.THS_PER.SCA.POP_NC.DE,1991-Q1,2026-Q2,142
+DEU,employment_expectations,M,index,TRUE,EC_BCS,DE.EEI,1985-M01,2026-M09,423
+DEU,house_price_real,Q,index 2010=100,TRUE,FRED_MIRROR,QDER628BIS,1970-Q1,2026-Q1,225
+DEU,construction_confidence,M,balance,TRUE,EC_BCS,DE.BUIL,1985-M01,2026-M09,501
+DEU,retail_sales_volume,M,index 2021=100,TRUE,EUROSTAT_STS,"sts_trtu_m:M.VOL_SLS.G47.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)",1960-M01,2026-M08,800
+DEU,retail_confidence,M,balance,TRUE,EC_BCS,DE.RETA,1985-M01,2026-M09,501
+DEU,cpi_index,M,index 2025=100,TRUE,EUROSTAT_HICP,prc_hicp_minr:M.I25.TOTAL.DE,1996-M01,2026-M09,369
+DEU,core_cpi_index,M,index 2025=100,TRUE,EUROSTAT_HICP,prc_hicp_minr:M.I25.TOT_X_NRG_FOOD.DE,1996-M01,2026-M09,369
+DEU,food_price_index,M,index 2025=100,TRUE,EUROSTAT_HICP,prc_hicp_minr:M.I25.CP01.DE,1996-M01,2026-M08,368
+DEU,energy_price_index,M,index 2025=100,TRUE,EUROSTAT_HICP,prc_hicp_minr:M.I25.NRG.DE,1996-M01,2026-M09,369
+DEU,services_price_index,M,index 2025=100,TRUE,EUROSTAT_HICP,prc_hicp_minr:M.I25.SERV.DE,1996-M01,2026-M09,369
+DEU,unit_labor_cost,Q,index 2010=100,TRUE,EUROSTAT_ULC,namq_10_lp_ulc:Q.I10.SCA.NULC_HW.DE,1991-Q1,2026-Q2,142
+DEU,long_term_rate,M,% p.a.,TRUE,ECB_IRS,"IRS/M.DE.L.L40.CI.0000.EUR.N.Z (10-year government bond yield, convergence criterion) (OECD MEI mirror fills earlier months unchanged, same units)",1960-M01,2026-M08,800
+DEU,short_term_rate,M,% p.a.,TRUE,ECB_FM,"FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA (3-month Euribor, from euro adoption) (OECD MEI mirror fills earlier months unchanged, same units)",1960-M01,2026-M09,801
+DEU,government_bond_yield_2y,M,% p.a.,TRUE,BUNDESBANK,"BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R02XX.R.A.A._Z._Z.A (daily, averaged within the month; end-of-month values from the monthly series before 1997-08)",1972-M09,2026-M10,650
+DEU,government_bond_yield_5y,M,% p.a.,TRUE,BUNDESBANK,"BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R05XX.R.A.A._Z._Z.A (daily, averaged within the month; end-of-month values from the monthly series before 1997-08)",1972-M09,2026-M10,650
+DEU,mortgage_rate,M,% p.a.,TRUE,ECB_MIR,A2C.R.A.2250.EUR.N,2000-M01,2026-M08,320
+DEU,mortgage_rate_pure_new_loans,M,% p.a.,TRUE,ECB_MIR,A2C.R.A.2250.EUR.P,2014-M12,2026-M08,141
+DEU,mortgage_rate_oenb,M,% p.a.,FALSE,,,,,0
+DEU,credit_to_private_nonfin_sector,Q,% of GDP,TRUE,BIS_WSTC,Q.DE.P.A.M.770.A,1960-Q4,2025-Q4,261
+DEU,household_mortgage_loans,M,"EUR mn, outstanding",TRUE,ECB_BSI,A22T.A.1.U6.2250.Z01.E,2009-M12,2026-M08,201
+DEU,mortgage_new_lending,M,EUR mn per period,TRUE,ECB_MIR,A2C.B.A.2250.EUR.P,2014-M12,2026-M08,141
+DEU,mortgage_new_lending_oenb,M,EUR mn per period,FALSE,,,,,0
+DEU,euro_area_household_net_worth_growth,Q,% change,TRUE,ECB_QSA_PUB,I8,2000-Q1,2022-Q4,92
+DEU,household_credit_to_gdp,Q,% of GDP,TRUE,BIS_WSTC,Q.DE.H.A.M.770.A,1970-Q4,2025-Q4,221
+DEU,corporate_credit_to_gdp,Q,% of GDP,TRUE,BIS_WSTC,Q.DE.N.A.M.770.A,1970-Q4,2025-Q4,221
+DEU,government_debt_to_gdp,Q,% of GDP,TRUE,BIS_WSTC,Q.DE.G.A.N.770.A,2000-Q1,2025-Q4,104
+DEU,government_primary_balance_to_gdp,Q,% of GDP,TRUE,EUROSTAT_GOV,gov_10q_ggnfa:Q.PC_GDP.NSA.S13.B9+D41PAY.DE,2002-Q1,2026-Q1,97
+DEU,fx_rate_to_usd,M,EUR per USD,TRUE,FRED_MIRROR,CCUSMA02DEM618N,1960-M01,2026-M08,800
+DEU,real_effective_exchange_rate,M,index 2015=100,TRUE,FRED_MIRROR,CCRETT01DEM661N,1970-M01,2026-M08,680
+DEU,consumer_confidence,M,balance,TRUE,EC_BCS,DE.CONS (OECD MEI mirror dropped: it measures a different statistic),1985-M01,2026-M09,501
+DEU,consumer_financial_situation_past,M,balance,TRUE,EC_BCS,CONS.DE.TOT.1.BS.M,1985-M01,2026-M09,501
+DEU,consumer_financial_situation_expected,M,balance,TRUE,EC_BCS,CONS.DE.TOT.2.BS.M,1985-M01,2026-M09,501
+DEU,consumer_economic_situation_past,M,balance,TRUE,EC_BCS,CONS.DE.TOT.3.BS.M,1985-M01,2026-M09,501
+DEU,consumer_economic_situation_expected,M,balance,TRUE,EC_BCS,CONS.DE.TOT.4.BS.M,1985-M01,2026-M09,501
+DEU,consumer_price_trends_past,M,balance,TRUE,EC_BCS,CONS.DE.TOT.5.BS.M,1985-M01,2026-M09,501
+DEU,consumer_price_expectations,M,balance,TRUE,EC_BCS,CONS.DE.TOT.6.BS.M,1985-M01,2026-M09,501
+DEU,consumer_unemployment_expectations,M,balance,TRUE,EC_BCS,CONS.DE.TOT.7.BS.M,1985-M01,2026-M09,501
+DEU,consumer_major_purchases_now,M,balance,TRUE,EC_BCS,CONS.DE.TOT.8.BS.M,1985-M01,2026-M09,501
+DEU,consumer_major_purchases_expected,M,balance,TRUE,EC_BCS,CONS.DE.TOT.9.BS.M,1985-M01,2026-M09,501
+DEU,consumer_savings_expected,M,balance,TRUE,EC_BCS,CONS.DE.TOT.11.BS.M,1985-M01,2026-M09,501
+DEU,consumer_household_finances_now,M,balance,TRUE,EC_BCS,CONS.DE.TOT.12.BS.M,1985-M01,2026-M09,501
+DEU,consumer_home_purchase_intentions,Q,balance,TRUE,EC_BCS,CONS.DE.TOT.14.BS.Q,1990-Q1,2026-Q3,147
+DEU,consumer_home_improvement_intentions,Q,balance,TRUE,EC_BCS,CONS.DE.TOT.15.BS.Q,1990-Q1,2026-Q3,147
+DEU,industry_production_past,M,balance,TRUE,EC_BCS,INDU.DE.TOT.1.BS.M,1985-M01,2026-M09,501
+DEU,industry_order_books,M,balance,TRUE,EC_BCS,INDU.DE.TOT.2.BS.M,1985-M01,2026-M09,501
+DEU,industry_export_order_books,M,balance,TRUE,EC_BCS,INDU.DE.TOT.3.BS.M,1985-M01,2026-M09,501
+DEU,industry_stocks_finished_products,M,balance,TRUE,EC_BCS,INDU.DE.TOT.4.BS.M,1985-M01,2026-M09,501
+DEU,industry_production_expectations,M,balance,TRUE,EC_BCS,INDU.DE.TOT.5.BS.M,1985-M01,2026-M09,501
+DEU,industry_selling_price_expectations,M,balance,TRUE,EC_BCS,INDU.DE.TOT.6.BS.M,1985-M01,2026-M09,501
+DEU,industry_employment_expectations,M,balance,TRUE,EC_BCS,INDU.DE.TOT.7.BS.M,1985-M01,2026-M09,423
+DEU,industry_limits_none,Q,% of firms,TRUE,EC_BCS,INDU.DE.TOT.8.F1S.Q,1985-Q1,2026-Q3,167
+DEU,industry_limits_demand,Q,% of firms,TRUE,EC_BCS,INDU.DE.TOT.8.F2S.Q,1985-Q1,2026-Q3,167
+DEU,industry_limits_labour,Q,% of firms,TRUE,EC_BCS,INDU.DE.TOT.8.F3S.Q,1985-Q1,2026-Q3,167
+DEU,industry_limits_material_equipment,Q,% of firms,TRUE,EC_BCS,INDU.DE.TOT.8.F4S.Q,1985-Q1,2026-Q3,167
+DEU,industry_limits_other,Q,% of firms,TRUE,EC_BCS,INDU.DE.TOT.8.F5S.Q,1985-Q1,2026-Q3,148
+DEU,industry_limits_financial,Q,% of firms,TRUE,EC_BCS,INDU.DE.TOT.8.F6S.Q,1985-Q1,2026-Q3,124
+DEU,industry_production_capacity,Q,balance,TRUE,EC_BCS,INDU.DE.TOT.9.BS.Q,1985-Q1,2026-Q3,167
+DEU,industry_new_orders_past,Q,balance,TRUE,EC_BCS,INDU.DE.TOT.11.BS.Q,1985-Q1,2026-Q3,167
+DEU,industry_capacity_utilization,Q,% of capacity,TRUE,EC_BCS,INDU.DE.TOT.13.QPS.Q,1985-Q1,2026-Q3,167
+DEU,industry_competitive_position_eu,Q,balance,TRUE,EC_BCS,INDU.DE.TOT.15.BS.Q,1994-Q3,2026-Q3,129
+DEU,industry_competitive_position_outside_eu,Q,balance,TRUE,EC_BCS,INDU.DE.TOT.16.BS.Q,1994-Q3,2026-Q3,129
+DEU,services_business_situation_past,M,balance,TRUE,EC_BCS,SERV.DE.TOT.1.BS.M,1995-M04,2026-M09,378
+DEU,services_demand_past,M,balance,TRUE,EC_BCS,SERV.DE.TOT.2.BS.M,1995-M04,2026-M09,378
+DEU,services_demand_expected,M,balance,TRUE,EC_BCS,SERV.DE.TOT.3.BS.M,1995-M04,2026-M09,378
+DEU,services_employment_expectations,M,balance,TRUE,EC_BCS,SERV.DE.TOT.5.BS.M,2001-M02,2026-M09,308
+DEU,services_price_expectations,M,balance,TRUE,EC_BCS,SERV.DE.TOT.6.BS.M,2003-M04,2026-M09,282
+DEU,services_limits_none,Q,% of firms,TRUE,EC_BCS,SERV.DE.TOT.7.F1S.Q,2003-Q3,2026-Q3,93
+DEU,services_limits_demand,Q,% of firms,TRUE,EC_BCS,SERV.DE.TOT.7.F2S.Q,2003-Q3,2026-Q3,93
+DEU,services_limits_labour,Q,% of firms,TRUE,EC_BCS,SERV.DE.TOT.7.F3S.Q,2003-Q3,2026-Q3,93
+DEU,services_limits_equipment_space,Q,% of firms,TRUE,EC_BCS,SERV.DE.TOT.7.F4S.Q,2003-Q3,2026-Q3,93
+DEU,services_limits_financial,Q,% of firms,TRUE,EC_BCS,SERV.DE.TOT.7.F5S.Q,2003-Q3,2026-Q3,93
+DEU,services_limits_other,Q,% of firms,TRUE,EC_BCS,SERV.DE.TOT.7.F6S.Q,2003-Q3,2026-Q3,93
+DEU,services_capacity_utilization,Q,% of capacity,TRUE,EC_BCS,SERV.DE.TOT.8.QPS.Q,2011-Q1,2026-Q3,63
+DEU,retail_business_activity_past,M,balance,TRUE,EC_BCS,RETA.DE.TOT.1.BS.M,1985-M01,2026-M09,501
+DEU,retail_stocks,M,balance,TRUE,EC_BCS,RETA.DE.TOT.2.BS.M,1985-M01,2026-M09,501
+DEU,retail_orders_expected,M,balance,TRUE,EC_BCS,RETA.DE.TOT.3.BS.M,1985-M02,2026-M09,500
+DEU,retail_business_activity_expected,M,balance,TRUE,EC_BCS,RETA.DE.TOT.4.BS.M,1985-M01,2026-M09,501
+DEU,retail_employment_expectations,M,balance,TRUE,EC_BCS,RETA.DE.TOT.5.BS.M,1985-M04,2026-M09,498
+DEU,retail_price_expectations,M,balance,TRUE,EC_BCS,RETA.DE.TOT.6.BS.M,1991-M01,2026-M09,429
+DEU,construction_activity_past,M,balance,TRUE,EC_BCS,BUIL.DE.TOT.1.BS.M,1985-M01,2026-M09,501
+DEU,construction_limits_none,M,% of firms,TRUE,EC_BCS,BUIL.DE.TOT.2.F1S.M,1991-M01,2026-M09,429
+DEU,construction_limits_demand,M,% of firms,TRUE,EC_BCS,BUIL.DE.TOT.2.F2S.M,1996-M01,2026-M09,369
+DEU,construction_limits_labour,M,% of firms,TRUE,EC_BCS,BUIL.DE.TOT.2.F4S.M,1991-M01,2026-M09,429
+DEU,construction_limits_material_equipment,M,% of firms,TRUE,EC_BCS,BUIL.DE.TOT.2.F5S.M,1991-M01,2026-M09,429
+DEU,construction_limits_other,M,% of firms,TRUE,EC_BCS,BUIL.DE.TOT.2.F6S.M,1991-M01,2026-M09,429
+DEU,construction_limits_financial,M,% of firms,TRUE,EC_BCS,BUIL.DE.TOT.2.F7S.M,1991-M01,2026-M09,429
+DEU,construction_order_books,M,balance,TRUE,EC_BCS,BUIL.DE.TOT.3.BS.M,1985-M01,2026-M09,501
+DEU,construction_employment_expectations,M,balance,TRUE,EC_BCS,BUIL.DE.TOT.4.BS.M,1985-M01,2026-M09,501
+DEU,construction_price_expectations,M,balance,TRUE,EC_BCS,BUIL.DE.TOT.5.BS.M,1985-M01,2026-M09,501
+DEU,economic_sentiment_indicator,M,"index, long-term mean = 100",TRUE,EC_BCS,DE.ESI,1985-M01,2026-M09,501
+DEU,services_confidence,M,balance,TRUE,EC_BCS,DE.SERV,1995-M04,2026-M09,378
+DEU,construction_cost_index,Q,index 2021=100,TRUE,EUROSTAT_STS,sts_copi_q:Q.COST.CPA_F41001_X_410014.NSA.I21.DE,2000-Q1,2026-Q2,106
+DEU,construction_producer_prices,Q,index 2021=100,TRUE,EUROSTAT_STS,sts_copi_q:Q.PRC_PRR.CPA_F41001_X_410014.NSA.I21.DE,1970-Q1,2026-Q2,226
+DEU,oil_price,M,USD per barrel,TRUE,FRED,WTISPLC,1960-M01,2026-M08,800
+DEU,geopolitical_risk,M,index,TRUE,GPR,GPRC_DEU,1985-M01,2026-M07,499
+DEU,global_activity,M,deviation from trend,TRUE,FRED,IGREA,1968-M01,2026-M07,703
+DEU,financial_stress,M,index 0-1,TRUE,ECB_CISS,"D.DE.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)",1980-M01,2026-M09,561
+DEU,world_uncertainty_index,Q,index,TRUE,FRED_MIRROR,WUIDEU,1952-Q2,2026-Q2,297
+DEU,share_price_index,M,index 2015=100,TRUE,FRED_MIRROR,SPASTT01DEM661N,1960-M01,2026-M08,800
+DEU,construction_weather_constraint,M,% of firms,TRUE,EC_BCS,BUIL.DE.TOT.2.F3S.M,1991-M01,2026-M09,429
+DEU,heating_degree_days,M,degree days,TRUE,OPEN_METEO,"ERA5, 8-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x1.029, corr 0.999 over 552 months)",1960-M01,2026-M09,801
+DEU,cooling_degree_days,M,degree days,TRUE,OPEN_METEO,"ERA5, 8-city population-weighted, spliced with Eurostat nrg_chdd_m and level-calibrated to it (x0.698, corr 0.971 over 552 months)",1960-M01,2026-M09,801
+USA,real_gdp,Q,"USD mn, chain-linked volume (2020), seasonally adjusted annual rate",TRUE,OECD_QNA,S1.B1GQ,1960-Q1,2026-Q2,266
+USA,real_household_consumption,Q,"USD mn, chain-linked volume (2020), seasonally adjusted annual rate",TRUE,OECD_QNA,S1M.P3,1960-Q1,2026-Q2,266
+USA,real_govt_consumption,Q,"USD mn, chain-linked volume (2020), seasonally adjusted annual rate",TRUE,OECD_QNA,S13.P3,1960-Q1,2026-Q2,266
+USA,real_gfcf_total,Q,"USD mn, chain-linked volume (2020), seasonally adjusted annual rate",TRUE,OECD_QNA,.P51G,1960-Q1,2026-Q2,266
+USA,real_exports,Q,"USD mn, chain-linked volume (2020), seasonally adjusted annual rate",TRUE,OECD_QNA,S1.P6,1960-Q1,2026-Q2,266
+USA,real_imports,Q,"USD mn, chain-linked volume (2020), seasonally adjusted annual rate",TRUE,OECD_QNA,S1.P7,1960-Q1,2026-Q2,266
+USA,inventory_change_to_gdp,Q,% of GDP,TRUE,FRED,A014RE1Q156NBEA,1960-Q1,2026-Q2,266
+USA,real_household_disposable_income,Q,"USD mn at 2020 prices, quarterly level",TRUE,OECD_QNA,DF_QSA:Q.Y.USA.S1M.S1.C.B6G...XDC.S.V.N.T0801 deflated by DF_QNA:S1M.P3 (V/LR),1960-Q1,2026-Q2,266
+USA,industrial_production,M,index 2015=100,TRUE,FRED_MIRROR,USAPROINDMISMEI,1960-M01,2024-M04,772
+USA,industrial_confidence,M,balance,FALSE,,,,,0
+USA,unemployment_rate,M,% of labour force,TRUE,FRED_MIRROR,LRHUTTTTUSM156S,1960-M01,2025-M09,789
+USA,employment_rate,Q,% of population 15-64,TRUE,FRED_MIRROR,LREM64TTUSQ156S,1977-Q1,2026-Q2,198
+USA,hours_worked,Q,thousand hours,FALSE,,,,,0
+USA,population,Q,thousand persons,TRUE,FRED,POPTHM,1960-Q1,2026-Q3,267
+USA,employment_expectations,M,index,FALSE,,,,,0
+USA,house_price_real,Q,index 2010=100,TRUE,FRED_MIRROR,QUSR628BIS,1970-Q1,2026-Q1,225
+USA,construction_confidence,M,balance,FALSE,,,,,0
+USA,retail_sales_volume,M,index 2015=100,TRUE,FRED_MIRROR,USASARTMISMEI,1960-M01,2023-M12,768
+USA,retail_confidence,M,balance,FALSE,,,,,0
+USA,cpi_index,M,index 1982-1984=100,TRUE,FRED,CPIAUCSL,1960-M01,2026-M08,799
+USA,core_cpi_index,M,index 2025=100,FALSE,,,,,0
+USA,food_price_index,M,index 2025=100,FALSE,,,,,0
+USA,energy_price_index,M,index 2025=100,FALSE,,,,,0
+USA,services_price_index,M,index 2025=100,FALSE,,,,,0
+USA,unit_labor_cost,Q,% change on previous quarter,TRUE,FRED_MIRROR,ULQEUL01USQ657S,1955-Q2,2025-Q3,282
+USA,long_term_rate,M,% p.a.,TRUE,FRED_MIRROR,IRLTLT01USM156N,1960-M01,2026-M08,800
+USA,short_term_rate,M,% p.a.,TRUE,FRED_MIRROR,IR3TIB01USM156N,1964-M06,2026-M08,746
+USA,government_bond_yield_2y,M,% p.a.,TRUE,FRED,GS2,1976-M06,2026-M09,604
+USA,government_bond_yield_5y,M,% p.a.,TRUE,FRED,GS5,1960-M01,2026-M09,801
+USA,mortgage_rate,M,% p.a.,FALSE,,,,,0
+USA,mortgage_rate_pure_new_loans,M,% p.a.,FALSE,,,,,0
+USA,mortgage_rate_oenb,M,% p.a.,FALSE,,,,,0
+USA,credit_to_private_nonfin_sector,Q,% of GDP,TRUE,BIS_WSTC,Q.US.P.A.M.770.A,1960-Q1,2026-Q1,265
+USA,household_mortgage_loans,M,"EUR mn, outstanding",FALSE,,,,,0
+USA,mortgage_new_lending,M,EUR mn per period,FALSE,,,,,0
+USA,mortgage_new_lending_oenb,M,EUR mn per period,FALSE,,,,,0
+USA,euro_area_household_net_worth_growth,Q,% change,FALSE,,,,,0
+USA,household_credit_to_gdp,Q,% of GDP,TRUE,BIS_WSTC,Q.US.H.A.M.770.A,1960-Q1,2026-Q1,265
+USA,corporate_credit_to_gdp,Q,% of GDP,TRUE,BIS_WSTC,Q.US.N.A.M.770.A,1960-Q1,2026-Q1,265
+USA,government_debt_to_gdp,Q,% of GDP,TRUE,BIS_WSTC,Q.US.G.A.N.770.A,1960-Q1,2026-Q1,265
+USA,government_primary_balance_to_gdp,Q,% of GDP,FALSE,,,,,0
+USA,fx_rate_to_usd,M,USD per USD,FALSE,,,,,0
+USA,real_effective_exchange_rate,M,index 2015=100,TRUE,FRED_MIRROR,CCRETT01USM661N,1970-M01,2026-M08,680
+USA,consumer_confidence,M,"index, long-term average = 100",TRUE,FRED_MIRROR,CSCICP03USM665S,1960-M01,2024-M01,769
+USA,consumer_financial_situation_past,M,balance,FALSE,,,,,0
+USA,consumer_financial_situation_expected,M,balance,FALSE,,,,,0
+USA,consumer_economic_situation_past,M,balance,FALSE,,,,,0
+USA,consumer_economic_situation_expected,M,balance,FALSE,,,,,0
+USA,consumer_price_trends_past,M,balance,FALSE,,,,,0
+USA,consumer_price_expectations,M,balance,FALSE,,,,,0
+USA,consumer_unemployment_expectations,M,balance,FALSE,,,,,0
+USA,consumer_major_purchases_now,M,balance,FALSE,,,,,0
+USA,consumer_major_purchases_expected,M,balance,FALSE,,,,,0
+USA,consumer_savings_expected,M,balance,FALSE,,,,,0
+USA,consumer_household_finances_now,M,balance,FALSE,,,,,0
+USA,consumer_home_purchase_intentions,Q,balance,FALSE,,,,,0
+USA,consumer_home_improvement_intentions,Q,balance,FALSE,,,,,0
+USA,industry_production_past,M,balance,FALSE,,,,,0
+USA,industry_order_books,M,balance,FALSE,,,,,0
+USA,industry_export_order_books,M,balance,FALSE,,,,,0
+USA,industry_stocks_finished_products,M,balance,FALSE,,,,,0
+USA,industry_production_expectations,M,balance,FALSE,,,,,0
+USA,industry_selling_price_expectations,M,balance,FALSE,,,,,0
+USA,industry_employment_expectations,M,balance,FALSE,,,,,0
+USA,industry_limits_none,Q,% of firms,FALSE,,,,,0
+USA,industry_limits_demand,Q,% of firms,FALSE,,,,,0
+USA,industry_limits_labour,Q,% of firms,FALSE,,,,,0
+USA,industry_limits_material_equipment,Q,% of firms,FALSE,,,,,0
+USA,industry_limits_other,Q,% of firms,FALSE,,,,,0
+USA,industry_limits_financial,Q,% of firms,FALSE,,,,,0
+USA,industry_production_capacity,Q,balance,FALSE,,,,,0
+USA,industry_new_orders_past,Q,balance,FALSE,,,,,0
+USA,industry_capacity_utilization,Q,% of capacity,FALSE,,,,,0
+USA,industry_competitive_position_eu,Q,balance,FALSE,,,,,0
+USA,industry_competitive_position_outside_eu,Q,balance,FALSE,,,,,0
+USA,services_business_situation_past,M,balance,FALSE,,,,,0
+USA,services_demand_past,M,balance,FALSE,,,,,0
+USA,services_demand_expected,M,balance,FALSE,,,,,0
+USA,services_employment_expectations,M,balance,FALSE,,,,,0
+USA,services_price_expectations,M,balance,FALSE,,,,,0
+USA,services_limits_none,Q,% of firms,FALSE,,,,,0
+USA,services_limits_demand,Q,% of firms,FALSE,,,,,0
+USA,services_limits_labour,Q,% of firms,FALSE,,,,,0
+USA,services_limits_equipment_space,Q,% of firms,FALSE,,,,,0
+USA,services_limits_financial,Q,% of firms,FALSE,,,,,0
+USA,services_limits_other,Q,% of firms,FALSE,,,,,0
+USA,services_capacity_utilization,Q,% of capacity,FALSE,,,,,0
+USA,retail_business_activity_past,M,balance,FALSE,,,,,0
+USA,retail_stocks,M,balance,FALSE,,,,,0
+USA,retail_orders_expected,M,balance,FALSE,,,,,0
+USA,retail_business_activity_expected,M,balance,FALSE,,,,,0
+USA,retail_employment_expectations,M,balance,FALSE,,,,,0
+USA,retail_price_expectations,M,balance,FALSE,,,,,0
+USA,construction_activity_past,M,balance,FALSE,,,,,0
+USA,construction_limits_none,M,% of firms,FALSE,,,,,0
+USA,construction_limits_demand,M,% of firms,FALSE,,,,,0
+USA,construction_limits_labour,M,% of firms,FALSE,,,,,0
+USA,construction_limits_material_equipment,M,% of firms,FALSE,,,,,0
+USA,construction_limits_other,M,% of firms,FALSE,,,,,0
+USA,construction_limits_financial,M,% of firms,FALSE,,,,,0
+USA,construction_order_books,M,balance,FALSE,,,,,0
+USA,construction_employment_expectations,M,balance,FALSE,,,,,0
+USA,construction_price_expectations,M,balance,FALSE,,,,,0
+USA,economic_sentiment_indicator,M,"index, long-term mean = 100",FALSE,,,,,0
+USA,services_confidence,M,balance,FALSE,,,,,0
+USA,construction_cost_index,M,index June 1986=100,TRUE,FRED,WPUIP2311001,1986-M06,2026-M08,483
+USA,construction_producer_prices,M,index 2021=100,FALSE,,,,,0
+USA,oil_price,M,USD per barrel,TRUE,FRED,WTISPLC,1960-M01,2026-M08,800
+USA,geopolitical_risk,M,index,TRUE,GPR,GPRC_USA,1985-M01,2026-M09,501
+USA,global_activity,M,deviation from trend,TRUE,FRED,IGREA,1968-M01,2026-M07,703
+USA,financial_stress,M,index 0-1,TRUE,ECB_CISS,"D.US.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)",1980-M01,2026-M09,561
+USA,world_uncertainty_index,Q,index,TRUE,FRED_MIRROR,WUIUSA,1952-Q1,2026-Q2,298
+USA,share_price_index,M,index 2015=100,TRUE,FRED_MIRROR,SPASTT01USM661N,1960-M01,2026-M08,800
+USA,construction_weather_constraint,M,% of firms,FALSE,,,,,0
+USA,heating_degree_days,M,degree days,TRUE,OPEN_METEO,"ERA5, 15-city population-weighted (USA); UNCALIBRATED -- Eurostat nrg_chdd_m publishes no cross-check for this country",1960-M01,2026-M09,801
+USA,cooling_degree_days,M,degree days,TRUE,OPEN_METEO,"ERA5, 15-city population-weighted (USA); UNCALIBRATED -- Eurostat nrg_chdd_m publishes no cross-check for this country",1960-M01,2026-M09,801
