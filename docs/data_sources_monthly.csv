@@ -45,7 +45,7 @@ AUT,industry_production_expectations,EC_BCS,INDU.AT.TOT.5.BS.M
 AUT,industry_production_past,EC_BCS,INDU.AT.TOT.1.BS.M
 AUT,industry_selling_price_expectations,EC_BCS,INDU.AT.TOT.6.BS.M
 AUT,industry_stocks_finished_products,EC_BCS,INDU.AT.TOT.4.BS.M
-AUT,long_term_rate,FRED_MIRROR,IRLTLT01ATM156N
+AUT,long_term_rate,ECB_IRS,"IRS/M.AT.L.L40.CI.0000.EUR.N.Z (10-year government bond yield, convergence criterion) (OECD MEI mirror fills earlier months unchanged, same units)"
 AUT,mortgage_new_lending,ECB_MIR,A2C.B.A.2250.EUR.P
 AUT,mortgage_new_lending_oenb,OENB,100140002/VDBMSKNWOHNBAU
 AUT,mortgage_rate,ECB_MIR,A2C.R.A.2250.EUR.N
@@ -69,7 +69,7 @@ AUT,services_employment_expectations,EC_BCS,SERV.AT.TOT.5.BS.M
 AUT,services_price_expectations,EC_BCS,SERV.AT.TOT.6.BS.M
 AUT,services_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.SERV.AT
 AUT,share_price_index,YAHOO_FINANCE,^ATX (monthly close) (OECD MEI mirror dropped: it measures a different statistic)
-AUT,short_term_rate,FRED_MIRROR,IR3TIB01ATM156N
+AUT,short_term_rate,ECB_FM,"FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA (3-month Euribor, from euro adoption) (OECD MEI mirror fills earlier months unchanged, same units)"
 AUT,unemployment_rate,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.AT (OECD MEI mirror fills earlier months unchanged, same units)"
 DEU,construction_activity_past,EC_BCS,BUIL.DE.TOT.1.BS.M
 DEU,construction_confidence,EC_BCS,DE.BUIL
@@ -119,7 +119,7 @@ DEU,industry_production_expectations,EC_BCS,INDU.DE.TOT.5.BS.M
 DEU,industry_production_past,EC_BCS,INDU.DE.TOT.1.BS.M
 DEU,industry_selling_price_expectations,EC_BCS,INDU.DE.TOT.6.BS.M
 DEU,industry_stocks_finished_products,EC_BCS,INDU.DE.TOT.4.BS.M
-DEU,long_term_rate,FRED_MIRROR,IRLTLT01DEM156N
+DEU,long_term_rate,ECB_IRS,"IRS/M.DE.L.L40.CI.0000.EUR.N.Z (10-year government bond yield, convergence criterion) (OECD MEI mirror fills earlier months unchanged, same units)"
 DEU,mortgage_new_lending,ECB_MIR,A2C.B.A.2250.EUR.P
 DEU,mortgage_rate,ECB_MIR,A2C.R.A.2250.EUR.N
 DEU,mortgage_rate_pure_new_loans,ECB_MIR,A2C.R.A.2250.EUR.P
@@ -141,7 +141,7 @@ DEU,services_employment_expectations,EC_BCS,SERV.DE.TOT.5.BS.M
 DEU,services_price_expectations,EC_BCS,SERV.DE.TOT.6.BS.M
 DEU,services_price_index,EUROSTAT_HICP,prc_hicp_minr:M.I25.SERV.DE
 DEU,share_price_index,FRED_MIRROR,SPASTT01DEM661N
-DEU,short_term_rate,FRED_MIRROR,IR3TIB01DEM156N
+DEU,short_term_rate,ECB_FM,"FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA (3-month Euribor, from euro adoption) (OECD MEI mirror fills earlier months unchanged, same units)"
 DEU,unemployment_rate,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.DE (OECD MEI mirror fills earlier months unchanged, same units)"
 USA,consumer_confidence,FRED_MIRROR,CSCICP03USM665S
 USA,cooling_degree_days,OPEN_METEO,"ERA5, 15-city population-weighted (USA); UNCALIBRATED -- Eurostat nrg_chdd_m publishes no cross-check for this country"

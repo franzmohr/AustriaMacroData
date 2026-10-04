@@ -1,7 +1,7 @@
 {
   "country": "DEU",
   "frequency": "monthly",
-  "generated_at": "2026-10-04T09:13:36Z",
+  "generated_at": "2026-10-04T10:43:49Z",
   "start_period": "1960-M01",
   "concepts_published_monthly": 74,
   "concepts_quarterly_only": 40,
@@ -69,12 +69,12 @@
     {
       "fred_qd_group": "Interest Rates",
       "label": "long_term_rate",
-      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IRLTLT01DEM156N]"
+      "source": "ECB Long-term interest rate statistics (IRS) [IRS/M.DE.L.L40.CI.0000.EUR.N.Z (10-year government bond yield, convergence criterion) (OECD MEI mirror fills earlier months unchanged, same units)]"
     },
     {
       "fred_qd_group": "Interest Rates",
       "label": "short_term_rate",
-      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IR3TIB01DEM156N]"
+      "source": "ECB Financial market data (FM) [FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA (3-month Euribor, from euro adoption) (OECD MEI mirror fills earlier months unchanged, same units)]"
     },
     {
       "fred_qd_group": "Interest Rates",
@@ -622,7 +622,7 @@
       "label": "short_term_rate",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 800 values within [-10, 400]."
+      "detail": "All 801 values within [-10, 400]."
     },
     {
       "label": "government_bond_yield_2y",
@@ -946,7 +946,7 @@
       "label": "geopolitical_risk",
       "category": "level_event_driven",
       "status": "PASS",
-      "detail": "Positive throughout (499 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+      "detail": "Positive throughout (501 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
     },
     {
       "label": "global_activity",

@@ -163,6 +163,8 @@ provider_display_names <- c(
   ECB_MIR = "ECB MFI Interest Rate Statistics (MIR)",
   ECB_BSI = "ECB MFI Balance Sheet Items (BSI)",
   ECB_CISS = "ECB Composite Indicator of Systemic Stress (CISS)",
+  ECB_FM = "ECB Financial market data (FM)",
+  ECB_IRS = "ECB Long-term interest rate statistics (IRS)",
   FRED_MIRROR = "OECD MEI / BIS / World Uncertainty Index (via FRED mirror)",
   EC_BCS = "European Commission Business and Consumer Survey",
   EUROSTAT_HICP = "Eurostat (prc_hicp_minr, HICP 2025=100)",

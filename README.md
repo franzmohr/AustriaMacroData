@@ -118,6 +118,9 @@ R/                          Fetcher library used by build_panels.R,
   oenb.R                    OeNB data service (Austria only): new loans for
                              housing purposes from 2009 and their new-business
                              rate from 1995, longer than the ECB MIR series
+  ecb_market_rates.R        3-month Euribor and the 10-year yield from the
+                             ECB for euro-area members, current where the
+                             OECD MEI mirror runs a month behind
   gov_yields.R              2- and 5-year government bond yields: Bundesbank
                              term structure (Germany), FRED GS2/GS5 (USA)
   ec_survey.R                European Commission Business and Consumer
@@ -810,8 +813,8 @@ override exists -- see the fallback chain earlier in this README.
 | Prices | CPI index | **Eurostat HICP** `prc_hicp_midx` (EU members, live/current), else OECD MEI via FRED (`CPALTT01{cc}Q657N`, stale) | Verified -- AUT + DEU via Eurostat HICP (current through 2025-Q4, ~2 years fresher than the stale FRED mirror, which stops at 2023-Q4 for AT); USA via the stale FRED mirror (no EU HICP equivalent for non-EU countries) |
 | Prices | Core, food, energy, services CPI sub-indices | **Eurostat HICP** `prc_hicp_midx`, COICOP=`TOT_X_NRG_FOOD`/`CP01`/`NRG`/`SERV` | Verified -- AUT + DEU only; EU-only by construction, no FRED-mirror equivalent for any of the four |
 | Earnings and Productivity | Unit labor cost | **Eurostat labour productivity/ULC** `namq_10_lp_ulc` (EU members, where an index-level series is published), else OECD MEI via FRED (`ULQEUL01{cc}Q657S`) | Verified -- AUT via Eurostat (hours-based index, matching FRED-QD's ULCNFB construction); DEU + USA via the OECD-mirror proxy (employment-based % change, confirmed absent in index form for Germany) |
-| Interest Rates | Long-term interest rate | OECD MEI via FRED (`IRLTLT01{cc}Q156N`) | Verified -- AUT + DEU + USA |
-| Interest Rates | Short-term (3-month interbank) rate | OECD MEI via FRED (`IR3TIB01{cc}Q156N`) | Verified -- AUT + DEU + USA |
+| Interest Rates | Long-term interest rate | **ECB** `IRS`, `M.{cc}.L.L40.CI.0000.EUR.N.Z` (euro-area members), the OECD MEI mirror via FRED (`IRLTLT01{cc}M156N`) before it starts and for every other country | Verified 2026-10-04 -- equal to the mirror for AUT since 1993; DE differs by at most 0.15 pp up to 2019 |
+| Interest Rates | Short-term (3-month interbank) rate | **ECB** `FM`, 3-month Euribor (euro-area members, from euro adoption), the OECD MEI mirror via FRED (`IR3TIB01{cc}M156N`) before it and for every other country | Verified 2026-10-04 -- equal to the mirror for AUT and DEU in every month since 1999; current within days, where the mirror runs a month behind |
 | Interest Rates | 2-year and 5-year government bond yields (`government_bond_yield_2y`, `_5y`) | **Deutsche Bundesbank** Svensson term structure, `BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R02XX/R05XX.R.A.A._Z._Z.A` (Germany); FRED `GS2` / `GS5` (USA) | Verified 2026-10-04 -- DEU from 1972-09 (daily values averaged within the month from 1997-08, end-of-month values before), USA from 1976-06 (2y) and 1953-04 (5y). **AUT: NA** -- no Austrian yield at a fixed 2- or 5-year maturity is published (OeNB data set 24 holds issue yields and the all-bond average only; the ECB's FM benchmarks are euro-area aggregates) |
 | Interest Rates | Mortgage rate (new business, loans to households) | **ECB** `MIR` (euro-area members) | Verified -- AUT + DE, genuinely country-specific; no source for non-euro-area countries (incl. USA -- FRED-QD's own MORTGAGE30US is US-specific too) |
 | Interest Rates | Mortgage rate on pure new loans (renegotiations excluded) | **ECB** `MIR`, `A2C.R.A.2250.EUR.P` (euro-area members) | Verified 2026-10-03 -- AUT (3.64%) + DE (4.02%) for 2026-08; published from 2017-08 for AUT, computed back to 2017-01 as new business less renegotiations |
