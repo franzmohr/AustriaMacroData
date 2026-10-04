@@ -1,6 +1,6 @@
 {
   "country": "AUT",
-  "generated_at": "2026-10-03T21:30:48Z",
+  "generated_at": "2026-10-04T09:20:14Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -126,12 +126,12 @@
     {
       "fred_qd_group": "Interest Rates",
       "label": "long_term_rate",
-      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IRLTLT01ATM156N] -- quarterly average of its months"
+      "source": "ECB Long-term interest rate statistics (IRS) [IRS/M.AT.L.L40.CI.0000.EUR.N.Z (10-year government bond yield, convergence criterion) (OECD MEI mirror fills earlier months unchanged, same units)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Interest Rates",
       "label": "short_term_rate",
-      "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IR3TIB01ATM156N] -- quarterly average of its months"
+      "source": "ECB Financial market data (FM) [FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA (3-month Euribor, from euro adoption) (OECD MEI mirror fills earlier months unchanged, same units)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Interest Rates",
@@ -756,7 +756,7 @@
       "label": "credit_to_private_nonfin_sector",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 261 values within [-10, 400]."
+      "detail": "All 262 values within [-10, 400]."
     },
     {
       "label": "household_mortgage_loans",
@@ -786,19 +786,19 @@
       "label": "household_credit_to_gdp",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 121 values within [-10, 400]."
+      "detail": "All 122 values within [-10, 400]."
     },
     {
       "label": "corporate_credit_to_gdp",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 121 values within [-10, 400]."
+      "detail": "All 122 values within [-10, 400]."
     },
     {
       "label": "government_debt_to_gdp",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 104 values within [-10, 400]."
+      "detail": "All 105 values within [-10, 400]."
     },
     {
       "label": "government_primary_balance_to_gdp",

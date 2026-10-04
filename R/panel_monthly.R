@@ -139,6 +139,26 @@ fetch_monthly_concepts <- function(country, start_period, country2 = lookup_coun
   }
 
   ## ===================================================================
+  ## 2b. Market interest rates from the ECB for euro-area members, current
+  ##     within days of a month's end where the mirror runs a month behind.
+  ##     Same units, so the mirror fills the earlier months unchanged
+  ##     ("prefer") -- see R/ecb_market_rates.R.
+  ## ===================================================================
+  if (country %in% names(euro_adoption)) {
+    message("Country is a euro-area member -- fetching Euribor and the 10-year yield from the ECB...")
+    rates <- list(short_term_rate = list(fetch_ecb_short_term_rate(country, start_period = start_period, frequency = freq), "ECB_FM"),
+                  long_term_rate  = list(fetch_ecb_long_term_rate(country, start_period = start_period, frequency = freq), "ECB_IRS"))
+    for (lbl in names(rates)) {
+      got <- rates[[lbl]][[1]]
+      if (is.null(got)) {
+        message("  ", lbl, ": ECB unavailable this run -- keeping the FRED-mirror series, if any.")
+        next
+      }
+      combine_in(got, lbl, rates[[lbl]][[2]], attr(got, "key"), mode = "prefer")
+    }
+  }
+
+  ## ===================================================================
   ## 3. Eurostat HICP: the headline index and its four sub-categories.
   ## ===================================================================
   if (country %in% eu_member_countries) {

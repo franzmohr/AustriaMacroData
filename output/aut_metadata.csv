@@ -24,19 +24,19 @@ food_price_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,,EUROSTAT_HICP,prc_hic
 energy_price_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,,EUROSTAT_HICP,prc_hicp_minr:M.I25.NRG.AT,1996-M01,2026-M09,369
 services_price_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,CUSR0000SAS,EUROSTAT_HICP,prc_hicp_minr:M.I25.SERV.AT,1999-M12,2026-M09,322
 unit_labor_cost,Earnings and Productivity,Q,mean,index 2010=100,SCA,N,5,2,3,ULCNFB,EUROSTAT_ULC,namq_10_lp_ulc:Q.I10.SCA.NULC_HW.AT,1995-Q1,2026-Q2,126
-long_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,GS10,FRED_MIRROR,IRLTLT01ATM156N,1990-M01,2026-M08,440
-short_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,TB3MS,FRED_MIRROR,IR3TIB01ATM156N,1989-M06,2026-M08,447
+long_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,GS10,ECB_IRS,"IRS/M.AT.L.L40.CI.0000.EUR.N.Z (10-year government bond yield, convergence criterion) (OECD MEI mirror fills earlier months unchanged, same units)",1990-M01,2026-M08,440
+short_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,TB3MS,ECB_FM,"FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA (3-month Euribor, from euro adoption) (OECD MEI mirror fills earlier months unchanged, same units)",1989-M06,2026-M09,448
 mortgage_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,MORTGAGE30US,ECB_MIR,A2C.R.A.2250.EUR.N,2000-M01,2026-M08,320
 mortgage_rate_pure_new_loans,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,ECB_MIR,A2C.R.A.2250.EUR.P,2017-M01,2026-M08,116
 mortgage_rate_oenb,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,OENB,23/VDBZSBSZN10010,1995-M12,2026-M08,369
-credit_to_private_nonfin_sector,Money and Credit,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.AT.P.A.M.770.A,1960-Q4,2025-Q4,261
+credit_to_private_nonfin_sector,Money and Credit,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.AT.P.A.M.770.A,1960-Q4,2026-Q1,262
 household_mortgage_loans,Money and Credit,M,mean,"EUR mn, outstanding",NSA,N,5,2,3,REALLNx,ECB_BSI,A22T.A.1.U6.2250.Z01.E,2014-M12,2026-M08,141
 mortgage_new_lending,Money and Credit,M,sum,EUR mn per period,NSA,N,5,2,2,,ECB_MIR,A2C.B.A.2250.EUR.P,2014-M12,2026-M08,141
 mortgage_new_lending_oenb,Money and Credit,M,sum,EUR mn per period,NSA,N,5,2,2,,OENB,100140002/VDBMSKNWOHNBAU,2009-M01,2026-M08,212
 euro_area_household_net_worth_growth,Household Balance Sheets,Q,mean,% change,NSA,F,1,0,0,TNWBSHNOx,ECB_QSA_PUB,I8,2000-Q1,2022-Q4,92
-household_credit_to_gdp,Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.AT.H.A.M.770.A,1995-Q4,2025-Q4,121
-corporate_credit_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.AT.N.A.M.770.A,1995-Q4,2025-Q4,121
-government_debt_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,GFDEGDQ188S,BIS_WSTC,Q.AT.G.A.N.770.A,2000-Q1,2025-Q4,104
+household_credit_to_gdp,Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.AT.H.A.M.770.A,1995-Q4,2026-Q1,122
+corporate_credit_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.AT.N.A.M.770.A,1995-Q4,2026-Q1,122
+government_debt_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,GFDEGDQ188S,BIS_WSTC,Q.AT.G.A.N.770.A,2000-Q1,2026-Q1,105
 government_primary_balance_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,1,0,0,,EUROSTAT_GOV,gov_10q_ggnfa:Q.PC_GDP.NSA.S13.B9+D41PAY.AT,2001-Q1,2026-Q1,101
 fx_rate_to_usd,Exchange Rates,M,mean,national currency per USD,NSA,F,5,2,2,,FRED_MIRROR,CCUSMA02ATM618N,1960-M01,2026-M08,800
 real_effective_exchange_rate,Exchange Rates,M,mean,index 2015=100,NSA,F,5,2,2,TWEXAFEGSMTHx,FRED_MIRROR,CCRETT01ATM661N,1970-M01,2026-M08,680
@@ -103,7 +103,7 @@ construction_price_expectations,Housing,M,mean,balance,SA,C,1,0,0,,EC_BCS,BUIL.A
 economic_sentiment_indicator,Other,M,mean,"index, long-term mean = 100",SA,C,1,0,0,,EC_BCS,AT.ESI,1985-M01,2026-M09,501
 services_confidence,Other,M,mean,balance,SA,C,1,0,0,,EC_BCS,AT.SERV,1996-M10,2026-M09,360
 oil_price,Prices,M,mean,USD per barrel,NSA,N,5,2,3,OILPRICEx,FRED,WTISPLC,1960-M01,2026-M08,800
-geopolitical_risk,Other,M,mean,index,NSA,C,1,0,0,,GPR,GPR,1985-M01,2026-M07,499
+geopolitical_risk,Other,M,mean,index,NSA,C,1,0,0,,GPR,GPR,1985-M01,2026-M09,501
 global_activity,Other,M,mean,deviation from trend,NSA,R,1,0,0,,FRED,IGREA,1968-M01,2026-M07,703
 financial_stress,Other,M,mean,index 0-1,NSA,F,1,0,0,,ECB_CISS,"D.AT.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)",1999-M01,2026-M09,333
 world_uncertainty_index,Other,Q,mean,index,NSA,C,1,0,0,,FRED_MIRROR,WUIAUT,1963-Q4,2026-Q2,251
