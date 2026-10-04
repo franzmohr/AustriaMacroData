@@ -71,9 +71,75 @@ test_that("fetch_eurostat_anchors honors a `labels` filter, mirroring fetch_oecd
   expect_true(grepl("B1GQ", requested[1]))
 })
 
-test_that("fetch_eurostat_anchors never attempts real_household_disposable_income (not valid for this dataflow)", {
-  out <- eurostat_anchor_concepts$label
-  expect_false("real_household_disposable_income" %in% out)
+test_that("real_household_disposable_income is not a namq_10_gdp row (B6G is not valid for that dataflow)", {
+  expect_false("real_household_disposable_income" %in% eurostat_anchor_concepts$label)
+})
+
+## Fixtures mirror the real shapes confirmed live 2026-10-04: AT B6G for
+## S14_S15 from nasq_10_nf_tr, and P31_S14_S15 from namq_10_gdp at
+## current prices and at chain-linked 2020 volumes.
+eurostat_b6g_fixture <- paste(
+  "DATAFLOW,LAST UPDATE,freq,unit,direct,sector,na_item,s_adj,geo,TIME_PERIOD,OBS_VALUE,OBS_FLAG,CONF_STATUS",
+  "ESTAT:NASQ_10_NF_TR(1.0),02/10/26 11:00:00,Q,CP_MEUR,RECV,S14_S15,B6G,SCA,AT,2025-Q4,78228,,",
+  "ESTAT:NASQ_10_NF_TR(1.0),02/10/26 11:00:00,Q,CP_MEUR,RECV,S14_S15,B6G,SCA,AT,2026-Q1,79000,,",
+  sep = "
+"
+)
+eurostat_p31_cp_fixture <- paste(
+  "DATAFLOW,LAST UPDATE,freq,unit,s_adj,na_item,geo,TIME_PERIOD,OBS_VALUE,OBS_FLAG,CONF_STATUS",
+  "ESTAT:NAMQ_10_GDP(1.0),02/10/26 23:00:00,Q,CP_MEUR,SCA,P31_S14_S15,AT,2025-Q4,66000,,",
+  "ESTAT:NAMQ_10_GDP(1.0),02/10/26 23:00:00,Q,CP_MEUR,SCA,P31_S14_S15,AT,2026-Q1,66600,,",
+  "ESTAT:NAMQ_10_GDP(1.0),02/10/26 23:00:00,Q,CP_MEUR,SCA,P31_S14_S15,AT,2026-Q2,69369.4,,",
+  sep = "
+"
+)
+eurostat_p31_clv_fixture <- paste(
+  "DATAFLOW,LAST UPDATE,freq,unit,s_adj,na_item,geo,TIME_PERIOD,OBS_VALUE,OBS_FLAG,CONF_STATUS",
+  "ESTAT:NAMQ_10_GDP(1.0),02/10/26 23:00:00,Q,CLV20_MEUR,SCA,P31_S14_S15,AT,2025-Q4,52800,,",
+  "ESTAT:NAMQ_10_GDP(1.0),02/10/26 23:00:00,Q,CLV20_MEUR,SCA,P31_S14_S15,AT,2026-Q1,52800,,",
+  "ESTAT:NAMQ_10_GDP(1.0),02/10/26 23:00:00,Q,CLV20_MEUR,SCA,P31_S14_S15,AT,2026-Q2,53715.7,,",
+  sep = "
+"
+)
+disposable_income_mock <- function(url, ...) {
+  if (grepl("nasq_10_nf_tr", url, fixed = TRUE)) eurostat_b6g_fixture
+  else if (grepl("CP_MEUR.SCA.P31_S14_S15", url, fixed = TRUE)) eurostat_p31_cp_fixture
+  else eurostat_p31_clv_fixture
+}
+
+test_that("fetch_eurostat_disposable_income deflates B6G by the P31_S14_S15 implicit deflator", {
+  with_mock_fetch_text(disposable_income_mock, {
+    out <- fetch_eurostat_disposable_income("AT")
+  })
+  expect_equal(names(out), c("period", "real_household_disposable_income"))
+  ## only quarters all three inputs share; 2026-Q2 has no B6G yet
+  expect_equal(out$period, c("2025-Q4", "2026-Q1"))
+  expect_equal(out$real_household_disposable_income,
+               c(78228 / (66000 / 52800), 79000 / (66600 / 52800)))
+})
+
+test_that("fetch_eurostat_disposable_income requests the confirmed sector-accounts key", {
+  requested <- character()
+  with_mock_fetch_text(function(url, ...) { requested <<- c(requested, url); disposable_income_mock(url) }, {
+    fetch_eurostat_disposable_income("AT")
+  })
+  expect_true(any(grepl("nasq_10_nf_tr/Q.CP_MEUR.RECV.S14_S15.B6G.SCA.AT", requested, fixed = TRUE)))
+  expect_true(any(grepl("namq_10_gdp/Q.CP_MEUR.SCA.P31_S14_S15.AT", requested, fixed = TRUE)))
+  expect_true(any(grepl("namq_10_gdp/Q.CLV20_MEUR.SCA.P31_S14_S15.AT", requested, fixed = TRUE)))
+})
+
+test_that("fetch_eurostat_disposable_income returns NULL with a warning on a SOAP Fault", {
+  with_mock_fetch_text(const_fetch_text(eurostat_fault_fixture), {
+    expect_warning(out <- fetch_eurostat_disposable_income("AT"), "no observations")
+  })
+  expect_null(out)
+})
+
+test_that("fetch_eurostat_anchors resolves real_household_disposable_income when asked for it alone", {
+  with_mock_fetch_text(disposable_income_mock, {
+    out <- fetch_eurostat_anchors("AUT", labels = "real_household_disposable_income")
+  })
+  expect_equal(names(out), c("period", "real_household_disposable_income"))
 })
 
 ## Fixture mirrors the real shape confirmed live against

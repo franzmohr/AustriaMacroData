@@ -45,8 +45,16 @@ fetch_quarterly_native_concepts <- function(country, start_period, country2 = lo
     eurostat_result <- fetch_eurostat_anchors(country, start_period = start_period)
   }
 
+  ## OECD is still asked for every NIPA anchor Eurostat has, to extend it
+  ## before 1995, but not for disposable income once Eurostat has it:
+  ## DF_QNA_INC_SAV has no household sector and returns NoRecordsFound for
+  ## AUT and DEU (see R/eurostat.R fetch_eurostat_disposable_income()).
+  oecd_labels <- all_anchor_labels
+  if (has_data(eurostat_result, "real_household_disposable_income")) {
+    oecd_labels <- setdiff(oecd_labels, "real_household_disposable_income")
+  }
   message("Fetching anchor NIPA concepts for ", country, " from OECD QNA...")
-  oecd_result <- fetch_oecd_anchors(country, start_period = start_period)
+  oecd_result <- fetch_oecd_anchors(country, start_period = start_period, labels = oecd_labels)
 
   anchor_merged <- splice_prefer(eurostat_result, oecd_result)
 
@@ -64,6 +72,13 @@ fetch_quarterly_native_concepts <- function(country, start_period, country2 = lo
       concept_source[[lbl]] <- list(
         provider = "EUROSTAT",
         key = sprintf("namq_10_gdp:%s (extended pre-1995 with level-spliced OECD_QNA:%s)", na_item, oecd_anchor_key(lbl))
+      )
+    } else if (from_eurostat && lbl == "real_household_disposable_income") {
+      concept_source[[lbl]] <- list(
+        provider = "EUROSTAT",
+        key = sprintf("nasq_10_nf_tr:%s.%s deflated by namq_10_gdp:%s",
+                      eurostat_disposable_income_key, lookup_ec_country2(country),
+                      eurostat_consumption_deflator_item)
       )
     } else if (from_eurostat) {
       na_item <- eurostat_anchor_concepts$na_item[eurostat_anchor_concepts$label == lbl]

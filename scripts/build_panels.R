@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 ## ---------------------------------------------------------------
-## build_panels.R -- CLI entrypoint: one fetch, three panels
+## build_panels.R -- CLI entrypoint: one fetch, two panels
 ##
 ## Fetches every concept once, at the frequency its source publishes it
 ## (R/panel_monthly.R, R/panel_quarterly.R), and writes:
@@ -10,9 +10,6 @@
 ##                                   plus the monthly ones aggregated to
 ##                                   quarters by their own rule -- summed
 ##                                   for flows, averaged otherwise
-##   output/<cc>_mixed_panel.csv     EA-MD-QD style: every concept on one
-##                                   monthly index, quarterly values in the
-##                                   first month of their quarter
 ##   output/<cc>_metadata.csv        per concept: frequency, aggregation,
 ##                                   unit, seasonal adjustment, class,
 ##                                   FRED (1-7) and EA-MD-QD light/heavy
@@ -97,7 +94,7 @@ quarterly_fetch <- fetch_quarterly_native_concepts(country, start_q, country2)
 concept_source <- c(monthly_fetch$concept_source, quarterly_fetch$concept_source)
 
 ## =====================================================================
-## 2. The three panels
+## 2. The two panels, monthly and quarterly, kept apart
 ##
 ##    Every file has the same columns in the same order for every
 ##    country, resolved or not, so that changing --country returns a
@@ -122,8 +119,6 @@ quarterly_panel <- dplyr::full_join(
   by = "date"
 ) %>% with_schema(all_cols)
 
-mixed_panel <- to_mixed(monthly_panel, quarterly_fetch$panel, all_cols)
-
 write_panel <- function(panel, suffix, cols, unit) {
   path <- out_path(suffix)
   readr::write_csv(panel, path)
@@ -133,16 +128,18 @@ write_panel <- function(panel, suffix, cols, unit) {
 }
 write_panel(monthly_panel, "_monthly_panel.csv", monthly_cols, "months")
 write_panel(quarterly_panel, "_panel.csv", all_cols, "quarters")
-write_panel(mixed_panel, "_mixed_panel.csv", all_cols, "months")
 
-metadata <- series_metadata(mixed_panel, concept_source)
+## Each concept's span is read at its native frequency: a monthly
+## concept from the monthly panel, a quarterly one from the quarterly.
+metadata <- series_metadata(list(M = monthly_panel, Q = quarterly_panel), concept_source)
 readr::write_csv(metadata, out_path("_metadata.csv"), na = "")
 message("Saved series metadata to '", out_path("_metadata.csv"), "'")
 
 ## =====================================================================
-## 3. Policy-event dummies, over the mixed panel's months
+## 3. Policy-event dummies, over the months the two panels span
 ## =====================================================================
-dummies_m <- make_monthly_dummies(country, min(mixed_panel$date), max(mixed_panel$date))
+panel_dates <- c(monthly_panel$date, quarterly_panel$date)
+dummies_m <- make_monthly_dummies(country, min(panel_dates), max(panel_dates))
 if (is.null(dummies_m)) {
   message("No policy events recorded for ", country, " in R/dummies.R -- no dummy files written.")
 } else {
@@ -175,6 +172,7 @@ provider_display_names <- c(
   EUROSTAT_GOV = "Eurostat (gov_10q_ggnfa, government finance statistics)",
   EUROSTAT_STS = "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m)",
   OENB = "OeNB data service (Oesterreichische Nationalbank)",
+  BUNDESBANK = "Deutsche Bundesbank (term structure of listed Federal securities)",
   YAHOO_FINANCE = "Yahoo Finance",
   GPR = "Geopolitical Risk Index (Caldara-Iacoviello)",
   EUROSTAT_CHDD = "Eurostat (nrg_chdd_m, degree days)",

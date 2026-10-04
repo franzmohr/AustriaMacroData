@@ -1,21 +1,18 @@
 ## ---------------------------------------------------------------
-## panel_derive.R -- the quarterly and mixed-frequency panels, derived
-## from one fetch at each concept's native frequency
+## panel_derive.R -- the quarterly panel, derived from one fetch at each
+## concept's native frequency
 ##
 ## EA-MD-QD's arrangement (Barigozzi, Lissona and Tonni): every series is
 ## held once, at the frequency its source publishes it, and the quarterly
 ## view is made from the monthly one by a rule per series -- flows are
 ## summed over the quarter, everything else is averaged. Nothing is ever
-## interpolated: a quarterly concept appears in the mixed-frequency panel
-## in the FIRST month of its quarter and is NA in the other two, and it
-## is absent from the monthly panel.
+## interpolated: a quarterly concept is absent from the monthly panel.
 ##
-## Three panels come out of it:
+## Two panels come out of it, kept apart rather than stacked on one
+## monthly date index:
 ##   <cc>_monthly_panel.csv  FRED-MD style: the monthly concepts
 ##   <cc>_panel.csv          FRED-QD style: quarterly concepts, plus the
 ##                           monthly concepts aggregated to quarters
-##   <cc>_mixed_panel.csv    EA-MD-QD style: all concepts on one monthly
-##                           date index
 ## and <cc>_metadata.csv carries the codes, units and sources that
 ## FRED-MD/QD keep in header rows, without putting anything but data
 ## into the data files.
@@ -54,28 +51,22 @@ to_quarterly <- function(monthly_panel, labels = setdiff(names(monthly_panel), "
   dplyr::arrange(out, .data$date)
 }
 
-#' The mixed-frequency panel: monthly concepts as they are, quarterly
-#' concepts in the first month of their quarter
-to_mixed <- function(monthly_panel, quarterly_panel, columns) {
-  q <- quarterly_panel
-  q$date <- quarter_start(q$date)
-  mixed <- dplyr::full_join(monthly_panel, q, by = "date")
-  for (col in setdiff(columns, names(mixed))) mixed[[col]] <- NA_real_
-  mixed <- dplyr::select(mixed, "date", dplyr::all_of(columns))
-  mixed <- dplyr::arrange(mixed, .data$date)
-  observed <- rowSums(!is.na(mixed[, columns, drop = FALSE])) > 0
-  mixed[observed, ]
-}
-
 #' One metadata row per concept: what it is, how it is published, how to
 #' transform it and where it came from
 #'
-#' `panel` is the panel in which the concept is held at its native
-#' frequency (the mixed-frequency panel), from which the first and last
-#' observed periods and the number of observations are read.
-series_metadata <- function(panel, concept_source, dictionary = concept_dictionary) {
+#' `panels` is a list with one panel per native frequency, `M` and `Q`;
+#' each concept's first and last observed periods and its number of
+#' observations are read from the panel of its own `frequency`, so a
+#' monthly concept is counted in months, not in the quarters derived
+#' from them.
+series_metadata <- function(panels, concept_source, dictionary = concept_dictionary) {
+  native <- function(lbl) {
+    panel <- panels[[dictionary$frequency[dictionary$label == lbl]]]
+    if (is.null(panel) || !lbl %in% names(panel)) return(as.Date(character(0)))
+    panel$date[!is.na(panel[[lbl]])]
+  }
   span <- function(lbl, f) {
-    x <- if (lbl %in% names(panel)) panel$date[!is.na(panel[[lbl]])] else as.Date(character(0))
+    x <- native(lbl)
     if (length(x) == 0) return(NA_character_)
     date_to_period(f(x), dictionary$frequency[dictionary$label == lbl])
   }
@@ -96,6 +87,6 @@ series_metadata <- function(panel, concept_source, dictionary = concept_dictiona
       key = purrr::map_chr(.data$label, ~ concept_source[[.x]]$key %||% NA_character_),
       first = purrr::map_chr(.data$label, ~ span(.x, min)),
       last = purrr::map_chr(.data$label, ~ span(.x, max)),
-      n_obs = purrr::map_int(.data$label, ~ if (.x %in% names(panel)) sum(!is.na(panel[[.x]])) else 0L)
+      n_obs = purrr::map_int(.data$label, ~ length(native(.x)))
     )
 }

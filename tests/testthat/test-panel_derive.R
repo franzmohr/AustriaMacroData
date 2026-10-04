@@ -1,4 +1,4 @@
-## The derivation of the quarterly and mixed-frequency panels from one
+## The derivation of the quarterly panel and the metadata from one
 ## fetch at native frequency (R/panel_derive.R). No network involved.
 
 toy_dictionary <- tibble::tibble(
@@ -37,27 +37,14 @@ test_that("to_quarterly ignores months a concept was not observed in", {
   expect_false(any(is.nan(q$rate)))
 })
 
-test_that("to_mixed puts quarterly values in the first month of their quarter and nowhere else", {
-  quarterly <- tibble::tibble(date = as.Date(c("2026-01-01", "2026-04-01")), gdp = c(100, 101))
-  mixed <- to_mixed(toy_monthly, quarterly, c("rate", "flow", "gdp"))
-  expect_equal(names(mixed), c("date", "rate", "flow", "gdp"))
-  expect_equal(mixed$rate, toy_monthly$rate)
-  expect_equal(mixed$gdp[mixed$date == as.Date("2026-04-01")], 101)
-  expect_true(all(is.na(mixed$gdp[!format(mixed$date, "%m") %in% c("01", "04")])))
-})
-
-test_that("to_mixed fills unresolved concepts with NA rather than dropping them", {
-  mixed <- to_mixed(toy_monthly, tibble::tibble(date = as.Date(character(0))),
-                    c("rate", "flow", "never_resolved"))
-  expect_true("never_resolved" %in% names(mixed))
-  expect_true(all(is.na(mixed$never_resolved)))
-})
-
 test_that("series_metadata has one row per concept with codes, source and span", {
-  panel <- tibble::tibble(date = as.Date(c("2026-01-01", "2026-02-01")),
-                          mortgage_new_lending = c(1500, 1600))
+  monthly <- tibble::tibble(date = as.Date(c("2026-01-01", "2026-02-01")),
+                            mortgage_new_lending = c(1500, 1600))
+  quarterly <- tibble::tibble(date = as.Date(c("2025-10-01", "2026-01-01", "2026-04-01")),
+                              mortgage_new_lending = c(4400, 4600, NA),
+                              real_gdp = c(100, 101, 102))
   src <- list(mortgage_new_lending = list(provider = "ECB_MIR", key = "A2C.B.A.2250.EUR.P"))
-  md <- series_metadata(panel, src)
+  md <- series_metadata(list(M = monthly, Q = quarterly), src)
   expect_equal(nrow(md), nrow(concept_dictionary))
   row <- md[md$label == "mortgage_new_lending", ]
   expect_equal(row$frequency, "M")
@@ -65,4 +52,12 @@ test_that("series_metadata has one row per concept with codes, source and span",
   expect_equal(row$provider, "ECB_MIR")
   expect_equal(c(row$first, row$last, row$n_obs), c("2026-M01", "2026-M02", "2"))
   expect_true(is.na(md$provider[md$label == "real_gdp"]))
+})
+
+test_that("series_metadata reads a quarterly concept's span from the quarterly panel", {
+  quarterly <- tibble::tibble(date = as.Date(c("2025-10-01", "2026-01-01")), real_gdp = c(100, 101))
+  md <- series_metadata(list(M = toy_monthly, Q = quarterly), list())
+  row <- md[md$label == "real_gdp", ]
+  expect_equal(row$frequency, "Q")
+  expect_equal(c(row$first, row$last, row$n_obs), c("2025-Q4", "2026-Q1", "2"))
 })

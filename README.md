@@ -47,8 +47,8 @@ resolved.
 2. **A country-panel builder** ([scripts/build_panels.R](scripts/build_panels.R)
    plus the [R/](R) module library) -- a command-line tool that fetches every
    concept for one country once, at its native frequency, and writes a
-   FRED-MD-style monthly panel, a FRED-QD-style quarterly panel, an
-   EA-MD-QD-style mixed-frequency panel, per-series metadata with
+   FRED-MD-style monthly panel, a FRED-QD-style quarterly panel,
+   per-series metadata with
    transformation codes, policy-event dummies, and coverage reports
    documenting where each concept came from.
 3. **A data-sources registry** ([docs/data_sources.csv](docs/data_sources.csv))
@@ -61,8 +61,8 @@ resolved.
 
 ```
 scripts/
-  build_panels.R            CLI entrypoint -- one fetch, monthly + quarterly +
-                             mixed-frequency panels, metadata and dummies;
+  build_panels.R            CLI entrypoint -- one fetch, monthly and
+                             quarterly panels, metadata and dummies;
                              see Usage below
   build_country_panel.R,    Kept so existing commands keep working; both
   build_monthly_panel.R      run build_panels.R with the same arguments
@@ -74,7 +74,7 @@ R/                          Fetcher library used by build_panels.R,
                              live API (see header comments for verification
                              notes and corrections vs. earlier guesses)
   concept_dictionary.R      The single authored source of metadata for all
-                             112 concepts (FRED-QD group, mnemonic, notes,
+                             114 concepts (FRED-QD group, mnemonic, notes,
                              plausibility category) -- scripts/build_panels.R,
                              R/fred_qd_validation.R and R/plausibility_checks.R
                              all derive their working tables from this one
@@ -87,8 +87,8 @@ R/                          Fetcher library used by build_panels.R,
   panel_monthly.R           Fetches every concept that is monthly at source
   panel_quarterly.R         Fetches every concept that is quarterly at source
   panel_derive.R            Quarterly panel from the monthly one (flows
-                             summed, the rest averaged), the mixed-frequency
-                             panel, and the metadata table
+                             summed, the rest averaged) and the metadata
+                             table
   dummies.R                 Dated policy events (KIM-V) and the monthly and
                              quarterly dummy variables made from them
   utils.R                   Shared HTTP/parsing helpers (incl. fetch_text,
@@ -121,6 +121,8 @@ R/                          Fetcher library used by build_panels.R,
   ecb_market_rates.R        3-month Euribor and the 10-year yield from the
                              ECB for euro-area members, current where the
                              OECD MEI mirror runs a month behind
+  gov_yields.R              2- and 5-year government bond yields: Bundesbank
+                             term structure (Germany), FRED GS2/GS5 (USA)
   ec_survey.R                European Commission Business and Consumer
                              Survey -- PREFERRED consumer-confidence source
                              for EU member states (fresher than the FRED
@@ -188,8 +190,7 @@ data/
 output/                      Output of build_panels.R, checked into git and
                              refreshed monthly by CI (see below), for AUT,
                              DEU and USA: <country>_panel.csv (quarterly),
-                             _monthly_panel.csv, _mixed_panel.csv,
-                             _metadata.csv, _dummies_monthly.csv and
+                             _monthly_panel.csv, _metadata.csv, _dummies_monthly.csv and
                              _dummies_quarterly.csv (where the country has
                              policy events), the two _coverage.json reports,
                              plus vintages/ (dated archive)
@@ -234,9 +235,8 @@ it, and writes all of the following for that country:
 
 | File | Style | Contents |
 |---|---|---|
-| `output/<country>_monthly_panel.csv` | FRED-MD | The 72 concepts that are monthly at source, one row per month |
-| `output/<country>_panel.csv` | FRED-QD | All 112 concepts, one row per quarter: the 40 quarterly ones as published, the 72 monthly ones aggregated to quarters |
-| `output/<country>_mixed_panel.csv` | EA-MD-QD | All 112 concepts on one monthly date index, quarterly values in the first month of their quarter and `NA` in the other two |
+| `output/<country>_monthly_panel.csv` | FRED-MD | The 74 concepts that are monthly at source, one row per month |
+| `output/<country>_panel.csv` | FRED-QD | All 114 concepts, one row per quarter: the 40 quarterly ones as published, the 74 monthly ones aggregated to quarters |
 | `output/<country>_metadata.csv` | | One row per concept: frequency, aggregation rule, unit, seasonal adjustment, class, transformation codes, source, first and last period |
 | `output/<country>_dummies_monthly.csv`, `_dummies_quarterly.csv` | | Policy-event dummies, see [Dummy variables](#dummy-variables) |
 | `output/<country>_coverage.json`, `_monthly_coverage.json` | | What resolved, from where, and the plausibility checks, per frequency |
@@ -296,18 +296,18 @@ switching `--country` should be the *only* thing that changes between two
 runs, so downstream code can load `aut_panel.csv` and `deu_panel.csv` (or
 any other country's file) with the same column-handling logic.
 
-## Frequencies: monthly, quarterly, mixed
+## Frequencies: monthly and quarterly
 
 The arrangement is EA-MD-QD's (Barigozzi, Lissona and Tonni): **every
 concept is fetched once, at its native frequency, and the quarterly view of
 a monthly concept is made from its months** -- never fetched again from a
 quarterly source, and never the other way round. A quarterly concept is
-never interpolated into months: it is absent from the monthly panel, and in
-the mixed-frequency panel it sits in the first month of its quarter with
-`NA` in the other two. A quarterly figure smoothed into three monthly cells
+never interpolated into months: it is absent from the monthly panel. The
+two panels are kept as separate files rather than stacked on one monthly
+date index with quarterly values in one month of three. A quarterly figure smoothed into three monthly cells
 is an invention that looks exactly like data once it is in a CSV.
 
-**72 of the 112 concepts are monthly at source.** The other 40 are
+**74 of the 114 concepts are monthly at source.** The other 40 are
 quarterly -- every national-accounts concept, the BIS credit series,
 government debt and the primary balance, hours worked, population, the
 change in inventories, unit labour cost, the employment rate, real house
@@ -410,8 +410,7 @@ Each run:
    via `scripts/build_panels.R`, overwriting the "latest" files.
 2. Archives a dated copy of each into `output/vintages/`, e.g.
    `output/vintages/aut_panel_2026-10.csv`,
-   `aut_monthly_panel_2026-10.csv`, `aut_mixed_panel_2026-10.csv` and
-   `aut_metadata_2026-10.csv` -- a monthly vintage history, not just a
+   `aut_monthly_panel_2026-10.csv` and `aut_metadata_2026-10.csv` -- a monthly vintage history, not just a
    single always-overwritten snapshot.
 3. Commits and pushes `output/` back to `main` if anything changed, as
    `github-actions[bot]`.
@@ -584,7 +583,7 @@ and EC survey/geopolitical-risk concepts):
 
 ## Candidate indicators (proposed, unverified)
 
-The 112 implemented concepts are representative anchors, not a 1:1
+The 114 implemented concepts are representative anchors, not a 1:1
 replication of FRED-QD's 245 series (see Overview above -- most of those
 245 are U.S.-specific and have no cross-country equivalent at all).
 [docs/candidate_indicators_austria.csv](docs/candidate_indicators_austria.csv)
@@ -716,7 +715,10 @@ just "made the warning go away"):
   quarterly disposable-income dataflow (`DF_QNA_INC_SAV`) publishes it for
   only 11 countries (AUS, BRA, CAN, CHL, EST, GRC, HUN, LTU, LUX, LVA, ZAF),
   confirmed via zero-observation responses for USA, DEU, FRA, GBR and AUT
-  specifically -- a checked absence, not a guess.
+  specifically -- a checked absence, not a guess. Re-checked 2026-10-04:
+  that dataflow covers the total economy (`S1`) only, with no household
+  sector, so EU members now take this concept from Eurostat's quarterly
+  sector accounts instead (`nasq_10_nf_tr`, see `R/eurostat.R`).
 - **IMF**: the prototype's dataflow ID `NEA` no longer exists (IMF's March
   2025 platform restructuring renamed it to `QNEA`, agency `IMF.STA`,
   version `7.0.0`), and its indicator codes are standard SNA transaction
@@ -796,7 +798,7 @@ override exists -- see the fallback chain earlier in this README.
 | FRED-QD Group | Concept(s) | Source | Status |
 |---|---|---|---|
 | Output and Income | Real GDP, household consumption, govt. consumption, GFCF, exports, imports | **Eurostat** `namq_10_gdp` (EU members), else OECD QNA `DF_QNA` | Verified -- real current (2026-Q2) data, AUT + DEU via Eurostat, USA via OECD |
-| Output and Income | Household disposable income | OECD `DF_QNA_INC_SAV`, IMF QNEA fallback | Verified absent for USA/DEU/FRA/GBR/AUT (checked against Eurostat too: no valid quarterly NA_ITEM either); available for 11 smaller economies only (see below) |
+| Output and Income | Real household disposable income | **Eurostat** sector accounts `nasq_10_nf_tr`, B6G for S14_S15 (EU members), deflated by the `namq_10_gdp` P31_S14_S15 implicit deflator; else OECD `DF_QNA_INC_SAV` | Verified 2026-10-04 -- AUT (from 1999-Q1) + DEU (from 1999-Q1); quarterly growth matches Eurostat's own real per-capita indicator at correlation 0.998 (AUT) / 0.974 (DEU). USA: NA (the OECD dataflow has no household sector) |
 | Industrial Production | Industrial production index | OECD MEI via FRED (`{cc3}PROINDQISMEI`) | Verified -- AUT + DEU + USA |
 | Industrial Production | Industrial confidence indicator | **EC Business and Consumer Survey** (`AT.INDU`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent. Documented leading-indicator value (OECD Composite Leading Indicators input) |
 | Industrial Production | Industry survey questions (18): production, order books, stocks, price and employment expectations monthly; limiting factors, capacity, new orders, capacity utilisation, competitive position quarterly | **EC Business and Consumer Survey** (`INDU.AT.TOT.<Q>.<ANSWER>.<FREQ>`, all-surveys bundle) | Verified -- AUT; EU-only. Capacity utilisation (`QPS`) is the survey counterpart of FRED-QD's `CUMFNS` |
@@ -813,6 +815,7 @@ override exists -- see the fallback chain earlier in this README.
 | Earnings and Productivity | Unit labor cost | **Eurostat labour productivity/ULC** `namq_10_lp_ulc` (EU members, where an index-level series is published), else OECD MEI via FRED (`ULQEUL01{cc}Q657S`) | Verified -- AUT via Eurostat (hours-based index, matching FRED-QD's ULCNFB construction); DEU + USA via the OECD-mirror proxy (employment-based % change, confirmed absent in index form for Germany) |
 | Interest Rates | Long-term interest rate | **ECB** `IRS`, `M.{cc}.L.L40.CI.0000.EUR.N.Z` (euro-area members), the OECD MEI mirror via FRED (`IRLTLT01{cc}M156N`) before it starts and for every other country | Verified 2026-10-04 -- equal to the mirror for AUT since 1993; DE differs by at most 0.15 pp up to 2019 |
 | Interest Rates | Short-term (3-month interbank) rate | **ECB** `FM`, 3-month Euribor (euro-area members, from euro adoption), the OECD MEI mirror via FRED (`IR3TIB01{cc}M156N`) before it and for every other country | Verified 2026-10-04 -- equal to the mirror for AUT and DEU in every month since 1999; current within days, where the mirror runs a month behind |
+| Interest Rates | 2-year and 5-year government bond yields (`government_bond_yield_2y`, `_5y`) | **Deutsche Bundesbank** Svensson term structure, `BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R02XX/R05XX.R.A.A._Z._Z.A` (Germany); FRED `GS2` / `GS5` (USA) | Verified 2026-10-04 -- DEU from 1972-09 (daily values averaged within the month from 1997-08, end-of-month values before), USA from 1976-06 (2y) and 1953-04 (5y). **AUT: NA** -- no Austrian yield at a fixed 2- or 5-year maturity is published (OeNB data set 24 holds issue yields and the all-bond average only; the ECB's FM benchmarks are euro-area aggregates) |
 | Interest Rates | Mortgage rate (new business, loans to households) | **ECB** `MIR` (euro-area members) | Verified -- AUT + DE, genuinely country-specific; no source for non-euro-area countries (incl. USA -- FRED-QD's own MORTGAGE30US is US-specific too) |
 | Interest Rates | Mortgage rate on pure new loans (renegotiations excluded) | **ECB** `MIR`, `A2C.R.A.2250.EUR.P` (euro-area members) | Verified 2026-10-03 -- AUT (3.64%) + DE (4.02%) for 2026-08; published from 2017-08 for AUT, computed back to 2017-01 as new business less renegotiations |
 | Interest Rates | Mortgage rate, new business (`mortgage_rate_oenb`) | **OeNB** data service, data set 23, `VDBZSBSZN10010` (**Austria only**) | Verified 2026-10-03 -- 3.61% for 2026-08; identical to the ECB `mortgage_rate` in every month since 2000-01, and reaches back to 1995-12 |

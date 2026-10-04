@@ -1,6 +1,6 @@
 ## ---------------------------------------------------------------
 ## concept_dictionary.R -- the single authored source of metadata for
-## every one of this project's 112 FRED-QD-style concepts
+## every one of this project's 114 FRED-QD-style concepts
 ##
 ## MOTIVATION: before this file existed, the same concept-level facts
 ## (which FRED-QD group a concept belongs to, its FRED-QD mnemonic, its
@@ -97,7 +97,7 @@ concept_dictionary <- tibble::tribble(
     "Change in inventories as a PERCENT OF GDP (both nominal), signed -- not a real level like the other expenditure components, because Eurostat publishes no chain-linked volume for it (a signed flow that crosses zero, for which chain-linked volumes are not additive; see R/inventories.R). EU member states: Eurostat namq_10_gdp, NA_ITEM=P52 (excluding valuables, P53), UNIT=PC_GDP, seasonally and calendar adjusted -- the same construction as FRED-QD's A014RE1Q156NBEA, except that P52 covers inventories of all sectors where FRED-QD's covers private inventories only. From 1995 for Austria (1991 for Germany). Outside the EU only the United States resolves (FRED-QD's own series); NA elsewhere.",
     "balance", FALSE,
   "real_household_disposable_income",      "Output and Income",              "DPIC96",          NA,
-    "OECD's quarterly household disposable income (DF_QNA_INC_SAV) is published for only 11 countries (AUS, BRA, CAN, CHL, EST, GRC, HUN, LTU, LUX, LVA, ZAF); absent for most others, confirmed absent for DEU/AUT/USA/FRA/GBR.",
+    "EU member states: Eurostat quarterly sector accounts, nasq_10_nf_tr B6G for households and NPISH (S14_S15), current prices, seasonally and calendar adjusted, deflated by the implicit deflator of household and NPISH final consumption (namq_10_gdp P31_S14_S15, CP_MEUR / CLV20_MEUR), so million euro at chain-linked 2020 prices -- the construction of FRED-QD's DPIC96, which deflates personal disposable income (also including NPISH) by the PCE price index. From 1999-Q1 for Austria and Germany; its quarterly growth matches Eurostat's own real per-capita indicator (nasq_10_ki B6G_R_HAB_GR) at correlation 0.998 for Austria and 0.974 for Germany, the gap being population growth (checked live 2026-10-04). Austria's 2022-Q3/Q4 swing (+6.4%, -5.4% q/q) is real: one-off energy and anti-inflation transfers. Outside the EU the OECD's DF_QNA_INC_SAV is tried, but it carries the total economy (S1) only, so it is NA for most countries, including the USA.",
     "level", FALSE,
   "industrial_production",                 "Industrial Production",          "INDPRO",          NA,
     "EU member states: sourced from Eurostat short-term statistics (sts_inpr_q, NACE B-D, seasonally and calendar adjusted, index 2021 = 100), NOT the OECD-MEI-via-FRED mirror used elsewhere -- see R/eurostat_sts.R. The mirror is frozen: AUTPROINDQISMEI was confirmed live 2026-09-25 to stop at 2024-Q1 while every other concept in the panel ran to the current quarter, which silently truncates any model estimated on it. The mirror earlier history (back to 1955 for Austria) is spliced on, rescaled to the Eurostat base at the overlap. Read that spliced history with care: over the 334 months the two share they correlate 0.896 in log differences, so they are close relatives rather than the same series.",
@@ -165,6 +165,13 @@ concept_dictionary <- tibble::tribble(
     "percent", TRUE,
   "short_term_rate",                       "Interest Rates",                 "TB3MS",           NA,
     "Euro-area members: 3-month Euribor from the ECB (FM, M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA), from the country's euro adoption on and current within days of a month's end; before adoption the OECD MEI mirror (IR3TIB01<cc>M156N), which holds the national interbank rate, unchanged. From 1999 the two agree in every month for Austria and Germany. Other countries: the mirror -- see R/ecb_market_rates.R.",
+    "percent", TRUE,
+  "government_bond_yield_2y",              "Interest Rates",                 NA,
+    "No FRED-QD equivalent: FRED-QD's Treasury yields are GS1, GS5 and GS10, with no 2-year maturity. The US value is FRED's GS2, the 2-year Treasury constant-maturity yield, monthly average of daily values, from 1976-06.",
+    "Germany: Deutsche Bundesbank, zero-coupon yield on listed Federal securities at a residual maturity of 2.0 years (Svensson term structure, BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R02XX.R.A.A._Z._Z.A), averaged over the month's daily values from 1997-08 and end-of-month values back to 1972-09. NA for Austria and every other country: no Austrian yield at a fixed 2-year maturity is published (the OeNB carries issue yields and an all-bond average only, the ECB a euro-area aggregate only) -- see R/gov_yields.R.",
+    "percent", TRUE,
+  "government_bond_yield_5y",              "Interest Rates",                 "GS5",             NA,
+    "Germany: Deutsche Bundesbank, zero-coupon yield on listed Federal securities at a residual maturity of 5.0 years (Svensson term structure, BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R05XX.R.A.A._Z._Z.A), averaged over the month's daily values from 1997-08 and end-of-month values back to 1972-09. A zero-coupon yield, where FRED-QD's GS5 is a par (constant-maturity) yield; at five years the two differ by a few basis points. United States: GS5 itself, from 1953-04. NA for Austria and every other country -- see government_bond_yield_2y.",
     "percent", TRUE,
   "mortgage_rate",                         "Interest Rates",                 "MORTGAGE30US",
     "FRED-QD's MORTGAGE30US is a 30-year FIXED-rate average; the ECB series used for euro-area countries is a new-business AAR/NDER rate across all initial rate fixation periods (fixed and variable combined) -- related but not an identical construction.",
@@ -506,8 +513,8 @@ concept_dictionary <- tibble::tribble(
 )
 
 ## ---------------------------------------------------------------
-## Per-series metadata for the monthly, quarterly and mixed-frequency
-## panels (FRED-MD/QD and EA-MD-QD conventions)
+## Per-series metadata for the monthly and quarterly panels (FRED-MD/QD
+## and EA-MD-QD conventions)
 ##
 ## Kept as a second, narrow table joined onto `concept_dictionary` rather
 ## than as seven more columns in every row above, so that the notes stay
@@ -577,6 +584,8 @@ concept_metadata <- tibble::tribble(
   "unit_labor_cost",                         "mean",       "index 2010=100",              "SCA", 5L, "N",
   "long_term_rate",                          "mean",       "% p.a.",                      "NSA", 2L, "F",
   "short_term_rate",                         "mean",       "% p.a.",                      "NSA", 2L, "F",
+  "government_bond_yield_2y",                "mean",       "% p.a.",                      "NSA", 2L, "F",
+  "government_bond_yield_5y",                "mean",       "% p.a.",                      "NSA", 2L, "F",
   "mortgage_rate",                           "mean",       "% p.a.",                      "NSA", 2L, "F",
   "mortgage_rate_pure_new_loans",            "mean",       "% p.a.",                      "NSA", 2L, "F",
   "mortgage_rate_oenb",                      "mean",       "% p.a.",                      "NSA", 2L, "F",
@@ -681,8 +690,7 @@ ea_md_qd_codes <- function(tcode_fred, class, aggregation) {
 
 ## Native frequency of the source used: "M" concepts are fetched monthly
 ## and their quarters derived by `aggregation`; "Q" concepts are fetched
-## quarterly and placed in the first month of their quarter in the
-## mixed-frequency panel. `available_monthly` above stays the authored
+## quarterly and appear only in the quarterly panel. `available_monthly` above stays the authored
 ## flag, so readers of docs/concept_dictionary.csv that use it keep working.
 concept_dictionary <- concept_dictionary %>%
   dplyr::left_join(concept_metadata, by = "label") %>%

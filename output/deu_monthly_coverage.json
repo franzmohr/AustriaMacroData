@@ -1,9 +1,9 @@
 {
   "country": "DEU",
   "frequency": "monthly",
-  "generated_at": "2026-10-04T09:32:30Z",
+  "generated_at": "2026-10-04T10:43:49Z",
   "start_period": "1960-M01",
-  "concepts_published_monthly": 72,
+  "concepts_published_monthly": 74,
   "concepts_quarterly_only": 40,
   "resolved": [
     {
@@ -75,6 +75,16 @@
       "fred_qd_group": "Interest Rates",
       "label": "short_term_rate",
       "source": "ECB Financial market data (FM) [FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA (3-month Euribor, from euro adoption) (OECD MEI mirror fills earlier months unchanged, same units)]"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "government_bond_yield_2y",
+      "source": "Deutsche Bundesbank (term structure of listed Federal securities) [BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R02XX.R.A.A._Z._Z.A (daily, averaged within the month; end-of-month values from the monthly series before 1997-08)]"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "government_bond_yield_5y",
+      "source": "Deutsche Bundesbank (term structure of listed Federal securities) [BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R05XX.R.A.A._Z._Z.A (daily, averaged within the month; end-of-month values from the monthly series before 1997-08)]"
     },
     {
       "fred_qd_group": "Interest Rates",
@@ -613,6 +623,18 @@
       "category": "percent",
       "status": "PASS",
       "detail": "All 801 values within [-10, 400]."
+    },
+    {
+      "label": "government_bond_yield_2y",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 650 values within [-10, 400]."
+    },
+    {
+      "label": "government_bond_yield_5y",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 650 values within [-10, 400]."
     },
     {
       "label": "mortgage_rate",

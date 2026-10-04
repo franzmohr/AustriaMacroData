@@ -6,7 +6,7 @@ real_gfcf_total,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2
 real_exports,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,EXPGSC1,EUROSTAT,namq_10_gdp:P6 (extended pre-1995 with level-spliced OECD_QNA:S1.P6),1960-Q1,2026-Q2,266
 real_imports,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,IMPGSC1,EUROSTAT,namq_10_gdp:P7 (extended pre-1995 with level-spliced OECD_QNA:S1.P7),1960-Q1,2026-Q2,266
 inventory_change_to_gdp,Output and Income,Q,mean,% of GDP,SCA,R,1,0,0,A014RE1Q156NBEA,EUROSTAT,namq_10_gdp:Q.PC_GDP.SCA.P52.DE,1991-Q1,2026-Q2,142
-real_household_disposable_income,Output and Income,Q,mean,"national currency, volume",SCA,R,5,2,2,DPIC96,,,,,0
+real_household_disposable_income,Output and Income,Q,mean,"national currency, volume",SCA,R,5,2,2,DPIC96,EUROSTAT,nasq_10_nf_tr:Q.CP_MEUR.RECV.S14_S15.B6G.SCA.DE deflated by namq_10_gdp:P31_S14_S15,1999-Q1,2026-Q2,110
 industrial_production,Industrial Production,M,mean,index 2021=100,SCA,R,5,2,2,INDPRO,EUROSTAT_STS,"sts_inpr_m:M.PRD.B-D.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)",1960-M01,2026-M07,799
 industrial_confidence,Industrial Production,M,mean,balance,SA,C,1,0,0,,EC_BCS,DE.INDU,1985-M01,2026-M09,501
 unemployment_rate,Employment and Unemployment,M,mean,% of labour force,SA,R,2,4,4,UNRATE,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.DE (OECD MEI mirror fills earlier months unchanged, same units)",1991-M01,2026-M08,428
@@ -26,6 +26,8 @@ services_price_index,Prices,M,mean,index 2025=100,NSA,N,6,2,3,CUSR0000SAS,EUROST
 unit_labor_cost,Earnings and Productivity,Q,mean,index 2010=100,SCA,N,5,2,3,ULCNFB,EUROSTAT_ULC,namq_10_lp_ulc:Q.I10.SCA.NULC_HW.DE,1991-Q1,2026-Q2,142
 long_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,GS10,ECB_IRS,"IRS/M.DE.L.L40.CI.0000.EUR.N.Z (10-year government bond yield, convergence criterion) (OECD MEI mirror fills earlier months unchanged, same units)",1960-M01,2026-M08,800
 short_term_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,TB3MS,ECB_FM,"FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA (3-month Euribor, from euro adoption) (OECD MEI mirror fills earlier months unchanged, same units)",1960-M01,2026-M09,801
+government_bond_yield_2y,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,BUNDESBANK,"BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R02XX.R.A.A._Z._Z.A (daily, averaged within the month; end-of-month values from the monthly series before 1997-08)",1972-M09,2026-M10,650
+government_bond_yield_5y,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,GS5,BUNDESBANK,"BBSIS.D.I.ZST.ZI.EUR.S1311.B.A604.R05XX.R.A.A._Z._Z.A (daily, averaged within the month; end-of-month values from the monthly series before 1997-08)",1972-M09,2026-M10,650
 mortgage_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,MORTGAGE30US,ECB_MIR,A2C.R.A.2250.EUR.N,2000-M01,2026-M08,320
 mortgage_rate_pure_new_loans,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,ECB_MIR,A2C.R.A.2250.EUR.P,2014-M12,2026-M08,141
 mortgage_rate_oenb,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,,,,,0

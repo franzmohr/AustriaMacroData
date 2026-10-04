@@ -1,6 +1,6 @@
 {
   "country": "USA",
-  "generated_at": "2026-10-03T21:25:47Z",
+  "generated_at": "2026-10-04T09:07:37Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -87,6 +87,16 @@
       "fred_qd_group": "Interest Rates",
       "label": "short_term_rate",
       "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [IR3TIB01USM156N] -- quarterly average of its months"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "government_bond_yield_2y",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [GS2] -- quarterly average of its months"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "government_bond_yield_5y",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [GS5] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Money and Credit",
@@ -653,6 +663,18 @@
       "category": "percent",
       "status": "PASS",
       "detail": "All 250 values within [-10, 400]."
+    },
+    {
+      "label": "government_bond_yield_2y",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 202 values within [-10, 400]."
+    },
+    {
+      "label": "government_bond_yield_5y",
+      "category": "percent",
+      "status": "PASS",
+      "detail": "All 267 values within [-10, 400]."
     },
     {
       "label": "mortgage_rate",

@@ -1,6 +1,6 @@
 {
   "country": "AUT",
-  "generated_at": "2026-10-04T09:20:14Z",
+  "generated_at": "2026-10-04T10:29:32Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -37,6 +37,11 @@
       "fred_qd_group": "Output and Income",
       "label": "inventory_change_to_gdp",
       "source": "Eurostat (namq_10_gdp) [namq_10_gdp:Q.PC_GDP.SCA.P52.AT]"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_household_disposable_income",
+      "source": "Eurostat (namq_10_gdp) [nasq_10_nf_tr:Q.CP_MEUR.RECV.S14_S15.B6G.SCA.AT deflated by namq_10_gdp:P31_S14_S15]"
     },
     {
       "fred_qd_group": "Industrial Production",
@@ -561,8 +566,12 @@
   ],
   "skipped": [
     {
-      "fred_qd_group": "Output and Income",
-      "label": "real_household_disposable_income"
+      "fred_qd_group": "Interest Rates",
+      "label": "government_bond_yield_2y"
+    },
+    {
+      "fred_qd_group": "Interest Rates",
+      "label": "government_bond_yield_5y"
     }
   ],
   "groups_not_attempted": [
@@ -617,8 +626,8 @@
     {
       "label": "real_household_disposable_income",
       "category": "level",
-      "status": "NO_DATA",
-      "detail": "No non-NA observations."
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 7%."
     },
     {
       "label": "industrial_production",
@@ -733,6 +742,18 @@
       "category": "percent",
       "status": "PASS",
       "detail": "All 150 values within [-10, 400]."
+    },
+    {
+      "label": "government_bond_yield_2y",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "government_bond_yield_5y",
+      "category": "percent",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
     },
     {
       "label": "mortgage_rate",

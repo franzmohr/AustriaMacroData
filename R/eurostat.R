@@ -29,10 +29,10 @@
 ##   P6       - Exports of goods and services                 -> real_exports
 ##   P7       - Imports of goods and services                 -> real_imports
 ## No quarterly household disposable income code validates against this
-## dataflow (B6G and its variants are whole-economy / per-capita / growth-
-## rate only) -- the same genuine gap already documented in R/oecd.R, not
-## solved by switching sources; real_household_disposable_income is never
-## attempted here and always falls through to OECD/IMF.
+## dataflow ("B6G" returns INVALID_QUERY_DIMENSION_VALUE). Household
+## disposable income lives in the sector accounts, nasq_10_nf_tr, instead
+## -- see `fetch_eurostat_disposable_income()` below, which
+## `fetch_eurostat_anchors()` calls alongside the six rows here.
 ##
 ## GEO uses the same 2-letter codes as everywhere else in this project
 ## EXCEPT Greece ("EL", not "GR") -- reuses R/country_codes.R's
@@ -103,8 +103,7 @@ fetch_eurostat_series_impl <- function(geo, na_item, label, s_adj, unit, start_p
 #'
 #' `labels`, if given, restricts which concepts are attempted (mirrors
 #' R/oecd.R's `fetch_oecd_anchors(..., labels =)`). Returns a tibble with
-#' one `period` column plus one column per concept that returned data
-#' (household disposable income is never included -- see header comment),
+#' one `period` column plus one column per concept that returned data,
 #' or NULL if the country isn't an EU member or nothing resolved.
 fetch_eurostat_anchors <- function(country3, start_period = "1995-Q1", labels = NULL) {
   if (!country3 %in% eu_member_countries) return(NULL)
@@ -113,17 +112,87 @@ fetch_eurostat_anchors <- function(country3, start_period = "1995-Q1", labels = 
 
   concepts <- eurostat_anchor_concepts
   if (!is.null(labels)) concepts <- concepts[concepts$label %in% labels, ]
-  if (nrow(concepts) == 0) return(NULL)
 
   results <- purrr::pmap(
     list(concepts$na_item, concepts$label),
     function(na_item, label) fetch_eurostat_series(geo, na_item, label, start_period = start_period)
   )
   names(results) <- concepts$label
+
+  if (is.null(labels) || "real_household_disposable_income" %in% labels) {
+    results[["real_household_disposable_income"]] <-
+      fetch_eurostat_disposable_income(geo, start_period = start_period)
+  }
   results <- purrr::compact(results)
 
   if (length(results) == 0) return(NULL)
   purrr::reduce(results, dplyr::full_join, by = "period") %>% dplyr::arrange(period)
+}
+
+## ---------------------------------------------------------------
+## Real household disposable income, from the quarterly sector accounts
+##
+## STATUS: VERIFIED 2026-10-04 against Eurostat's SDMX 2.1 API, real 200
+## responses for AT (1999-Q1 to 2026-Q1) and DE (1999-Q1 to 2026-Q2).
+##
+## WHY: OECD's DF_QNA_INC_SAV, the only OECD source tried until then,
+## carries the total economy only (SECTOR = S1, no household sector) and
+## returns NoRecordsFound for AUT and DEU, so the column was empty for
+## both. Its availableconstraint lists no B6G for any sector at all.
+##
+## Nominal: nasq_10_nf_tr, key FREQ.UNIT.DIRECT.SECTOR.NA_ITEM.S_ADJ.GEO =
+## Q.CP_MEUR.RECV.S14_S15.B6G.SCA -- gross disposable income of
+## households and NPISH, current prices, seasonally and calendar
+## adjusted. B6G is a balancing item, so DIRECT = RECV and PAID carry
+## identical values; RECV is used.
+##
+## Deflator: the implicit deflator of household and NPISH final
+## consumption, namq_10_gdp P31_S14_S15 at CP_MEUR / CLV20_MEUR -- the
+## same deflator Eurostat uses for its own real household income
+## indicator (nasq_10_ki B6G_R_HAB), and the counterpart of FRED-QD's
+## DPIC96, which deflates by the PCE price index. The result is in
+## million euro at chain-linked 2020 prices, like the other anchors.
+##
+## Sector: S14_S15 includes NPISH, as FRED's personal income does;
+## households alone (S14) are not published quarterly in this dataflow.
+## ---------------------------------------------------------------
+
+eurostat_disposable_income_key <- "Q.CP_MEUR.RECV.S14_S15.B6G.SCA"
+eurostat_consumption_deflator_item <- "P31_S14_S15"
+
+#' Fetch real household disposable income for one EU country (2-letter
+#' Eurostat geo), or NULL if any of its three inputs is unavailable
+fetch_eurostat_disposable_income <- function(geo, start_period = "1995-Q1") {
+  label <- "real_household_disposable_income"
+  key <- paste(eurostat_disposable_income_key, geo, sep = ".")
+  url <- sprintf(
+    "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/nasq_10_nf_tr/%s?format=SDMX-CSV&startPeriod=%s",
+    key, start_period
+  )
+
+  txt <- fetch_text(url)
+  if (is.null(txt)) {
+    warning(sprintf("[%s] Eurostat fetch failed -- URL: %s", label, url))
+    return(NULL)
+  }
+  if (stringr::str_detect(txt, stringr::regex("S:Fault|faultstring", ignore_case = TRUE))) {
+    warning(sprintf("[%s] Eurostat has no observations for key '%s'", label, key))
+    return(NULL)
+  }
+  nominal <- parse_time_value_csv(txt, "nominal")
+
+  item <- eurostat_consumption_deflator_item
+  cp  <- fetch_eurostat_series(geo, item, "cp",  unit = "CP_MEUR",    start_period = start_period)
+  clv <- fetch_eurostat_series(geo, item, "clv", unit = eurostat_unit, start_period = start_period)
+  if (is.null(nominal) || is.null(cp) || is.null(clv)) return(NULL)
+
+  nominal %>%
+    dplyr::inner_join(cp, by = "period") %>%
+    dplyr::inner_join(clv, by = "period") %>%
+    dplyr::transmute(period = .data$period,
+                     !!label := .data$nominal / (.data$cp / .data$clv)) %>%
+    dplyr::filter(!is.na(.data[[label]])) %>%
+    dplyr::arrange(.data$period)
 }
 
 ## ---------------------------------------------------------------
