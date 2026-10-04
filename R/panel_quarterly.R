@@ -46,9 +46,10 @@ fetch_quarterly_native_concepts <- function(country, start_period, country2 = lo
   }
 
   ## OECD is still asked for every NIPA anchor Eurostat has, to extend it
-  ## before 1995, but not for disposable income once Eurostat has it:
-  ## DF_QNA_INC_SAV has no household sector and returns NoRecordsFound for
-  ## AUT and DEU (see R/eurostat.R fetch_eurostat_disposable_income()).
+  ## before 1995, but not for disposable income once Eurostat has it: the
+  ## two are built the same way (B6G of households and NPISH over the
+  ## household consumption deflator), and Eurostat's is the one EU members
+  ## are meant to have (see R/oecd.R fetch_oecd_disposable_income()).
   oecd_labels <- all_anchor_labels
   if (has_data(eurostat_result, "real_household_disposable_income")) {
     oecd_labels <- setdiff(oecd_labels, "real_household_disposable_income")
@@ -61,7 +62,7 @@ fetch_quarterly_native_concepts <- function(country, start_period, country2 = lo
   oecd_anchor_key <- function(label) {
     row <- oecd_anchor_concepts[oecd_anchor_concepts$label == label, ]
     if (nrow(row) == 1) return(paste0(row$sector, ".", row$transaction))
-    paste0(oecd_disposable_income_dims$sector, ".", oecd_disposable_income_dims$transaction, " (DF_QNA_INC_SAV)")
+    sprintf("DF_QSA:%s deflated by DF_QNA:S1M.P3 (V/LR)", build_oecd_disposable_income_key(country))
   }
 
   for (lbl in all_anchor_labels) {

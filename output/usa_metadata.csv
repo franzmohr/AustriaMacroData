@@ -6,7 +6,7 @@ real_gfcf_total,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2
 real_exports,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,EXPGSC1,OECD_QNA,S1.P6,1960-Q1,2026-Q2,266
 real_imports,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,IMPGSC1,OECD_QNA,S1.P7,1960-Q1,2026-Q2,266
 inventory_change_to_gdp,Output and Income,Q,mean,% of GDP,SCA,R,1,0,0,A014RE1Q156NBEA,FRED,A014RE1Q156NBEA,1960-Q1,2026-Q2,266
-real_household_disposable_income,Output and Income,Q,mean,"national currency, volume",SCA,R,5,2,2,DPIC96,,,,,0
+real_household_disposable_income,Output and Income,Q,mean,"national currency, volume",SCA,R,5,2,2,DPIC96,OECD_QNA,DF_QSA:Q.Y.USA.S1M.S1.C.B6G...XDC.S.V.N.T0801 deflated by DF_QNA:S1M.P3 (V/LR),1960-Q1,2026-Q2,266
 industrial_production,Industrial Production,M,mean,index 2021=100,SCA,R,5,2,2,INDPRO,FRED_MIRROR,USAPROINDMISMEI,1960-M01,2024-M04,772
 industrial_confidence,Industrial Production,M,mean,balance,SA,C,1,0,0,,,,,,0
 unemployment_rate,Employment and Unemployment,M,mean,% of labour force,SA,R,2,4,4,UNRATE,FRED_MIRROR,LRHUTTTTUSM156S,1960-M01,2025-M09,789

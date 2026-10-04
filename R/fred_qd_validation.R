@@ -50,12 +50,11 @@ fetch_actual_fred_qd <- function(vintage_url) {
 #' for the same concept -- found live 2026-08-31 when GPDIC1 FAILed at
 #' corr=0.660).
 ##
-## No explicit exclusion for household disposable income is needed even
-## though it DOES have a real mnemonic (DPIC96): `validate_against_fred_qd()`
-## below only validates concepts present in `anchor_merged`, and that
-## concept has no reliable quarterly source for USA from either OECD or
-## IMF (verified, see README/R/oecd.R), so it is never a column of
-## `anchor_merged` for the one country --validate actually runs against.
+## Household disposable income is validated against DPIC96 like the
+## other anchors since 2026-10, when the USA gained an OECD source for it
+## (the quarterly sector accounts, see R/oecd.R
+## fetch_oecd_disposable_income()); `validate_against_fred_qd()` below
+## validates whatever concepts are present in `anchor_merged`.
 fred_qd_validation_map <- concept_dictionary %>%
   dplyr::filter(!is.na(.data$fred_qd_mnemonic)) %>%
   dplyr::transmute(our_label = .data$label, fred_qd_mnemonic = .data$fred_qd_mnemonic)

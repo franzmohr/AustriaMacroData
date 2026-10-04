@@ -1,6 +1,6 @@
 {
   "country": "USA",
-  "generated_at": "2026-10-04T09:07:37Z",
+  "generated_at": "2026-10-04T10:57:53Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -37,6 +37,11 @@
       "fred_qd_group": "Output and Income",
       "label": "inventory_change_to_gdp",
       "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [A014RE1Q156NBEA]"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_household_disposable_income",
+      "source": "OECD QNA [DF_QSA:Q.Y.USA.S1M.S1.C.B6G...XDC.S.V.N.T0801 deflated by DF_QNA:S1M.P3 (V/LR)]"
     },
     {
       "fred_qd_group": "Industrial Production",
@@ -170,10 +175,6 @@
     }
   ],
   "skipped": [
-    {
-      "fred_qd_group": "Output and Income",
-      "label": "real_household_disposable_income"
-    },
     {
       "fred_qd_group": "Industrial Production",
       "label": "industrial_confidence"
@@ -547,8 +548,8 @@
     {
       "label": "real_household_disposable_income",
       "category": "level",
-      "status": "NO_DATA",
-      "detail": "No non-NA observations."
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 12%."
     },
     {
       "label": "industrial_production",

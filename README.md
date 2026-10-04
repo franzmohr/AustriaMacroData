@@ -718,7 +718,9 @@ just "made the warning go away"):
   specifically -- a checked absence, not a guess. Re-checked 2026-10-04:
   that dataflow covers the total economy (`S1`) only, with no household
   sector, so EU members now take this concept from Eurostat's quarterly
-  sector accounts instead (`nasq_10_nf_tr`, see `R/eurostat.R`).
+  sector accounts instead (`nasq_10_nf_tr`, see `R/eurostat.R`), and every
+  other country from the OECD's quarterly sector accounts
+  (`DSD_NASEC1@DF_QSA`, see `R/oecd.R`), which do have the household sector.
 - **IMF**: the prototype's dataflow ID `NEA` no longer exists (IMF's March
   2025 platform restructuring renamed it to `QNEA`, agency `IMF.STA`,
   version `7.0.0`), and its indicator codes are standard SNA transaction
@@ -798,7 +800,7 @@ override exists -- see the fallback chain earlier in this README.
 | FRED-QD Group | Concept(s) | Source | Status |
 |---|---|---|---|
 | Output and Income | Real GDP, household consumption, govt. consumption, GFCF, exports, imports | **Eurostat** `namq_10_gdp` (EU members), else OECD QNA `DF_QNA` | Verified -- real current (2026-Q2) data, AUT + DEU via Eurostat, USA via OECD |
-| Output and Income | Real household disposable income | **Eurostat** sector accounts `nasq_10_nf_tr`, B6G for S14_S15 (EU members), deflated by the `namq_10_gdp` P31_S14_S15 implicit deflator; else OECD `DF_QNA_INC_SAV` | Verified 2026-10-04 -- AUT (from 1999-Q1) + DEU (from 1999-Q1); quarterly growth matches Eurostat's own real per-capita indicator at correlation 0.998 (AUT) / 0.974 (DEU). USA: NA (the OECD dataflow has no household sector) |
+| Output and Income | Real household disposable income | **Eurostat** sector accounts `nasq_10_nf_tr`, B6G for S14_S15 (EU members), deflated by the `namq_10_gdp` P31_S14_S15 implicit deflator; else **OECD** quarterly sector accounts `DSD_NASEC1@DF_QSA`, B6G for S1M, deflated by the `DF_QNA` S1M P3 implicit deflator | Verified 2026-10-04 -- AUT (from 1999-Q1) + DEU (from 1999-Q1); quarterly growth matches Eurostat's own real per-capita indicator at correlation 0.998 (AUT) / 0.974 (DEU). USA via OECD from 1947-Q1; quarterly growth matches FRED-QD's DPIC96 at correlation 0.999 |
 | Industrial Production | Industrial production index | OECD MEI via FRED (`{cc3}PROINDQISMEI`) | Verified -- AUT + DEU + USA |
 | Industrial Production | Industrial confidence indicator | **EC Business and Consumer Survey** (`AT.INDU`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent. Documented leading-indicator value (OECD Composite Leading Indicators input) |
 | Industrial Production | Industry survey questions (18): production, order books, stocks, price and employment expectations monthly; limiting factors, capacity, new orders, capacity utilisation, competitive position quarterly | **EC Business and Consumer Survey** (`INDU.AT.TOT.<Q>.<ANSWER>.<FREQ>`, all-surveys bundle) | Verified -- AUT; EU-only. Capacity utilisation (`QPS`) is the survey counterpart of FRED-QD's `CUMFNS` |
