@@ -53,7 +53,7 @@ test_that("fetch_oecd_anchors merges multiple concepts into one wide tibble by p
     disp_income = "NoResultsFound"
   )
   mock <- function(url, ...) {
-    if (grepl("DF_QNA_INC_SAV", url, fixed = TRUE)) responses$disp_income else responses$real_gdp
+    if (grepl("DF_QSA", url, fixed = TRUE)) responses$disp_income else responses$real_gdp
   }
   with_mock_fetch_text(mock, {
     out <- fetch_oecd_anchors("DEU", start_period = "2020-Q1")
@@ -62,4 +62,37 @@ test_that("fetch_oecd_anchors merges multiple concepts into one wide tibble by p
   expect_true("real_gdp" %in% names(out))
   ## disposable income correctly absent (NoResultsFound), not silently zero
   expect_false("real_household_disposable_income" %in% names(out))
+})
+
+test_that("build_oecd_disposable_income_key matches the verified DF_QSA dimension order", {
+  ## FREQ.ADJUSTMENT.REF_AREA.SECTOR.COUNTERPART_SECTOR.ACCOUNTING_ENTRY.
+  ## TRANSACTION.INSTR_ASSET.EXPENDITURE.UNIT_MEASURE.VALUATION.PRICE_BASE.
+  ## TRANSFORMATION.TABLE_IDENTIFIER (14 segments, verified live 2026-10-04)
+  expect_equal(build_oecd_disposable_income_key("USA"), "Q.Y.USA.S1M.S1.C.B6G...XDC.S.V.N.T0801")
+})
+
+oecd_fixture <- function(values, periods = c("2025-Q1", "2025-Q2")) {
+  paste(c("STRUCTURE,TIME_PERIOD,OBS_VALUE",
+          paste0("DATAFLOW,", periods, ",", values)), collapse = "
+")
+}
+
+test_that("fetch_oecd_disposable_income deflates B6G by the household consumption deflator", {
+  mock <- function(url, ...) {
+    if (grepl("DF_QSA", url, fixed = TRUE)) return(oecd_fixture(c(1000, 1100)))
+    if (grepl("XDC.V.LA", url, fixed = TRUE)) return(oecd_fixture(c(4000, 4400)))
+    if (grepl("XDC.LR.LA", url, fixed = TRUE)) return(oecd_fixture(c(4000, 4000)))
+    stop("unexpected url ", url)
+  }
+  with_mock_fetch_text(mock, out <- fetch_oecd_disposable_income("USA", "2025-Q1"))
+  expect_equal(out$period, c("2025-Q1", "2025-Q2"))
+  ## deflator 1.0 then 1.1: nominal growth of 10% is all price
+  expect_equal(out$real_household_disposable_income, c(1000, 1000))
+})
+
+test_that("fetch_oecd_disposable_income returns NULL when the sector accounts have nothing", {
+  with_mock_fetch_text(const_fetch_text("NoResultsFound"), {
+    expect_warning(out <- fetch_oecd_disposable_income("DEU", "2025-Q1"), "no observations")
+  })
+  expect_null(out)
 })

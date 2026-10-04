@@ -1,6 +1,6 @@
 {
   "country": "USA",
-  "generated_at": "2026-10-04T09:07:37Z",
+  "generated_at": "2026-10-04T11:18:29Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -37,6 +37,11 @@
       "fred_qd_group": "Output and Income",
       "label": "inventory_change_to_gdp",
       "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [A014RE1Q156NBEA]"
+    },
+    {
+      "fred_qd_group": "Output and Income",
+      "label": "real_household_disposable_income",
+      "source": "OECD QNA [DF_QSA:Q.Y.USA.S1M.S1.C.B6G...XDC.S.V.N.T0801 deflated by DF_QNA:S1M.P3 (V/LR)]"
     },
     {
       "fred_qd_group": "Industrial Production",
@@ -130,6 +135,11 @@
     },
     {
       "fred_qd_group": "Prices",
+      "label": "construction_cost_index",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [WPUIP2311001] -- quarterly average of its months"
+    },
+    {
+      "fred_qd_group": "Prices",
       "label": "oil_price",
       "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [WTISPLC] -- quarterly average of its months"
     },
@@ -170,10 +180,6 @@
     }
   ],
   "skipped": [
-    {
-      "fred_qd_group": "Output and Income",
-      "label": "real_household_disposable_income"
-    },
     {
       "fred_qd_group": "Industrial Production",
       "label": "industrial_confidence"
@@ -491,6 +497,10 @@
       "label": "services_confidence"
     },
     {
+      "fred_qd_group": "Prices",
+      "label": "construction_producer_prices"
+    },
+    {
       "fred_qd_group": "Housing",
       "label": "construction_weather_constraint"
     }
@@ -547,8 +557,8 @@
     {
       "label": "real_household_disposable_income",
       "category": "level",
-      "status": "NO_DATA",
-      "detail": "No non-NA observations."
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 12%."
     },
     {
       "label": "industrial_production",
@@ -698,7 +708,7 @@
       "label": "credit_to_private_nonfin_sector",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 264 values within [-10, 400]."
+      "detail": "All 265 values within [-10, 400]."
     },
     {
       "label": "household_mortgage_loans",
@@ -728,19 +738,19 @@
       "label": "household_credit_to_gdp",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 264 values within [-10, 400]."
+      "detail": "All 265 values within [-10, 400]."
     },
     {
       "label": "corporate_credit_to_gdp",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 264 values within [-10, 400]."
+      "detail": "All 265 values within [-10, 400]."
     },
     {
       "label": "government_debt_to_gdp",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 264 values within [-10, 400]."
+      "detail": "All 265 values within [-10, 400]."
     },
     {
       "label": "government_primary_balance_to_gdp",
@@ -1129,6 +1139,18 @@
     {
       "label": "services_confidence",
       "category": "balance",
+      "status": "NO_DATA",
+      "detail": "No non-NA observations."
+    },
+    {
+      "label": "construction_cost_index",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 9%."
+    },
+    {
+      "label": "construction_producer_prices",
+      "category": "level",
       "status": "NO_DATA",
       "detail": "No non-NA observations."
     },

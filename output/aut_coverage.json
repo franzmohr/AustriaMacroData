@@ -1,6 +1,6 @@
 {
   "country": "AUT",
-  "generated_at": "2026-10-04T10:29:32Z",
+  "generated_at": "2026-10-04T11:29:42Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -21,7 +21,7 @@
     {
       "fred_qd_group": "Output and Income",
       "label": "real_gfcf_total",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P51G (extended pre-1995 with level-spliced OECD_QNA:.P51G)]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P51G]"
     },
     {
       "fred_qd_group": "Output and Income",
@@ -31,7 +31,7 @@
     {
       "fred_qd_group": "Output and Income",
       "label": "real_imports",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P7 (extended pre-1995 with level-spliced OECD_QNA:S1.P7)]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P7]"
     },
     {
       "fred_qd_group": "Output and Income",
@@ -46,7 +46,7 @@
     {
       "fred_qd_group": "Industrial Production",
       "label": "industrial_production",
-      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [sts_inpr_m:M.PRD.B-D.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)] -- quarterly average of its months"
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [sts_inpr_m:M.PRD.B-D.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Industrial Production",
@@ -56,7 +56,7 @@
     {
       "fred_qd_group": "Employment and Unemployment",
       "label": "unemployment_rate",
-      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [une_rt_m:M.SA.TOTAL.PC_ACT.T.AT (OECD MEI mirror fills earlier months unchanged, same units)] -- quarterly average of its months"
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [une_rt_m:M.SA.TOTAL.PC_ACT.T.AT (OECD MEI mirror fills earlier months unchanged, same units)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
@@ -91,7 +91,7 @@
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
       "label": "retail_sales_volume",
-      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [sts_trtu_m:M.VOL_SLS.G47.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)] -- quarterly average of its months"
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [sts_trtu_m:M.VOL_SLS.G47.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)] -- quarterly average of its months"
     },
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
@@ -520,6 +520,16 @@
     },
     {
       "fred_qd_group": "Prices",
+      "label": "construction_cost_index",
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [sts_copi_m:M.COST.CPA_F41001_X_410014.NSA.I21.AT] -- quarterly average of its months"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "construction_producer_prices",
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [sts_copi_m:M.PRC_PRR.CPA_F41001_X_410014.NSA.I21.AT] -- quarterly average of its months"
+    },
+    {
+      "fred_qd_group": "Prices",
       "label": "oil_price",
       "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [WTISPLC] -- quarterly average of its months"
     },
@@ -603,7 +613,7 @@
       "label": "real_gfcf_total",
       "category": "level",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change 15%."
+      "detail": "Positive throughout; largest quarter-over-quarter change 7%."
     },
     {
       "label": "real_exports",
@@ -615,7 +625,7 @@
       "label": "real_imports",
       "category": "level",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change 22%."
+      "detail": "Positive throughout; largest quarter-over-quarter change -15%."
     },
     {
       "label": "inventory_change_to_gdp",
@@ -1210,6 +1220,18 @@
       "category": "balance",
       "status": "PASS",
       "detail": "All 120 values within [-150, 250]."
+    },
+    {
+      "label": "construction_cost_index",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 6%."
+    },
+    {
+      "label": "construction_producer_prices",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 6%."
     },
     {
       "label": "oil_price",

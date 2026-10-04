@@ -91,7 +91,17 @@ message("Building panels for ", country, " from ", start_m, ": ", length(monthly
 ## =====================================================================
 monthly_fetch <- fetch_monthly_concepts(country, start_m, country2)
 quarterly_fetch <- fetch_quarterly_native_concepts(country, start_q, country2)
-concept_source <- c(monthly_fetch$concept_source, quarterly_fetch$concept_source)
+## A monthly concept this country has no monthly series of may still have
+## a quarterly one (Germany's construction costs): it goes into the
+## quarterly panel as published -- see fetch_quarterly_fallbacks().
+fallback_fetch <- fetch_quarterly_fallbacks(
+  country, start_q, setdiff(monthly_cols, names(monthly_fetch$concept_source))
+)
+## Where each concept came from: `monthly_source` for the monthly panel,
+## `concept_source` for the quarterly panel, which also holds the
+## quarterly-only concepts and the fallbacks.
+monthly_source <- monthly_fetch$concept_source
+concept_source <- c(monthly_source, quarterly_fetch$concept_source, fallback_fetch$concept_source)
 
 ## =====================================================================
 ## 2. The two panels, monthly and quarterly, kept apart
@@ -113,25 +123,30 @@ monthly_panel <- with_schema(monthly_fetch$panel, monthly_cols) %>%
   dplyr::filter(.data$date >= period_to_date(start_m))
 monthly_panel <- monthly_panel[rowSums(!is.na(monthly_panel[, monthly_cols, drop = FALSE])) > 0, ]
 
-quarterly_panel <- dplyr::full_join(
-  quarterly_fetch$panel,
-  to_quarterly(monthly_panel, monthly_cols),
-  by = "date"
-) %>% with_schema(all_cols)
+## A fallback concept is NA throughout the monthly panel, so
+## to_quarterly() returns no column for it and the two cannot collide.
+quarterly_panel <- quarterly_fetch$panel %>%
+  dplyr::full_join(fallback_fetch$panel, by = "date") %>%
+  dplyr::full_join(to_quarterly(monthly_panel, monthly_cols), by = "date") %>%
+  with_schema(all_cols)
 
-write_panel <- function(panel, suffix, cols, unit) {
+write_panel <- function(panel, suffix, cols, unit, sources) {
   path <- out_path(suffix)
   readr::write_csv(panel, path)
-  n_resolved <- sum(cols %in% names(concept_source))
+  n_resolved <- sum(cols %in% names(sources))
   message("Saved ", nrow(panel), " ", unit, " x ", length(cols), " canonical concepts (",
           n_resolved, " resolved, ", length(cols) - n_resolved, " NA) to '", path, "'")
 }
-write_panel(monthly_panel, "_monthly_panel.csv", monthly_cols, "months")
-write_panel(quarterly_panel, "_panel.csv", all_cols, "quarters")
+write_panel(monthly_panel, "_monthly_panel.csv", monthly_cols, "months", monthly_source)
+write_panel(quarterly_panel, "_panel.csv", all_cols, "quarters", concept_source)
 
 ## Each concept's span is read at its native frequency: a monthly
-## concept from the monthly panel, a quarterly one from the quarterly.
-metadata <- series_metadata(list(M = monthly_panel, Q = quarterly_panel), concept_source)
+## concept from the monthly panel, a quarterly one from the quarterly --
+## and a fallback, quarterly for this country, from the quarterly one.
+fallback_frequency <- setNames(rep("Q", length(fallback_fetch$concept_source)),
+                               names(fallback_fetch$concept_source))
+metadata <- series_metadata(list(M = monthly_panel, Q = quarterly_panel), concept_source,
+                            frequency = fallback_frequency, country = country)
 readr::write_csv(metadata, out_path("_metadata.csv"), na = "")
 message("Saved series metadata to '", out_path("_metadata.csv"), "'")
 
@@ -170,7 +185,7 @@ provider_display_names <- c(
   EUROSTAT_HICP = "Eurostat (prc_hicp_minr, HICP 2025=100)",
   EUROSTAT_ULC = "Eurostat (namq_10_lp_ulc, hours-based ULC)",
   EUROSTAT_GOV = "Eurostat (gov_10q_ggnfa, government finance statistics)",
-  EUROSTAT_STS = "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m)",
+  EUROSTAT_STS = "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q)",
   OENB = "OeNB data service (Oesterreichische Nationalbank)",
   BUNDESBANK = "Deutsche Bundesbank (term structure of listed Federal securities)",
   YAHOO_FINANCE = "Yahoo Finance",
@@ -184,10 +199,12 @@ provider_display_names <- c(
 ## In the quarterly report a monthly concept's source says how its
 ## quarters were made, since that is not visible in the CSV.
 format_source <- function(lbl, quarterly) {
-  src <- concept_source[[lbl]]
+  src <- (if (quarterly) concept_source else monthly_source)[[lbl]]
   if (is.null(src)) return(NA_character_)
   out <- sprintf("%s [%s]", provider_display_names[[src$provider]] %||% src$provider, src$key)
-  if (quarterly && lbl %in% monthly_cols) {
+  if (isTRUE(src$quarterly_at_source)) {
+    out <- paste0(out, " -- quarterly at source: no monthly series for this country")
+  } else if (quarterly && lbl %in% monthly_cols) {
     rule <- concept_dictionary$aggregation[concept_dictionary$label == lbl]
     out <- paste0(out, if (identical(rule, "sum")) " -- quarterly total of complete months" else
       " -- quarterly average of its months")
@@ -199,7 +216,7 @@ coverage_rows <- function(cols, quarterly) {
     dplyr::filter(.data$label %in% cols) %>%
     dplyr::transmute(
       fred_qd_group, label,
-      resolved = .data$label %in% names(concept_source),
+      resolved = .data$label %in% names(if (quarterly) concept_source else monthly_source),
       source = purrr::map_chr(.data$label, ~ format_source(.x, quarterly))
     )
 }
@@ -339,8 +356,8 @@ rows_m <- m_rows %>%
   dplyr::filter(.data$resolved) %>%
   dplyr::transmute(
     country = !!country, variable = .data$label,
-    provider = purrr::map_chr(.data$label, ~ concept_source[[.x]]$provider),
-    key = purrr::map_chr(.data$label, ~ concept_source[[.x]]$key)
+    provider = purrr::map_chr(.data$label, ~ monthly_source[[.x]]$provider),
+    key = purrr::map_chr(.data$label, ~ monthly_source[[.x]]$key)
   )
 existing_m <- if (file.exists(registry_m_path)) {
   readr::read_csv(registry_m_path, col_types = readr::cols(.default = "c")) %>%
@@ -351,3 +368,11 @@ existing_m <- if (file.exists(registry_m_path)) {
 readr::write_csv(dplyr::arrange(dplyr::bind_rows(existing_m, rows_m), .data$country, .data$variable),
                  registry_m_path)
 message("Updated the data-sources registries: '", data_sources_path, "' and '", registry_m_path, "'")
+
+## =====================================================================
+## 7. The semantic layer for AI agents (R/semantic_layer.R): catalog,
+##    concept table and availability across every country in the output
+##    directory, rebuilt so it always matches the panels just written.
+## =====================================================================
+write_semantic_layer(opt$output_dir)
+message("Updated the semantic layer in '", file.path(opt$output_dir, "semantic"), "'")

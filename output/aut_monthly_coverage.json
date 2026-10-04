@@ -1,15 +1,15 @@
 {
   "country": "AUT",
   "frequency": "monthly",
-  "generated_at": "2026-10-04T10:29:32Z",
+  "generated_at": "2026-10-04T11:29:42Z",
   "start_period": "1960-M01",
-  "concepts_published_monthly": 74,
+  "concepts_published_monthly": 76,
   "concepts_quarterly_only": 40,
   "resolved": [
     {
       "fred_qd_group": "Industrial Production",
       "label": "industrial_production",
-      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [sts_inpr_m:M.PRD.B-D.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)]"
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [sts_inpr_m:M.PRD.B-D.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)]"
     },
     {
       "fred_qd_group": "Industrial Production",
@@ -19,7 +19,7 @@
     {
       "fred_qd_group": "Employment and Unemployment",
       "label": "unemployment_rate",
-      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [une_rt_m:M.SA.TOTAL.PC_ACT.T.AT (OECD MEI mirror fills earlier months unchanged, same units)]"
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [une_rt_m:M.SA.TOTAL.PC_ACT.T.AT (OECD MEI mirror fills earlier months unchanged, same units)]"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
@@ -34,7 +34,7 @@
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
       "label": "retail_sales_volume",
-      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m) [sts_trtu_m:M.VOL_SLS.G47.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)]"
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [sts_trtu_m:M.VOL_SLS.G47.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)]"
     },
     {
       "fred_qd_group": "Inventories, Orders, and Sales",
@@ -325,6 +325,16 @@
       "fred_qd_group": "Other",
       "label": "services_confidence",
       "source": "European Commission Business and Consumer Survey [AT.SERV]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "construction_cost_index",
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [sts_copi_m:M.COST.CPA_F41001_X_410014.NSA.I21.AT]"
+    },
+    {
+      "fred_qd_group": "Prices",
+      "label": "construction_producer_prices",
+      "source": "Eurostat short-term statistics (sts_inpr_m / sts_trtu_m / une_rt_m / sts_copi_m / sts_copi_q) [sts_copi_m:M.PRC_PRR.CPA_F41001_X_410014.NSA.I21.AT]"
     },
     {
       "fred_qd_group": "Prices",
@@ -935,6 +945,18 @@
       "category": "balance",
       "status": "PASS",
       "detail": "All 360 values within [-150, 250]."
+    },
+    {
+      "label": "construction_cost_index",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 5%."
+    },
+    {
+      "label": "construction_producer_prices",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change 5%."
     },
     {
       "label": "oil_price",

@@ -1,20 +1,20 @@
 label,fred_qd_group,frequency,aggregation,unit,sa,class,tcode_fred,tcode_lt,tcode_ht,fred_qd_mnemonic,provider,key,first,last,n_obs
-real_gdp,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,GDPC1,EUROSTAT,namq_10_gdp:B1GQ (extended pre-1995 with level-spliced OECD_QNA:S1.B1GQ),1960-Q1,2026-Q2,266
-real_household_consumption,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,PCECC96,EUROSTAT,namq_10_gdp:P31_S14 (extended pre-1995 with level-spliced OECD_QNA:S1M.P3),1960-Q1,2026-Q2,266
-real_govt_consumption,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,GCEC1,EUROSTAT,namq_10_gdp:P3_S13 (extended pre-1995 with level-spliced OECD_QNA:S13.P3),1960-Q1,2026-Q2,266
-real_gfcf_total,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,FPIx,EUROSTAT,namq_10_gdp:P51G (extended pre-1995 with level-spliced OECD_QNA:.P51G),1960-Q1,2026-Q2,266
-real_exports,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,EXPGSC1,EUROSTAT,namq_10_gdp:P6 (extended pre-1995 with level-spliced OECD_QNA:S1.P6),1960-Q1,2026-Q2,266
-real_imports,Output and Income,Q,mean,"EUR mn, chain-linked volume",SCA,R,5,2,2,IMPGSC1,EUROSTAT,namq_10_gdp:P7 (extended pre-1995 with level-spliced OECD_QNA:S1.P7),1960-Q1,2026-Q2,266
+real_gdp,Output and Income,Q,mean,"EUR mn, chain-linked volume (2020), quarterly level",SCA,R,5,2,2,GDPC1,EUROSTAT,namq_10_gdp:B1GQ (extended pre-1995 with level-spliced OECD_QNA:S1.B1GQ),1960-Q1,2026-Q2,266
+real_household_consumption,Output and Income,Q,mean,"EUR mn, chain-linked volume (2020), quarterly level",SCA,R,5,2,2,PCECC96,EUROSTAT,namq_10_gdp:P31_S14 (extended pre-1995 with level-spliced OECD_QNA:S1M.P3),1960-Q1,2026-Q2,266
+real_govt_consumption,Output and Income,Q,mean,"EUR mn, chain-linked volume (2020), quarterly level",SCA,R,5,2,2,GCEC1,EUROSTAT,namq_10_gdp:P3_S13 (extended pre-1995 with level-spliced OECD_QNA:S13.P3),1960-Q1,2026-Q2,266
+real_gfcf_total,Output and Income,Q,mean,"EUR mn, chain-linked volume (2020), quarterly level",SCA,R,5,2,2,FPIx,EUROSTAT,namq_10_gdp:P51G,1995-Q1,2026-Q2,126
+real_exports,Output and Income,Q,mean,"EUR mn, chain-linked volume (2020), quarterly level",SCA,R,5,2,2,EXPGSC1,EUROSTAT,namq_10_gdp:P6 (extended pre-1995 with level-spliced OECD_QNA:S1.P6),1960-Q1,2026-Q2,266
+real_imports,Output and Income,Q,mean,"EUR mn, chain-linked volume (2020), quarterly level",SCA,R,5,2,2,IMPGSC1,EUROSTAT,namq_10_gdp:P7,1995-Q1,2026-Q2,126
 inventory_change_to_gdp,Output and Income,Q,mean,% of GDP,SCA,R,1,0,0,A014RE1Q156NBEA,EUROSTAT,namq_10_gdp:Q.PC_GDP.SCA.P52.AT,1995-Q1,2026-Q2,126
-real_household_disposable_income,Output and Income,Q,mean,"national currency, volume",SCA,R,5,2,2,DPIC96,EUROSTAT,nasq_10_nf_tr:Q.CP_MEUR.RECV.S14_S15.B6G.SCA.AT deflated by namq_10_gdp:P31_S14_S15,1999-Q1,2026-Q1,109
+real_household_disposable_income,Output and Income,Q,mean,"EUR mn at 2020 prices, quarterly level",SCA,R,5,2,2,DPIC96,EUROSTAT,nasq_10_nf_tr:Q.CP_MEUR.RECV.S14_S15.B6G.SCA.AT deflated by namq_10_gdp:P31_S14_S15,1999-Q1,2026-Q1,109
 industrial_production,Industrial Production,M,mean,index 2021=100,SCA,R,5,2,2,INDPRO,EUROSTAT_STS,"sts_inpr_m:M.PRD.B-D.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)",1960-M01,2026-M07,799
 industrial_confidence,Industrial Production,M,mean,balance,SA,C,1,0,0,,EC_BCS,AT.INDU,1985-M01,2026-M09,501
 unemployment_rate,Employment and Unemployment,M,mean,% of labour force,SA,R,2,4,4,UNRATE,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.AT (OECD MEI mirror fills earlier months unchanged, same units)",1993-M01,2026-M08,404
 employment_rate,Employment and Unemployment,Q,mean,% of population 15-64,SA,R,2,4,4,,FRED_MIRROR,LREM64TTATQ156S,1999-Q1,2026-Q2,110
-hours_worked,Employment and Unemployment,Q,mean,mn hours,SCA,R,5,2,2,HOANBS,EUROSTAT_NA,namq_10_a10_e:Q.THS_HW.TOTAL.SCA.EMP_DC.AT,1995-Q1,2026-Q2,126
+hours_worked,Employment and Unemployment,Q,mean,thousand hours,SCA,R,5,2,2,HOANBS,EUROSTAT_NA,namq_10_a10_e:Q.THS_HW.TOTAL.SCA.EMP_DC.AT,1995-Q1,2026-Q2,126
 population,Employment and Unemployment,Q,mean,thousand persons,SCA,R,5,2,2,,EUROSTAT_POP,namq_10_pe:Q.THS_PER.SCA.POP_NC.AT,1995-Q1,2026-Q2,126
 employment_expectations,Employment and Unemployment,M,mean,index,SA,C,1,0,0,,EC_BCS,AT.EEI,1996-M01,2026-M09,369
-house_price_real,Housing,Q,mean,index,NSA,R,5,2,2,USSTHPI,FRED_MIRROR,QATR628BIS,1986-Q3,2026-Q1,159
+house_price_real,Housing,Q,mean,index 2010=100,NSA,R,5,2,2,USSTHPI,FRED_MIRROR,QATR628BIS,1986-Q3,2026-Q1,159
 construction_confidence,Housing,M,mean,balance,SA,C,1,0,0,,EC_BCS,AT.BUIL,1996-M01,2026-M09,369
 retail_sales_volume,"Inventories, Orders, and Sales",M,mean,index 2021=100,SCA,R,5,2,2,RSAFSx,EUROSTAT_STS,"sts_trtu_m:M.VOL_SLS.G47.SCA.I21.AT (OECD MEI mirror's earlier history spliced on, rescaled to this base)",1973-M01,2026-M08,644
 retail_confidence,"Inventories, Orders, and Sales",M,mean,balance,SA,C,1,0,0,,EC_BCS,AT.RETA,1996-M01,2026-M09,369
@@ -40,7 +40,7 @@ household_credit_to_gdp,Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BI
 corporate_credit_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.AT.N.A.M.770.A,1995-Q4,2026-Q1,122
 government_debt_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,GFDEGDQ188S,BIS_WSTC,Q.AT.G.A.N.770.A,2000-Q1,2026-Q1,105
 government_primary_balance_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,1,0,0,,EUROSTAT_GOV,gov_10q_ggnfa:Q.PC_GDP.NSA.S13.B9+D41PAY.AT,2001-Q1,2026-Q1,101
-fx_rate_to_usd,Exchange Rates,M,mean,national currency per USD,NSA,F,5,2,2,,FRED_MIRROR,CCUSMA02ATM618N,1960-M01,2026-M08,800
+fx_rate_to_usd,Exchange Rates,M,mean,EUR per USD,NSA,F,5,2,2,,FRED_MIRROR,CCUSMA02ATM618N,1960-M01,2026-M08,800
 real_effective_exchange_rate,Exchange Rates,M,mean,index 2015=100,NSA,F,5,2,2,TWEXAFEGSMTHx,FRED_MIRROR,CCRETT01ATM661N,1970-M01,2026-M08,680
 consumer_confidence,Other,M,mean,balance,SA,C,1,0,0,UMCSENTx,EC_BCS,AT.CONS (OECD MEI mirror dropped: it measures a different statistic),1995-M10,2026-M09,372
 consumer_financial_situation_past,Other,M,mean,balance,SA,C,1,0,0,,EC_BCS,CONS.AT.TOT.1.BS.M,1995-M10,2026-M09,372
@@ -104,6 +104,8 @@ construction_employment_expectations,Housing,M,mean,balance,SA,C,1,0,0,,EC_BCS,B
 construction_price_expectations,Housing,M,mean,balance,SA,C,1,0,0,,EC_BCS,BUIL.AT.TOT.5.BS.M,1985-M01,2026-M09,501
 economic_sentiment_indicator,Other,M,mean,"index, long-term mean = 100",SA,C,1,0,0,,EC_BCS,AT.ESI,1985-M01,2026-M09,501
 services_confidence,Other,M,mean,balance,SA,C,1,0,0,,EC_BCS,AT.SERV,1996-M10,2026-M09,360
+construction_cost_index,Prices,M,mean,index 2021=100,NSA,N,6,2,3,,EUROSTAT_STS,sts_copi_m:M.COST.CPA_F41001_X_410014.NSA.I21.AT,1990-M01,2026-M08,440
+construction_producer_prices,Prices,M,mean,index 2021=100,NSA,N,6,2,3,,EUROSTAT_STS,sts_copi_m:M.PRC_PRR.CPA_F41001_X_410014.NSA.I21.AT,1990-M01,2026-M08,440
 oil_price,Prices,M,mean,USD per barrel,NSA,N,5,2,3,OILPRICEx,FRED,WTISPLC,1960-M01,2026-M08,800
 geopolitical_risk,Other,M,mean,index,NSA,C,1,0,0,,GPR,GPR,1985-M01,2026-M09,501
 global_activity,Other,M,mean,deviation from trend,NSA,R,1,0,0,,FRED,IGREA,1968-M01,2026-M07,703

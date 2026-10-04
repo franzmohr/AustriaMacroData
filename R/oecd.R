@@ -38,32 +38,81 @@ oecd_anchor_concepts <- tibble::tribble(
   "real_imports",                      "S1",    "",                  "P7",         "LR",        "T0102"
 )
 
-#' Household disposable income -- STATUS: VERIFIED ABSENT for most countries
+#' Household disposable income, from the OECD quarterly sector accounts
 ##
-## Checked live via OECD's SDMX `availableconstraint` endpoint: quarterly
-## gross disposable income (transaction B6G) in dataflow DF_QNA_INC_SAV is
-## published for only 11 countries (AUS, BRA, CAN, CHL, EST, GRC, HUN, LTU,
-## LUX, LVA, ZAF) and NOT for USA, DEU, FRA, GBR or AUT -- confirmed via
-## zero-observation responses, not a guess. Also, COUNTERPART_SECTOR must be
-## "S1" (not blank) in this dataflow, and PRICE_BASE only has "L"/"V" codes
-## (not "LR"). Included as a best-effort attempt; expect NULL for most
-## countries, which is correct behavior, not a bug.
-##
-## Re-checked 2026-10-04: this dataflow has SECTOR = S1 (total economy)
-## only, no household sector, and its availableconstraint lists no B6G at
-## all; AUT returns NoRecordsFound. EU members therefore take this concept
-## from Eurostat's sector accounts (R/eurostat.R
-## fetch_eurostat_disposable_income()), and R/panel_quarterly.R skips
-## this request once Eurostat has resolved it.
-oecd_disposable_income_dims <- list(
-  dataflow = "OECD.SDD.NAD,DSD_NAMAIN1@DF_QNA_INC_SAV",
-  sector = "S1", counterpart_sector = "S1", transaction = "B6G",
-  price_base = "V", table_id = "T0107"
-)
+## Until 2026-10 this concept was requested from DF_QNA_INC_SAV, which
+## carries the total economy (S1) only and no household sector, so it was
+## NA for the USA and most other countries. The quarterly sector accounts,
+## DSD_NASEC1@DF_QSA, do have it: gross disposable income (B6G) of
+## households and NPISH (S1M), resources side ("C"), current prices,
+## seasonally adjusted, table T0801. Verified live 2026-10-04 for the USA
+## from 1947-Q1 to 2026-Q2. It is published at current prices only, so
+## it is deflated by the implicit deflator of household and NPISH final
+## consumption from DF_QNA (S1M P3, current prices over chain-linked
+## volume, both at the same annualised rate, which cancels) -- the
+## construction of FRED-QD's DPIC96, and of the Eurostat series EU
+## members take this concept from (R/eurostat.R
+## fetch_eurostat_disposable_income()). B6G itself is a quarterly level,
+## as Eurostat's is, not an annual rate.
+oecd_qsa_dims <- c("FREQ", "ADJUSTMENT", "REF_AREA", "SECTOR", "COUNTERPART_SECTOR",
+                   "ACCOUNTING_ENTRY", "TRANSACTION", "INSTR_ASSET", "EXPENDITURE",
+                   "UNIT_MEASURE", "VALUATION", "PRICE_BASE", "TRANSFORMATION",
+                   "TABLE_IDENTIFIER")
+
+build_oecd_disposable_income_key <- function(country) {
+  dims <- c(FREQ = "Q", ADJUSTMENT = "Y", REF_AREA = country, SECTOR = "S1M",
+            COUNTERPART_SECTOR = "S1", ACCOUNTING_ENTRY = "C", TRANSACTION = "B6G",
+            INSTR_ASSET = "", EXPENDITURE = "", UNIT_MEASURE = "XDC", VALUATION = "S",
+            PRICE_BASE = "V", TRANSFORMATION = "N", TABLE_IDENTIFIER = "T0801")
+  build_sdmx_key(dims[oecd_qsa_dims])
+}
+
+#' Fetch real household disposable income for one country from the OECD
+#' quarterly sector accounts, deflated by the household consumption
+#' deflator; NULL (with a warning) where any of the three parts is missing
+fetch_oecd_disposable_income <- function(country, start_period = "1995-Q1") {
+  label <- "real_household_disposable_income"
+  nominal <- fetch_oecd_series_impl_url(
+    paste0("https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NASEC1@DF_QSA,/",
+           build_oecd_disposable_income_key(country),
+           "?format=csvfilewithlabels&startPeriod=", start_period),
+    "disposable_income_nominal", build_oecd_disposable_income_key(country)
+  )
+  if (is.null(nominal)) return(NULL)
+  ## The deflator's two parts, both at the annualised rate ("LA"), the
+  ## only one DF_QNA publishes the volume at.
+  consumption <- function(price_base, name) {
+    key <- build_oecd_qna_key(country, "S1M", "", "P3", price_base = price_base,
+                              transformation = "LA")
+    fetch_oecd_series_impl_url(
+      paste0("https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NAMAIN1@DF_QNA,/", key,
+             "?format=csvfilewithlabels&startPeriod=", start_period),
+      name, key
+    )
+  }
+  cp <- consumption("V", "consumption_current")
+  if (is.null(cp)) return(NULL)
+  vol <- consumption("LR", "consumption_volume")
+  if (is.null(vol)) return(NULL)
+  out <- dplyr::inner_join(nominal, cp, by = "period") %>%
+    dplyr::inner_join(vol, by = "period") %>%
+    dplyr::transmute(
+      period = .data$period,
+      !!label := .data$disposable_income_nominal /
+        (.data$consumption_current / .data$consumption_volume)
+    ) %>%
+    dplyr::filter(is.finite(.data[[label]])) %>%
+    dplyr::arrange(.data$period)
+  if (nrow(out) == 0) {
+    warning(sprintf("[%s] OECD disposable income and the consumption deflator do not overlap for %s", label, country))
+    return(NULL)
+  }
+  out
+}
 
 build_oecd_qna_key <- function(country, sector, counterpart_sector, transaction,
                                 price_base = "LR", table_id = "T0102",
-                                adjustment = "Y") {
+                                adjustment = "Y", transformation = "") {
   ## INSTR_ASSET/ACTIVITY/EXPENDITURE left blank (wildcard) -- this exact
   ## pattern is what was verified end-to-end: it's what the CLI actually
   ## used to pull real 200-with-data responses for all 6 anchors for both
@@ -73,7 +122,7 @@ build_oecd_qna_key <- function(country, sector, counterpart_sector, transaction,
   dims <- c(FREQ = "Q", ADJUSTMENT = adjustment, REF_AREA = country, SECTOR = sector,
             COUNTERPART_SECTOR = counterpart_sector, TRANSACTION = transaction,
             INSTR_ASSET = "", ACTIVITY = "", EXPENDITURE = "", UNIT_MEASURE = "XDC",
-            PRICE_BASE = price_base, TRANSFORMATION = "", TABLE_IDENTIFIER = table_id)
+            PRICE_BASE = price_base, TRANSFORMATION = transformation, TABLE_IDENTIFIER = table_id)
   build_sdmx_key(dims[oecd_qna_dims])
 }
 
@@ -100,7 +149,10 @@ fetch_oecd_series_impl <- function(country, sector, counterpart_sector, transact
     "https://sdmx.oecd.org/public/rest/data/", dataflow, ",/", key,
     "?format=csvfilewithlabels&startPeriod=", start_period
   )
+  fetch_oecd_series_impl_url(url, label, key)
+}
 
+fetch_oecd_series_impl_url <- function(url, label, key) {
   txt <- fetch_text(url)
   if (is.null(txt)) {
     warning(sprintf("[%s] OECD fetch failed -- URL: %s", label, url))
@@ -149,11 +201,13 @@ fetch_oecd_anchors <- function(country, start_period = "1995-Q1", labels = NULL)
   results <- purrr::compact(results)
 
   if (is.null(labels) || "real_household_disposable_income" %in% labels) {
-    disp <- with(oecd_disposable_income_dims,
-      fetch_oecd_series(country, sector, counterpart_sector, transaction,
-                         "real_household_disposable_income",
-                         dataflow = dataflow, price_base = price_base,
-                         table_id = table_id, start_period = start_period)
+    disp <- tryCatch(
+      fetch_oecd_disposable_income(country, start_period = start_period),
+      error = function(e) {
+        warning(sprintf("[real_household_disposable_income] OECD fetch errored unexpectedly: %s",
+                        conditionMessage(e)))
+        NULL
+      }
     )
     if (!is.null(disp)) results[["real_household_disposable_income"]] <- disp
   }

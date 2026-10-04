@@ -46,9 +46,10 @@ fetch_quarterly_native_concepts <- function(country, start_period, country2 = lo
   }
 
   ## OECD is still asked for every NIPA anchor Eurostat has, to extend it
-  ## before 1995, but not for disposable income once Eurostat has it:
-  ## DF_QNA_INC_SAV has no household sector and returns NoRecordsFound for
-  ## AUT and DEU (see R/eurostat.R fetch_eurostat_disposable_income()).
+  ## before 1995, but not for disposable income once Eurostat has it: the
+  ## two are built the same way (B6G of households and NPISH over the
+  ## household consumption deflator), and Eurostat's is the one EU members
+  ## are meant to have (see R/oecd.R fetch_oecd_disposable_income()).
   oecd_labels <- all_anchor_labels
   if (has_data(eurostat_result, "real_household_disposable_income")) {
     oecd_labels <- setdiff(oecd_labels, "real_household_disposable_income")
@@ -61,7 +62,7 @@ fetch_quarterly_native_concepts <- function(country, start_period, country2 = lo
   oecd_anchor_key <- function(label) {
     row <- oecd_anchor_concepts[oecd_anchor_concepts$label == label, ]
     if (nrow(row) == 1) return(paste0(row$sector, ".", row$transaction))
-    paste0(oecd_disposable_income_dims$sector, ".", oecd_disposable_income_dims$transaction, " (DF_QNA_INC_SAV)")
+    sprintf("DF_QSA:%s deflated by DF_QNA:S1M.P3 (V/LR)", build_oecd_disposable_income_key(country))
   }
 
   for (lbl in all_anchor_labels) {
@@ -244,4 +245,33 @@ fetch_quarterly_native_concepts <- function(country, start_period, country2 = lo
   list(panel = dplyr::arrange(panel[, keep], .data$date),
        concept_source = concept_source[intersect(names(concept_source), quarterly_labels)],
        anchors = anchor_merged)
+}
+
+#' Quarterly series for monthly concepts a country has no monthly series of
+#'
+#' A monthly concept's quarters are normally made from its months
+#' (R/panel_derive.R). Where a country has no monthly series but its
+#' source publishes a quarterly one -- Germany's construction costs and
+#' prices, quarterly only in Eurostat's sts_copi_q -- that quarterly
+#' series goes into the quarterly panel as published, and the monthly
+#' panel keeps the concept NA rather than inventing months.
+#'
+#' `labels` are the monthly concepts that did NOT resolve monthly; only
+#' those with a quarterly fetcher below are tried. Returns the same
+#' `list(panel =, concept_source =)` shape as the other fetchers, each
+#' source marked `quarterly_at_source = TRUE`.
+fetch_quarterly_fallbacks <- function(country, start_period, labels) {
+  start_period <- as_period(start_period, "Q")
+  panel <- tibble::tibble(date = as.Date(character(0)))
+  concept_source <- list()
+  for (lbl in intersect(labels, construction_cost_concepts$label)) {
+    got <- fetch_construction_index(country, lbl, start_period = start_period, frequency = "Q")
+    if (is.null(got)) next
+    message("  ", lbl, ": no monthly series for ", country, " -- its quarterly series goes into the quarterly panel.")
+    panel <- dplyr::full_join(panel, got[, c("date", lbl)], by = "date")
+    concept_source[[lbl]] <- list(provider = attr(got, "provider"),
+                                  key = attr(got, "source_col"),
+                                  quarterly_at_source = TRUE)
+  }
+  list(panel = dplyr::arrange(panel, .data$date), concept_source = concept_source)
 }

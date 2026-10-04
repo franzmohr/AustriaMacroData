@@ -51,6 +51,26 @@ to_quarterly <- function(monthly_panel, labels = setdiff(names(monthly_panel), "
   dplyr::arrange(out, .data$date)
 }
 
+#' The unit of one concept as the source that resolved it publishes it
+#'
+#' `source` is the concept's `concept_source` entry (NULL if it did not
+#' resolve). A `unit` the fetcher recorded there comes first; then the
+#' provider's row in `concept_source_units`; then concept_metadata's
+#' unit, which is written for euro-area members. `{currency}`, and
+#' "national currency" in the dictionary's own units, become the
+#' country's ISO 4217 code where it is known.
+source_unit <- function(label, source, country = NA_character_,
+                        dictionary = concept_dictionary, units = concept_source_units) {
+  unit <- source$unit %||% {
+    by_provider <- units$unit[units$label == label & units$provider %in% source$provider]
+    if (length(by_provider) == 1) by_provider else dictionary$unit[dictionary$label == label]
+  }
+  currency <- if (is.na(country)) NA_character_ else lookup_currency(country)
+  if (is.na(currency)) return(sub("{currency}", "national currency", unit, fixed = TRUE))
+  unit <- sub("{currency}", currency, unit, fixed = TRUE)
+  sub("national currency", currency, unit, fixed = TRUE)
+}
+
 #' One metadata row per concept: what it is, how it is published, how to
 #' transform it and where it came from
 #'
@@ -58,25 +78,33 @@ to_quarterly <- function(monthly_panel, labels = setdiff(names(monthly_panel), "
 #' each concept's first and last observed periods and its number of
 #' observations are read from the panel of its own `frequency`, so a
 #' monthly concept is counted in months, not in the quarters derived
-#' from them.
-series_metadata <- function(panels, concept_source, dictionary = concept_dictionary) {
+#' from them. `frequency` overrides the dictionary's for this country, as
+#' a named vector: a monthly concept the country has only a quarterly
+#' series of is "Q" here (see fetch_quarterly_fallbacks()). `unit` is
+#' the unit of the source that resolved for `country` (source_unit()), so
+#' it differs across countries where their sources do.
+series_metadata <- function(panels, concept_source, dictionary = concept_dictionary,
+                            frequency = character(0), country = NA_character_) {
+  freq_of <- function(lbl) {
+    if (lbl %in% names(frequency)) frequency[[lbl]] else dictionary$frequency[dictionary$label == lbl]
+  }
   native <- function(lbl) {
-    panel <- panels[[dictionary$frequency[dictionary$label == lbl]]]
+    panel <- panels[[freq_of(lbl)]]
     if (is.null(panel) || !lbl %in% names(panel)) return(as.Date(character(0)))
     panel$date[!is.na(panel[[lbl]])]
   }
   span <- function(lbl, f) {
     x <- native(lbl)
     if (length(x) == 0) return(NA_character_)
-    date_to_period(f(x), dictionary$frequency[dictionary$label == lbl])
+    date_to_period(f(x), freq_of(lbl))
   }
   dictionary %>%
     dplyr::transmute(
       label = .data$label,
       fred_qd_group = .data$fred_qd_group,
-      frequency = .data$frequency,
+      frequency = purrr::map_chr(.data$label, freq_of),
       aggregation = .data$aggregation,
-      unit = .data$unit,
+      unit = purrr::map_chr(.data$label, ~ source_unit(.x, concept_source[[.x]], country, dictionary)),
       sa = .data$sa,
       class = .data$class,
       tcode_fred = .data$tcode_fred,

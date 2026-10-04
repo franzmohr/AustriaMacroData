@@ -68,13 +68,16 @@ scripts/
   build_monthly_panel.R      run build_panels.R with the same arguments
   update_monthly.R          Rebuilds AUT/DEU/USA and archives a dated vintage
                              into output/vintages/; run by the CI job below
+  query.R                   Search, describe and pull series (transformed,
+                             as CSV) from output/ -- see Semantic layer below
+  build_semantic_layer.R    Rewrites output/semantic/ without fetching
 
 R/                          Fetcher library used by build_panels.R,
                              each module individually verified against its
                              live API (see header comments for verification
                              notes and corrections vs. earlier guesses)
   concept_dictionary.R      The single authored source of metadata for all
-                             114 concepts (FRED-QD group, mnemonic, notes,
+                             116 concepts (FRED-QD group, mnemonic, notes,
                              plausibility category) -- scripts/build_panels.R,
                              R/fred_qd_validation.R and R/plausibility_checks.R
                              all derive their working tables from this one
@@ -84,6 +87,9 @@ R/                          Fetcher library used by build_panels.R,
                              per-series metadata (frequency, aggregation,
                              unit, seasonal adjustment, class, FRED and
                              EA-MD-QD transformation codes)
+  semantic_layer.R          Titles, descriptions, synonyms and scope per
+                             concept, derived metrics, and the catalog and
+                             query API built on them (see Semantic layer)
   panel_monthly.R           Fetches every concept that is monthly at source
   panel_quarterly.R         Fetches every concept that is quarterly at source
   panel_derive.R            Quarterly panel from the monthly one (flows
@@ -121,6 +127,9 @@ R/                          Fetcher library used by build_panels.R,
   ecb_market_rates.R        3-month Euribor and the 10-year yield from the
                              ECB for euro-area members, current where the
                              OECD MEI mirror runs a month behind
+  construction_costs.R      Construction costs and construction producer
+                             prices for new residential buildings: Eurostat
+                             sts_copi (EU), BLS input prices via FRED (USA)
   gov_yields.R              2- and 5-year government bond yields: Bundesbank
                              term structure (Germany), FRED GS2/GS5 (USA)
   ec_survey.R                European Commission Business and Consumer
@@ -193,7 +202,8 @@ output/                      Output of build_panels.R, checked into git and
                              _monthly_panel.csv, _metadata.csv, _dummies_monthly.csv and
                              _dummies_quarterly.csv (where the country has
                              policy events), the two _coverage.json reports,
-                             plus vintages/ (dated archive)
+                             plus vintages/ (dated archive) and semantic/
+                             (the catalog for agents, see Semantic layer)
 
 .github/workflows/
   monthly-update.yml         Scheduled CI job (1st of every month) -- runs
@@ -235,8 +245,8 @@ it, and writes all of the following for that country:
 
 | File | Style | Contents |
 |---|---|---|
-| `output/<country>_monthly_panel.csv` | FRED-MD | The 74 concepts that are monthly at source, one row per month |
-| `output/<country>_panel.csv` | FRED-QD | All 114 concepts, one row per quarter: the 40 quarterly ones as published, the 74 monthly ones aggregated to quarters |
+| `output/<country>_monthly_panel.csv` | FRED-MD | The 76 concepts that are monthly at source, one row per month |
+| `output/<country>_panel.csv` | FRED-QD | All 116 concepts, one row per quarter: the 40 quarterly ones as published, the 76 monthly ones aggregated to quarters (or, for a country with only a quarterly series of one, that series as published) |
 | `output/<country>_metadata.csv` | | One row per concept: frequency, aggregation rule, unit, seasonal adjustment, class, transformation codes, source, first and last period |
 | `output/<country>_dummies_monthly.csv`, `_dummies_quarterly.csv` | | Policy-event dummies, see [Dummy variables](#dummy-variables) |
 | `output/<country>_coverage.json`, `_monthly_coverage.json` | | What resolved, from where, and the plausibility checks, per frequency |
@@ -307,12 +317,18 @@ two panels are kept as separate files rather than stacked on one monthly
 date index with quarterly values in one month of three. A quarterly figure smoothed into three monthly cells
 is an invention that looks exactly like data once it is in a CSV.
 
-**74 of the 114 concepts are monthly at source.** The other 40 are
+**76 of the 116 concepts are monthly at source.** The other 40 are
 quarterly -- every national-accounts concept, the BIS credit series,
 government debt and the primary balance, hours worked, population, the
 change in inventories, unit labour cost, the employment rate, real house
 prices, the World Uncertainty Index, and the EC surveys' quarterly
 questions.
+
+**A monthly concept a country publishes only quarterly** stays NA in that
+country's monthly panel, and its quarterly series goes into the quarterly
+panel as published. Construction costs and construction prices are the
+case: monthly for Austria, quarterly only for Germany. The metadata
+records the frequency per country, so Germany's rows say `Q`.
 
 **How a monthly concept becomes quarterly** is the `aggregation` column of
 the metadata: flows -- new mortgage lending and the two degree-day series
@@ -396,6 +412,41 @@ residential real estate: `syrb_rre_order` (impulse, 2022-04, ordered),
 `syrb_rre` (step from 2023-02, binding at 2%) and `syrb_rre_cut` (step from
 2025-05, lowered to 1%) -- a capital-based measure aimed at the same lending,
 which matters wherever Germany serves as the control for KIM-V.
+
+## Semantic layer (for AI agents)
+
+The panels are wide CSVs with snake_case column names. What each column
+means is spread across `concept_dictionary`, every country's metadata, the
+policy events and this README. [R/semantic_layer.R](R/semantic_layer.R)
+pulls all of that into one machine-readable catalog. It also adds what none
+of those sources hold: a plain title, a one-sentence description, the words
+people actually search with ("inflation", "Euribor", "labour shortage"), and
+whether a column is national, euro-area-wide or global. Every build writes:
+
+| File | Contents |
+|---|---|
+| `output/semantic/catalog.json` | Reading rules, datasets, countries, every concept with its caveats and per-country availability, derived metrics, transforms, policy events |
+| `output/semantic/concepts.csv` | One row per concept |
+| `output/semantic/availability.csv` | One row per (country, concept): provider, key, span |
+
+The **derived metrics** are defined once as formulas over panel columns, so
+every agent computes them the same way. They cover headline, core and
+component inflation; real GDP growth (q/q, annualised and y/y); GDP per
+capita; productivity per hour; the term spread; real short and long rates;
+the mortgage spread; and others. `scripts/query.R` puts this in front of
+anything with a shell:
+
+```bash
+Rscript scripts/query.R search labour shortage
+Rscript scripts/query.R describe real_gfcf_total
+Rscript scripts/query.R get --series inflation_yoy,term_spread --country AUT,DEU --freq M --from 2020-M01
+```
+
+[AGENTS.md](AGENTS.md) is the entry point for agents. It lists the rules
+that are easy to get wrong: period-start dates, quarterly concepts never
+interpolated, partial current quarters, and levels that cannot be compared
+across countries. A new concept needs a row in `concept_semantics`, and
+`tests/testthat/test-semantic_layer.R` fails until it has one.
 
 ## Automated updates
 
@@ -583,7 +634,7 @@ and EC survey/geopolitical-risk concepts):
 
 ## Candidate indicators (proposed, unverified)
 
-The 114 implemented concepts are representative anchors, not a 1:1
+The 116 implemented concepts are representative anchors, not a 1:1
 replication of FRED-QD's 245 series (see Overview above -- most of those
 245 are U.S.-specific and have no cross-country equivalent at all).
 [docs/candidate_indicators_austria.csv](docs/candidate_indicators_austria.csv)
@@ -718,7 +769,9 @@ just "made the warning go away"):
   specifically -- a checked absence, not a guess. Re-checked 2026-10-04:
   that dataflow covers the total economy (`S1`) only, with no household
   sector, so EU members now take this concept from Eurostat's quarterly
-  sector accounts instead (`nasq_10_nf_tr`, see `R/eurostat.R`).
+  sector accounts instead (`nasq_10_nf_tr`, see `R/eurostat.R`), and every
+  other country from the OECD's quarterly sector accounts
+  (`DSD_NASEC1@DF_QSA`, see `R/oecd.R`), which do have the household sector.
 - **IMF**: the prototype's dataflow ID `NEA` no longer exists (IMF's March
   2025 platform restructuring renamed it to `QNEA`, agency `IMF.STA`,
   version `7.0.0`), and its indicator codes are standard SNA transaction
@@ -798,7 +851,7 @@ override exists -- see the fallback chain earlier in this README.
 | FRED-QD Group | Concept(s) | Source | Status |
 |---|---|---|---|
 | Output and Income | Real GDP, household consumption, govt. consumption, GFCF, exports, imports | **Eurostat** `namq_10_gdp` (EU members), else OECD QNA `DF_QNA` | Verified -- real current (2026-Q2) data, AUT + DEU via Eurostat, USA via OECD |
-| Output and Income | Real household disposable income | **Eurostat** sector accounts `nasq_10_nf_tr`, B6G for S14_S15 (EU members), deflated by the `namq_10_gdp` P31_S14_S15 implicit deflator; else OECD `DF_QNA_INC_SAV` | Verified 2026-10-04 -- AUT (from 1999-Q1) + DEU (from 1999-Q1); quarterly growth matches Eurostat's own real per-capita indicator at correlation 0.998 (AUT) / 0.974 (DEU). USA: NA (the OECD dataflow has no household sector) |
+| Output and Income | Real household disposable income | **Eurostat** sector accounts `nasq_10_nf_tr`, B6G for S14_S15 (EU members), deflated by the `namq_10_gdp` P31_S14_S15 implicit deflator; else **OECD** quarterly sector accounts `DSD_NASEC1@DF_QSA`, B6G for S1M, deflated by the `DF_QNA` S1M P3 implicit deflator | Verified 2026-10-04 -- AUT (from 1999-Q1) + DEU (from 1999-Q1); quarterly growth matches Eurostat's own real per-capita indicator at correlation 0.998 (AUT) / 0.974 (DEU). USA via OECD from 1947-Q1; quarterly growth matches FRED-QD's DPIC96 at correlation 0.999 |
 | Industrial Production | Industrial production index | OECD MEI via FRED (`{cc3}PROINDQISMEI`) | Verified -- AUT + DEU + USA |
 | Industrial Production | Industrial confidence indicator | **EC Business and Consumer Survey** (`AT.INDU`) | Verified -- AUT + DEU only; EU-only, no FRED-mirror equivalent. Documented leading-indicator value (OECD Composite Leading Indicators input) |
 | Industrial Production | Industry survey questions (18): production, order books, stocks, price and employment expectations monthly; limiting factors, capacity, new orders, capacity utilisation, competitive position quarterly | **EC Business and Consumer Survey** (`INDU.AT.TOT.<Q>.<ANSWER>.<FREQ>`, all-surveys bundle) | Verified -- AUT; EU-only. Capacity utilisation (`QPS`) is the survey counterpart of FRED-QD's `CUMFNS` |
@@ -812,6 +865,8 @@ override exists -- see the fallback chain earlier in this README.
 | Inventories, Orders, and Sales | Manufacturers' new orders/inventories | -- | Re-checked 2026-08-30: no cross-country equivalent exists (US Census Bureau-specific concept); deliberately not attempted |
 | Prices | CPI index | **Eurostat HICP** `prc_hicp_midx` (EU members, live/current), else OECD MEI via FRED (`CPALTT01{cc}Q657N`, stale) | Verified -- AUT + DEU via Eurostat HICP (current through 2025-Q4, ~2 years fresher than the stale FRED mirror, which stops at 2023-Q4 for AT); USA via the stale FRED mirror (no EU HICP equivalent for non-EU countries) |
 | Prices | Core, food, energy, services CPI sub-indices | **Eurostat HICP** `prc_hicp_midx`, COICOP=`TOT_X_NRG_FOOD`/`CP01`/`NRG`/`SERV` | Verified -- AUT + DEU only; EU-only by construction, no FRED-mirror equivalent for any of the four |
+| Prices | Construction cost index, new residential buildings (`construction_cost_index`) | **Eurostat** `sts_copi_m` (monthly) or `sts_copi_q` (quarterly only), indic_bt `COST`, CPA_F41001_X_410014, I21, NSA; USA: FRED `WPUIP2311001` (BLS PPI, inputs to residential construction, goods) | Verified 2026-10-04 -- AUT monthly from 1990-01; DEU quarterly only, from 2000-Q1; USA from 1986-06 (materials only, no labour) |
+| Prices | Construction producer prices, new residential buildings (`construction_producer_prices`) | **Eurostat** `sts_copi_m` / `sts_copi_q`, indic_bt `PRC_PRR`, CPA_F41001_X_410014, I21, NSA | Verified 2026-10-04 -- AUT monthly from 1990-01; DEU quarterly only, from 1970-Q1. **USA: NA** -- no comparable published series |
 | Earnings and Productivity | Unit labor cost | **Eurostat labour productivity/ULC** `namq_10_lp_ulc` (EU members, where an index-level series is published), else OECD MEI via FRED (`ULQEUL01{cc}Q657S`) | Verified -- AUT via Eurostat (hours-based index, matching FRED-QD's ULCNFB construction); DEU + USA via the OECD-mirror proxy (employment-based % change, confirmed absent in index form for Germany) |
 | Interest Rates | Long-term interest rate | **ECB** `IRS`, `M.{cc}.L.L40.CI.0000.EUR.N.Z` (euro-area members), the OECD MEI mirror via FRED (`IRLTLT01{cc}M156N`) before it starts and for every other country | Verified 2026-10-04 -- equal to the mirror for AUT since 1993; DE differs by at most 0.15 pp up to 2019 |
 | Interest Rates | Short-term (3-month interbank) rate | **ECB** `FM`, 3-month Euribor (euro-area members, from euro adoption), the OECD MEI mirror via FRED (`IR3TIB01{cc}M156N`) before it and for every other country | Verified 2026-10-04 -- equal to the mirror for AUT and DEU in every month since 1999; current within days, where the mirror runs a month behind |
