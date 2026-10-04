@@ -3,11 +3,10 @@
 ## once, at its own frequency
 ##
 ## The fetching half of what was scripts/build_monthly_panel.R, moved
-## here unchanged so that scripts/build_panels.R can build all three
-## panels from one fetch: the monthly panel is this; the quarterly panel
-## takes these concepts' quarters from it (R/panel_derive.R) rather than
-## fetching them again from a quarterly source; the mixed-frequency panel
-## holds them as they are. Before that split the two builders fetched
+## here unchanged so that scripts/build_panels.R can build both panels
+## from one fetch: the monthly panel is this; the quarterly panel takes
+## these concepts' quarters from it (R/panel_derive.R) rather than
+## fetching them again from a quarterly source. Before that split the two builders fetched
 ## every concept separately and their panels "shared labels, not series"
 ## -- industrial production came from sts_inpr_q in one and sts_inpr_m in
 ## the other, the share price index from the ATX in one and an OECD

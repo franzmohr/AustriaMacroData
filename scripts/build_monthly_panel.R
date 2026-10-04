@@ -8,8 +8,8 @@
 ## which fetches every concept once at its native frequency and writes the
 ## monthly panel (output/<cc>_monthly_panel.csv, same name and columns as
 ## before, plus the two degree-day concepts that are now monthly) together
-## with the quarterly and mixed-frequency panels, the series metadata and
-## the policy-event dummies. The fetching code, with its notes on how each
+## with the quarterly panel, the series metadata and the policy-event
+## dummies. The fetching code, with its notes on how each
 ## monthly source was verified, is in R/panel_monthly.R.
 ##
 ## Usage (unchanged):

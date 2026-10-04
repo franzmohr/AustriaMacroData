@@ -7,8 +7,7 @@
 ## scripts/build_panels.R with the same arguments, which fetches every
 ## concept once at its native frequency and writes the quarterly panel
 ## (output/<cc>_panel.csv, same name and columns as before) together with
-## the monthly and mixed-frequency panels, the series metadata and the
-## policy-event dummies. See that script's header for why, and git
+## the monthly panel, the series metadata and the policy-event dummies. See that script's header for why, and git
 ## history for this script's own record of how each quarterly source was
 ## verified -- those notes now live beside the code in R/panel_quarterly.R
 ## and R/panel_monthly.R.

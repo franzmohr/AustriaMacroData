@@ -513,8 +513,8 @@ concept_dictionary <- tibble::tribble(
 )
 
 ## ---------------------------------------------------------------
-## Per-series metadata for the monthly, quarterly and mixed-frequency
-## panels (FRED-MD/QD and EA-MD-QD conventions)
+## Per-series metadata for the monthly and quarterly panels (FRED-MD/QD
+## and EA-MD-QD conventions)
 ##
 ## Kept as a second, narrow table joined onto `concept_dictionary` rather
 ## than as seven more columns in every row above, so that the notes stay
@@ -690,8 +690,7 @@ ea_md_qd_codes <- function(tcode_fred, class, aggregation) {
 
 ## Native frequency of the source used: "M" concepts are fetched monthly
 ## and their quarters derived by `aggregation`; "Q" concepts are fetched
-## quarterly and placed in the first month of their quarter in the
-## mixed-frequency panel. `available_monthly` above stays the authored
+## quarterly and appear only in the quarterly panel. `available_monthly` above stays the authored
 ## flag, so readers of docs/concept_dictionary.csv that use it keep working.
 concept_dictionary <- concept_dictionary %>%
   dplyr::left_join(concept_metadata, by = "label") %>%

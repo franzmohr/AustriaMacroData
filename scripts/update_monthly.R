@@ -4,9 +4,9 @@
 ## .github/workflows/monthly-update.yml on the 1st of every month.
 ##
 ## Rebuilds every panel for each country below with
-## scripts/build_panels.R -- one fetch, from which the monthly, quarterly
-## and mixed-frequency panels, the series metadata and the policy-event
-## dummies are all written -- then archives a dated copy of each into
+## scripts/build_panels.R -- one fetch, from which the monthly and
+## quarterly panels, the series metadata and the policy-event dummies are
+## all written -- then archives a dated copy of each into
 ## output/vintages/, mirroring how FRED-QD and EA-MD-QD keep a monthly
 ## vintage history rather than only ever exposing "latest".
 ##
@@ -24,7 +24,7 @@ vintage_tag <- format(Sys.Date(), "%Y-%m")
 ## Every file build_panels.R writes for a country, as <cc><suffix>.
 archived_suffixes <- c("_panel.csv", "_coverage.json",
                        "_monthly_panel.csv", "_monthly_coverage.json",
-                       "_mixed_panel.csv", "_metadata.csv",
+                       "_metadata.csv",
                        "_dummies_monthly.csv", "_dummies_quarterly.csv")
 
 archive <- function(cc) {
@@ -48,4 +48,4 @@ for (country in countries) {
   archive(tolower(country))
 }
 
-message("Update complete (monthly, quarterly and mixed) for: ", paste(countries, collapse = ", "))
+message("Update complete (monthly and quarterly) for: ", paste(countries, collapse = ", "))

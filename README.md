@@ -47,8 +47,8 @@ resolved.
 2. **A country-panel builder** ([scripts/build_panels.R](scripts/build_panels.R)
    plus the [R/](R) module library) -- a command-line tool that fetches every
    concept for one country once, at its native frequency, and writes a
-   FRED-MD-style monthly panel, a FRED-QD-style quarterly panel, an
-   EA-MD-QD-style mixed-frequency panel, per-series metadata with
+   FRED-MD-style monthly panel, a FRED-QD-style quarterly panel,
+   per-series metadata with
    transformation codes, policy-event dummies, and coverage reports
    documenting where each concept came from.
 3. **A data-sources registry** ([docs/data_sources.csv](docs/data_sources.csv))
@@ -61,8 +61,8 @@ resolved.
 
 ```
 scripts/
-  build_panels.R            CLI entrypoint -- one fetch, monthly + quarterly +
-                             mixed-frequency panels, metadata and dummies;
+  build_panels.R            CLI entrypoint -- one fetch, monthly and
+                             quarterly panels, metadata and dummies;
                              see Usage below
   build_country_panel.R,    Kept so existing commands keep working; both
   build_monthly_panel.R      run build_panels.R with the same arguments
@@ -87,8 +87,8 @@ R/                          Fetcher library used by build_panels.R,
   panel_monthly.R           Fetches every concept that is monthly at source
   panel_quarterly.R         Fetches every concept that is quarterly at source
   panel_derive.R            Quarterly panel from the monthly one (flows
-                             summed, the rest averaged), the mixed-frequency
-                             panel, and the metadata table
+                             summed, the rest averaged) and the metadata
+                             table
   dummies.R                 Dated policy events (KIM-V) and the monthly and
                              quarterly dummy variables made from them
   utils.R                   Shared HTTP/parsing helpers (incl. fetch_text,
@@ -187,8 +187,7 @@ data/
 output/                      Output of build_panels.R, checked into git and
                              refreshed monthly by CI (see below), for AUT,
                              DEU and USA: <country>_panel.csv (quarterly),
-                             _monthly_panel.csv, _mixed_panel.csv,
-                             _metadata.csv, _dummies_monthly.csv and
+                             _monthly_panel.csv, _metadata.csv, _dummies_monthly.csv and
                              _dummies_quarterly.csv (where the country has
                              policy events), the two _coverage.json reports,
                              plus vintages/ (dated archive)
@@ -235,7 +234,6 @@ it, and writes all of the following for that country:
 |---|---|---|
 | `output/<country>_monthly_panel.csv` | FRED-MD | The 74 concepts that are monthly at source, one row per month |
 | `output/<country>_panel.csv` | FRED-QD | All 114 concepts, one row per quarter: the 40 quarterly ones as published, the 74 monthly ones aggregated to quarters |
-| `output/<country>_mixed_panel.csv` | EA-MD-QD | All 114 concepts on one monthly date index, quarterly values in the first month of their quarter and `NA` in the other two |
 | `output/<country>_metadata.csv` | | One row per concept: frequency, aggregation rule, unit, seasonal adjustment, class, transformation codes, source, first and last period |
 | `output/<country>_dummies_monthly.csv`, `_dummies_quarterly.csv` | | Policy-event dummies, see [Dummy variables](#dummy-variables) |
 | `output/<country>_coverage.json`, `_monthly_coverage.json` | | What resolved, from where, and the plausibility checks, per frequency |
@@ -295,15 +293,15 @@ switching `--country` should be the *only* thing that changes between two
 runs, so downstream code can load `aut_panel.csv` and `deu_panel.csv` (or
 any other country's file) with the same column-handling logic.
 
-## Frequencies: monthly, quarterly, mixed
+## Frequencies: monthly and quarterly
 
 The arrangement is EA-MD-QD's (Barigozzi, Lissona and Tonni): **every
 concept is fetched once, at its native frequency, and the quarterly view of
 a monthly concept is made from its months** -- never fetched again from a
 quarterly source, and never the other way round. A quarterly concept is
-never interpolated into months: it is absent from the monthly panel, and in
-the mixed-frequency panel it sits in the first month of its quarter with
-`NA` in the other two. A quarterly figure smoothed into three monthly cells
+never interpolated into months: it is absent from the monthly panel. The
+two panels are kept as separate files rather than stacked on one monthly
+date index with quarterly values in one month of three. A quarterly figure smoothed into three monthly cells
 is an invention that looks exactly like data once it is in a CSV.
 
 **74 of the 114 concepts are monthly at source.** The other 40 are
@@ -409,8 +407,7 @@ Each run:
    via `scripts/build_panels.R`, overwriting the "latest" files.
 2. Archives a dated copy of each into `output/vintages/`, e.g.
    `output/vintages/aut_panel_2026-10.csv`,
-   `aut_monthly_panel_2026-10.csv`, `aut_mixed_panel_2026-10.csv` and
-   `aut_metadata_2026-10.csv` -- a monthly vintage history, not just a
+   `aut_monthly_panel_2026-10.csv` and `aut_metadata_2026-10.csv` -- a monthly vintage history, not just a
    single always-overwritten snapshot.
 3. Commits and pushes `output/` back to `main` if anything changed, as
    `github-actions[bot]`.
