@@ -77,7 +77,7 @@ R/                          Fetcher library used by build_panels.R,
                              live API (see header comments for verification
                              notes and corrections vs. earlier guesses)
   concept_dictionary.R      The single authored source of metadata for all
-                             116 concepts (FRED-QD group, mnemonic, notes,
+                             117 concepts (FRED-QD group, mnemonic, notes,
                              plausibility category) -- scripts/build_panels.R,
                              R/fred_qd_validation.R and R/plausibility_checks.R
                              all derive their working tables from this one
@@ -162,6 +162,10 @@ R/                          Fetcher library used by build_panels.R,
                              namq_10_gdp P52 for EU members, FRED-QD's own
                              A014RE1Q156NBEA for the USA) -- a share, not a
                              real level, since none is published
+  employment.R              Persons employed, quarterly: Eurostat
+                             namq_10_pe (national-accounts employment,
+                             domestic concept) for EU members, FRED PAYEMS
+                             for the USA; shares population.R's fetch
   population.R              Total population, quarterly: Eurostat
                              namq_10_pe (national-accounts population) for
                              EU members, an explicit per-country FRED series
@@ -246,7 +250,7 @@ it, and writes all of the following for that country:
 | File | Style | Contents |
 |---|---|---|
 | `output/<country>_monthly_panel.csv` | FRED-MD | The 76 concepts that are monthly at source, one row per month |
-| `output/<country>_panel.csv` | FRED-QD | All 116 concepts, one row per quarter: the 40 quarterly ones as published, the 76 monthly ones aggregated to quarters (or, for a country with only a quarterly series of one, that series as published) |
+| `output/<country>_panel.csv` | FRED-QD | All 117 concepts, one row per quarter: the 41 quarterly ones as published, the 76 monthly ones aggregated to quarters (or, for a country with only a quarterly series of one, that series as published) |
 | `output/<country>_metadata.csv` | | One row per concept: frequency, aggregation rule, unit, seasonal adjustment, class, transformation codes, source, first and last period |
 | `output/<country>_dummies_monthly.csv`, `_dummies_quarterly.csv` | | Policy-event dummies, see [Dummy variables](#dummy-variables) |
 | `output/<country>_coverage.json`, `_monthly_coverage.json` | | What resolved, from where, and the plausibility checks, per frequency |
@@ -317,9 +321,9 @@ two panels are kept as separate files rather than stacked on one monthly
 date index with quarterly values in one month of three. A quarterly figure smoothed into three monthly cells
 is an invention that looks exactly like data once it is in a CSV.
 
-**76 of the 116 concepts are monthly at source.** The other 40 are
+**76 of the 117 concepts are monthly at source.** The other 41 are
 quarterly -- every national-accounts concept, the BIS credit series,
-government debt and the primary balance, hours worked, population, the
+government debt and the primary balance, hours worked, employment, population, the
 change in inventories, unit labour cost, the employment rate, real house
 prices, the World Uncertainty Index, and the EC surveys' quarterly
 questions.
@@ -634,7 +638,7 @@ and EC survey/geopolitical-risk concepts):
 
 ## Candidate indicators (proposed, unverified)
 
-The 116 implemented concepts are representative anchors, not a 1:1
+The 117 implemented concepts are representative anchors, not a 1:1
 replication of FRED-QD's 245 series (see Overview above -- most of those
 245 are U.S.-specific and have no cross-country equivalent at all).
 [docs/candidate_indicators_austria.csv](docs/candidate_indicators_austria.csv)

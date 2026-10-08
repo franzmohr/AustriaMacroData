@@ -192,6 +192,7 @@ provider_display_names <- c(
   GPR = "Geopolitical Risk Index (Caldara-Iacoviello)",
   EUROSTAT_CHDD = "Eurostat (nrg_chdd_m, degree days)",
   EUROSTAT_NA = "Eurostat (namq_10_a10_e, national accounts by activity)",
+  EUROSTAT_EMP = "Eurostat (namq_10_pe, national accounts employment)",
   EUROSTAT_POP = "Eurostat (namq_10_pe, national accounts population)",
   FRED = "FRED (series published by FRED itself, not an OECD/BIS mirror)",
   OPEN_METEO = "ERA5 reanalysis (via the Open-Meteo archive API)"

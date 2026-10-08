@@ -57,11 +57,13 @@ national_population <- tibble::tribble(
   "USA",     "POPTHM",  "BEA total population including armed forces overseas, thousands of persons, monthly from 1959-01."
 )
 
-#' Fetch quarterly total population for one EU country from Eurostat
+#' Fetch one persons series of namq_10_pe for one EU country
 #'
-#' Returns a tibble with `date` and `label`, or NULL for a non-EU
-#' country or a failed request.
-fetch_eurostat_population <- function(country3, label = "population",
+#' The fetch shared by `population` and `employment` (R/employment.R): the
+#' two differ only in NA_ITEM. `what` names the series in warnings. Returns
+#' a tibble with `date` and `label`, or NULL for a non-EU country or a
+#' failed request.
+fetch_eurostat_namq_10_pe <- function(country3, label, na_item, what,
                                       s_adj = "SCA", start_period = "1960-Q1") {
   if (!country3 %in% eu_member_countries) return(NULL)
 
@@ -71,19 +73,18 @@ fetch_eurostat_population <- function(country3, label = "population",
     return(NULL)
   }
 
-  key <- paste("Q", eurostat_population_unit, s_adj,
-               eurostat_population_na_item, geo, sep = ".")
+  key <- paste("Q", eurostat_population_unit, s_adj, na_item, geo, sep = ".")
   url <- sprintf(
     "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/%s/%s?format=SDMX-CSV&startPeriod=%s",
     eurostat_population_dataflow, key, start_period
   )
 
   txt <- tryCatch(fetch_text(url), error = function(e) {
-    warning(sprintf("[%s] Eurostat population fetch errored: %s", label, conditionMessage(e)))
+    warning(sprintf("[%s] Eurostat %s fetch errored: %s", label, what, conditionMessage(e)))
     NULL
   })
   if (is.null(txt)) {
-    warning(sprintf("[%s] Eurostat population fetch failed -- URL: %s", label, url))
+    warning(sprintf("[%s] Eurostat %s fetch failed -- URL: %s", label, what, url))
     return(NULL)
   }
   if (stringr::str_detect(txt, stringr::regex("S:Fault|faultstring", ignore_case = TRUE))) {
@@ -103,6 +104,18 @@ fetch_eurostat_population <- function(country3, label = "population",
 
   attr(out, "source_col") <- sprintf("%s:%s", eurostat_population_dataflow, key)
   out
+}
+
+#' Fetch quarterly total population for one EU country from Eurostat
+#'
+#' Returns a tibble with `date` and `label`, or NULL for a non-EU
+#' country or a failed request.
+fetch_eurostat_population <- function(country3, label = "population",
+                                      s_adj = "SCA", start_period = "1960-Q1") {
+  fetch_eurostat_namq_10_pe(country3, label = label,
+                            na_item = eurostat_population_na_item,
+                            what = "population", s_adj = s_adj,
+                            start_period = start_period)
 }
 
 #' Fetch a country's own population series from FRED, or NULL
