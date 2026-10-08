@@ -12,6 +12,7 @@ industrial_confidence,Industrial Production,M,mean,balance,SA,C,1,0,0,,,,,,0
 unemployment_rate,Employment and Unemployment,M,mean,% of labour force,SA,R,2,4,4,UNRATE,FRED_MIRROR,LRHUTTTTUSM156S,1960-M01,2025-M09,789
 employment_rate,Employment and Unemployment,Q,mean,% of population 15-64,SA,R,2,4,4,,FRED_MIRROR,LREM64TTUSQ156S,1977-Q1,2026-Q2,198
 hours_worked,Employment and Unemployment,Q,mean,thousand hours,SCA,R,5,2,2,HOANBS,,,,,0
+employment,Employment and Unemployment,Q,mean,thousand persons,SCA,R,5,2,2,PAYEMS,FRED,PAYEMS,1960-Q1,2026-Q3,267
 population,Employment and Unemployment,Q,mean,thousand persons,SCA,R,5,2,2,,FRED,POPTHM,1960-Q1,2026-Q3,267
 employment_expectations,Employment and Unemployment,M,mean,index,SA,C,1,0,0,,,,,,0
 house_price_real,Housing,Q,mean,index 2010=100,NSA,R,5,2,2,USSTHPI,FRED_MIRROR,QUSR628BIS,1970-Q1,2026-Q1,225
@@ -106,10 +107,10 @@ economic_sentiment_indicator,Other,M,mean,"index, long-term mean = 100",SA,C,1,0
 services_confidence,Other,M,mean,balance,SA,C,1,0,0,,,,,,0
 construction_cost_index,Prices,M,mean,index June 1986=100,NSA,N,6,2,3,,FRED,WPUIP2311001,1986-M06,2026-M08,483
 construction_producer_prices,Prices,M,mean,index 2021=100,NSA,N,6,2,3,,,,,,0
-oil_price,Prices,M,mean,USD per barrel,NSA,N,5,2,3,OILPRICEx,FRED,WTISPLC,1960-M01,2026-M08,800
+oil_price,Prices,M,mean,USD per barrel,NSA,N,5,2,3,OILPRICEx,FRED,WTISPLC,1960-M01,2026-M09,801
 geopolitical_risk,Other,M,mean,index,NSA,C,1,0,0,,GPR,GPRC_USA,1985-M01,2026-M09,501
 global_activity,Other,M,mean,deviation from trend,NSA,R,1,0,0,,FRED,IGREA,1968-M01,2026-M07,703
-financial_stress,Other,M,mean,index 0-1,NSA,F,1,0,0,,ECB_CISS,"D.US.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)",1980-M01,2026-M09,561
+financial_stress,Other,M,mean,index 0-1,NSA,F,1,0,0,,ECB_CISS,"D.US.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)",1980-M01,2026-M10,562
 world_uncertainty_index,Other,Q,mean,index,NSA,C,1,0,0,,FRED_MIRROR,WUIUSA,1952-Q1,2026-Q2,298
 share_price_index,Stock Markets,M,mean,index 2015=100,NSA,F,5,2,2,S&P 500,FRED_MIRROR,SPASTT01USM661N,1960-M01,2026-M08,800
 construction_weather_constraint,Housing,M,mean,% of firms,SA,C,1,0,0,,,,,,0

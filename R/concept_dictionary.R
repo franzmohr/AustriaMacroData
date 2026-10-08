@@ -1,6 +1,6 @@
 ## ---------------------------------------------------------------
 ## concept_dictionary.R -- the single authored source of metadata for
-## every one of this project's 116 FRED-QD-style concepts
+## every one of this project's 117 FRED-QD-style concepts
 ##
 ## MOTIVATION: before this file existed, the same concept-level facts
 ## (which FRED-QD group a concept belongs to, its FRED-QD mnemonic, its
@@ -116,6 +116,10 @@ concept_dictionary <- tibble::tribble(
   "hours_worked",                          "Employment and Unemployment",    "HOANBS",          
     "HOANBS is hours of all persons in the NONFARM BUSINESS sector; the series here is the total economy, which additionally includes general government, households as employers and the farm sector. The broader coverage is what the national-accounts source publishes and what pairs with this panel's own total-economy real_gdp.",
     "EU member states only: Eurostat namq_10_a10_e, total hours worked, domestic concept (NA_ITEM=EMP_DC, employees and self-employed together), seasonally and calendar adjusted -- see R/eurostat.R. No FRED-mirror fallback exists: FRED's OECD mirror carries hours PER WORKER for some countries and total hours for none, so this resolves to NA outside the EU.",
+    "level", FALSE,
+  "employment",                            "Employment and Unemployment",    "PAYEMS",
+    "PAYEMS is payroll employment from the BLS establishment survey: nonfarm EMPLOYEES only. The national-accounts headcount used for EU members also counts the self-employed and farm workers, so its level is higher relative to population; both count jobs where they are located, so growth rates compare. A live --country USA run resolves this concept to PAYEMS itself (monthly, averaged within the quarter) -- see R/employment.R.",
+    "Persons employed in THOUSANDS OF PERSONS, employees and self-employed together. EU member states: Eurostat namq_10_pe, total employment, domestic concept (NA_ITEM=EMP_DC, UNIT=THS_PER, S_ADJ=SCA) -- the employment figure of the quarterly national accounts, the same domestic concept as this panel's real_gdp and hours_worked, so output per person and hours per person are internally consistent. Quarterly from 1995 for Austria (1991 for Germany); the annual series before that is not interpolated onto quarters. Outside the EU only countries with an explicit entry in R/employment.R's national_employment table resolve (currently the United States, FRED PAYEMS); NA elsewhere.",
     "level", FALSE,
   "population",                            "Employment and Unemployment",    NA,
     "No FRED-QD equivalent; none of FRED-QD's 245 series is a population count. A live --country USA run resolves this concept to the BEA's total population including armed forces overseas (FRED POPTHM, monthly, averaged within the quarter) -- see R/population.R.",
@@ -585,6 +589,7 @@ concept_metadata <- tibble::tribble(
   "unemployment_rate",                       "mean",       "% of labour force",           "SA",  2L, "R",
   "employment_rate",                         "mean",       "% of population 15-64",       "SA",  2L, "R",
   "hours_worked",                            "mean",       "thousand hours",              "SCA", 5L, "R",
+  "employment",                              "mean",       "thousand persons",            "SCA", 5L, "R",
   "population",                              "mean",       "thousand persons",            "SCA", 5L, "R",
   "employment_expectations",                 "mean",       "index",                       "SA",  1L, "C",
   "house_price_real",                        "mean",       "index",                       "NSA", 5L, "R",

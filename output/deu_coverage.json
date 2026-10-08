@@ -1,6 +1,6 @@
 {
   "country": "DEU",
-  "generated_at": "2026-10-04T11:13:06Z",
+  "generated_at": "2026-10-08T13:34:32Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -67,6 +67,11 @@
       "fred_qd_group": "Employment and Unemployment",
       "label": "hours_worked",
       "source": "Eurostat (namq_10_a10_e, national accounts by activity) [namq_10_a10_e:Q.THS_HW.TOTAL.SCA.EMP_DC.DE]"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "employment",
+      "source": "Eurostat (namq_10_pe, national accounts employment) [namq_10_pe:Q.THS_PER.SCA.EMP_DC.DE]"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
@@ -670,6 +675,12 @@
       "detail": "Positive throughout; largest quarter-over-quarter change -6%."
     },
     {
+      "label": "employment",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -1%."
+    },
+    {
       "label": "population",
       "category": "level",
       "status": "PASS",
@@ -787,7 +798,7 @@
       "label": "credit_to_private_nonfin_sector",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 261 values within [-10, 400]."
+      "detail": "All 262 values within [-10, 400]."
     },
     {
       "label": "household_mortgage_loans",
@@ -817,19 +828,19 @@
       "label": "household_credit_to_gdp",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 221 values within [-10, 400]."
+      "detail": "All 222 values within [-10, 400]."
     },
     {
       "label": "corporate_credit_to_gdp",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 221 values within [-10, 400]."
+      "detail": "All 222 values within [-10, 400]."
     },
     {
       "label": "government_debt_to_gdp",
       "category": "percent",
       "status": "PASS",
-      "detail": "All 104 values within [-10, 400]."
+      "detail": "All 105 values within [-10, 400]."
     },
     {
       "label": "government_primary_balance_to_gdp",
@@ -1255,7 +1266,7 @@
       "label": "financial_stress",
       "category": "level_event_driven",
       "status": "PASS",
-      "detail": "Positive throughout (187 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+      "detail": "Positive throughout (188 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
     },
     {
       "label": "world_uncertainty_index",

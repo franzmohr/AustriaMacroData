@@ -1,7 +1,7 @@
 {
   "name": "AustriaMacroData",
   "description": "FRED-QD/FRED-MD-style macroeconomic panels for Austria (and comparison countries), built from Eurostat, OECD, ECB, BIS, OeNB, the European Commission surveys and FRED. One wide panel per country and frequency, one column per concept, same columns for every country.",
-  "generated_at": "2026-10-04T11:40:56Z",
+  "generated_at": "2026-10-08T13:34:53Z",
   "rules": [
     "Dates are the FIRST day of the period: 2026-04-01 in a quarterly panel is 2026-Q2, in a monthly panel April 2026. `period` in amd_get() output spells this out.",
     "Each concept is held once at its native `frequency`. Monthly concepts are in both panels (the quarterly value is the mean of the quarter's months, or the sum for `aggregation` = sum); quarterly concepts are ONLY in the quarterly panel and are never interpolated to months.",
@@ -64,7 +64,7 @@
       "name": "Austria",
       "eu_member": true,
       "euro_adoption": "1999-01",
-      "n_resolved": 114,
+      "n_resolved": 115,
       "files": {
         "quarterly_panel": "output/aut_panel.csv",
         "monthly_panel": "output/aut_monthly_panel.csv",
@@ -80,7 +80,7 @@
       "name": "Germany",
       "eu_member": true,
       "euro_adoption": "1999-01",
-      "n_resolved": 114,
+      "n_resolved": 115,
       "files": {
         "quarterly_panel": "output/deu_panel.csv",
         "monthly_panel": "output/deu_monthly_panel.csv",
@@ -96,7 +96,7 @@
       "name": "United States",
       "eu_member": false,
       "euro_adoption": null,
-      "n_resolved": 35,
+      "n_resolved": 36,
       "files": {
         "quarterly_panel": "output/usa_panel.csv",
         "monthly_panel": "output/usa_monthly_panel.csv",
@@ -298,10 +298,10 @@
           "unit": "EUR mn, chain-linked volume (2020), quarterly level",
           "resolved": true,
           "provider": "EUROSTAT",
-          "key": "namq_10_gdp:P51G",
-          "first": "1995-Q1",
+          "key": "namq_10_gdp:P51G (extended pre-1995 with level-spliced OECD_QNA:.P51G)",
+          "first": "1960-Q1",
           "last": "2026-Q2",
-          "n_obs": 126
+          "n_obs": 266
         },
         {
           "country": "DEU",
@@ -408,10 +408,10 @@
           "unit": "EUR mn, chain-linked volume (2020), quarterly level",
           "resolved": true,
           "provider": "EUROSTAT",
-          "key": "namq_10_gdp:P7",
-          "first": "1995-Q1",
+          "key": "namq_10_gdp:P7 (extended pre-1995 with level-spliced OECD_QNA:S1.P7)",
+          "first": "1960-Q1",
           "last": "2026-Q2",
-          "n_obs": 126
+          "n_obs": 266
         },
         {
           "country": "DEU",
@@ -520,8 +520,8 @@
           "provider": "EUROSTAT",
           "key": "nasq_10_nf_tr:Q.CP_MEUR.RECV.S14_S15.B6G.SCA.AT deflated by namq_10_gdp:P31_S14_S15",
           "first": "1999-Q1",
-          "last": "2026-Q1",
-          "n_obs": 109
+          "last": "2026-Q2",
+          "n_obs": 110
         },
         {
           "country": "DEU",
@@ -586,8 +586,8 @@
           "provider": "EUROSTAT_STS",
           "key": "sts_inpr_m:M.PRD.B-D.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)",
           "first": "1960-M01",
-          "last": "2026-M07",
-          "n_obs": 799
+          "last": "2026-M08",
+          "n_obs": 800
         },
         {
           "country": "USA",
@@ -819,6 +819,61 @@
           "first": null,
           "last": null,
           "n_obs": 0
+        }
+      ]
+    },
+    {
+      "label": "employment",
+      "title": "Persons employed",
+      "description": "Total employment, employees and self-employed, in thousands of persons (domestic concept).",
+      "synonyms": ["employment level", "jobs", "employed persons", "headcount", "payrolls", "payems", "number of workers"],
+      "scope": "country",
+      "group": "Employment and Unemployment",
+      "frequency": "Q",
+      "in_panels": "quarterly",
+      "aggregation": "mean",
+      "unit": "thousand persons",
+      "seasonal_adjustment": "SCA",
+      "class": "R",
+      "tcode_fred": 5,
+      "tcode_lt": 2,
+      "tcode_ht": 2,
+      "fred_qd_mnemonic": "PAYEMS",
+      "us_note": "PAYEMS is payroll employment from the BLS establishment survey: nonfarm EMPLOYEES only. The national-accounts headcount used for EU members also counts the self-employed and farm workers, so its level is higher relative to population; both count jobs where they are located, so growth rates compare. A live --country USA run resolves this concept to PAYEMS itself (monthly, averaged within the quarter) -- see R/employment.R.",
+      "cross_country_note": "Persons employed in THOUSANDS OF PERSONS, employees and self-employed together. EU member states: Eurostat namq_10_pe, total employment, domestic concept (NA_ITEM=EMP_DC, UNIT=THS_PER, S_ADJ=SCA) -- the employment figure of the quarterly national accounts, the same domestic concept as this panel's real_gdp and hours_worked, so output per person and hours per person are internally consistent. Quarterly from 1995 for Austria (1991 for Germany); the annual series before that is not interpolated onto quarters. Outside the EU only countries with an explicit entry in R/employment.R's national_employment table resolve (currently the United States, FRED PAYEMS); NA elsewhere.",
+      "availability": [
+        {
+          "country": "AUT",
+          "frequency": "Q",
+          "unit": "thousand persons",
+          "resolved": true,
+          "provider": "EUROSTAT_EMP",
+          "key": "namq_10_pe:Q.THS_PER.SCA.EMP_DC.AT",
+          "first": "1995-Q1",
+          "last": "2026-Q2",
+          "n_obs": 126
+        },
+        {
+          "country": "DEU",
+          "frequency": "Q",
+          "unit": "thousand persons",
+          "resolved": true,
+          "provider": "EUROSTAT_EMP",
+          "key": "namq_10_pe:Q.THS_PER.SCA.EMP_DC.DE",
+          "first": "1991-Q1",
+          "last": "2026-Q2",
+          "n_obs": 142
+        },
+        {
+          "country": "USA",
+          "frequency": "Q",
+          "unit": "thousand persons",
+          "resolved": true,
+          "provider": "FRED",
+          "key": "PAYEMS",
+          "first": "1960-Q1",
+          "last": "2026-Q3",
+          "n_obs": 267
         }
       ]
     },
@@ -1906,8 +1961,8 @@
           "provider": "BIS_WSTC",
           "key": "Q.DE.P.A.M.770.A",
           "first": "1960-Q4",
-          "last": "2025-Q4",
-          "n_obs": 261
+          "last": "2026-Q1",
+          "n_obs": 262
         },
         {
           "country": "USA",
@@ -2181,8 +2236,8 @@
           "provider": "BIS_WSTC",
           "key": "Q.DE.H.A.M.770.A",
           "first": "1970-Q4",
-          "last": "2025-Q4",
-          "n_obs": 221
+          "last": "2026-Q1",
+          "n_obs": 222
         },
         {
           "country": "USA",
@@ -2236,8 +2291,8 @@
           "provider": "BIS_WSTC",
           "key": "Q.DE.N.A.M.770.A",
           "first": "1970-Q4",
-          "last": "2025-Q4",
-          "n_obs": 221
+          "last": "2026-Q1",
+          "n_obs": 222
         },
         {
           "country": "USA",
@@ -2291,8 +2346,8 @@
           "provider": "BIS_WSTC",
           "key": "Q.DE.G.A.N.770.A",
           "first": "2000-Q1",
-          "last": "2025-Q4",
-          "n_obs": 104
+          "last": "2026-Q1",
+          "n_obs": 105
         },
         {
           "country": "USA",
@@ -6020,8 +6075,8 @@
           "provider": "FRED",
           "key": "WTISPLC",
           "first": "1960-M01",
-          "last": "2026-M08",
-          "n_obs": 800
+          "last": "2026-M09",
+          "n_obs": 801
         },
         {
           "country": "DEU",
@@ -6031,8 +6086,8 @@
           "provider": "FRED",
           "key": "WTISPLC",
           "first": "1960-M01",
-          "last": "2026-M08",
-          "n_obs": 800
+          "last": "2026-M09",
+          "n_obs": 801
         },
         {
           "country": "USA",
@@ -6042,8 +6097,8 @@
           "provider": "FRED",
           "key": "WTISPLC",
           "first": "1960-M01",
-          "last": "2026-M08",
-          "n_obs": 800
+          "last": "2026-M09",
+          "n_obs": 801
         }
       ]
     },
@@ -6086,8 +6141,8 @@
           "provider": "GPR",
           "key": "GPRC_DEU",
           "first": "1985-M01",
-          "last": "2026-M07",
-          "n_obs": 499
+          "last": "2026-M09",
+          "n_obs": 501
         },
         {
           "country": "USA",
@@ -6185,8 +6240,8 @@
           "provider": "ECB_CISS",
           "key": "D.AT.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)",
           "first": "1999-M01",
-          "last": "2026-M09",
-          "n_obs": 333
+          "last": "2026-M10",
+          "n_obs": 334
         },
         {
           "country": "DEU",
@@ -6196,8 +6251,8 @@
           "provider": "ECB_CISS",
           "key": "D.DE.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)",
           "first": "1980-M01",
-          "last": "2026-M09",
-          "n_obs": 561
+          "last": "2026-M10",
+          "n_obs": 562
         },
         {
           "country": "USA",
@@ -6207,8 +6262,8 @@
           "provider": "ECB_CISS",
           "key": "D.US.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)",
           "first": "1980-M01",
-          "last": "2026-M09",
-          "n_obs": 561
+          "last": "2026-M10",
+          "n_obs": 562
         }
       ]
     },
@@ -6567,6 +6622,16 @@
       "unit": "% y/y",
       "formula": "pct_change(real_gdp, ppy)",
       "inputs": "real_gdp",
+      "frequencies": "Q"
+    },
+    {
+      "name": "employment_growth_yoy",
+      "title": "Employment growth, y/y",
+      "description": "Year-on-year change of persons employed.",
+      "synonyms": ["employment growth", "job growth", "jobs growth", "payroll growth"],
+      "unit": "% y/y",
+      "formula": "pct_change(employment, ppy)",
+      "inputs": "employment",
       "frequencies": "Q"
     },
     {

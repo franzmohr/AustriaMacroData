@@ -1,6 +1,6 @@
 {
   "country": "AUT",
-  "generated_at": "2026-10-04T11:29:42Z",
+  "generated_at": "2026-10-08T13:31:11Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -21,7 +21,7 @@
     {
       "fred_qd_group": "Output and Income",
       "label": "real_gfcf_total",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P51G]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P51G (extended pre-1995 with level-spliced OECD_QNA:.P51G)]"
     },
     {
       "fred_qd_group": "Output and Income",
@@ -31,7 +31,7 @@
     {
       "fred_qd_group": "Output and Income",
       "label": "real_imports",
-      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P7]"
+      "source": "Eurostat (namq_10_gdp) [namq_10_gdp:P7 (extended pre-1995 with level-spliced OECD_QNA:S1.P7)]"
     },
     {
       "fred_qd_group": "Output and Income",
@@ -67,6 +67,11 @@
       "fred_qd_group": "Employment and Unemployment",
       "label": "hours_worked",
       "source": "Eurostat (namq_10_a10_e, national accounts by activity) [namq_10_a10_e:Q.THS_HW.TOTAL.SCA.EMP_DC.AT]"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "employment",
+      "source": "Eurostat (namq_10_pe, national accounts employment) [namq_10_pe:Q.THS_PER.SCA.EMP_DC.AT]"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
@@ -613,7 +618,7 @@
       "label": "real_gfcf_total",
       "category": "level",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change 7%."
+      "detail": "Positive throughout; largest quarter-over-quarter change 15%."
     },
     {
       "label": "real_exports",
@@ -625,7 +630,7 @@
       "label": "real_imports",
       "category": "level",
       "status": "PASS",
-      "detail": "Positive throughout; largest quarter-over-quarter change -15%."
+      "detail": "Positive throughout; largest quarter-over-quarter change 22%."
     },
     {
       "label": "inventory_change_to_gdp",
@@ -668,6 +673,12 @@
       "category": "level",
       "status": "PASS",
       "detail": "Positive throughout; largest quarter-over-quarter change 15%."
+    },
+    {
+      "label": "employment",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -4%."
     },
     {
       "label": "population",
@@ -1255,7 +1266,7 @@
       "label": "financial_stress",
       "category": "level_event_driven",
       "status": "PASS",
-      "detail": "Positive throughout (111 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+      "detail": "Positive throughout (112 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
     },
     {
       "label": "world_uncertainty_index",

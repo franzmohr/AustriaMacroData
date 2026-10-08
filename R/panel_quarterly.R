@@ -214,8 +214,9 @@ fetch_quarterly_native_concepts <- function(country, start_period, country2 = lo
   }
 
   ## ===================================================================
-  ## 4k. Hours (EU only), the change in inventories and population --
-  ##     see R/eurostat.R, R/inventories.R and R/population.R
+  ## 4k. Hours (EU only), the change in inventories, employment and
+  ##     population -- see R/eurostat.R, R/inventories.R, R/employment.R
+  ##     and R/population.R
   ## ===================================================================
   if (country %in% eu_member_countries) {
     message("Country is an EU member -- fetching Eurostat total hours worked...")
@@ -229,6 +230,14 @@ fetch_quarterly_native_concepts <- function(country, start_period, country2 = lo
   if (is.null(inventories)) message("No inventory-change source for ", country, " -- inventory_change_to_gdp stays NA.")
   join_concept(inventories, "inventory_change_to_gdp", attr(inventories, "provider"),
                attr(inventories, "source_col"))
+
+  message("Fetching persons employed for ", country, "...")
+  employment <- fetch_employment(country, start_period = start_period)
+  if (is.null(employment)) {
+    message("No quarterly employment source for ", country,
+            " -- employment stays NA (see R/employment.R).")
+  }
+  join_concept(employment, "employment", attr(employment, "provider"), attr(employment, "source_col"))
 
   message("Fetching total population for ", country, "...")
   population <- fetch_population(country, start_period = start_period)
