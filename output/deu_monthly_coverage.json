@@ -1,10 +1,10 @@
 {
   "country": "DEU",
   "frequency": "monthly",
-  "generated_at": "2026-10-04T11:13:06Z",
+  "generated_at": "2026-10-08T13:34:32Z",
   "start_period": "1960-M01",
   "concepts_published_monthly": 76,
-  "concepts_quarterly_only": 40,
+  "concepts_quarterly_only": 41,
   "resolved": [
     {
       "fred_qd_group": "Industrial Production",
@@ -425,6 +425,10 @@
     {
       "fred_qd_group": "Employment and Unemployment",
       "label": "hours_worked"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "employment"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
@@ -960,13 +964,13 @@
       "label": "oil_price",
       "category": "level_event_driven",
       "status": "PASS",
-      "detail": "Positive throughout (800 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+      "detail": "Positive throughout (801 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
     },
     {
       "label": "geopolitical_risk",
       "category": "level_event_driven",
       "status": "PASS",
-      "detail": "Positive throughout (499 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+      "detail": "Positive throughout (501 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
     },
     {
       "label": "global_activity",
@@ -978,7 +982,7 @@
       "label": "financial_stress",
       "category": "level_event_driven",
       "status": "PASS",
-      "detail": "Positive throughout (561 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+      "detail": "Positive throughout (562 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
     },
     {
       "label": "share_price_index",

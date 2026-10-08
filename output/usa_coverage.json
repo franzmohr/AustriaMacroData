@@ -1,6 +1,6 @@
 {
   "country": "USA",
-  "generated_at": "2026-10-04T11:18:29Z",
+  "generated_at": "2026-10-08T13:34:53Z",
   "start_period": "1960-Q1",
   "resolved": [
     {
@@ -57,6 +57,11 @@
       "fred_qd_group": "Employment and Unemployment",
       "label": "employment_rate",
       "source": "OECD MEI / BIS / World Uncertainty Index (via FRED mirror) [LREM64TTUSQ156S]"
+    },
+    {
+      "fred_qd_group": "Employment and Unemployment",
+      "label": "employment",
+      "source": "FRED (series published by FRED itself, not an OECD/BIS mirror) [PAYEMS]"
     },
     {
       "fred_qd_group": "Employment and Unemployment",
@@ -589,6 +594,12 @@
       "category": "level",
       "status": "NO_DATA",
       "detail": "No non-NA observations."
+    },
+    {
+      "label": "employment",
+      "category": "level",
+      "status": "PASS",
+      "detail": "Positive throughout; largest quarter-over-quarter change -12%."
     },
     {
       "label": "population",
@@ -1176,7 +1187,7 @@
       "label": "financial_stress",
       "category": "level_event_driven",
       "status": "PASS",
-      "detail": "Positive throughout (187 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
+      "detail": "Positive throughout (188 observations); no jump check applied -- this concept is expected to spike sharply around real geopolitical events."
     },
     {
       "label": "world_uncertainty_index",

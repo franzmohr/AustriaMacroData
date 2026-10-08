@@ -7,11 +7,12 @@ real_exports,Output and Income,Q,mean,"EUR mn, chain-linked volume (2020), quart
 real_imports,Output and Income,Q,mean,"EUR mn, chain-linked volume (2020), quarterly level",SCA,R,5,2,2,IMPGSC1,EUROSTAT,namq_10_gdp:P7 (extended pre-1995 with level-spliced OECD_QNA:S1.P7),1960-Q1,2026-Q2,266
 inventory_change_to_gdp,Output and Income,Q,mean,% of GDP,SCA,R,1,0,0,A014RE1Q156NBEA,EUROSTAT,namq_10_gdp:Q.PC_GDP.SCA.P52.DE,1991-Q1,2026-Q2,142
 real_household_disposable_income,Output and Income,Q,mean,"EUR mn at 2020 prices, quarterly level",SCA,R,5,2,2,DPIC96,EUROSTAT,nasq_10_nf_tr:Q.CP_MEUR.RECV.S14_S15.B6G.SCA.DE deflated by namq_10_gdp:P31_S14_S15,1999-Q1,2026-Q2,110
-industrial_production,Industrial Production,M,mean,index 2021=100,SCA,R,5,2,2,INDPRO,EUROSTAT_STS,"sts_inpr_m:M.PRD.B-D.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)",1960-M01,2026-M07,799
+industrial_production,Industrial Production,M,mean,index 2021=100,SCA,R,5,2,2,INDPRO,EUROSTAT_STS,"sts_inpr_m:M.PRD.B-D.SCA.I21.DE (OECD MEI mirror's earlier history spliced on, rescaled to this base)",1960-M01,2026-M08,800
 industrial_confidence,Industrial Production,M,mean,balance,SA,C,1,0,0,,EC_BCS,DE.INDU,1985-M01,2026-M09,501
 unemployment_rate,Employment and Unemployment,M,mean,% of labour force,SA,R,2,4,4,UNRATE,EUROSTAT_STS,"une_rt_m:M.SA.TOTAL.PC_ACT.T.DE (OECD MEI mirror fills earlier months unchanged, same units)",1991-M01,2026-M08,428
 employment_rate,Employment and Unemployment,Q,mean,% of population 15-64,SA,R,2,4,4,,FRED_MIRROR,LREM64TTDEQ156S,2005-Q1,2026-Q2,86
 hours_worked,Employment and Unemployment,Q,mean,thousand hours,SCA,R,5,2,2,HOANBS,EUROSTAT_NA,namq_10_a10_e:Q.THS_HW.TOTAL.SCA.EMP_DC.DE,1991-Q1,2026-Q2,142
+employment,Employment and Unemployment,Q,mean,thousand persons,SCA,R,5,2,2,PAYEMS,EUROSTAT_EMP,namq_10_pe:Q.THS_PER.SCA.EMP_DC.DE,1991-Q1,2026-Q2,142
 population,Employment and Unemployment,Q,mean,thousand persons,SCA,R,5,2,2,,EUROSTAT_POP,namq_10_pe:Q.THS_PER.SCA.POP_NC.DE,1991-Q1,2026-Q2,142
 employment_expectations,Employment and Unemployment,M,mean,index,SA,C,1,0,0,,EC_BCS,DE.EEI,1985-M01,2026-M09,423
 house_price_real,Housing,Q,mean,index 2010=100,NSA,R,5,2,2,USSTHPI,FRED_MIRROR,QDER628BIS,1970-Q1,2026-Q1,225
@@ -31,14 +32,14 @@ government_bond_yield_5y,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,GS5,BUNDESBANK
 mortgage_rate,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,MORTGAGE30US,ECB_MIR,A2C.R.A.2250.EUR.N,2000-M01,2026-M08,320
 mortgage_rate_pure_new_loans,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,ECB_MIR,A2C.R.A.2250.EUR.P,2014-M12,2026-M08,141
 mortgage_rate_oenb,Interest Rates,M,mean,% p.a.,NSA,F,2,4,4,,,,,,0
-credit_to_private_nonfin_sector,Money and Credit,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.DE.P.A.M.770.A,1960-Q4,2025-Q4,261
+credit_to_private_nonfin_sector,Money and Credit,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.DE.P.A.M.770.A,1960-Q4,2026-Q1,262
 household_mortgage_loans,Money and Credit,M,mean,"EUR mn, outstanding",NSA,N,5,2,3,REALLNx,ECB_BSI,A22T.A.1.U6.2250.Z01.E,2009-M12,2026-M08,201
 mortgage_new_lending,Money and Credit,M,sum,EUR mn per period,NSA,N,5,2,2,,ECB_MIR,A2C.B.A.2250.EUR.P,2014-M12,2026-M08,141
 mortgage_new_lending_oenb,Money and Credit,M,sum,EUR mn per period,NSA,N,5,2,2,,,,,,0
 euro_area_household_net_worth_growth,Household Balance Sheets,Q,mean,% change,NSA,F,1,0,0,TNWBSHNOx,ECB_QSA_PUB,I8,2000-Q1,2022-Q4,92
-household_credit_to_gdp,Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.DE.H.A.M.770.A,1970-Q4,2025-Q4,221
-corporate_credit_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.DE.N.A.M.770.A,1970-Q4,2025-Q4,221
-government_debt_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,GFDEGDQ188S,BIS_WSTC,Q.DE.G.A.N.770.A,2000-Q1,2025-Q4,104
+household_credit_to_gdp,Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.DE.H.A.M.770.A,1970-Q4,2026-Q1,222
+corporate_credit_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,,BIS_WSTC,Q.DE.N.A.M.770.A,1970-Q4,2026-Q1,222
+government_debt_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,2,4,4,GFDEGDQ188S,BIS_WSTC,Q.DE.G.A.N.770.A,2000-Q1,2026-Q1,105
 government_primary_balance_to_gdp,Non-Household Balance Sheets,Q,mean,% of GDP,NSA,N,1,0,0,,EUROSTAT_GOV,gov_10q_ggnfa:Q.PC_GDP.NSA.S13.B9+D41PAY.DE,2002-Q1,2026-Q1,97
 fx_rate_to_usd,Exchange Rates,M,mean,EUR per USD,NSA,F,5,2,2,,FRED_MIRROR,CCUSMA02DEM618N,1960-M01,2026-M08,800
 real_effective_exchange_rate,Exchange Rates,M,mean,index 2015=100,NSA,F,5,2,2,TWEXAFEGSMTHx,FRED_MIRROR,CCRETT01DEM661N,1970-M01,2026-M08,680
@@ -106,10 +107,10 @@ economic_sentiment_indicator,Other,M,mean,"index, long-term mean = 100",SA,C,1,0
 services_confidence,Other,M,mean,balance,SA,C,1,0,0,,EC_BCS,DE.SERV,1995-M04,2026-M09,378
 construction_cost_index,Prices,Q,mean,index 2021=100,NSA,N,6,2,3,,EUROSTAT_STS,sts_copi_q:Q.COST.CPA_F41001_X_410014.NSA.I21.DE,2000-Q1,2026-Q2,106
 construction_producer_prices,Prices,Q,mean,index 2021=100,NSA,N,6,2,3,,EUROSTAT_STS,sts_copi_q:Q.PRC_PRR.CPA_F41001_X_410014.NSA.I21.DE,1970-Q1,2026-Q2,226
-oil_price,Prices,M,mean,USD per barrel,NSA,N,5,2,3,OILPRICEx,FRED,WTISPLC,1960-M01,2026-M08,800
-geopolitical_risk,Other,M,mean,index,NSA,C,1,0,0,,GPR,GPRC_DEU,1985-M01,2026-M07,499
+oil_price,Prices,M,mean,USD per barrel,NSA,N,5,2,3,OILPRICEx,FRED,WTISPLC,1960-M01,2026-M09,801
+geopolitical_risk,Other,M,mean,index,NSA,C,1,0,0,,GPR,GPRC_DEU,1985-M01,2026-M09,501
 global_activity,Other,M,mean,deviation from trend,NSA,R,1,0,0,,FRED,IGREA,1968-M01,2026-M07,703
-financial_stress,Other,M,mean,index 0-1,NSA,F,1,0,0,,ECB_CISS,"D.DE.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)",1980-M01,2026-M09,561
+financial_stress,Other,M,mean,index 0-1,NSA,F,1,0,0,,ECB_CISS,"D.DE.Z0Z.4F.EC.SS_CIN.IDX (daily, averaged within the month)",1980-M01,2026-M10,562
 world_uncertainty_index,Other,Q,mean,index,NSA,C,1,0,0,,FRED_MIRROR,WUIDEU,1952-Q2,2026-Q2,297
 share_price_index,Stock Markets,M,mean,index 2015=100,NSA,F,5,2,2,S&P 500,FRED_MIRROR,SPASTT01DEM661N,1960-M01,2026-M08,800
 construction_weather_constraint,Housing,M,mean,% of firms,SA,C,1,0,0,,EC_BCS,BUIL.DE.TOT.2.F3S.M,1991-M01,2026-M09,429
