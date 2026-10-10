@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 [![GitHub Sponsors](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ea4aaa?logo=github-sponsors&logoColor=white)](https://github.com/sponsors/franzmohr)
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?logo=buymeacoffee&logoColor=black)](https://www.buymeacoffee.com/franzmohr)
+[![Buy me coffee & AI tokens](https://img.shields.io/badge/Buy%20me%20coffee%20%26%20AI%20tokens-FFDD00?logo=buymeacoffee&logoColor=black)](https://www.buymeacoffee.com/franzmohr)
 
 Tools for building a [FRED-QD](https://research.stlouisfed.org/econ/mccracken/fred-databases/)-style
 quarterly macroeconomic panel for Austria (and, more generally, any OECD or
