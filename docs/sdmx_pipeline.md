@@ -145,7 +145,7 @@ Three design points:
   `name_en` and a `name_de`. Exports join them in. `CL_INDICATOR` is seeded
   with the 51 indicators the 117 panel concepts fold into. The EC survey
   questions, for example, become `CONSUMER_SURVEY` × 13 subindicators. The
-  new topics add 18 more. German names are drafted for all of them and need a
+  new topics add 17 more. German names are drafted for all of them and need a
   read by a native speaker.
 - **`SOURCE_AGENCY` and `SOURCE_KEY` are attached to each observation, not to
   the series.** A spliced series changes source at the splice. Today's
@@ -235,7 +235,9 @@ the same silver.
 
 `TIME_PERIOD` is the key in every layer from gold onwards, in SDMX's
 reporting forms: `2026` (A), `2026-Q2` (Q), `2026-M04` (M) and `2026-11-20`
-(D). Silver keeps a period as the source wrote it. Every source's form is a
+(D). These are SDMX's forms, kept rather than ISO 8601's (decided 20
+November 2026), because ISO 8601 has no quarter and the panels already use
+`2026-M04`. Silver keeps a period as the source wrote it. Every source's form is a
 valid SDMX time period, but the forms differ: Eurostat, the ECB and the OeNB
 write `2026-07`, FRED and the EC workbooks a first day, `2026-07-01`. Writing
 the period in one reporting form is gold's first step, which is a normalisation
@@ -295,7 +297,6 @@ The topics, with the existing fetchers grouped and the new ones added:
 | **`insolvencies`** (new) | – | `ESTAT:STS_RB_Q` |
 | **`government_deficit`** (new) | – | `ESTAT:GOV_10Q_GGNFA` (B9, quarterly), `GOV_10DD_EDPT1` (annual, EDP) |
 | **`forecasts`** (new) | – | `OECD.ECO.MAD:DSD_EO@DF_EO(1.5)`; `IMF.RES:WEO(9.0.0)` |
-| **`house_price_valuation`** (new) | – | `ECB:RESV(1.0)` (annual); the OeNB fundamental indicator, source open |
 
 ### The new topics
 
@@ -339,13 +340,6 @@ those keys is part of implementing each topic.
   years carry `OBS_STATUS = F`. Gold keeps only the latest edition, and the
   vintages keep the earlier ones. Austrian forecasters (WIFO, IHS, OeNB) follow
   only if they publish machine-readable forecasts.
-- **Fundamental house price indicator.** The OeNB's indicator is **not** in
-  the OeNB web service: none of its 40 data sets contains it (checked with
-  `oenb.toc()` and `oenb.dataset()` on 20 November 2026). The ECB's
-  `ECB:RESV(1.0)` has annual valuation estimates for every euro-area country
-  (`A.AT._T.N._TR.RVAV.4F0._Z._Z.PT` and three other measures). That is the
-  SDMX source, under `HOUSE_PRICE_VALUATION` / `ECB_VALUATION`. The OeNB's own
-  indicator needs a source decision (see below).
 - **Euro-area and EU aggregates** are not a topic of their own. They are
   `REF_AREA` values in every topic whose source publishes them: the CISS for
   U2, CBD2 for U2 and B0, and the Eurostat flows for EA20 and EU27_2020.
@@ -374,10 +368,10 @@ SDMX-ML.
 |---|---|---|
 | [`concepts.csv`](../registry/concepts.csv) | Concept scheme `AMD:AMD_CONCEPTS(1.0)` | The 19 concepts SDMX has none for, with each one's core representation |
 | [`codelists.csv`](../registry/codelists.csv) | Codelists | The 20 `AMD:CL_*` codelists, with names in English and German. `AMD:CL_AREA` extends `SDMX:CL_AREA(2.0.1)`, as SDMX 3.0 lets a codelist extend another |
-| [`codes.csv`](../registry/codes.csv) | Codes | 349 codes. Each has a parent, English and German names, a description and, where silver maps a source identifier, the `source_code` |
+| [`codes.csv`](../registry/codes.csv) | Codes | 346 codes. Each has a parent, English and German names, a description and, where silver maps a source identifier, the `source_code` |
 | [`data_structures.csv`](../registry/data_structures.csv) | Data structures `AMD:DSD_*(1.0)` | 8 structures. Each component has its position, role, concept (by full reference), representation, attachment level and assignment status |
 | [`dataflows.csv`](../registry/dataflows.csv) | Dataflows `AMD:*(1.0)` | The 8 AMD dataflows, by layer |
-| [`source_dataflows.csv`](../registry/source_dataflows.csv) | References to source dataflows | The 38 source dataflows silver accepts, with the date each was checked and the layout it answers in |
+| [`source_dataflows.csv`](../registry/source_dataflows.csv) | References to source dataflows | The 37 source dataflows silver accepts, with the date each was checked and the layout it answers in |
 | [`external.csv`](../registry/external.csv) | References to SDMX and ECB artefacts | Every non-AMD concept scheme and codelist the AMD structures use, with the date each was checked |
 | [`area_map.csv`](../registry/area_map.csv) | (Representation map) | Each source's area codes mapped to `AMD:CL_AREA` |
 | [`transformations.csv`](../registry/transformations.csv) | (Transformation scheme) | The gold derivations; six examples so far |
@@ -480,7 +474,7 @@ both the value differences and the byte differences.
    the README and `CONTRIBUTING.md`.
 9. **Exports:** parquet, SDMX-CSV, SDMX-ML structures and the Excel workbook.
 10. **New topics**, one commit each: banks, FDI, current account,
-    insolvencies, government deficit, forecasts, house price valuation, and
+    insolvencies, government deficit, forecasts, and
     the aggregates.
 
 The steps up to 7 change no published file. Step 10 adds data.
@@ -494,13 +488,10 @@ Made on 20 November 2026:
 - **The pipeline moves to Python.**
 - **`REF_AREA` follows ISO conventions** as far as they go: ISO 3166-1
   alpha-2 for countries, ISO's reserved `EU` and `EZ`, and `XW` for the world.
-
-Still open:
-
-1. **The OeNB fundamental house price indicator.** It is not in the OeNB web
-   service. The options are to use the ECB's `RESV` estimates only, or to name
-   a published file for the OeNB's indicator, which would be a non-SDMX source
-   with an AMD structure.
+- **`TIME_PERIOD` stays in SDMX's forms** (`2026-M04`), not ISO 8601's.
+- **The fundamental house price indicator is dropped**, MDB's
+  "Immo-Fundamentalpreisindikator" included: it is not in the OeNB web
+  service, and the ECB's `RESV` estimates are not taken in its place.
 
 ## Not yet verified
 

@@ -70,7 +70,6 @@ AMD:CL_INDICATOR(1.0),FORECAST_REAL_GDP_GROWTH,,Forecast: real GDP growth,Progno
 AMD:CL_INDICATOR(1.0),FORECAST_INFLATION,,Forecast: inflation,Prognose: Inflation,Annual consumer price inflation as forecast by the institution named in SUBINDICATOR.,
 AMD:CL_INDICATOR(1.0),FORECAST_UNEMPLOYMENT_RATE,,Forecast: unemployment rate,Prognose: Arbeitslosenquote,Annual unemployment rate as forecast by the institution named in SUBINDICATOR.,
 AMD:CL_INDICATOR(1.0),FORECAST_GOV_NET_LENDING_TO_GDP,,Forecast: government net lending (% of GDP),Prognose: Finanzierungssaldo des Staates (% des BIP),As forecast by the institution named in SUBINDICATOR.,
-AMD:CL_INDICATOR(1.0),HOUSE_PRICE_VALUATION,,Residential property valuation gap,Bewertungslücke bei Wohnimmobilien,"Deviation of residential property prices from the level fundamentals explain, in percent; SUBINDICATOR names the estimate (the OeNB fundamental price indicator, the ECB's estimates).",
 AMD:CL_SUBINDICATOR(1.0),_Z,,Not applicable,Nicht zutreffend,,
 AMD:CL_SUBINDICATOR(1.0),INDUSTRY,,Industry,Industrie,,
 AMD:CL_SUBINDICATOR(1.0),CONSTRUCTION,,Construction,Bau,,
@@ -141,8 +140,6 @@ AMD:CL_SUBINDICATOR(1.0),SECONDARY_INCOME,,Secondary income,Sekundäreinkommen,,
 AMD:CL_SUBINDICATOR(1.0),OECD_EO,,OECD Economic Outlook,OECD Economic Outlook,,
 AMD:CL_SUBINDICATOR(1.0),IMF_WEO,,IMF World Economic Outlook,IWF World Economic Outlook,,
 AMD:CL_SUBINDICATOR(1.0),EC_FORECAST,,European Commission economic forecast,Prognose der Europäischen Kommission,,
-AMD:CL_SUBINDICATOR(1.0),OENB_FUNDAMENTAL,,OeNB fundamental residential property price indicator,OeNB-Fundamentalpreisindikator für Wohnimmobilien,,
-AMD:CL_SUBINDICATOR(1.0),ECB_VALUATION,,ECB residential property valuation estimate,EZB-Bewertungsschätzung für Wohnimmobilien,,
 AMD:CL_UNIT_MEASURE(1.0),EUR,,Euro,Euro,Values in euro; the size is UNIT_MULT,EUR
 AMD:CL_UNIT_MEASURE(1.0),USD,,US dollar,US-Dollar,Values in US dollars; the size is UNIT_MULT,USD
 AMD:CL_UNIT_MEASURE(1.0),XDC,,National currency,Landeswährung,"Values in the reference area's own currency, as the IMF and the OECD use the code",XDC

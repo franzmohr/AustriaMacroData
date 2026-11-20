@@ -27,7 +27,6 @@ ECB:IRS(1.0),in_use,2026-11-20,ECB csvdata,
 ECB:CISS(1.0),in_use,2026-11-20,ECB csvdata,Country CISS today; the euro-area series D.U2.Z0Z.4F.EC.SS_CIN.IDX is proposed
 ECB.DISS:QSA_PUB(1.0),in_use,,ECB csvdata,Version as R/ecb.R requests it; not re-checked
 ECB:CBD2(1.0),proposed,2026-11-20,ECB csvdata,Bank indicators. I2100 (cost-income) is published negative: -51.6 for AT in 2026-Q2
-ECB:RESV(1.0),proposed,2026-11-20,ECB csvdata,"Annual over/undervaluation estimates of residential property prices, e.g. A.AT._T.N._TR.RVAV.4F0._Z._Z.PT"
 OECD.SDD.NAD:DSD_NAMAIN1@DF_QNA(1.1),in_use,2026-11-20,SDMX-CSV 1.0,
 OECD.SDD.NAD:DSD_NASEC1@DF_QSA(1.1),in_use,2026-11-20,SDMX-CSV 1.0,
 OECD.SDD.NAD:DSD_NAMAIN10@DF_TABLE1_EXPENDITURE(2.0),in_use,2026-11-20,SDMX-CSV 1.0,
