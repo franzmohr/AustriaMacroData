@@ -44,7 +44,7 @@ assumptions turned out to be wrong:
 |---|---|---|
 | `SDMX:CL_ADJUSTMENT` | No such codelist under the SDMX agency. The cross-domain concept `ADJUSTMENT` exists but is uncoded, while `SEASONAL_ADJUST` is coded by `SDMX:CL_SEASONAL_ADJUST(1.0)` (N, S, W, Y, T, …). | The dimension is called `ADJUSTMENT` (concept `SDMX:CROSS_DOMAIN_CONCEPTS(2.0).ADJUSTMENT`) and coded by `SDMX:CL_SEASONAL_ADJUST(1.0)`. The ECB's `ECB:CL_ADJUSTMENT(1.0)` uses the same letters for N, S, W and Y. Eurostat's `s_adj` maps as NSA→N, SA→S, CA→W, SCA→Y. |
 | `SOURCE_AGENCY` as a cross-domain concept | Not one of the 229 cross-domain concepts. The ECB declares it, as `ECB:ECB_CONCEPTS(1.0).SOURCE_AGENCY`. | Rule 2 has nothing, so the ECB's concept is reused rather than an AMD one invented. Its codes are in `AMD:CL_SOURCE_AGENCY(1.0)`, and each code is the publisher's SDMX agency ID where it has one. |
-| U2 and B0 in `SDMX:CL_AREA` | `SDMX:CL_AREA(2.0.1)` has ISO alpha-2 countries and numeric M49 groups only: `098` euro area, `097` EU, `001` world. U2 and B0 are the ECB's codes (`ECB:CL_AREA(1.0)`), which also has `I9` (EA20, fixed composition), `B6` (EU27_2020, fixed), `W0` (world) and `W1` (**rest of** the world). The BIS's `BIS:CL_AREA(1.0)` (101 codes) has `XM` euro area and `XW` world, but no EU and no fixed compositions. | This is still open (see "Decisions" below). Separately, the earlier registry coded the world GPR index `W1`. That is wrong in the ECB's list and is now `W0`, pending that decision. |
+| U2 and B0 in `SDMX:CL_AREA` | `SDMX:CL_AREA(2.0.1)` has ISO alpha-2 countries and numeric M49 groups only: `098` euro area, `097` EU, `001` world. U2 and B0 are the ECB's codes (`ECB:CL_AREA(1.0)`), which also has `I9` (EA20, fixed composition), `B6` (EU27_2020, fixed), `W0` (world) and `W1` (**rest of** the world). The BIS's `BIS:CL_AREA(1.0)` (101 codes) has `XM` euro area and `XW` world, but no EU and no fixed compositions. | Decided on 20 November 2026: ISO conventions as far as they go. `REF_AREA` uses `AMD:CL_AREA(1.0)`, which extends `SDMX:CL_AREA(2.0.1)`, whose 266 alpha-2 codes are ISO 3166-1, with the codes ISO 3166-1 reserves for the EU (`EU`) and the euro area (`EZ`). ISO has no code for the world, so the world is `XW`, from ISO's user-assigned range (the BIS uses the same code). Sources' codes are mapped by [`registry/area_map.csv`](../registry/area_map.csv). The earlier registry's `W1` for the world GPR index, which the ECB uses for *rest of* the world, is now `XW`. |
 
 There is also no SDMX unit codelist, so `UNIT_MEASURE` reuses the
 cross-domain concept with codes in `AMD:CL_UNIT_MEASURE(1.0)`.
@@ -122,7 +122,7 @@ structure, `AMD:DSD_INDICATORS(1.0)`:
 | # | Component | Role | Concept | Representation |
 |---|---|---|---|---|
 | 1 | `FREQ` | dimension | SDMX `FREQ` | `SDMX:CL_FREQ(2.1)`: A, Q, M, D |
-| 2 | `REF_AREA` | dimension | SDMX `REF_AREA` | `ECB:CL_AREA(1.0)` (recommended, your decision) |
+| 2 | `REF_AREA` | dimension | SDMX `REF_AREA` | `AMD:CL_AREA(1.0)`: ISO 3166-1 alpha-2, `EU`, `EZ`, `XW` |
 | 3 | `INDICATOR` | dimension | SDMX `INDICATOR` | `AMD:CL_INDICATOR(1.0)` |
 | 4 | `SUBINDICATOR` | dimension | AMD `SUBINDICATOR` | `AMD:CL_SUBINDICATOR(1.0)`; `_Z` if no breakdown, `_T` for a total |
 | 5 | `ADJUSTMENT` | dimension | SDMX `ADJUSTMENT` | `SDMX:CL_SEASONAL_ADJUST(1.0)` |
@@ -348,12 +348,15 @@ those keys is part of implementing each topic.
   indicator needs a source decision (see below).
 - **Euro-area and EU aggregates** are not a topic of their own. They are
   `REF_AREA` values in every topic whose source publishes them: the CISS for
-  U2, CBD2 for U2 and B0, and the Eurostat flows for EA20 and EU27_2020. Each
-  source's area code is mapped to the chosen `REF_AREA` codelist by
-  `RECODE_AREA` in gold. Silver keeps the source's code. Composition matters
-  here. With the ECB's codelist, Eurostat's EA20, which is a fixed composition
-  back-calculated, maps to I9, and the ECB's changing-composition U2 stays U2.
-  The two are not merged by accident. Wide panels for U2 and B0 are not in this
+  U2, CBD2 for U2 and B0, and the Eurostat flows for EA20 and EU27_2020.
+  Silver keeps the source's code. Gold maps it to `EZ` or `EU` by
+  `RECODE_AREA`, following [`registry/area_map.csv`](../registry/area_map.csv),
+  and the same map turns Eurostat's `EL` and `UK` into ISO's `GR` and `GB`.
+  ISO has no codes for fixed and changing compositions. So `EZ` means the
+  euro area as the source defines it, and the observation's `SOURCE_KEY`
+  says which composition that is (U2 changing, EA20 fixed). Each aggregate
+  series is declared from one source, so the two compositions are never mixed
+  within a series. Wide panels for the euro area and the EU are not in this
   scope. They would be one more pivot.
 - **CISS** is already fetched. `fetch_ecb_ciss()` (`R/ecb.R:445`) requests
   `CISS/D.<cc>.Z0Z.4F.EC.SS_CIN.IDX` for each country and averages the daily
@@ -370,12 +373,13 @@ SDMX-ML.
 | File | SDMX artefact | Holds |
 |---|---|---|
 | [`concepts.csv`](../registry/concepts.csv) | Concept scheme `AMD:AMD_CONCEPTS(1.0)` | The 19 concepts SDMX has none for, with each one's core representation |
-| [`codelists.csv`](../registry/codelists.csv) | Codelists | The 19 `AMD:CL_*` codelists, with names in English and German |
-| [`codes.csv`](../registry/codes.csv) | Codes | 346 codes. Each has a parent, English and German names, a description and, where silver maps a source identifier, the `source_code` |
+| [`codelists.csv`](../registry/codelists.csv) | Codelists | The 20 `AMD:CL_*` codelists, with names in English and German. `AMD:CL_AREA` extends `SDMX:CL_AREA(2.0.1)`, as SDMX 3.0 lets a codelist extend another |
+| [`codes.csv`](../registry/codes.csv) | Codes | 349 codes. Each has a parent, English and German names, a description and, where silver maps a source identifier, the `source_code` |
 | [`data_structures.csv`](../registry/data_structures.csv) | Data structures `AMD:DSD_*(1.0)` | 8 structures. Each component has its position, role, concept (by full reference), representation, attachment level and assignment status |
 | [`dataflows.csv`](../registry/dataflows.csv) | Dataflows `AMD:*(1.0)` | The 8 AMD dataflows, by layer |
 | [`source_dataflows.csv`](../registry/source_dataflows.csv) | References to source dataflows | The 38 source dataflows silver accepts, with the date each was checked and the layout it answers in |
 | [`external.csv`](../registry/external.csv) | References to SDMX and ECB artefacts | Every non-AMD concept scheme and codelist the AMD structures use, with the date each was checked |
+| [`area_map.csv`](../registry/area_map.csv) | (Representation map) | Each source's area codes mapped to `AMD:CL_AREA` |
 | [`transformations.csv`](../registry/transformations.csv) | (Transformation scheme) | The gold derivations; six examples so far |
 | [`panel_columns.csv`](../registry/panel_columns.csv) | (Mapping) | Panel column to indicator series |
 
@@ -387,7 +391,7 @@ It replaces `docs/sdmx_structures.csv` and changes it in four ways:
 - The EC survey structure follows the Commission's series code
   (`SURVEY.COUNTRY.ACTIVITY.QUESTION.ANSWER.FREQ`).
 - `ADJUSTMENT` now points at a codelist that exists.
-- The world GPR index is `W0`.
+- `REF_AREA` uses ISO codes, and the world GPR index is `XW`.
 
 **Versioning** follows the ECB's practice. Every artefact is version 1.0 and
 not final, so codes may be added without a new version. A change that alters
@@ -488,20 +492,12 @@ Made on 20 November 2026:
 - **`output/silver/` is committed.**
 - **Daily series stay daily in silver.**
 - **The pipeline moves to Python.**
+- **`REF_AREA` follows ISO conventions** as far as they go: ISO 3166-1
+  alpha-2 for countries, ISO's reserved `EU` and `EZ`, and `XW` for the world.
 
 Still open:
 
-1. **Euro-area, EU and world codes for `REF_AREA`.** The options:
-
-   | Codelist | Euro area | EU | World | Notes |
-   |---|---|---|---|---|
-   | `BIS:CL_AREA(1.0)` | `XM` | none | `XW` | The BIS's conventions. 101 codes. `XM` and `XW` are ISO 3166 user-assigned codes. There is no EU code, so the EU needs an AMD extension, for example ISO's exceptionally reserved `EU`. There are no fixed compositions. |
-   | `ECB:CL_AREA(1.0)` | `U2` | `B0` | `W0` | Also `I9` and `B6` for fixed EA20 and EU27_2020. The ECB sources already answer in it. |
-   | `SDMX:CL_AREA(2.0.1)` | `098` | `097` | `001` | Numeric M49 groups next to alpha-2 countries. |
-   | AMD's own | `EA` | `EU` | | What MDB used. It needs an invented codelist although published ones exist. |
-
-   `registry/` uses `ECB:CL_AREA(1.0)` as a placeholder until this is decided.
-2. **The OeNB fundamental house price indicator.** It is not in the OeNB web
+1. **The OeNB fundamental house price indicator.** It is not in the OeNB web
    service. The options are to use the ECB's `RESV` estimates only, or to name
    a published file for the OeNB's indicator, which would be a non-SDMX source
    with an AMD structure.

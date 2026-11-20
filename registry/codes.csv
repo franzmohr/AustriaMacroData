@@ -1,4 +1,7 @@
 codelist,code,parent,name_en,name_de,description,source_code
+AMD:CL_AREA(1.0),EU,,European Union,Europäische Union,"ISO 3166-1 exceptionally reserved code. The EU as the source defines it; SOURCE_KEY says which composition (ECB B0 changing, Eurostat EU27_2020 fixed).",
+AMD:CL_AREA(1.0),EZ,,Euro area,Euroraum,"ISO 3166-1 exceptionally reserved code (Eurozone). The euro area as the source defines it; SOURCE_KEY says which composition (ECB U2 changing, Eurostat EA20 fixed).",
+AMD:CL_AREA(1.0),XW,,World,Welt,"ISO 3166-1 user-assigned code, as the BIS uses it; ISO has no code for the world.",
 AMD:CL_INDICATOR(1.0),REAL_GDP,,Real GDP,Reales BIP,"Gross domestic product at constant (chain-linked) prices, seasonally and calendar adjusted.",
 AMD:CL_INDICATOR(1.0),REAL_HOUSEHOLD_CONSUMPTION,,Real private consumption,Realer privater Konsum,Household final consumption expenditure at constant prices.,
 AMD:CL_INDICATOR(1.0),REAL_GOVT_CONSUMPTION,,Real government consumption,Realer öffentlicher Konsum,General government final consumption expenditure at constant prices.,
@@ -183,7 +186,7 @@ AMD:CL_DATA_COMP(1.0),SPLICE_APPEND,,Append,Anfügen,"The later series continues
 AMD:CL_DATA_COMP(1.0),BACKCAST_GROWTH,,Backcast by growth rates,Rückrechnung über Wachstumsraten,The earlier series' growth rates carry the later one back,
 AMD:CL_DATA_COMP(1.0),WEIGHTED_MEAN,,Weighted mean of series,Gewichteter Durchschnitt von Reihen,E.g. degree days averaged over cities with population weights,
 AMD:CL_DATA_COMP(1.0),CALIBRATE,,Calibrate to another series,Kalibrierung an eine andere Reihe,E.g. Open-Meteo degree days calibrated to Eurostat's over their overlap,
-AMD:CL_DATA_COMP(1.0),RECODE_AREA,,Recode the reference area,Referenzgebiet umcodieren,"Map a source's area code to REF_AREA's codelist, e.g. EA20 to I9",
+AMD:CL_DATA_COMP(1.0),RECODE_AREA,,Recode the reference area,Referenzgebiet umcodieren,"Map a source's area code to AMD:CL_AREA by registry/area_map.csv, e.g. U2 or EA20 to EZ, EL to GR",
 AMD:CL_FRED_SERIES(1.0),A014RE1Q156NBEA,,A014RE1Q156NBEA,,,A014RE1Q156NBEA
 AMD:CL_FRED_SERIES(1.0),AUTPROINDMISMEI,,AUTPROINDMISMEI,,,AUTPROINDMISMEI
 AMD:CL_FRED_SERIES(1.0),AUTPROINDQISMEI,,AUTPROINDQISMEI,,,AUTPROINDQISMEI

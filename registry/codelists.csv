@@ -1,20 +1,21 @@
-codelist,name_en,name_de,description
-AMD:CL_INDICATOR(1.0),Indicator,Indikator,"The indicators of AMD:INDICATORS(1.0). One code per economic quantity, broken down further by SUBINDICATOR."
-AMD:CL_SUBINDICATOR(1.0),Subindicator,Unterindikator,Breakdowns of indicators. A code means the same thing under every indicator it is used with.
-AMD:CL_UNIT_MEASURE(1.0),Unit of measure,Maßeinheit,"Units of AMD:INDICATORS(1.0). Separate from the unit multiplier (UNIT_MULT) and the index base period (BASE_PER), as SDMX keeps them. Declared here because the SDMX agency publishes no unit codelist."
-AMD:CL_SOURCE_AGENCY(1.0),Source agency,Quelle,"Who published the silver series an observation is built from. Where the publisher is an SDMX maintenance agency, the code is its agency ID."
-AMD:CL_DATA_COMP(1.0),Data compilation,Datenaufbereitung,The operations gold applies to silver series. Each transformation in registry/transformations.csv is a chain of these.
-AMD:CL_FRED_SERIES(1.0),FRED series,FRED-Zeitreihen,The FRED series this project fetches. The FRED identifier is the code.
-AMD:CL_SURVEY(1.0),EC survey,EK-Umfrage,"The surveys and composite indicators of the EC Business and Consumer Surveys, as the first segment of the Commission's series codes."
-AMD:CL_ACTIVITY(1.0),Activity,Wirtschaftstätigkeit,"Activity coverage of an EC survey series; the Commission writes TOT, kept as source_code."
-AMD:CL_QUESTION(1.0),Survey question,Umfragefrage,Question numbers of the EC surveys; a number's wording depends on the survey.
-AMD:CL_ANSWER(1.0),Survey answer,Antwortkategorie,Answer categories of the EC surveys and the balance of answers.
-AMD:CL_OENB_DATASET(1.0),OeNB data set,OeNB-Datensatz,OeNB web service data sets this project fetches.
-AMD:CL_OENB_POSITION(1.0),OeNB position,OeNB-Position,OeNB web service position codes this project fetches.
-AMD:CL_TICKER(1.0),Ticker,Tickersymbol,Instruments fetched from Yahoo Finance.
-AMD:CL_PRICE_TYPE(1.0),Price type,Preisart,Price of the period a market series reports.
-AMD:CL_LOCATION(1.0),Location,Ort,Places the weather series are requested for.
-AMD:CL_VARIABLE(1.0),Weather variable,Wettervariable,Open-Meteo daily variables this project fetches.
-AMD:CL_GPR_INDEX(1.0),Geopolitical risk index,Index des geopolitischen Risikos,Indices of the Caldara-Iacoviello geopolitical risk data set.
-AMD:CL_EVENT(1.0),Policy event,Wirtschaftspolitisches Ereignis,The measures of docs/policy_events.csv; the event's name upper-cased is the code.
-AMD:CL_EVENT_TYPE(1.0),Event type,Ereignistyp,How a policy dummy is coded.
+codelist,name_en,name_de,description,extends
+AMD:CL_AREA(1.0),Reference area,Referenzgebiet,"ISO 3166-1 codes: every country by its alpha-2 code as SDMX:CL_AREA(2.0.1) lists it, extended by the codes ISO reserves for the EU (EU) and the euro area (EZ) and by XW for the world, from the range ISO leaves to users (the BIS uses it too).",SDMX:CL_AREA(2.0.1)
+AMD:CL_INDICATOR(1.0),Indicator,Indikator,"The indicators of AMD:INDICATORS(1.0). One code per economic quantity, broken down further by SUBINDICATOR.",
+AMD:CL_SUBINDICATOR(1.0),Subindicator,Unterindikator,Breakdowns of indicators. A code means the same thing under every indicator it is used with.,
+AMD:CL_UNIT_MEASURE(1.0),Unit of measure,Maßeinheit,"Units of AMD:INDICATORS(1.0). Separate from the unit multiplier (UNIT_MULT) and the index base period (BASE_PER), as SDMX keeps them. Declared here because the SDMX agency publishes no unit codelist.",
+AMD:CL_SOURCE_AGENCY(1.0),Source agency,Quelle,"Who published the silver series an observation is built from. Where the publisher is an SDMX maintenance agency, the code is its agency ID.",
+AMD:CL_DATA_COMP(1.0),Data compilation,Datenaufbereitung,The operations gold applies to silver series. Each transformation in registry/transformations.csv is a chain of these.,
+AMD:CL_FRED_SERIES(1.0),FRED series,FRED-Zeitreihen,The FRED series this project fetches. The FRED identifier is the code.,
+AMD:CL_SURVEY(1.0),EC survey,EK-Umfrage,"The surveys and composite indicators of the EC Business and Consumer Surveys, as the first segment of the Commission's series codes.",
+AMD:CL_ACTIVITY(1.0),Activity,Wirtschaftstätigkeit,"Activity coverage of an EC survey series; the Commission writes TOT, kept as source_code.",
+AMD:CL_QUESTION(1.0),Survey question,Umfragefrage,Question numbers of the EC surveys; a number's wording depends on the survey.,
+AMD:CL_ANSWER(1.0),Survey answer,Antwortkategorie,Answer categories of the EC surveys and the balance of answers.,
+AMD:CL_OENB_DATASET(1.0),OeNB data set,OeNB-Datensatz,OeNB web service data sets this project fetches.,
+AMD:CL_OENB_POSITION(1.0),OeNB position,OeNB-Position,OeNB web service position codes this project fetches.,
+AMD:CL_TICKER(1.0),Ticker,Tickersymbol,Instruments fetched from Yahoo Finance.,
+AMD:CL_PRICE_TYPE(1.0),Price type,Preisart,Price of the period a market series reports.,
+AMD:CL_LOCATION(1.0),Location,Ort,Places the weather series are requested for.,
+AMD:CL_VARIABLE(1.0),Weather variable,Wettervariable,Open-Meteo daily variables this project fetches.,
+AMD:CL_GPR_INDEX(1.0),Geopolitical risk index,Index des geopolitischen Risikos,Indices of the Caldara-Iacoviello geopolitical risk data set.,
+AMD:CL_EVENT(1.0),Policy event,Wirtschaftspolitisches Ereignis,The measures of docs/policy_events.csv; the event's name upper-cased is the code.,
+AMD:CL_EVENT_TYPE(1.0),Event type,Ereignistyp,How a policy dummy is coded.,

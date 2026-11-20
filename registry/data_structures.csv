@@ -1,6 +1,6 @@
 structure,position,component,role,concept,representation,attachment,assignment,description
 AMD:DSD_INDICATORS(1.0),1,FREQ,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).FREQ,SDMX:CL_FREQ(2.1),,mandatory,"A, Q, M or D"
-AMD:DSD_INDICATORS(1.0),2,REF_AREA,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).REF_AREA,ECB:CL_AREA(1.0),,mandatory,"Country, euro area or EU; codelist pending the decision on aggregate codes (docs/sdmx_pipeline.md)"
+AMD:DSD_INDICATORS(1.0),2,REF_AREA,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).REF_AREA,AMD:CL_AREA(1.0),,mandatory,"ISO 3166-1 alpha-2 country, EZ (euro area), EU or XW (world); source codes mapped by registry/area_map.csv"
 AMD:DSD_INDICATORS(1.0),3,INDICATOR,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).INDICATOR,AMD:CL_INDICATOR(1.0),,mandatory,The economic quantity
 AMD:DSD_INDICATORS(1.0),4,SUBINDICATOR,dimension,AMD:AMD_CONCEPTS(1.0).SUBINDICATOR,AMD:CL_SUBINDICATOR(1.0),,mandatory,"Its breakdown; _Z if none"
 AMD:DSD_INDICATORS(1.0),5,ADJUSTMENT,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).ADJUSTMENT,SDMX:CL_SEASONAL_ADJUST(1.0),,mandatory,"N, S, W or Y"
@@ -51,12 +51,12 @@ AMD:DSD_OPEN_METEO(1.0),5,OBS_VALUE,measure,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).OBS_
 AMD:DSD_OPEN_METEO(1.0),6,LATITUDE,attribute,AMD:AMD_CONCEPTS(1.0).LATITUDE,Double,series,mandatory,Latitude requested
 AMD:DSD_OPEN_METEO(1.0),7,LONGITUDE,attribute,AMD:AMD_CONCEPTS(1.0).LONGITUDE,Double,series,mandatory,Longitude requested
 AMD:DSD_GPR(1.0),1,FREQ,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).FREQ,SDMX:CL_FREQ(2.1),,mandatory,M
-AMD:DSD_GPR(1.0),2,REF_AREA,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).REF_AREA,ECB:CL_AREA(1.0),,mandatory,"Country of a country index (the workbook's GPRC_DEU is DE), W0 for the world index; codelist pending the decision on aggregate codes"
+AMD:DSD_GPR(1.0),2,REF_AREA,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).REF_AREA,AMD:CL_AREA(1.0),,mandatory,"Country of a country index (the workbook's GPRC_DEU is DE), XW for the world index"
 AMD:DSD_GPR(1.0),3,GPR_INDEX,dimension,AMD:AMD_CONCEPTS(1.0).GPR_INDEX,AMD:CL_GPR_INDEX(1.0),,mandatory,GPR for the world index or GPRC for a country index
 AMD:DSD_GPR(1.0),4,TIME_PERIOD,time_dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).TIME_PERIOD,ObservationalTimePeriod,,mandatory,YYYY-MM
 AMD:DSD_GPR(1.0),5,OBS_VALUE,measure,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).OBS_VALUE,Double,,mandatory,Index value
 AMD:DSD_POLICY_EVENTS(1.0),1,FREQ,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).FREQ,SDMX:CL_FREQ(2.1),,mandatory,M or Q
-AMD:DSD_POLICY_EVENTS(1.0),2,REF_AREA,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).REF_AREA,ECB:CL_AREA(1.0),,mandatory,Country the measure applies in
+AMD:DSD_POLICY_EVENTS(1.0),2,REF_AREA,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).REF_AREA,AMD:CL_AREA(1.0),,mandatory,Country the measure applies in
 AMD:DSD_POLICY_EVENTS(1.0),3,EVENT,dimension,AMD:AMD_CONCEPTS(1.0).EVENT,AMD:CL_EVENT(1.0),,mandatory,"e.g. KIMV"
 AMD:DSD_POLICY_EVENTS(1.0),4,TIME_PERIOD,time_dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).TIME_PERIOD,ObservationalTimePeriod,,mandatory,YYYY-Mnn or YYYY-Qn
 AMD:DSD_POLICY_EVENTS(1.0),5,OBS_VALUE,measure,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).OBS_VALUE,Double,,mandatory,1 or 0
