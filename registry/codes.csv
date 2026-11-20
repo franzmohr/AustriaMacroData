@@ -1,0 +1,347 @@
+codelist,code,parent,name_en,name_de,description,source_code
+AMD:CL_AREA(1.0),EU,,European Union,Europäische Union,"ISO 3166-1 exceptionally reserved code. The EU as the source defines it; SOURCE_KEY says which composition (ECB B0 changing, Eurostat EU27_2020 fixed).",
+AMD:CL_AREA(1.0),EZ,,Euro area,Euroraum,"ISO 3166-1 exceptionally reserved code (Eurozone). The euro area as the source defines it; SOURCE_KEY says which composition (ECB U2 changing, Eurostat EA20 fixed).",
+AMD:CL_AREA(1.0),XW,,World,Welt,"ISO 3166-1 user-assigned code, as the BIS uses it; ISO has no code for the world.",
+AMD:CL_INDICATOR(1.0),REAL_GDP,,Real GDP,Reales BIP,"Gross domestic product at constant (chain-linked) prices, seasonally and calendar adjusted.",
+AMD:CL_INDICATOR(1.0),REAL_HOUSEHOLD_CONSUMPTION,,Real private consumption,Realer privater Konsum,Household final consumption expenditure at constant prices.,
+AMD:CL_INDICATOR(1.0),REAL_GOVT_CONSUMPTION,,Real government consumption,Realer öffentlicher Konsum,General government final consumption expenditure at constant prices.,
+AMD:CL_INDICATOR(1.0),REAL_GFCF_TOTAL,,Real gross fixed capital formation,Reale Bruttoanlageinvestitionen,Gross fixed capital formation of all sectors at constant prices.,
+AMD:CL_INDICATOR(1.0),REAL_EXPORTS,,Real exports,Reale Exporte,Exports of goods and services at constant prices.,
+AMD:CL_INDICATOR(1.0),REAL_IMPORTS,,Real imports,Reale Importe,Imports of goods and services at constant prices.,
+AMD:CL_INDICATOR(1.0),INVENTORY_CHANGE_TO_GDP,,Change in inventories (% of GDP),Lagerveränderung (% des BIP),"Change in inventories as a share of nominal GDP, signed.",
+AMD:CL_INDICATOR(1.0),REAL_HOUSEHOLD_DISPOSABLE_INCOME,,Real household disposable income,Reales verfügbares Haushaltseinkommen,"Gross disposable income of households and NPISHs, deflated by the household consumption deflator.",
+AMD:CL_INDICATOR(1.0),INDUSTRIAL_PRODUCTION,,Industrial production,Industrieproduktion,Volume index of production in industry excluding construction (NACE B-D).,
+AMD:CL_INDICATOR(1.0),CONFIDENCE,,Confidence indicator (EC survey),Vertrauensindikator (EK-Umfrage),,
+AMD:CL_INDICATOR(1.0),UNEMPLOYMENT_RATE,,Unemployment rate,Arbeitslosenquote,Unemployed persons as a percentage of the labour force.,
+AMD:CL_INDICATOR(1.0),EMPLOYMENT_RATE,,Employment rate (15-64),Beschäftigungsquote (15-64),Employed persons aged 15-64 as a percentage of the population of that age.,
+AMD:CL_INDICATOR(1.0),HOURS_WORKED,,Total hours worked,Geleistete Arbeitsstunden,Total hours worked by employees and self-employed in the whole economy.,
+AMD:CL_INDICATOR(1.0),EMPLOYMENT,,Persons employed,Erwerbstätige,"Total employment, employees and self-employed, in thousands of persons (domestic concept).",
+AMD:CL_INDICATOR(1.0),POPULATION,,Population,Bevölkerung,"Total resident population, in thousands of persons.",
+AMD:CL_INDICATOR(1.0),EEI,,Employment Expectations Indicator (EC survey),Beschäftigungserwartungsindikator (EK-Umfrage),,
+AMD:CL_INDICATOR(1.0),HOUSE_PRICE_REAL,,Real house prices,Reale Wohnimmobilienpreise,Residential property price index deflated by consumer prices.,
+AMD:CL_INDICATOR(1.0),RETAIL_SALES_VOLUME,,Retail sales volume,Einzelhandelsumsatz (real),"Volume of retail trade sales (NACE G47), seasonally and calendar adjusted.",
+AMD:CL_INDICATOR(1.0),CPI,,Consumer price index,Verbraucherpreisindex,,
+AMD:CL_INDICATOR(1.0),UNIT_LABOR_COST,,Unit labour cost,Lohnstückkosten,"Labour cost per unit of real output (an index where Eurostat publishes one, a percent change otherwise).",
+AMD:CL_INDICATOR(1.0),GOV_BOND_YIELD,,Government bond yield,Rendite von Staatsanleihen,,
+AMD:CL_INDICATOR(1.0),SHORT_TERM_RATE,,3-month interest rate,3-Monats-Zinssatz,"3-month money-market rate: Euribor for euro-area members from euro adoption on (so identical across members), the national interbank rate before.",
+AMD:CL_INDICATOR(1.0),MORTGAGE_RATE,,Mortgage rate,Zinssatz für Wohnbaukredite,,
+AMD:CL_INDICATOR(1.0),MORTGAGE_RATE_OENB,,"Mortgage rate (OeNB, Austria)",Zinssatz für Wohnbaukredite (OeNB),OeNB interest rate on new business in housing loans to households; equals mortgage_rate from 2000 and reaches back to 1995.,
+AMD:CL_INDICATOR(1.0),CREDIT_TO_GDP,,Credit (% of GDP),Kredite (% des BIP),,
+AMD:CL_INDICATOR(1.0),HOUSEHOLD_MORTGAGE_LOANS,,Outstanding mortgage loans,Aushaftende Wohnbaukredite,"Stock of MFI loans to households for house purchase, nominal.",
+AMD:CL_INDICATOR(1.0),MORTGAGE_NEW_LENDING,,New mortgage lending,Neuvergabe von Wohnbaukrediten,"Volume of pure new loans to households for house purchase per period, nominal and not seasonally adjusted (a flow).",
+AMD:CL_INDICATOR(1.0),MORTGAGE_NEW_LENDING_OENB,,"New mortgage lending (OeNB, Austria)",Neuvergabe von Wohnbaukrediten (OeNB),"OeNB new loans to households for housing purposes per period, nominal and not seasonally adjusted (a flow).",
+AMD:CL_INDICATOR(1.0),EURO_AREA_HOUSEHOLD_NET_WORTH_GROWTH,,Household net worth growth (euro area),Wachstum des Haushaltsnettovermögens (Euroraum),Growth of euro-area household net worth; the same euro-area figure for every member.,
+AMD:CL_INDICATOR(1.0),GOVERNMENT_DEBT_TO_GDP,,Government debt (% of GDP),Staatsschulden (% des BIP),"Credit to general government at nominal value as a percentage of GDP, a close proxy for gross public debt.",
+AMD:CL_INDICATOR(1.0),GOVERNMENT_PRIMARY_BALANCE_TO_GDP,,Government primary balance (% of GDP),Primärsaldo des Staates (% des BIP),"General government net lending plus interest payable as a percentage of GDP, not seasonally adjusted.",
+AMD:CL_INDICATOR(1.0),FX_RATE_TO_USD,,Exchange rate to the US dollar,Wechselkurs zum US-Dollar,National currency per US dollar (so a rise is a depreciation against the dollar).,
+AMD:CL_INDICATOR(1.0),REAL_EFFECTIVE_EXCHANGE_RATE,,Real effective exchange rate,Realer effektiver Wechselkurs,"Trade-weighted, price-adjusted exchange rate index (a rise is a real appreciation).",
+AMD:CL_INDICATOR(1.0),CONSUMER_SURVEY,,Consumer survey (EC),Verbraucherumfrage (EK),,
+AMD:CL_INDICATOR(1.0),INDUSTRY_SURVEY,,Industry survey (EC),Industrieumfrage (EK),,
+AMD:CL_INDICATOR(1.0),INDUSTRY_LIMITS,,Industry: factors limiting production,Industrie: produktionsbehindernde Faktoren,,
+AMD:CL_INDICATOR(1.0),SERVICES_SURVEY,,Services survey (EC),Dienstleistungsumfrage (EK),,
+AMD:CL_INDICATOR(1.0),SERVICES_LIMITS,,Services: factors limiting business,Dienstleistungen: geschäftsbehindernde Faktoren,,
+AMD:CL_INDICATOR(1.0),RETAIL_SURVEY,,Retail trade survey (EC),Einzelhandelsumfrage (EK),,
+AMD:CL_INDICATOR(1.0),CONSTRUCTION_SURVEY,,Construction survey (EC),Bauumfrage (EK),,
+AMD:CL_INDICATOR(1.0),CONSTRUCTION_LIMITS,,Construction: factors limiting building activity,Bau: behindernde Faktoren,,
+AMD:CL_INDICATOR(1.0),ESI,,Economic Sentiment Indicator,Indikator der wirtschaftlichen Einschätzung,,
+AMD:CL_INDICATOR(1.0),CONSTRUCTION_COST_INDEX,,Construction cost index (residential),Baukostenindex (Wohnbau),"Cost to the builder of materials and labour for new residential buildings, not seasonally adjusted.",
+AMD:CL_INDICATOR(1.0),CONSTRUCTION_PRODUCER_PRICES,,Construction producer prices (residential),Baupreise (Wohnbau),"Price builders charge for new residential buildings, not seasonally adjusted; its gap to construction_cost_index is the builder's margin.",
+AMD:CL_INDICATOR(1.0),OIL_PRICE,,Oil price (WTI),Ölpreis (WTI),"Spot price of West Texas Intermediate crude oil in US dollars per barrel; one world price, identical in every panel.",
+AMD:CL_INDICATOR(1.0),GEOPOLITICAL_RISK,,Geopolitical risk index,Index des geopolitischen Risikos,"Caldara-Iacoviello Geopolitical Risk index: country-specific where the source has one (DEU, USA), the global index otherwise (AUT).",
+AMD:CL_INDICATOR(1.0),GLOBAL_ACTIVITY,,Global real economic activity (Kilian index),Globale reale Wirtschaftsaktivität (Kilian-Index),"Kilian's index of global real economic activity from dry-bulk freight rates, deviation from trend; identical in every panel.",
+AMD:CL_INDICATOR(1.0),FINANCIAL_STRESS,,Financial stress (CISS),Finanzmarktstress (CISS),"ECB Composite Indicator of Systemic Stress for the country, bounded between 0 and 1.",
+AMD:CL_INDICATOR(1.0),WORLD_UNCERTAINTY_INDEX,,World Uncertainty Index,World Uncertainty Index,Ahir-Bloom-Furceri index of how often 'uncertainty' appears in the EIU's reports on the country.,
+AMD:CL_INDICATOR(1.0),SHARE_PRICE_INDEX,,Share price index,Aktienindex,"Benchmark stock market index: the ATX for Austria, the OECD all-shares index otherwise.",
+AMD:CL_INDICATOR(1.0),DEGREE_DAYS,,Degree days,Gradtage,,
+AMD:CL_INDICATOR(1.0),BANK_TOTAL_ASSETS,,Bank total assets,Bilanzsumme der Banken,"Consolidated banking data (ECB CBD2), all domestic banking groups and stand-alone banks, foreign-controlled subsidiaries and branches; scaled in gold from the source's unit multiplier.",
+AMD:CL_INDICATOR(1.0),BANK_CET1_RATIO,,Bank CET1 ratio,Harte Kernkapitalquote (CET1) der Banken,"Common equity tier 1 capital over risk-weighted assets, consolidated (ECB CBD2 item I4008).",
+AMD:CL_INDICATOR(1.0),BANK_T1_RATIO,,Bank tier 1 ratio,Kernkapitalquote (T1) der Banken,"Tier 1 capital over risk-weighted assets, consolidated (ECB CBD2 item I4002).",
+AMD:CL_INDICATOR(1.0),BANK_NPL_RATIO,,Bank non-performing loans ratio,NPL-Quote der Banken,"Non-performing loans over total loans, consolidated (ECB CBD2 item I3632).",
+AMD:CL_INDICATOR(1.0),BANK_COVERAGE_RATIO,,Bank NPL coverage ratio,Deckungsquote notleidender Kredite,"Accumulated impairment over non-performing loans, consolidated (ECB CBD2 item I3631).",
+AMD:CL_INDICATOR(1.0),BANK_COST_INCOME_RATIO,,Bank cost-income ratio,Cost-Income-Ratio der Banken,"Operating expenses over operating income, consolidated (ECB CBD2 item I2100); the sign is turned positive in gold if the source publishes it negative.",
+AMD:CL_INDICATOR(1.0),BANK_LCR,,Bank liquidity coverage ratio,Liquiditätsdeckungsquote (LCR) der Banken,"High-quality liquid assets over net cash outflows over 30 days, consolidated (ECB CBD2 item I3017).",
+AMD:CL_INDICATOR(1.0),BANK_RWA_DENSITY,,Bank RWA density,RWA-Dichte der Banken,"Risk-weighted assets over total assets, in percent: a ratio of two CBD2 series computed in gold (E0000 over A0000).",
+AMD:CL_INDICATOR(1.0),FDI_POSITION,,Foreign direct investment position,Direktinvestitionsbestand,"Stock of direct investment, assets and liabilities, from the balance of payments statistics (BPM6).",
+AMD:CL_INDICATOR(1.0),FDI_FLOW,,Foreign direct investment flow,Direktinvestitionsströme,Net acquisition of direct investment assets and net incurrence of liabilities in the period (BPM6).,
+AMD:CL_INDICATOR(1.0),CURRENT_ACCOUNT_TO_GDP,,Current account balance (% of GDP),Leistungsbilanzsaldo (% des BIP),Current account balance and its components as a share of GDP (BPM6).,
+AMD:CL_INDICATOR(1.0),BANKRUPTCY_DECLARATIONS,,Business insolvencies,Unternehmensinsolvenzen,"Declarations of bankruptcies of businesses, index (Eurostat short-term business statistics).",
+AMD:CL_INDICATOR(1.0),GOV_NET_LENDING_TO_GDP,,Government net lending (+) / borrowing (-) (% of GDP),Finanzierungssaldo des Staates (% des BIP),ESA 2010 item B9 of general government: a deficit is negative.,
+AMD:CL_INDICATOR(1.0),FORECAST_REAL_GDP_GROWTH,,Forecast: real GDP growth,Prognose: reales BIP-Wachstum,Annual real GDP growth as forecast by the institution named in SUBINDICATOR; forecast years carry OBS_STATUS F.,
+AMD:CL_INDICATOR(1.0),FORECAST_INFLATION,,Forecast: inflation,Prognose: Inflation,Annual consumer price inflation as forecast by the institution named in SUBINDICATOR.,
+AMD:CL_INDICATOR(1.0),FORECAST_UNEMPLOYMENT_RATE,,Forecast: unemployment rate,Prognose: Arbeitslosenquote,Annual unemployment rate as forecast by the institution named in SUBINDICATOR.,
+AMD:CL_INDICATOR(1.0),FORECAST_GOV_NET_LENDING_TO_GDP,,Forecast: government net lending (% of GDP),Prognose: Finanzierungssaldo des Staates (% des BIP),As forecast by the institution named in SUBINDICATOR.,
+AMD:CL_SUBINDICATOR(1.0),_Z,,Not applicable,Nicht zutreffend,,
+AMD:CL_SUBINDICATOR(1.0),INDUSTRY,,Industry,Industrie,,
+AMD:CL_SUBINDICATOR(1.0),CONSTRUCTION,,Construction,Bau,,
+AMD:CL_SUBINDICATOR(1.0),RETAIL,,Retail,Einzelhandel,,
+AMD:CL_SUBINDICATOR(1.0),_T,,Total,Insgesamt,,
+AMD:CL_SUBINDICATOR(1.0),CORE,,"Core (excluding energy, food, alcohol and tobacco)",Kerninflation,,
+AMD:CL_SUBINDICATOR(1.0),FOOD,,Food,Nahrungsmittel,,
+AMD:CL_SUBINDICATOR(1.0),ENERGY,,Energy,Energie,,
+AMD:CL_SUBINDICATOR(1.0),SERVICES,,Services,Dienstleistungen,,
+AMD:CL_SUBINDICATOR(1.0),Y10,,10 years,10 Jahre,,
+AMD:CL_SUBINDICATOR(1.0),Y2,,2 years,2 Jahre,,
+AMD:CL_SUBINDICATOR(1.0),Y5,,5 years,5 Jahre,,
+AMD:CL_SUBINDICATOR(1.0),NEW_BUSINESS,,New business,Neugeschäft,,
+AMD:CL_SUBINDICATOR(1.0),PURE_NEW_LOANS,,Pure new loans,Echtes Neugeschäft,,
+AMD:CL_SUBINDICATOR(1.0),PRIVATE_NONFIN,,Private non-financial sector,Privater nichtfinanzieller Sektor,,
+AMD:CL_SUBINDICATOR(1.0),HOUSEHOLDS,,Households,Private Haushalte,,
+AMD:CL_SUBINDICATOR(1.0),NONFIN_CORP,,Non-financial corporations,Nichtfinanzielle Unternehmen,,
+AMD:CL_SUBINDICATOR(1.0),CONSUMERS,,Consumers,Verbraucher,,
+AMD:CL_SUBINDICATOR(1.0),FINANCIAL_SITUATION_PAST,,"Financial situation, past 12 months","Finanzielle Lage, letzte 12 Monate",,
+AMD:CL_SUBINDICATOR(1.0),FINANCIAL_SITUATION_EXPECTED,,"Financial situation, next 12 months","Finanzielle Lage, nächste 12 Monate",,
+AMD:CL_SUBINDICATOR(1.0),ECONOMIC_SITUATION_PAST,,"General economic situation, past 12 months","Allgemeine Wirtschaftslage, letzte 12 Monate",,
+AMD:CL_SUBINDICATOR(1.0),ECONOMIC_SITUATION_EXPECTED,,"General economic situation, next 12 months","Allgemeine Wirtschaftslage, nächste 12 Monate",,
+AMD:CL_SUBINDICATOR(1.0),PRICE_TRENDS_PAST,,Perceived inflation,Wahrgenommene Inflation,,
+AMD:CL_SUBINDICATOR(1.0),PRICE_EXPECTATIONS,,Inflation expectations,Preiserwartungen,,
+AMD:CL_SUBINDICATOR(1.0),UNEMPLOYMENT_EXPECTATIONS,,Unemployment expectations,Arbeitslosigkeitserwartungen,,
+AMD:CL_SUBINDICATOR(1.0),MAJOR_PURCHASES_NOW,,"Major purchases, right time now","Größere Anschaffungen, derzeit",,
+AMD:CL_SUBINDICATOR(1.0),MAJOR_PURCHASES_EXPECTED,,"Major purchases, next 12 months","Größere Anschaffungen, nächste 12 Monate",,
+AMD:CL_SUBINDICATOR(1.0),SAVINGS_EXPECTED,,"Savings, next 12 months","Sparen, nächste 12 Monate",,
+AMD:CL_SUBINDICATOR(1.0),HOUSEHOLD_FINANCES_NOW,,Current financial situation,Derzeitige finanzielle Lage,,
+AMD:CL_SUBINDICATOR(1.0),HOME_PURCHASE_INTENTIONS,,Intention to buy a home,"Absicht, Wohneigentum zu kaufen",,
+AMD:CL_SUBINDICATOR(1.0),HOME_IMPROVEMENT_INTENTIONS,,Home improvement plans,Renovierungsabsichten,,
+AMD:CL_SUBINDICATOR(1.0),PRODUCTION_PAST,,"Production trend, past 3 months","Produktion, letzte 3 Monate",,
+AMD:CL_SUBINDICATOR(1.0),ORDER_BOOKS,,Order books,Auftragsbestand,,
+AMD:CL_SUBINDICATOR(1.0),EXPORT_ORDER_BOOKS,,Export order books,Exportauftragsbestand,,
+AMD:CL_SUBINDICATOR(1.0),STOCKS_FINISHED_PRODUCTS,,Stocks of finished products,Fertigwarenlager,,
+AMD:CL_SUBINDICATOR(1.0),PRODUCTION_EXPECTATIONS,,Production expectations,Produktionserwartungen,,
+AMD:CL_SUBINDICATOR(1.0),SELLING_PRICE_EXPECTATIONS,,Selling price expectations,Verkaufspreiserwartungen,,
+AMD:CL_SUBINDICATOR(1.0),EMPLOYMENT_EXPECTATIONS,,Employment expectations,Beschäftigungserwartungen,,
+AMD:CL_SUBINDICATOR(1.0),NONE,,No factor limiting production,Keine Behinderung,,
+AMD:CL_SUBINDICATOR(1.0),DEMAND,,Production limited by demand,Nachfrage,,
+AMD:CL_SUBINDICATOR(1.0),LABOUR,,Production limited by labour shortage,Arbeitskräftemangel,,
+AMD:CL_SUBINDICATOR(1.0),MATERIAL_EQUIPMENT,,Production limited by materials or equipment,Material- oder Ausrüstungsmangel,,
+AMD:CL_SUBINDICATOR(1.0),OTHER,,Production limited by other factors,Sonstige,,
+AMD:CL_SUBINDICATOR(1.0),FINANCIAL,,Production limited by financial constraints,Finanzierung,,
+AMD:CL_SUBINDICATOR(1.0),PRODUCTION_CAPACITY,,Assessment of production capacity,Beurteilung der Produktionskapazität,,
+AMD:CL_SUBINDICATOR(1.0),NEW_ORDERS_PAST,,"New orders, past 3 months","Auftragseingang, letzte 3 Monate",,
+AMD:CL_SUBINDICATOR(1.0),CAPACITY_UTILIZATION,,Capacity utilisation,Kapazitätsauslastung,,
+AMD:CL_SUBINDICATOR(1.0),COMPETITIVE_POSITION_EU,,Competitive position inside the EU,Wettbewerbsposition in der EU,,
+AMD:CL_SUBINDICATOR(1.0),COMPETITIVE_POSITION_OUTSIDE_EU,,Competitive position outside the EU,Wettbewerbsposition außerhalb der EU,,
+AMD:CL_SUBINDICATOR(1.0),BUSINESS_SITUATION_PAST,,"Business situation, past 3 months","Geschäftslage, letzte 3 Monate",,
+AMD:CL_SUBINDICATOR(1.0),DEMAND_PAST,,"Demand, past 3 months","Nachfrage, letzte 3 Monate",,
+AMD:CL_SUBINDICATOR(1.0),DEMAND_EXPECTED,,Demand expectations,Nachfrageerwartungen,,
+AMD:CL_SUBINDICATOR(1.0),EQUIPMENT_SPACE,,Business limited by space or equipment,Raum- oder Ausrüstungsmangel,,
+AMD:CL_SUBINDICATOR(1.0),BUSINESS_ACTIVITY_PAST,,"Business activity, past 3 months","Geschäftstätigkeit, letzte 3 Monate",,
+AMD:CL_SUBINDICATOR(1.0),STOCKS,,Volume of stocks,Lagerbestand,,
+AMD:CL_SUBINDICATOR(1.0),ORDERS_EXPECTED,,"Orders placed with suppliers, expected","Bestellungen bei Lieferanten, erwartet",,
+AMD:CL_SUBINDICATOR(1.0),BUSINESS_ACTIVITY_EXPECTED,,Business activity expectations,Geschäftserwartungen,,
+AMD:CL_SUBINDICATOR(1.0),ACTIVITY_PAST,,"Building activity, past 3 months","Bautätigkeit, letzte 3 Monate",,
+AMD:CL_SUBINDICATOR(1.0),WEATHER,,Weather,Witterung,,
+AMD:CL_SUBINDICATOR(1.0),HEATING,,Heating degree days,Heizgradtage,,
+AMD:CL_SUBINDICATOR(1.0),COOLING,,Cooling degree days,Kühlgradtage,,
+AMD:CL_SUBINDICATOR(1.0),ASSETS,,Assets,Aktiva,,
+AMD:CL_SUBINDICATOR(1.0),LIABILITIES,,Liabilities,Passiva,,
+AMD:CL_SUBINDICATOR(1.0),NET,,Net,Netto,,
+AMD:CL_SUBINDICATOR(1.0),GOODS,,Goods,Güter,,
+AMD:CL_SUBINDICATOR(1.0),PRIMARY_INCOME,,Primary income,Primäreinkommen,,
+AMD:CL_SUBINDICATOR(1.0),SECONDARY_INCOME,,Secondary income,Sekundäreinkommen,,
+AMD:CL_SUBINDICATOR(1.0),OECD_EO,,OECD Economic Outlook,OECD Economic Outlook,,
+AMD:CL_SUBINDICATOR(1.0),IMF_WEO,,IMF World Economic Outlook,IWF World Economic Outlook,,
+AMD:CL_SUBINDICATOR(1.0),EC_FORECAST,,European Commission economic forecast,Prognose der Europäischen Kommission,,
+AMD:CL_UNIT_MEASURE(1.0),EUR,,Euro,Euro,Values in euro; the size is UNIT_MULT,EUR
+AMD:CL_UNIT_MEASURE(1.0),USD,,US dollar,US-Dollar,Values in US dollars; the size is UNIT_MULT,USD
+AMD:CL_UNIT_MEASURE(1.0),XDC,,National currency,Landeswährung,"Values in the reference area's own currency, as the IMF and the OECD use the code",XDC
+AMD:CL_UNIT_MEASURE(1.0),PC,,Percent,Prozent,A share or a ratio in percent,
+AMD:CL_UNIT_MEASURE(1.0),PC_GDP,,Percent of GDP,Prozent des BIP,,
+AMD:CL_UNIT_MEASURE(1.0),PC_PA,,Percent per annum,Prozent pro Jahr,Interest rates and yields,
+AMD:CL_UNIT_MEASURE(1.0),GR,,Growth rate in percent,Wachstumsrate in Prozent,Change on the period named by the indicator,
+AMD:CL_UNIT_MEASURE(1.0),IX,,Index,Index,An index; its base period is BASE_PER,
+AMD:CL_UNIT_MEASURE(1.0),BAL,,Balance of answers,Saldo der Antworten,Survey balance in percentage points,
+AMD:CL_UNIT_MEASURE(1.0),PS,,Persons,Personen,,
+AMD:CL_UNIT_MEASURE(1.0),H,,Hours,Stunden,,
+AMD:CL_UNIT_MEASURE(1.0),DD,,Degree days,Gradtage,,
+AMD:CL_UNIT_MEASURE(1.0),USD_BBL,,US dollars per barrel,US-Dollar je Barrel,,
+AMD:CL_UNIT_MEASURE(1.0),NAT_RATE,,National currency per US dollar,Landeswährung je US-Dollar,Exchange rate,
+AMD:CL_UNIT_MEASURE(1.0),PURE_NUMB,,Pure number,Reine Zahl,"Dimensionless, e.g. the CISS between 0 and 1",PURE_NUMB
+AMD:CL_UNIT_MEASURE(1.0),DUMMY,,Indicator variable,Indikatorvariable,1 or 0,
+AMD:CL_SOURCE_AGENCY(1.0),ESTAT,,Eurostat,Eurostat,SDMX agency ESTAT,
+AMD:CL_SOURCE_AGENCY(1.0),ECB,,European Central Bank,Europäische Zentralbank,SDMX agency ECB,
+AMD:CL_SOURCE_AGENCY(1.0),OECD,,OECD,OECD,SDMX agencies OECD.*,
+AMD:CL_SOURCE_AGENCY(1.0),BIS,,Bank for International Settlements,Bank für Internationalen Zahlungsausgleich,SDMX agency BIS,
+AMD:CL_SOURCE_AGENCY(1.0),BBK,,Deutsche Bundesbank,Deutsche Bundesbank,SDMX agency BBK,
+AMD:CL_SOURCE_AGENCY(1.0),IMF,,International Monetary Fund,Internationaler Währungsfonds,SDMX agencies IMF.*,
+AMD:CL_SOURCE_AGENCY(1.0),EC,,European Commission (DG ECFIN),Europäische Kommission (GD ECFIN),Business and Consumer Surveys,
+AMD:CL_SOURCE_AGENCY(1.0),OENB,,Oesterreichische Nationalbank,Oesterreichische Nationalbank,OeNB web service,
+AMD:CL_SOURCE_AGENCY(1.0),FRED,,Federal Reserve Bank of St. Louis (FRED),Federal Reserve Bank of St. Louis (FRED),,
+AMD:CL_SOURCE_AGENCY(1.0),YAHOO,,Yahoo Finance,Yahoo Finance,,
+AMD:CL_SOURCE_AGENCY(1.0),OPEN_METEO,,Open-Meteo,Open-Meteo,ERA5 reanalysis served by Open-Meteo,
+AMD:CL_SOURCE_AGENCY(1.0),GPR,,Caldara and Iacoviello,Caldara und Iacoviello,Geopolitical Risk Index,
+AMD:CL_SOURCE_AGENCY(1.0),AMD,,AustriaMacroData,AustriaMacroData,This project's own records,
+AMD:CL_DATA_COMP(1.0),SELECT,,Take as published,Unverändert übernommen,"One silver series, no change to its values",
+AMD:CL_DATA_COMP(1.0),SCALE,,Rescale,Umskalieren,Multiply by a power of ten and change UNIT_MULT accordingly,
+AMD:CL_DATA_COMP(1.0),NEGATE,,Change sign,Vorzeichen umkehren,,
+AMD:CL_DATA_COMP(1.0),RATIO,,Ratio,Quotient,"Numerator over denominator, times a factor (100 for percent)",
+AMD:CL_DATA_COMP(1.0),DEFLATE,,Deflate,Deflationieren,"A nominal series over a price index, times the index base",
+AMD:CL_DATA_COMP(1.0),SUM,,Sum of series,Summe von Reihen,,
+AMD:CL_DATA_COMP(1.0),AGG_MEAN,,Average to a lower frequency,Durchschnitt auf niedrigere Frequenz,Mean of the observations in the period; an incomplete period is flagged,
+AMD:CL_DATA_COMP(1.0),AGG_SUM,,Sum to a lower frequency,Summe auf niedrigere Frequenz,For flows,
+AMD:CL_DATA_COMP(1.0),AGG_LAST,,Last observation of the period,Letzte Beobachtung der Periode,For stocks and closing prices,
+AMD:CL_DATA_COMP(1.0),SPLICE_LEVEL,,Splice by level,Verkettung über das Niveau,The earlier series is rescaled to the later one's level at the overlap,
+AMD:CL_DATA_COMP(1.0),SPLICE_APPEND,,Append,Anfügen,"The later series continues the earlier one unchanged, e.g. the OECD MEI rate before euro adoption and Euribor after",
+AMD:CL_DATA_COMP(1.0),BACKCAST_GROWTH,,Backcast by growth rates,Rückrechnung über Wachstumsraten,The earlier series' growth rates carry the later one back,
+AMD:CL_DATA_COMP(1.0),WEIGHTED_MEAN,,Weighted mean of series,Gewichteter Durchschnitt von Reihen,E.g. degree days averaged over cities with population weights,
+AMD:CL_DATA_COMP(1.0),CALIBRATE,,Calibrate to another series,Kalibrierung an eine andere Reihe,E.g. Open-Meteo degree days calibrated to Eurostat's over their overlap,
+AMD:CL_DATA_COMP(1.0),RECODE_AREA,,Recode the reference area,Referenzgebiet umcodieren,"Map a source's area code to AMD:CL_AREA by registry/area_map.csv, e.g. U2 or EA20 to EZ, EL to GR",
+AMD:CL_FRED_SERIES(1.0),A014RE1Q156NBEA,,A014RE1Q156NBEA,,,A014RE1Q156NBEA
+AMD:CL_FRED_SERIES(1.0),AUTPROINDMISMEI,,AUTPROINDMISMEI,,,AUTPROINDMISMEI
+AMD:CL_FRED_SERIES(1.0),AUTPROINDQISMEI,,AUTPROINDQISMEI,,,AUTPROINDQISMEI
+AMD:CL_FRED_SERIES(1.0),AUTSARTMISMEI,,AUTSARTMISMEI,,,AUTSARTMISMEI
+AMD:CL_FRED_SERIES(1.0),AUTSARTQISMEI,,AUTSARTQISMEI,,,AUTSARTQISMEI
+AMD:CL_FRED_SERIES(1.0),CCRETT01ATM661N,,CCRETT01ATM661N,,,CCRETT01ATM661N
+AMD:CL_FRED_SERIES(1.0),CCRETT01ATQ661N,,CCRETT01ATQ661N,,,CCRETT01ATQ661N
+AMD:CL_FRED_SERIES(1.0),CCRETT01DEM661N,,CCRETT01DEM661N,,,CCRETT01DEM661N
+AMD:CL_FRED_SERIES(1.0),CCRETT01DEQ661N,,CCRETT01DEQ661N,,,CCRETT01DEQ661N
+AMD:CL_FRED_SERIES(1.0),CCRETT01USM661N,,CCRETT01USM661N,,,CCRETT01USM661N
+AMD:CL_FRED_SERIES(1.0),CCRETT01USQ661N,,CCRETT01USQ661N,,,CCRETT01USQ661N
+AMD:CL_FRED_SERIES(1.0),CCUSMA02ATM618N,,CCUSMA02ATM618N,,,CCUSMA02ATM618N
+AMD:CL_FRED_SERIES(1.0),CCUSMA02ATQ618N,,CCUSMA02ATQ618N,,,CCUSMA02ATQ618N
+AMD:CL_FRED_SERIES(1.0),CCUSMA02DEM618N,,CCUSMA02DEM618N,,,CCUSMA02DEM618N
+AMD:CL_FRED_SERIES(1.0),CCUSMA02DEQ618N,,CCUSMA02DEQ618N,,,CCUSMA02DEQ618N
+AMD:CL_FRED_SERIES(1.0),CCUSMA02USM618N,,CCUSMA02USM618N,,,CCUSMA02USM618N
+AMD:CL_FRED_SERIES(1.0),CCUSMA02USQ618N,,CCUSMA02USQ618N,,,CCUSMA02USQ618N
+AMD:CL_FRED_SERIES(1.0),CPALTT01ATQ657N,,CPALTT01ATQ657N,,,CPALTT01ATQ657N
+AMD:CL_FRED_SERIES(1.0),CPALTT01DEQ657N,,CPALTT01DEQ657N,,,CPALTT01DEQ657N
+AMD:CL_FRED_SERIES(1.0),CPALTT01USQ657N,,CPALTT01USQ657N,,,CPALTT01USQ657N
+AMD:CL_FRED_SERIES(1.0),CPIAUCSL,,CPIAUCSL,,,CPIAUCSL
+AMD:CL_FRED_SERIES(1.0),CSCICP03ATM665S,,CSCICP03ATM665S,,,CSCICP03ATM665S
+AMD:CL_FRED_SERIES(1.0),CSCICP03DEM665S,,CSCICP03DEM665S,,,CSCICP03DEM665S
+AMD:CL_FRED_SERIES(1.0),CSCICP03USM665S,,CSCICP03USM665S,,,CSCICP03USM665S
+AMD:CL_FRED_SERIES(1.0),DEUPROINDMISMEI,,DEUPROINDMISMEI,,,DEUPROINDMISMEI
+AMD:CL_FRED_SERIES(1.0),DEUPROINDQISMEI,,DEUPROINDQISMEI,,,DEUPROINDQISMEI
+AMD:CL_FRED_SERIES(1.0),DEUSARTMISMEI,,DEUSARTMISMEI,,,DEUSARTMISMEI
+AMD:CL_FRED_SERIES(1.0),DEUSARTQISMEI,,DEUSARTQISMEI,,,DEUSARTQISMEI
+AMD:CL_FRED_SERIES(1.0),GS2,,GS2,,,GS2
+AMD:CL_FRED_SERIES(1.0),GS5,,GS5,,,GS5
+AMD:CL_FRED_SERIES(1.0),IGREA,,IGREA,,,IGREA
+AMD:CL_FRED_SERIES(1.0),IR3TIB01ATM156N,,IR3TIB01ATM156N,,,IR3TIB01ATM156N
+AMD:CL_FRED_SERIES(1.0),IR3TIB01ATQ156N,,IR3TIB01ATQ156N,,,IR3TIB01ATQ156N
+AMD:CL_FRED_SERIES(1.0),IR3TIB01DEM156N,,IR3TIB01DEM156N,,,IR3TIB01DEM156N
+AMD:CL_FRED_SERIES(1.0),IR3TIB01DEQ156N,,IR3TIB01DEQ156N,,,IR3TIB01DEQ156N
+AMD:CL_FRED_SERIES(1.0),IR3TIB01USM156N,,IR3TIB01USM156N,,,IR3TIB01USM156N
+AMD:CL_FRED_SERIES(1.0),IR3TIB01USQ156N,,IR3TIB01USQ156N,,,IR3TIB01USQ156N
+AMD:CL_FRED_SERIES(1.0),IRLTLT01ATM156N,,IRLTLT01ATM156N,,,IRLTLT01ATM156N
+AMD:CL_FRED_SERIES(1.0),IRLTLT01ATQ156N,,IRLTLT01ATQ156N,,,IRLTLT01ATQ156N
+AMD:CL_FRED_SERIES(1.0),IRLTLT01DEM156N,,IRLTLT01DEM156N,,,IRLTLT01DEM156N
+AMD:CL_FRED_SERIES(1.0),IRLTLT01DEQ156N,,IRLTLT01DEQ156N,,,IRLTLT01DEQ156N
+AMD:CL_FRED_SERIES(1.0),IRLTLT01USM156N,,IRLTLT01USM156N,,,IRLTLT01USM156N
+AMD:CL_FRED_SERIES(1.0),IRLTLT01USQ156N,,IRLTLT01USQ156N,,,IRLTLT01USQ156N
+AMD:CL_FRED_SERIES(1.0),LREM64TTATQ156S,,LREM64TTATQ156S,,,LREM64TTATQ156S
+AMD:CL_FRED_SERIES(1.0),LREM64TTDEQ156S,,LREM64TTDEQ156S,,,LREM64TTDEQ156S
+AMD:CL_FRED_SERIES(1.0),LREM64TTUSQ156S,,LREM64TTUSQ156S,,,LREM64TTUSQ156S
+AMD:CL_FRED_SERIES(1.0),LRHUTTTTATM156S,,LRHUTTTTATM156S,,,LRHUTTTTATM156S
+AMD:CL_FRED_SERIES(1.0),LRHUTTTTATQ156S,,LRHUTTTTATQ156S,,,LRHUTTTTATQ156S
+AMD:CL_FRED_SERIES(1.0),LRHUTTTTDEM156S,,LRHUTTTTDEM156S,,,LRHUTTTTDEM156S
+AMD:CL_FRED_SERIES(1.0),LRHUTTTTDEQ156S,,LRHUTTTTDEQ156S,,,LRHUTTTTDEQ156S
+AMD:CL_FRED_SERIES(1.0),LRHUTTTTUSM156S,,LRHUTTTTUSM156S,,,LRHUTTTTUSM156S
+AMD:CL_FRED_SERIES(1.0),LRHUTTTTUSQ156S,,LRHUTTTTUSQ156S,,,LRHUTTTTUSQ156S
+AMD:CL_FRED_SERIES(1.0),PAYEMS,,PAYEMS,,,PAYEMS
+AMD:CL_FRED_SERIES(1.0),POPTHM,,POPTHM,,,POPTHM
+AMD:CL_FRED_SERIES(1.0),QATR628BIS,,QATR628BIS,,,QATR628BIS
+AMD:CL_FRED_SERIES(1.0),QDER628BIS,,QDER628BIS,,,QDER628BIS
+AMD:CL_FRED_SERIES(1.0),QUSR628BIS,,QUSR628BIS,,,QUSR628BIS
+AMD:CL_FRED_SERIES(1.0),SPASTT01ATM661N,,SPASTT01ATM661N,,,SPASTT01ATM661N
+AMD:CL_FRED_SERIES(1.0),SPASTT01ATQ661N,,SPASTT01ATQ661N,,,SPASTT01ATQ661N
+AMD:CL_FRED_SERIES(1.0),SPASTT01DEM661N,,SPASTT01DEM661N,,,SPASTT01DEM661N
+AMD:CL_FRED_SERIES(1.0),SPASTT01DEQ661N,,SPASTT01DEQ661N,,,SPASTT01DEQ661N
+AMD:CL_FRED_SERIES(1.0),SPASTT01USM661N,,SPASTT01USM661N,,,SPASTT01USM661N
+AMD:CL_FRED_SERIES(1.0),SPASTT01USQ661N,,SPASTT01USQ661N,,,SPASTT01USQ661N
+AMD:CL_FRED_SERIES(1.0),ULQEUL01ATQ657S,,ULQEUL01ATQ657S,,,ULQEUL01ATQ657S
+AMD:CL_FRED_SERIES(1.0),ULQEUL01DEQ657S,,ULQEUL01DEQ657S,,,ULQEUL01DEQ657S
+AMD:CL_FRED_SERIES(1.0),ULQEUL01USQ657S,,ULQEUL01USQ657S,,,ULQEUL01USQ657S
+AMD:CL_FRED_SERIES(1.0),USAPROINDMISMEI,,USAPROINDMISMEI,,,USAPROINDMISMEI
+AMD:CL_FRED_SERIES(1.0),USAPROINDQISMEI,,USAPROINDQISMEI,,,USAPROINDQISMEI
+AMD:CL_FRED_SERIES(1.0),USASARTMISMEI,,USASARTMISMEI,,,USASARTMISMEI
+AMD:CL_FRED_SERIES(1.0),USASARTQISMEI,,USASARTQISMEI,,,USASARTQISMEI
+AMD:CL_FRED_SERIES(1.0),WPUIP2311001,,WPUIP2311001,,,WPUIP2311001
+AMD:CL_FRED_SERIES(1.0),WTISPLC,,WTISPLC,,,WTISPLC
+AMD:CL_FRED_SERIES(1.0),WUIAUT,,WUIAUT,,,WUIAUT
+AMD:CL_FRED_SERIES(1.0),WUIDEU,,WUIDEU,,,WUIDEU
+AMD:CL_FRED_SERIES(1.0),WUIUSA,,WUIUSA,,,WUIUSA
+AMD:CL_SURVEY(1.0),INDU,,Industry,Industrie,,INDU
+AMD:CL_SURVEY(1.0),SERV,,Services,Dienstleistungen,,SERV
+AMD:CL_SURVEY(1.0),CONS,,Consumers,Verbraucher,,CONS
+AMD:CL_SURVEY(1.0),RETA,,Retail trade,Einzelhandel,,RETA
+AMD:CL_SURVEY(1.0),BUIL,,Construction,Bau,,BUIL
+AMD:CL_SURVEY(1.0),ESI,,Economic Sentiment Indicator,Indikator der wirtschaftlichen Einschätzung,,ESI
+AMD:CL_SURVEY(1.0),EEI,,Employment Expectations Indicator,Beschäftigungserwartungsindikator,,EEI
+AMD:CL_ACTIVITY(1.0),_T,,Total,Insgesamt,All activities covered by the survey,TOT
+AMD:CL_QUESTION(1.0),1,,Question 1,Frage 1,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,1
+AMD:CL_QUESTION(1.0),2,,Question 2,Frage 2,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,2
+AMD:CL_QUESTION(1.0),3,,Question 3,Frage 3,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,3
+AMD:CL_QUESTION(1.0),4,,Question 4,Frage 4,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,4
+AMD:CL_QUESTION(1.0),5,,Question 5,Frage 5,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,5
+AMD:CL_QUESTION(1.0),6,,Question 6,Frage 6,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,6
+AMD:CL_QUESTION(1.0),7,,Question 7,Frage 7,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,7
+AMD:CL_QUESTION(1.0),8,,Question 8,Frage 8,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,8
+AMD:CL_QUESTION(1.0),9,,Question 9,Frage 9,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,9
+AMD:CL_QUESTION(1.0),11,,Question 11,Frage 11,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,11
+AMD:CL_QUESTION(1.0),12,,Question 12,Frage 12,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,12
+AMD:CL_QUESTION(1.0),13,,Question 13,Frage 13,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,13
+AMD:CL_QUESTION(1.0),14,,Question 14,Frage 14,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,14
+AMD:CL_QUESTION(1.0),15,,Question 15,Frage 15,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,15
+AMD:CL_QUESTION(1.0),16,,Question 16,Frage 16,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,16
+AMD:CL_QUESTION(1.0),COF,,Confidence indicator,Vertrauensindikator,Question number as the survey questionnaire numbers it; the question's wording depends on SURVEY,COF
+AMD:CL_QUESTION(1.0),_Z,,Not applicable,Nicht zutreffend,"Composite indicators (ESI, EEI)",
+AMD:CL_ANSWER(1.0),BS,,Balance,Saldo,Answer code as the survey workbook's column name has it,BS
+AMD:CL_ANSWER(1.0),F1S,,Answer F1S,Antwort F1S,Answer code as the survey workbook's column name has it,F1S
+AMD:CL_ANSWER(1.0),F2S,,Answer F2S,Antwort F2S,Answer code as the survey workbook's column name has it,F2S
+AMD:CL_ANSWER(1.0),F3S,,Answer F3S,Antwort F3S,Answer code as the survey workbook's column name has it,F3S
+AMD:CL_ANSWER(1.0),F4S,,Answer F4S,Antwort F4S,Answer code as the survey workbook's column name has it,F4S
+AMD:CL_ANSWER(1.0),F5S,,Answer F5S,Antwort F5S,Answer code as the survey workbook's column name has it,F5S
+AMD:CL_ANSWER(1.0),F6S,,Answer F6S,Antwort F6S,Answer code as the survey workbook's column name has it,F6S
+AMD:CL_ANSWER(1.0),F7S,,Answer F7S,Antwort F7S,Answer code as the survey workbook's column name has it,F7S
+AMD:CL_ANSWER(1.0),QPS,,Answer QPS,Antwort QPS,Answer code as the survey workbook's column name has it,QPS
+AMD:CL_ANSWER(1.0),_Z,,Not applicable,Nicht zutreffend,"Composite indicators (ESI, EEI)",
+AMD:CL_OENB_DATASET(1.0),23,,Interest rates of credit institutions,Zinssätze der Kreditinstitute,OeNB web service data set (oenb.toc()),23
+AMD:CL_OENB_DATASET(1.0),100140002,,Loans and deposits of MFIs,Kredite und Einlagen der MFIs,OeNB web service data set (oenb.toc()),100140002
+AMD:CL_OENB_DATASET(1.0),901,,Balance of payments and international investment position,Zahlungsbilanz und internationale Vermögensposition,OeNB web service data set (oenb.toc()),901
+AMD:CL_OENB_DATASET(1.0),902,,Direct investment,Direktinvestitionen,OeNB web service data set (oenb.toc()),902
+AMD:CL_OENB_POSITION(1.0),VDBZSBSZN10010,,IR: loans for housing purpose to households in euro area - new business,,fetched today (mortgage_rate_oenb),VDBZSBSZN10010
+AMD:CL_OENB_POSITION(1.0),VDBMSKNWOHNBAU,,New loans (excl revolving loans) for housing purposes,,fetched today (mortgage_new_lending_oenb),VDBMSKNWOHNBAU
+AMD:CL_OENB_POSITION(1.0),VDBDSA5___KSALD___UP,,Inward direct investment excl. SPEs and real estate (stocks),,proposed: FDI topic,VDBDSA5---KSALD---UP
+AMD:CL_OENB_POSITION(1.0),VDBDFA5___KSALD___UP,,Inward direct investment excl. SPEs and real estate (flows),,proposed: FDI topic,VDBDFA5---KSALD---UP
+AMD:CL_TICKER(1.0),ATX,,Austrian Traded Index,Austrian Traded Index,,^ATX
+AMD:CL_PRICE_TYPE(1.0),CLOSE,,Closing price,Schlusskurs,,
+AMD:CL_LOCATION(1.0),VIENNA,,Vienna,,"City centre in AUT, latitude 48.21, longitude 16.37 (R/weather.R)",Vienna
+AMD:CL_LOCATION(1.0),GRAZ,,Graz,,"City centre in AUT, latitude 47.07, longitude 15.44 (R/weather.R)",Graz
+AMD:CL_LOCATION(1.0),LINZ,,Linz,,"City centre in AUT, latitude 48.31, longitude 14.29 (R/weather.R)",Linz
+AMD:CL_LOCATION(1.0),SALZBURG,,Salzburg,,"City centre in AUT, latitude 47.81, longitude 13.04 (R/weather.R)",Salzburg
+AMD:CL_LOCATION(1.0),INNSBRUCK,,Innsbruck,,"City centre in AUT, latitude 47.27, longitude 11.39 (R/weather.R)",Innsbruck
+AMD:CL_LOCATION(1.0),KLAGENFURT,,Klagenfurt,,"City centre in AUT, latitude 46.62, longitude 14.31 (R/weather.R)",Klagenfurt
+AMD:CL_LOCATION(1.0),BERLIN,,Berlin,,"City centre in DEU, latitude 52.52, longitude 13.40 (R/weather.R)",Berlin
+AMD:CL_LOCATION(1.0),HAMBURG,,Hamburg,,"City centre in DEU, latitude 53.55, longitude 9.99 (R/weather.R)",Hamburg
+AMD:CL_LOCATION(1.0),MUNICH,,Munich,,"City centre in DEU, latitude 48.14, longitude 11.58 (R/weather.R)",Munich
+AMD:CL_LOCATION(1.0),COLOGNE,,Cologne,,"City centre in DEU, latitude 50.94, longitude 6.96 (R/weather.R)",Cologne
+AMD:CL_LOCATION(1.0),FRANKFURT,,Frankfurt,,"City centre in DEU, latitude 50.11, longitude 8.68 (R/weather.R)",Frankfurt
+AMD:CL_LOCATION(1.0),STUTTGART,,Stuttgart,,"City centre in DEU, latitude 48.78, longitude 9.18 (R/weather.R)",Stuttgart
+AMD:CL_LOCATION(1.0),DUESSELDORF,,Duesseldorf,,"City centre in DEU, latitude 51.23, longitude 6.78 (R/weather.R)",Duesseldorf
+AMD:CL_LOCATION(1.0),LEIPZIG,,Leipzig,,"City centre in DEU, latitude 51.34, longitude 12.37 (R/weather.R)",Leipzig
+AMD:CL_LOCATION(1.0),NEW_YORK,,New York,,"City centre in USA, latitude 40.71, longitude -74.01 (R/weather.R)",New York
+AMD:CL_LOCATION(1.0),LOS_ANGELES,,Los Angeles,,"City centre in USA, latitude 34.05, longitude -118.24 (R/weather.R)",Los Angeles
+AMD:CL_LOCATION(1.0),CHICAGO,,Chicago,,"City centre in USA, latitude 41.88, longitude -87.63 (R/weather.R)",Chicago
+AMD:CL_LOCATION(1.0),DALLAS,,Dallas,,"City centre in USA, latitude 32.78, longitude -96.80 (R/weather.R)",Dallas
+AMD:CL_LOCATION(1.0),HOUSTON,,Houston,,"City centre in USA, latitude 29.76, longitude -95.37 (R/weather.R)",Houston
+AMD:CL_LOCATION(1.0),WASHINGTON,,Washington,,"City centre in USA, latitude 38.91, longitude -77.04 (R/weather.R)",Washington
+AMD:CL_LOCATION(1.0),PHILADELPHIA,,Philadelphia,,"City centre in USA, latitude 39.95, longitude -75.17 (R/weather.R)",Philadelphia
+AMD:CL_LOCATION(1.0),MIAMI,,Miami,,"City centre in USA, latitude 25.76, longitude -80.19 (R/weather.R)",Miami
+AMD:CL_LOCATION(1.0),ATLANTA,,Atlanta,,"City centre in USA, latitude 33.75, longitude -84.39 (R/weather.R)",Atlanta
+AMD:CL_LOCATION(1.0),BOSTON,,Boston,,"City centre in USA, latitude 42.36, longitude -71.06 (R/weather.R)",Boston
+AMD:CL_LOCATION(1.0),PHOENIX,,Phoenix,,"City centre in USA, latitude 33.45, longitude -112.07 (R/weather.R)",Phoenix
+AMD:CL_LOCATION(1.0),SAN_FRANCISCO,,San Francisco,,"City centre in USA, latitude 37.77, longitude -122.42 (R/weather.R)",San Francisco
+AMD:CL_LOCATION(1.0),SEATTLE,,Seattle,,"City centre in USA, latitude 47.61, longitude -122.33 (R/weather.R)",Seattle
+AMD:CL_LOCATION(1.0),MINNEAPOLIS,,Minneapolis,,"City centre in USA, latitude 44.98, longitude -93.27 (R/weather.R)",Minneapolis
+AMD:CL_LOCATION(1.0),DENVER,,Denver,,"City centre in USA, latitude 39.74, longitude -104.99 (R/weather.R)",Denver
+AMD:CL_VARIABLE(1.0),TEMPERATURE_2M_MEAN,,Mean air temperature 2 m above ground,Mittlere Lufttemperatur 2 m über Grund,"Degrees Celsius, daily mean",temperature_2m_mean
+AMD:CL_GPR_INDEX(1.0),GPR,,Geopolitical risk index (world),Index des geopolitischen Risikos (Welt),,GPR
+AMD:CL_GPR_INDEX(1.0),GPRC,,Country geopolitical risk index,Länderindex des geopolitischen Risikos,,GPRC
+AMD:CL_EVENT(1.0),KIMV_ANNOUNCEMENT,,KIM-V announced,KIM-V angekündigt,"FMSG recommends legally binding borrower-based measures for residential real estate lending, which the FMA implements as KIM-V.",kimv_announcement
+AMD:CL_EVENT(1.0),KIMV,,KIM-V in force,KIM-V in Kraft,"KIM-V in force: LTV at most 90% (20% exemption), DSTI at most 40% (10%), maturity at most 35 years (5%) for new residential real estate loans to households.",kimv
+AMD:CL_EVENT(1.0),KIMV_BRIDGING_EXEMPTION,,KIM-V: bridging-loan exemption,KIM-V: Ausnahme für Zwischenfinanzierungen,"KIM-V amendment: bridging loans and non-repayable government grants excluded; de minimis threshold for couples raised to EUR 100,000.",kimv_bridging_exemption
+AMD:CL_EVENT(1.0),KIMV_SINGLE_EXEMPTION_BUCKET,,KIM-V: single exemption bucket,KIM-V: gemeinsames Ausnahmekontingent,KIM-V amendment: the separate exemption buckets merged into one institution-specific bucket of 20% of new lending volume.,kimv_single_exemption_bucket
+AMD:CL_EVENT(1.0),SYRB_RRE_ORDER,,Sectoral systemic risk buffer on residential real estate ordered,Sektoraler Systemrisikopuffer für Wohnimmobilienkredite angeordnet,"BaFin orders a sectoral systemic risk buffer of 2% of risk-weighted assets on loans secured by residential real estate, to be met in full from 1 February 2023.",syrb_rre_order
+AMD:CL_EVENT(1.0),SYRB_RRE,,Sectoral systemic risk buffer on residential real estate in force,Sektoraler Systemrisikopuffer für Wohnimmobilienkredite in Kraft,"Sectoral systemic risk buffer on residential real estate loans binding (2% until April 2025, 1% from May 2025; see syrb_rre_cut).",syrb_rre
+AMD:CL_EVENT(1.0),SYRB_RRE_CUT,,Sectoral systemic risk buffer on residential real estate reduced,Sektoraler Systemrisikopuffer für Wohnimmobilienkredite gesenkt,BaFin lowers the sectoral systemic risk buffer on residential real estate loans from 2% to 1%.,syrb_rre_cut
+AMD:CL_EVENT_TYPE(1.0),STEP,,Step,Stufe,1 while the measure is in force,step
+AMD:CL_EVENT_TYPE(1.0),IMPULSE,,Impulse,Impuls,1 in the period the event happened,impulse

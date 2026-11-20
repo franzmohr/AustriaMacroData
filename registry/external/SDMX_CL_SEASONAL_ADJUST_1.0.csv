@@ -1,0 +1,12 @@
+id,name_en,parent
+T,Trend,
+C,"Trend-cycle data, calendar adjusted",
+R,"Trend-cycle data, not calendar adjusted",
+K,Calendar component,
+X,Seasonal component,
+M,Seasonal and calendar components,
+I,Irregular component,
+N,Neither seasonally adjusted nor calendar adjusted data,
+S,"Seasonally adjusted data, not calendar adjusted",
+W,"Calendar adjusted data, not seasonally adjusted",
+Y,Calendar and seasonally adjusted data,

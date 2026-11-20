@@ -1,0 +1,900 @@
+id,name_en,parent
+M49,M49 Group,
+000,Total,M49
+001,World,M49
+002,Africa,001
+003,North America,019
+004,Afghanistan,034
+005,South America,419
+006,Asia [former],M49
+007,Europe [former],M49
+008,Albania,039
+009,Oceania,001
+010,Antarctica,001
+011,Western Africa,202
+012,Algeria,015
+013,Central America,419
+014,Eastern Africa,202
+015,Northern Africa,002
+016,American Samoa,061
+017,Middle Africa,202
+018,Southern Africa,202
+019,Americas,001
+020,Andorra,039
+021,Northern America,001
+022,Andorra (France),020
+023,Andorra (Spain),020
+024,Angola,017
+025,South America (Tropical),M49
+026,South America (Temperate),M49
+027,"Antarctica, others",010
+028,Antigua and Barbuda,029
+029,Caribbean,419
+030,Eastern Asia,142
+031,Azerbaijan,145
+032,Argentina,005
+033,Southern Asia [former],M49
+034,Southern Asia,142
+035,South-eastern Asia,142
+036,Australia,053
+037,Western Asia [former],M49
+038,Western Europe [former],M49
+039,Southern Europe,150
+040,Austria,155
+041,Eastern Europe [former],M49
+042,Northern Europe [former],M49
+043,Europe (exc. Transition Economies),M49
+044,Bahamas,029
+045,Melanesia [former],M49
+046,Micronesia-Polynesia [former],M49
+047,Micronesia [former],M49
+048,Bahrain,145
+049,Polynesia [former],M49
+050,Bangladesh,034
+051,Armenia,145
+052,Barbados,029
+053,Australia and New Zealand,009
+054,Melanesia,009
+055,Micronesia-Polynesia,009
+056,Belgium,155
+057,Micronesia,009
+058,Belgium-Luxembourg,154
+059,Benelux Economic Union,M49
+060,Bermuda,021
+061,Polynesia,009
+062,South-central Asia,142
+063,Andean Common Market (ANCOM),M49
+064,Bhutan,034
+065,ASEAN Free Trade Area (AFTA),M49
+066,Asia-Pacific Economic Cooperation (APEC),M49
+067,European Economic Area (EEA),M49
+068,Bolivia (Plurinational State of),005
+069,Southern Common Market (MERCOSUR),M49
+070,Bosnia and Herzegovina,039
+071,North American Free Trade Agreement (NAFTA),M49
+072,Botswana,018
+073,Association of Southeast Asian Nations (ASEAN),M49
+074,Bouvet Island,005
+076,Brazil,005
+080,British Antarctic Territory [former],010
+081,Antarctic Fisheries,010
+084,Belize,013
+086,British Indian Ocean Territory,014
+090,Solomon Islands,054
+092,British Virgin Islands,029
+093,British Virgin Islands (Beef Island),092
+095,Latin American Integration Association (LAIA),M49
+096,Brunei Darussalam,035
+097,European Union (EU),M49
+098,Euro Area,M49
+100,Bulgaria,151
+104,Myanmar,035
+108,Burundi,014
+112,Belarus,151
+116,Cambodia,035
+119,The Lome Convention,M49
+120,Cameroon,017
+121,Cameroon (East),120
+122,Cameroon (West),120
+124,Canada,021
+127,Southern Asia (exc. India),M49
+128,Canton and Enderbury Islands [former],296
+129,Caribbean not elsewhere specified,029
+130,Caribbean Community and Common Market (CARICOM),M49
+131,Organization of Eastern Caribbean States (OECS),M49
+132,Cabo Verde,011
+133,Caroline Islands [former],057
+134,Caucasus,M49
+135,Caucasus and Central Asia,M49
+136,Cayman Islands,029
+140,Central African Republic,017
+141,Central America not elsewhere specified,013
+142,Asia,001
+143,Central Asia,142
+144,Sri Lanka,034
+145,Western Asia,142
+147,Developed economies - Asia and Oceania,M49
+148,Chad,017
+150,Europe,001
+151,Eastern Europe,150
+152,Chile,005
+153,Chile (Easter Island),152
+154,Northern Europe,150
+155,Western Europe,150
+156,China,030
+157,China (inc. Taiwan province),030
+158,Taiwan Province of China,030
+160,South-Eastern Europe,M49
+161,South-Eastern Europe & CIS,M49
+162,Christmas Island,053
+166,Cocos (Keeling) Islands,053
+170,Colombia,005
+171,Common Market for Eastern and Southern Africa (COMESA),M49
+172,Commonwealth of Independent States (CIS),M49
+173,CIS in Europe,M49
+174,Comoros,014
+175,Mayotte,014
+176,CIS in Asia,M49
+178,Congo,017
+180,Democratic Republic of the Congo,017
+184,Cook Islands,061
+185,Cook Islands-Niue,061
+188,Costa Rica,013
+190,Council for Mutual Economic Assistance (CMEA),M49
+191,Croatia,039
+192,Cuba,029
+196,Cyprus,145
+197,European Free Trade Association (EFTA),M49
+198,Organisation for Economic Co-operation and Development (OECD),M49
+199,Least Developed Countries (LDCs),M49
+200,Czechoslovakia [former],151
+201,Most seriously affected countries,M49
+202,Sub-Saharan Africa,002
+203,Czechia,151
+204,Benin,011
+208,Denmark,154
+209,Denmark-Greenland-Faroe Islands,154
+212,Dominica,029
+214,Dominican Republic,029
+216,Dronning Maud Land [former],010
+217,East African Community (EAC),M49
+218,Ecuador,005
+219,Eastern Africa not elsewhere specified,014
+220,Eastern Asia not elsewhere specified,030
+221,Eastern Europe not elsewhere specified,151
+222,El Salvador,013
+223,Eastern Asia (exc. Japan and China),M49
+224,European Patent Office (EPO),M49
+225,Eurasian Patent Organization (EAPO),M49
+226,Equatorial Guinea,017
+227,Equatorial Guinea (Rio Muni),226
+228,"Equatorial Guinea (Macias Nguema Biyogo, Bioko)",226
+230,Ethiopia [former],014
+231,Ethiopia,014
+232,Eritrea,014
+233,Estonia,154
+234,Faroe Islands,154
+238,Falkland Islands (Malvinas),005
+239,South Georgia and the South Sandwich Islands,005
+240,Food and Agriculture Organization (FAO),M49
+241,International Fund for Agricultural Development (IFAD),M49
+242,Fiji,054
+246,Finland,154
+248,Åland Islands,154
+249,"France, Metropolitan [former]",250
+250,France,155
+251,France-Monaco,155
+252,France-Switzerland,155
+253,French Antilles [former],029
+254,French Guiana,005
+258,French Polynesia,061
+260,French Southern Territories,014
+262,Djibouti,014
+263,French Equatorial Africa [former],017
+265,French Indo-China [former],035
+266,Gabon,017
+267,French West Africa [former],011
+268,Georgia,145
+270,Gambia,011
+272,General Agreement on Tariffs and Trade (GATT),M49
+273,Palestine Liberation Organization (PLO),M49
+274,State of Palestine (Gaza Strip),275
+275,State of Palestine,145
+276,Germany,155
+278,German Democratic Republic [former],276
+280,"Germany, Federal Republic of [former]",276
+282,"Germany, East Berlin [former]",276
+283,South America not elsewhere specified,005
+284,"Germany, West Berlin [former]",276
+285,Northern Europe not elsewhere specified,154
+286,Polynesia not elsewhere specified,061
+287,Sub-Saharan Africa not elsewhere specified,202
+288,Ghana,011
+289,North America not elsewhere specified,003
+290,Northern Africa not elsewhere specified,015
+291,Central Asia not elsewhere specified,143
+292,Gibraltar,039
+293,Northern America not elsewhere specified,021
+295,Economic Community of the Great Lakes Countries (ECGLC),M49
+296,Kiribati,057
+297,Kiribati (exc. Canton and Enderbury Islands) [former],296
+300,Greece,039
+304,Greenland,021
+308,Grenada,029
+310,Group of 77 (G77),M49
+312,Guadeloupe,029
+316,Guam,057
+320,Guatemala,013
+324,Guinea,011
+325,Cooperation Council for the Arab States of the Gulf (GCC),M49
+328,Guyana,005
+332,Haiti,029
+334,Heard Island and McDonald Islands,053
+336,Holy See,039
+340,Honduras,013
+344,"China, Hong Kong Special Administrative Region",030
+348,Hungary,151
+349,International Atomic Energy Agency (IAEA),M49
+350,International Bank for Reconstruction and Development (IBRD),M49
+351,International Civil Aviation Organization (ICAO),M49
+352,Iceland,154
+353,International Development Association (IDA),M49
+354,International Finance Corporation (IFC),M49
+355,International Labour Organization (ILO),M49
+356,India,034
+357,International Labour Office (ILO) [former],M49
+358,International Monetary Fund (IMF),M49
+359,International Maritime Organization (IMO),M49
+360,Indonesia,035
+361,Indonesia (exc. East Timor) [former],360
+364,Iran (Islamic Republic of),034
+368,Iraq,145
+372,Ireland,154
+375,Organization of the Islamic Conference (OIC),M49
+376,Israel,145
+378,International Trade Centre UNCTAD/GATT (ITC),M49
+380,Italy,039
+381,Italy-San Marino-Holy See,039
+382,Italy-San Marino,039
+384,Côte d’Ivoire,011
+386,International Telecommunication Union (ITU),M49
+388,Jamaica,029
+392,Japan,030
+393,Japan (exc. Okinawa),392
+394,"Japan (exc. Okinawa, Bonin and Volcano Islands)",392
+395,Central American Common Market (CACM),M49
+396,Johnston Island [former],581
+397,Central American Corporation for Air Navigation Services (COCESNA),M49
+398,Kazakhstan,143
+399,Organization of the Petroleum Exporting Countries (OPEC),M49
+400,Jordan,145
+401,Jordan (exc. the West Bank) [former],400
+402,State of Palestine (West Bank),275
+404,Kenya,014
+407,Democratic People's Republic of Korea-Republic of Korea,030
+408,Democratic People's Republic of Korea,030
+410,Republic of Korea,030
+412,Kosovo,039
+414,Kuwait,145
+415,Kuwait (Neutral Zone),414
+416,Kuwait (exc. Neutral Zone),414
+417,Kyrgyzstan,143
+418,Lao People's Democratic Republic,035
+419,Latin America and the Caribbean,001
+420,Latin America,419
+422,Lebanon,145
+423,British Leeward Islands [former],029
+426,Lesotho,018
+428,Latvia,154
+430,Liberia,011
+432,Landlocked developing countries (LLDCs),M49
+434,Libya,015
+438,Liechtenstein,155
+440,Lithuania,154
+442,Luxembourg,155
+446,"China, Macao Special Administrative Region",030
+450,Madagascar,014
+452,Arab Maghreb Union (AMU),M49
+454,Malawi,014
+455,"Federation of Malaya, Sabah, Sarawak and Singapore [former]",035
+457,Malaysia (Sarawak),460
+458,Malaysia,035
+459,Malaysia (Peninsular),458
+460,Malaysia (Sabah and Sarawak),458
+461,Malaysia (Sabah),460
+462,Maldives,034
+466,Mali,011
+470,Malta,039
+471,Central American Common Market (CACM) not elsewhere specified,395
+472,Economic and Monetary Community of Central Africa (EMCCA) not elsewhere specified,692
+473,Latin American Integration Association (LAIA) not elsewhere specified,095
+474,Martinique,029
+476,Mauritania (exc. Spanish Sahara) [former],478
+477,Spanish Sahara (Mauritania part) [former],732
+478,Mauritania,011
+479,Mauritius (Mauritius Island and Rodrigues Island),480
+480,Mauritius,014
+481,Mauritius (Mauritius Island),480
+482,Mauritius (Saint Brandon and Agalega),480
+483,Mauritius (Rodrigues Island),480
+484,Mexico,013
+485,"Western Asia (exc. Armenia, Azerbaijan, Cyprus, Israel and Georgia)",M49
+486,"Western Asia (exc. Armenia, Azerbaijan, Cyprus, Israel and Georgia) not elsewhere specified",145
+487,"Western Asia (exc. Armenia, Azerbaijan, Cyprus, Israel and Georgia) and Egypt",M49
+488,Midway Islands [former],581
+489,Developing economies - Asia,M49
+490,Asia not elsewhere specified,142
+491,Centrally Planned Economies,M49
+492,Monaco,155
+496,Mongolia,030
+497,European Union (EU) not elsewhere specified,097
+498,Republic of Moldova,151
+499,Montenegro,039
+500,Montserrat,029
+501,Arab World,M49
+502,League of Arab States (LAS),M49
+504,Morocco,015
+505,Morocco (excl. Ifni),504
+506,Morocco (Ifni),504
+507,Spanish Sahara (Moroccan part) [former],732
+508,Mozambique,014
+512,Oman,145
+513,Northern America and Europe,001
+514,"Developed regions (Europe, Cyprus, Israel, Northern America, Japan, Australia & New Zealand)",M49
+515,Developing regions,M49
+516,Namibia,018
+517,Developing economies - Southern Africa,M49
+518,Eastern Asia (exc. Japan),M49
+519,Developing economies - Northern America,M49
+520,Nauru,057
+521,Near East,M49
+522,Near East in Asia,M49
+523,Near East in Africa,M49
+524,Nepal,034
+525,Developing economies - Americas,M49
+526,Developing economies - Other America,M49
+527,Oceania not elsewhere specified,009
+528,Netherlands,155
+529,Developing economies not elsewhere specified,545
+530,"Netherlands Antilles [former, 1986 to 2010]",029
+531,Curaçao,029
+532,"Netherlands Antilles [former, pre-1986]",029
+533,Aruba,029
+534,Sint Maarten (Dutch part),029
+535,"Bonaire, Sint Eustatius and Saba",029
+536,Neutral Zone (Saudi Arabia and Iraq) [former],145
+537,Developing economies - Africa,M49
+538,Developing economies - North America,M49
+539,Developing economies - South America,M49
+540,New Caledonia,054
+541,Developing economies - Asia,M49
+542,Developing economies - Europe,M49
+543,Oceania (exc. Australia and New Zealand),009
+544,New Guinea (Trust Territory) [former],598
+545,Developing economies - Total,M49
+546,New Hebrides (French part) [former],548
+547,New Hebrides (British part) [former],548
+548,Vanuatu,054
+550,Developed economies - Asia,M49
+551,Developed economies - Europe,M49
+552,Developed economies - Oceania,M49
+553,Developed economies - Total,M49
+554,New Zealand,053
+555,New Zealand-Tokelau,053
+556,Antarctica (Ross Dependency),010
+557,Developed economies not elsewhere specified,553
+558,Nicaragua,013
+559,Centrally Planned Economies - Asia [former],M49
+560,Centrally Planned Economies - Europe [former],M49
+561,Centrally Planned Economies - Total [former],M49
+562,Niger,011
+563,Centrally Planned Economies - Europe and USSR [former],M49
+564,Centrally Planned Economies - Total excluding USSR [former],M49
+565,Centrally Planned Economies not elsewhere specified [former],561
+566,Nigeria,011
+568,Europe not elsewhere specified,150
+569,Centrally Planned Economies - Europe not elsewhere specified [former],560
+570,Niue,061
+571,American Oceania,M49
+572,Australian Oceania,M49
+573,New Zealand Oceania,M49
+574,Norfolk Island,053
+575,North West Africa,M49
+577,Africa not elsewhere specified,002
+578,Norway,154
+579,Norway-Svalbard and Jan Mayen Islands,154
+580,Northern Mariana Islands,057
+581,United States minor outlying islands,057
+582,Pacific Islands (Trust Territory) [former],057
+583,Micronesia (Federated States of),057
+584,Marshall Islands,057
+585,Palau,057
+586,Pakistan,034
+588,East and West Pakistan [former],034
+590,Panama (exc. Canal Zone) [former],591
+591,Panama,013
+592,Panama Canal Zone [former],591
+593,Development Assistance Committee (DAC),M49
+594,Commonwealth of Nations,M49
+595,Bangkok Agreement,M49
+596,Papua [former],598
+597,Andean Integration Group,M49
+598,Papua New Guinea,054
+600,Paraguay,005
+602,Patent Cooperation Treaty (PCT),M49
+604,Peru,005
+608,Philippines,035
+612,Pitcairn,061
+616,Poland,151
+620,Portugal,039
+624,Guinea-Bissau,011
+626,Timor-Leste,035
+627,Preferential Trade Area for Eastern and Southern African States (PTA),M49
+630,Puerto Rico,029
+633,FAO Regional Office for Asia and the Pacific (RAPA),M49
+634,Qatar,145
+636,Americas not elsewhere specified,019
+637,Northern and Central America not elsewhere specified,003
+638,Réunion,014
+642,Romania,151
+643,Russian Federation,151
+644,Caribbean Development Bank (CDB),M49
+645,Ruanda-Urundi [former],014
+646,Rwanda,014
+647,Japan (Okinawa),392
+648,African Development Bank (AfDB),M49
+649,Asian Development Bank (ADB),M49
+650,Ryukyu Islands [former],392
+651,Inter-American Development Bank (IDB),M49
+652,Saint Barthélemy,029
+653,Saint Helena (exc. Dependencies),654
+654,Saint Helena,011
+655,Saint Helena (Ascension),654
+656,Saint Helena (Tristan da Cunha),654
+657,"Saint Helena, others",654
+658,Saint Kitts-Nevis-Anguilla [former],029
+659,Saint Kitts and Nevis,029
+660,Anguilla,029
+662,Saint Lucia,029
+663,Saint Martin (French Part),029
+666,Saint Pierre and Miquelon,021
+667,"Bonaire, Sint Eustatius and Saba (Saba)",535
+668,"Bonaire, Sint Eustatius and Saba (Sint Eustatius)",535
+669,"Bonaire, Sint Eustatius and Saba (Bonaire)",535
+670,Saint Vincent and the Grenadines,029
+674,San Marino,039
+678,Sao Tome and Principe,017
+680,Sark,154
+682,Saudi Arabia,145
+684,Saudi Arabia (Neutral Zone),682
+685,Denmark-Norway-Sweden,154
+686,Senegal,011
+688,Serbia,039
+689,Bank for International Settlements (BIS),M49
+690,Seychelles,014
+692,Economic and Monetary Community of Central Africa (EMCCA),M49
+693,West African Economic Community (WAEC),M49
+694,Sierra Leone,011
+695,Mano River Union (MRU),M49
+697,European Free Trade Association (EFTA) not elsewhere specified,197
+698,Sikkim [former],356
+699,India (exc. Sikkim) [former],356
+702,Singapore,035
+703,Slovakia,151
+704,Viet Nam,035
+705,Slovenia,039
+706,Somalia,014
+707,"Somaliland Protectorate, British [former]",706
+708,Italian Trusteeship Territory of Somalia [former],706
+709,South-eastern Asia not elsewhere specified,035
+710,South Africa,018
+711,Southern African Customs Union (SACU),M49
+712,South Africa-Namibia,018
+713,Southern Africa not elsewhere specified,018
+714,Southern Asia not elsewhere specified,034
+715,Southern Europe not elsewhere specified,039
+716,Zimbabwe,014
+717,Rhodesia-Nyasaland [former],014
+718,"Australia, New Zealand and South Africa",M49
+719,"Israel, Japan and South Africa",M49
+720,Democratic Yemen [former],887
+722,Small island developing States (SIDS),M49
+724,Spain,039
+725,Spain (Canary Islands),724
+727,Ceuta and Melilla (Spanish North Africa),724
+728,South Sudan,014
+729,Sudan,015
+730,Economic and Social Commission for Asia and the Pacific (ESCAP),M49
+731,Economic and Social Commission for Western Asia (ESCWA),M49
+732,Western Sahara,015
+733,Economic Commission for Africa (ECA),M49
+734,Economic Commission for Europe (ECE),M49
+735,Economic Commission for Latin America and the Caribbean (ECLAC),M49
+736,Sudan [former],014
+738,Sub-Saharan Africa (inc. Sudan),M49
+740,Suriname,005
+741,Latin America and the Caribbean not elsewhere specified,419
+742,Eastern and South-eastern Asia and Oceania,001
+743,Southern Asia (exc. Iran),M49
+744,Svalbard and Jan Mayen Islands,154
+745,Europe and Central Asia,M49
+746,Northern Africa (exc. Sudan),M49
+747,Northern Africa and Western Asia,001
+748,Eswatini,018
+749,South Asian Association for Regional Cooperation (SAARC),M49
+750,South Pacific Commission (SPC),M49
+751,South Pacific Bureau for Economic Cooperation (SPEC),M49
+752,Sweden,154
+753,Eastern and South-Eastern Asia,142
+756,Switzerland,155
+757,Switzerland-Liechtenstein,155
+760,Syrian Arab Republic,145
+762,Tajikistan,143
+764,Thailand,035
+768,Togo,011
+772,Tokelau,061
+776,Tonga,061
+778,Transition countries,M49
+780,Trinidad and Tobago,029
+783,Egypt (Suez Canal),818
+784,United Arab Emirates,145
+785,United Arab Emirates (Abu Dhabi),784
+786,United Arab Emirates (Dubai),784
+787,United Arab Emirates (Sharjah),784
+788,Tunisia,015
+789,United Arab Emirates (Ajman),784
+790,United Arab Emirates (Fujairah),784
+791,United Arab Emirates (Umm al Qaiwain),784
+792,Türkiye,145
+793,United Arab Emirates (Ras al Khaimah),784
+795,Turkmenistan,143
+796,Turks and Caicos Islands,029
+798,Tuvalu,061
+800,Uganda,014
+804,Ukraine,151
+806,"United Nations Educational, Scientific and Cultural Organization (UNESCO)",M49
+807,Republic of North Macedonia,039
+808,United Nations Children's Fund (UNICEF),M49
+809,United Nations Industrial Development Organization (UNIDO),M49
+810,Union of Soviet Socialist Republics [former],001
+811,"Union of Soviet Socialist Republics, others",810
+813,United Nations Development Programme (UNDP),M49
+814,United Nations Conference on Trade and Development (UNCTAD),M49
+815,United Nations Environment Programme (UNEP),M49
+816,United Nations Centre for Human Settlements (UNCHS) (Habitat),M49
+818,Egypt,015
+819,United Nations High Commissioner for Refugees (UNHCR),M49
+820,United Nations Relief and Works Agency for Palestine Refugees in the Near East (UNRWA),M49
+821,United Nations Disaster Relief Organization (UNDRO),M49
+823,United Nations Population Fund (UNFPA),M49
+824,United Kingdom of Great Britain and Northern Ireland (England),827
+825,United Kingdom of Great Britain and Northern Ireland (Wales),827
+826,United Kingdom of Great Britain and Northern Ireland,154
+827,United Kingdom of Great Britain and Northern Ireland (England and Wales),826
+828,United Kingdom of Great Britain and Northern Ireland (Northern Ireland),826
+829,United Kingdom of Great Britain and Northern Ireland (Scotland),826
+830,Channel Islands,154
+831,Guernsey,154
+832,Jersey,154
+833,Isle of Man,154
+834,United Republic of Tanzania,014
+835,United Republic of Tanzania (mainland),834
+836,United Republic of Tanzania (Zanzibar),834
+837,"Bunkers, ship stores",M49
+838,Free zones,M49
+839,Undisclosed (Special categories),M49
+840,United States of America,021
+841,United States of America-Puerto Rico,021
+842,United States of America-Puerto Rico-United States Virgin Islands,021
+843,United Nations Institute for Training and Research (UNITAR),M49
+844,United Nations University (UNU),M49
+847,United States miscellaneous Pacific Islands [former] (Kingman Reef),849
+848,United States miscellaneous Pacific Islands [former] (Palmyra Atoll),849
+849,United States miscellaneous Pacific Islands [former],581
+850,United States Virgin Islands,029
+851,United States Virgin Islands (Saint Croix),850
+852,United States Virgin Islands (Saint John),850
+853,United States Virgin Islands (Saint Thomas),850
+854,Burkina Faso,011
+855,"United States Virgin Islands, others",850
+857,Universal Postal Union (UPU),M49
+858,Uruguay,005
+860,Uzbekistan,143
+862,Venezuela (Bolivarian Republic of),005
+866,"Viet Nam, Democratic Republic of [former]",704
+868,"South Viet-Nam, Republic of [former]",704
+869,World Intellectual Property Organization (WIPO),M49
+870,African Intellectual Property Organization (OAPI),M49
+871,African Regional Intellectual Property Organization (ARIPO),M49
+872,Wake Island [former],581
+873,World Food Conference (WFC),M49
+874,World Food Programme (WFP),M49
+875,Western Africa not elsewhere specified,011
+876,Wallis and Futuna Islands,061
+877,British West Indies [former],029
+878,West Indies Associated States,M49
+879,Western Asia not elsewhere specified,145
+880,World Health Organization (WHO),M49
+881,Western Europe not elsewhere specified,155
+882,Samoa,061
+883,British Windward Islands [former],029
+884,Yaounde Treaty States,M49
+885,World Meteorological Organization (WMO),M49
+886,Yemen [former],887
+887,Yemen,145
+888,World Bank (WB),M49
+889,World Trade Organization (WTO),M49
+890,Yugoslavia [former],039
+891,Serbia and Montenegro [former],039
+892,Economic Community of West African States (ECOWAS),M49
+894,Zambia,014
+896,Areas not elsewhere specified,M49
+898,Areas not specified,M49
+899,Areas not elsewhere specified and unknown,M49
+ISO3166_2,ISO Group,
+AF,Afghanistan,ISO3166_2
+AL,Albania,ISO3166_2
+AQ,Antarctica,ISO3166_2
+DZ,Algeria,ISO3166_2
+AS,American Samoa,ISO3166_2
+AD,Andorra,ISO3166_2
+AO,Angola,ISO3166_2
+AG,Antigua and Barbuda,ISO3166_2
+AZ,Azerbaijan,ISO3166_2
+AR,Argentina,ISO3166_2
+AU,Australia,ISO3166_2
+AT,Austria,ISO3166_2
+BS,Bahamas,ISO3166_2
+BH,Bahrain,ISO3166_2
+BD,Bangladesh,ISO3166_2
+AM,Armenia,ISO3166_2
+BB,Barbados,ISO3166_2
+BE,Belgium,ISO3166_2
+BM,Bermuda,ISO3166_2
+BT,Bhutan,ISO3166_2
+BO,Bolivia (Plurinational State of),ISO3166_2
+BA,Bosnia and Herzegovina,ISO3166_2
+BW,Botswana,ISO3166_2
+BV,Bouvet Island,ISO3166_2
+BR,Brazil,ISO3166_2
+BZ,Belize,ISO3166_2
+IO,British Indian Ocean Territory,ISO3166_2
+SB,Solomon Islands,ISO3166_2
+VG,British Virgin Islands,ISO3166_2
+BN,Brunei Darussalam,ISO3166_2
+BG,Bulgaria,ISO3166_2
+MM,Myanmar,ISO3166_2
+BI,Burundi,ISO3166_2
+BY,Belarus,ISO3166_2
+KH,Cambodia,ISO3166_2
+CM,Cameroon,ISO3166_2
+CA,Canada,ISO3166_2
+CT,Canton and Enderbury Islands [former],ISO3166_2
+CV,Cabo Verde,ISO3166_2
+KY,Cayman Islands,ISO3166_2
+CF,Central African Republic,ISO3166_2
+LK,Sri Lanka,ISO3166_2
+TD,Chad,ISO3166_2
+CL,Chile,ISO3166_2
+CN,China,ISO3166_2
+TW,Taiwan Province of China,ISO3166_2
+CX,Christmas Island,ISO3166_2
+CC,Cocos (Keeling) Islands,ISO3166_2
+CO,Colombia,ISO3166_2
+KM,Comoros,ISO3166_2
+YT,Mayotte,ISO3166_2
+CG,Congo,ISO3166_2
+CD,Democratic Republic of the Congo,ISO3166_2
+CK,Cook Islands,ISO3166_2
+CR,Costa Rica,ISO3166_2
+HR,Croatia,ISO3166_2
+CU,Cuba,ISO3166_2
+CY,Cyprus,ISO3166_2
+CS,Czechoslovakia [former],ISO3166_2
+CZ,Czechia,ISO3166_2
+BJ,Benin,ISO3166_2
+DK,Denmark,ISO3166_2
+DM,Dominica,ISO3166_2
+DO,Dominican Republic,ISO3166_2
+NQ,Dronning Maud Land [former],ISO3166_2
+EC,Ecuador,ISO3166_2
+SV,El Salvador,ISO3166_2
+GQ,Equatorial Guinea,ISO3166_2
+ET,Ethiopia,ISO3166_2
+ER,Eritrea,ISO3166_2
+EE,Estonia,ISO3166_2
+FO,Faroe Islands,ISO3166_2
+FK,Falkland Islands (Malvinas),ISO3166_2
+GS,South Georgia and the South Sandwich Islands,ISO3166_2
+FJ,Fiji,ISO3166_2
+FI,Finland,ISO3166_2
+AX,Åland Islands,ISO3166_2
+FX,"France, Metropolitan [former]",ISO3166_2
+FR,France,ISO3166_2
+GF,French Guiana,ISO3166_2
+PF,French Polynesia,ISO3166_2
+TF,French Southern Territories,ISO3166_2
+DJ,Djibouti,ISO3166_2
+GA,Gabon,ISO3166_2
+GE,Georgia,ISO3166_2
+GM,Gambia,ISO3166_2
+PS,State of Palestine,ISO3166_2
+DE,Germany,ISO3166_2
+DD,German Democratic Republic [former],ISO3166_2
+GH,Ghana,ISO3166_2
+GI,Gibraltar,ISO3166_2
+KI,Kiribati,ISO3166_2
+GR,Greece,ISO3166_2
+GL,Greenland,ISO3166_2
+GD,Grenada,ISO3166_2
+GP,Guadeloupe,ISO3166_2
+GU,Guam,ISO3166_2
+GT,Guatemala,ISO3166_2
+GN,Guinea,ISO3166_2
+GY,Guyana,ISO3166_2
+HT,Haiti,ISO3166_2
+HM,Heard Island and McDonald Islands,ISO3166_2
+VA,Holy See,ISO3166_2
+HN,Honduras,ISO3166_2
+HK,"China, Hong Kong Special Administrative Region",ISO3166_2
+HU,Hungary,ISO3166_2
+IS,Iceland,ISO3166_2
+IN,India,ISO3166_2
+ID,Indonesia,ISO3166_2
+IR,Iran (Islamic Republic of),ISO3166_2
+IQ,Iraq,ISO3166_2
+IE,Ireland,ISO3166_2
+IL,Israel,ISO3166_2
+IT,Italy,ISO3166_2
+CI,Côte d’Ivoire,ISO3166_2
+JM,Jamaica,ISO3166_2
+JP,Japan,ISO3166_2
+JT,Johnston Island [former],ISO3166_2
+KZ,Kazakhstan,ISO3166_2
+JO,Jordan,ISO3166_2
+KE,Kenya,ISO3166_2
+KP,Democratic People's Republic of Korea,ISO3166_2
+KR,Republic of Korea,ISO3166_2
+KW,Kuwait,ISO3166_2
+KG,Kyrgyzstan,ISO3166_2
+LA,Lao People's Democratic Republic,ISO3166_2
+LB,Lebanon,ISO3166_2
+LS,Lesotho,ISO3166_2
+LV,Latvia,ISO3166_2
+LR,Liberia,ISO3166_2
+LY,Libya,ISO3166_2
+LI,Liechtenstein,ISO3166_2
+LT,Lithuania,ISO3166_2
+LU,Luxembourg,ISO3166_2
+MO,"China, Macao Special Administrative Region",ISO3166_2
+MG,Madagascar,ISO3166_2
+MW,Malawi,ISO3166_2
+MY,Malaysia,ISO3166_2
+MV,Maldives,ISO3166_2
+ML,Mali,ISO3166_2
+MT,Malta,ISO3166_2
+MQ,Martinique,ISO3166_2
+MR,Mauritania,ISO3166_2
+MU,Mauritius,ISO3166_2
+MX,Mexico,ISO3166_2
+MI,Midway Islands [former],ISO3166_2
+MC,Monaco,ISO3166_2
+MN,Mongolia,ISO3166_2
+MD,Republic of Moldova,ISO3166_2
+ME,Montenegro,ISO3166_2
+MS,Montserrat,ISO3166_2
+MA,Morocco,ISO3166_2
+MZ,Mozambique,ISO3166_2
+OM,Oman,ISO3166_2
+NA,Namibia,ISO3166_2
+NR,Nauru,ISO3166_2
+NP,Nepal,ISO3166_2
+NL,Netherlands,ISO3166_2
+AN,"Netherlands Antilles [former, 1986 to 2010]",ISO3166_2
+CW,Curaçao,ISO3166_2
+AW,Aruba,ISO3166_2
+SX,Sint Maarten (Dutch part),ISO3166_2
+BQ,"Bonaire, Sint Eustatius and Saba",ISO3166_2
+NT,Neutral Zone (Saudi Arabia and Iraq) [former],ISO3166_2
+NC,New Caledonia,ISO3166_2
+VU,Vanuatu,ISO3166_2
+NZ,New Zealand,ISO3166_2
+NI,Nicaragua,ISO3166_2
+NE,Niger,ISO3166_2
+NG,Nigeria,ISO3166_2
+NU,Niue,ISO3166_2
+NF,Norfolk Island,ISO3166_2
+NO,Norway,ISO3166_2
+MP,Northern Mariana Islands,ISO3166_2
+UM,United States minor outlying islands,ISO3166_2
+PC,Pacific Islands (Trust Territory) [former],ISO3166_2
+FM,Micronesia (Federated States of),ISO3166_2
+MH,Marshall Islands,ISO3166_2
+PW,Palau,ISO3166_2
+PK,Pakistan,ISO3166_2
+PA,Panama,ISO3166_2
+PZ,Panama Canal Zone [former],ISO3166_2
+PG,Papua New Guinea,ISO3166_2
+PY,Paraguay,ISO3166_2
+PE,Peru,ISO3166_2
+PH,Philippines,ISO3166_2
+PN,Pitcairn,ISO3166_2
+PL,Poland,ISO3166_2
+PT,Portugal,ISO3166_2
+GW,Guinea-Bissau,ISO3166_2
+TL,Timor-Leste,ISO3166_2
+PR,Puerto Rico,ISO3166_2
+QA,Qatar,ISO3166_2
+RE,Réunion,ISO3166_2
+RO,Romania,ISO3166_2
+RU,Russian Federation,ISO3166_2
+RW,Rwanda,ISO3166_2
+BL,Saint Barthélemy,ISO3166_2
+SH,Saint Helena,ISO3166_2
+KN,Saint Kitts and Nevis,ISO3166_2
+AI,Anguilla,ISO3166_2
+LC,Saint Lucia,ISO3166_2
+MF,Saint Martin (French Part),ISO3166_2
+PM,Saint Pierre and Miquelon,ISO3166_2
+VC,Saint Vincent and the Grenadines,ISO3166_2
+SM,San Marino,ISO3166_2
+ST,Sao Tome and Principe,ISO3166_2
+SA,Saudi Arabia,ISO3166_2
+SN,Senegal,ISO3166_2
+RS,Serbia,ISO3166_2
+SC,Seychelles,ISO3166_2
+SL,Sierra Leone,ISO3166_2
+SG,Singapore,ISO3166_2
+SK,Slovakia,ISO3166_2
+VN,Viet Nam,ISO3166_2
+SI,Slovenia,ISO3166_2
+SO,Somalia,ISO3166_2
+ZA,South Africa,ISO3166_2
+ZW,Zimbabwe,ISO3166_2
+YD,Democratic Yemen [former],ISO3166_2
+ES,Spain,ISO3166_2
+SS,South Sudan,ISO3166_2
+SD,Sudan,ISO3166_2
+EH,Western Sahara,ISO3166_2
+SR,Suriname,ISO3166_2
+SJ,Svalbard and Jan Mayen Islands,ISO3166_2
+SZ,Eswatini,ISO3166_2
+SE,Sweden,ISO3166_2
+CH,Switzerland,ISO3166_2
+SY,Syrian Arab Republic,ISO3166_2
+TJ,Tajikistan,ISO3166_2
+TH,Thailand,ISO3166_2
+TG,Togo,ISO3166_2
+TK,Tokelau,ISO3166_2
+TO,Tonga,ISO3166_2
+TT,Trinidad and Tobago,ISO3166_2
+AE,United Arab Emirates,ISO3166_2
+TN,Tunisia,ISO3166_2
+TR,Türkiye,ISO3166_2
+TM,Turkmenistan,ISO3166_2
+TC,Turks and Caicos Islands,ISO3166_2
+TV,Tuvalu,ISO3166_2
+UG,Uganda,ISO3166_2
+UA,Ukraine,ISO3166_2
+MK,Republic of North Macedonia,ISO3166_2
+SU,Union of Soviet Socialist Republics [former],ISO3166_2
+EG,Egypt,ISO3166_2
+GB,United Kingdom of Great Britain and Northern Ireland,ISO3166_2
+GG,Guernsey,ISO3166_2
+JE,Jersey,ISO3166_2
+IM,Isle of Man,ISO3166_2
+TZ,United Republic of Tanzania,ISO3166_2
+US,United States of America,ISO3166_2
+PU,United States miscellaneous Pacific Islands [former],ISO3166_2
+VI,United States Virgin Islands,ISO3166_2
+BF,Burkina Faso,ISO3166_2
+UY,Uruguay,ISO3166_2
+UZ,Uzbekistan,ISO3166_2
+VE,Venezuela (Bolivarian Republic of),ISO3166_2
+VD,"Viet Nam, Democratic Republic of [former]",ISO3166_2
+WK,Wake Island [former],ISO3166_2
+WF,Wallis and Futuna Islands,ISO3166_2
+WS,Samoa,ISO3166_2
+YE,Yemen,ISO3166_2
+YU,Serbia and Montenegro [former],ISO3166_2
+ZM,Zambia,ISO3166_2

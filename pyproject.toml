@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "austriamacrodata"
+version = "0.1.0"
+description = "FRED-QD/FRED-MD-style macroeconomic panels for Austria, built as an SDMX pipeline"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.25",
+    "oenb>=0.1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[tool.setuptools.packages.find]
+include = ["amd*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/python"]

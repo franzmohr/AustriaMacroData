@@ -1,0 +1,17 @@
+source_codelist,source_code,REF_AREA,note
+ECB:CL_AREA(1.0),U2,EZ,"Euro area, changing composition"
+ECB:CL_AREA(1.0),I9,EZ,"EA20, fixed composition"
+ECB:CL_AREA(1.0),B0,EU,"EU, changing composition"
+ECB:CL_AREA(1.0),B6,EU,"EU27_2020, fixed composition"
+ECB:CL_AREA(1.0),W0,XW,World
+ESTAT:GEO(28.1),EA,EZ,"Euro area, changing composition"
+ESTAT:GEO(28.1),EA20,EZ,"Euro area, 20 members, fixed composition"
+ESTAT:GEO(28.1),EU27_2020,EU,"EU, 27 members from 2020, fixed composition"
+ESTAT:GEO(28.1),EL,GR,"Greece: Eurostat and the Commission use EL, ISO GR"
+ESTAT:GEO(28.1),UK,GB,"United Kingdom: Eurostat and the Commission use UK, ISO GB"
+BIS:CL_AREA(1.0),XM,EZ,Euro area
+BIS:CL_AREA(1.0),XW,XW,World
+ISO 3166-1 alpha-3,*,*,"OECD, IMF and GPR country codes (AUT, DEU, USA): mapped to alpha-2 by the ISO table, R/country_codes.R today"
+OECD,EA20,EZ,"Euro area, 20 members, fixed composition"
+OECD,EU27_2020,EU,"EU, 27 members from 2020, fixed composition"
+GPR,GPR,XW,"The world index, which the workbook does not code by area"

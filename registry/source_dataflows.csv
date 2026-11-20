@@ -1,0 +1,38 @@
+dataflow,status,checked,answer_layout,note
+ESTAT:NAMQ_10_GDP(1.0),in_use,2026-11-20,SDMX-CSV 1.0,
+ESTAT:NAMQ_10_PE(1.0),in_use,,SDMX-CSV 1.0,Eurostat versions every flow 1.0; not re-checked
+ESTAT:NAMQ_10_LP_ULC(1.0),in_use,,SDMX-CSV 1.0,Eurostat versions every flow 1.0; not re-checked
+ESTAT:NAMQ_10_A10_E(1.0),in_use,,SDMX-CSV 1.0,Eurostat versions every flow 1.0; not re-checked
+ESTAT:NASQ_10_NF_TR(1.0),in_use,,SDMX-CSV 1.0,Eurostat versions every flow 1.0; not re-checked
+ESTAT:GOV_10Q_GGNFA(1.0),in_use,2026-11-20,SDMX-CSV 1.0,
+ESTAT:PRC_HICP_MINR(1.0),in_use,,SDMX-CSV 1.0,Eurostat versions every flow 1.0; not re-checked
+ESTAT:STS_INPR_M(1.0),in_use,,SDMX-CSV 1.0,Eurostat versions every flow 1.0; not re-checked
+ESTAT:STS_INPR_Q(1.0),in_use,,SDMX-CSV 1.0,Eurostat versions every flow 1.0; not re-checked
+ESTAT:STS_TRTU_M(1.0),in_use,,SDMX-CSV 1.0,Eurostat versions every flow 1.0; not re-checked
+ESTAT:STS_TRTU_Q(1.0),in_use,,SDMX-CSV 1.0,Eurostat versions every flow 1.0; not re-checked
+ESTAT:STS_COPI_M(1.0),in_use,,SDMX-CSV 1.0,Eurostat versions every flow 1.0; not re-checked
+ESTAT:STS_COPI_Q(1.0),in_use,,SDMX-CSV 1.0,Eurostat versions every flow 1.0; not re-checked
+ESTAT:UNE_RT_M(1.0),in_use,,SDMX-CSV 1.0,Eurostat versions every flow 1.0; not re-checked
+ESTAT:NRG_CHDD_M(1.0),in_use,,SDMX-CSV 1.0,Eurostat versions every flow 1.0; not re-checked
+ESTAT:BOP_C6_Q(1.0),proposed,2026-11-20,SDMX-CSV 1.0,
+ESTAT:BOP_GDP6_Q(1.0),proposed,2026-11-20,SDMX-CSV 1.0,
+ESTAT:BOP_IIP6_Q(1.0),proposed,2026-11-20,SDMX-CSV 1.0,
+ESTAT:BOP_FDI6_POS(1.0),proposed,2026-11-20,SDMX-CSV 1.0,
+ESTAT:STS_RB_Q(1.0),proposed,2026-11-20,SDMX-CSV 1.0,
+ESTAT:GOV_10DD_EDPT1(1.0),proposed,2026-11-20,SDMX-CSV 1.0,
+ECB:MIR(1.0),in_use,2026-11-20,ECB csvdata,
+ECB:BSI(1.0),in_use,2026-11-20,ECB csvdata,
+ECB:FM(1.0),in_use,2026-11-20,ECB csvdata,
+ECB:IRS(1.0),in_use,2026-11-20,ECB csvdata,
+ECB:CISS(1.0),in_use,2026-11-20,ECB csvdata,Country CISS today; the euro-area series D.U2.Z0Z.4F.EC.SS_CIN.IDX is proposed
+ECB.DISS:QSA_PUB(1.0),in_use,,ECB csvdata,Version as R/ecb.R requests it; not re-checked
+ECB:CBD2(1.0),proposed,2026-11-20,ECB csvdata,Bank indicators. I2100 (cost-income) is published negative: -51.6 for AT in 2026-Q2
+OECD.SDD.NAD:DSD_NAMAIN1@DF_QNA(1.1),in_use,2026-11-20,SDMX-CSV 1.0,
+OECD.SDD.NAD:DSD_NASEC1@DF_QSA(1.1),in_use,2026-11-20,SDMX-CSV 1.0,
+OECD.SDD.NAD:DSD_NAMAIN10@DF_TABLE1_EXPENDITURE(2.0),in_use,2026-11-20,SDMX-CSV 1.0,
+OECD.SDD.STES:DSD_KEI@DF_KEI(4.0),in_use,2026-11-20,SDMX-CSV 1.0,
+OECD.ECO.MAD:DSD_EO@DF_EO(1.5),proposed,2026-11-20,SDMX-CSV 1.0,Economic Outlook forecasts
+BIS:WS_TC(2.0),in_use,,SDMX-CSV 1.0,Version as R/bis.R requests it; not re-checked
+BBK:BBSIS(1.0),in_use,2026-11-20,SDMX-CSV 1.0 (semicolons and a byte-order mark),
+IMF.STA:QNEA(7.0.0),in_use,2026-11-20,SDMX-CSV 2.0,"Answers in SDMX-CSV 2.0 (STRUCTURE[;],STRUCTURE_ID,ACTION) whatever Accept asks for, with ACTION = R; ignored startPeriod"
+IMF.RES:WEO(9.0.0),proposed,2026-11-20,SDMX-CSV 2.0 (assumed as QNEA),"World Economic Outlook; each edition is also its own dataflow, e.g. IMF.RES:WEO_2026_APR_VINTAGE(1.0.0)"
