@@ -9,7 +9,27 @@ eurostat_gdp_fixture <- paste(
   sep = "\n"
 )
 
-eurostat_fault_fixture <- '<?xml version="1.0" encoding="UTF-8"?><S:Fault xmlns:S="http://schemas.xmlsoap.org/soap/envelope/"><faultcode>150</faultcode><faultstring>INVALID_QUERY_DIMENSION_VALUE: Query is invalid as per its structure&apos;s definition.</faultstring></S:Fault>'
+## `fetch_eurostat_anchors()` requests two dataflows, and they declare
+## different key dimension orders -- nasq_10_nf_tr is
+## freq.unit.direct.sector.na_item.s_adj.geo against namq_10_gdp's
+## freq.unit.s_adj.na_item.geo. `fetch_eurostat_text()`
+## (R/eurostat_dimensions.R) checks an answer's dimensions against the
+## order its key was written for, so one fixture standing in for both
+## dataflows would (rightly) stop the fetch. A mock that covers more
+## than one dataflow therefore has to answer each with its own header --
+## as the disposable-income fixtures further down also do, with real
+## values rather than this one row.
+eurostat_nasq_fixture <- paste(
+  "DATAFLOW,LAST UPDATE,freq,unit,direct,sector,na_item,s_adj,geo,TIME_PERIOD,OBS_VALUE,OBS_FLAG,CONF_STATUS",
+  "ESTAT:NASQ_10_NF_TR(1.0),02/10/26 11:00:00,Q,CP_MEUR,RECV,S14_S15,B6G,SCA,AT,2026-Q1,79000,,",
+  sep = "\n"
+)
+
+eurostat_anchors_mock <- function(url, ...) {
+  if (grepl("nasq_10_nf_tr", url, fixed = TRUE)) eurostat_nasq_fixture else eurostat_gdp_fixture
+}
+
+eurostat_fault_fixture <-'<?xml version="1.0" encoding="UTF-8"?><S:Fault xmlns:S="http://schemas.xmlsoap.org/soap/envelope/"><faultcode>150</faultcode><faultstring>INVALID_QUERY_DIMENSION_VALUE: Query is invalid as per its structure&apos;s definition.</faultstring></S:Fault>'
 
 test_that("fetch_eurostat_series parses a successful response into period/value", {
   with_mock_fetch_text(const_fetch_text(eurostat_gdp_fixture), {
@@ -52,7 +72,7 @@ test_that("fetch_eurostat_anchors returns NULL for a non-EU country without any 
 })
 
 test_that("fetch_eurostat_anchors merges multiple concepts into one wide tibble by period", {
-  with_mock_fetch_text(const_fetch_text(eurostat_gdp_fixture), {
+  with_mock_fetch_text(eurostat_anchors_mock, {
     out <- fetch_eurostat_anchors("AUT", start_period = "2026-Q1")
   })
   expect_true("period" %in% names(out))

@@ -102,6 +102,11 @@ R/                          Fetcher library used by build_panels.R,
   country_codes.R           ISO-3166 alpha-3 <-> FRED 2-letter country code;
                              EU membership (`eu_member_countries`) and the
                              Commission's own 2-letter codes (Greece = "EL")
+  eurostat_dimensions.R     The declared key dimension order of every
+                             Eurostat dataflow this project requests, and
+                             the guard (`fetch_eurostat_text()`) that stops
+                             a build when an answer's dimensions are not
+                             the ones its positional key assumed
   eurostat.R                Eurostat Quarterly National Accounts -- PREFERRED
                              anchor-concept source for EU member states;
                              also HICP (cpi_index + 4 sub-categories) and

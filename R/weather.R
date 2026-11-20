@@ -429,7 +429,7 @@ fetch_eurostat_degree_days <- function(country3, start_period = "1980-Q1") {
       eurostat_chdd_dataflow, key, start_month
     )
 
-    txt <- fetch_text(url)
+    txt <- fetch_eurostat_text(url, eurostat_chdd_dataflow, key, label)
     if (is.null(txt)) {
       warning(sprintf("[%s] Eurostat degree-days fetch failed -- URL: %s", label, url))
       next
