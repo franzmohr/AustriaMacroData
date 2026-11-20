@@ -68,11 +68,13 @@
 ec_survey_base_url <- "https://ec.europa.eu/economy_finance/db_indicators/surveys/documents/series"
 ec_survey_landing_dir <- "data/landing"
 
-## The two archives this project reads out of the same monthly folder.
-## Both are zipped single-.xlsx downloads that behave identically as far
-## as fetching, month-walkback and caching are concerned -- they differ
-## only in file name, sheet name and column-naming scheme, so everything
-## below is parameterised by this table rather than duplicated.
+## The archives this project reads out of the same monthly folder. They
+## behave identically as far as fetching, month-walkback and caching are
+## concerned -- they differ only in file name, the workbook wanted inside
+## a multi-workbook zip, sheet name and column-naming scheme, so
+## everything below is parameterised by this table rather than
+## duplicated. They do NOT all share a seasonal treatment: the
+## uncertainty archive is published n.s.a. only.
 ec_survey_archives <- list(
   main = list(
     zip_name   = "main_indicators_sa_nace2.zip",
@@ -113,6 +115,16 @@ ec_survey_archives <- list(
     member           = "retail_total_sa_nace2.xlsx",
     cache_stem       = "ec_bcs_retail",
     sheet            = "RETAIL TRADE MONTHLY"
+  ),
+  ## The only archive here with more than one data sheet AND no `member`:
+  ## one workbook, six data sheets. `sheet` is therefore its DEFAULT sheet
+  ## (the composite indicator); the five per-survey sheets are in
+  ## `ec_uncertainty_sheets`. It is also the only n.s.a. archive -- see the
+  ## "Uncertainty" section at the bottom of this file.
+  uncertainty = list(
+    zip_name   = "uncertainty_total_nsa_nace2.zip",
+    cache_stem = "ec_bcs_uncertainty",
+    sheet      = "AGGREGATE"
   )
 )
 
@@ -728,4 +740,153 @@ fetch_ec_business_question <- function(country3, label,
   }
   if (is.null(out)) return(NULL)
   dplyr::filter(out, .data$date >= period_to_date(start_period))
+}
+
+## ---------------------------------------------------------------
+## Uncertainty: how hard respondents find it to predict
+## ---------------------------------------------------------------
+## DG ECFIN added an explicit uncertainty question to all five surveys --
+## how difficult respondents currently find it to predict their business
+## situation (for consumers, their financial situation) over the coming
+## months -- and publishes the resulting balances, plus a composite
+## Economic Uncertainty Indicator, in their own archive:
+## `uncertainty_total_nsa_nace2.zip` (confirmed live: HTTP 200, 124 kB for
+## month "2609"; an unpublished month 301-redirects exactly like the other
+## archives, so `get_ec_survey_xlsx()`'s month-walkback applies unchanged).
+##
+## THE ONE THING TO KNOW BEFORE USING THIS: the Commission publishes this
+## archive NON-SEASONALLY-ADJUSTED ONLY. There is no `_sa_` variant --
+## confirmed against the download page's own link list, where every other
+## survey offers both and uncertainty offers only n.s.a. That is a real
+## asymmetry with everything else this module returns, all of which is
+## seasonally adjusted at source. A quarterly average of this series is
+## therefore NOT directly comparable with a quarterly average of
+## `consumer_confidence` and friends, and anything that differences or
+## correlates the two should say which treatment it is relying on. Austria
+## shows no detectable seasonality in the raw series (calendar-month
+## dummies jointly insignificant in all five surveys, weakest p = 0.16),
+## so in practice the gap is small for this country -- but that is a
+## property of the data, not a guarantee from the publisher, and it is
+## worth re-checking per country.
+##
+## The workbook has eight sheets: Index, INFO, an AGGREGATE sheet carrying
+## the composite indicator as "<CC>.UNC", and one sheet per survey
+## (INDUSTRY/SERVICES/CONSUMER/RETAIL/BUILDING) using the same column
+## grammar as the sectoral archives above, "<SURVEY>.<CC>.TOT.UNC.B.M" --
+## so `parse_ec_survey_column()` reads both shapes unchanged. Confirmed
+## live: every one of the six data sheets carries exactly the same 34
+## reporting areas (32 countries plus the EA and EU aggregates) and
+## nothing but ".TOT." sub-sector codes, so unlike the industry archive
+## there is no sub-sector dimension to select here.
+##
+## HISTORY IS SHORT, AND NOT THE SAME LENGTH EVERYWHERE. The workbook
+## starts in 2019-01, but no country is observed from the start: the
+## earliest non-NA value anywhere is 2019-02, 88 of the 170 country-survey
+## series begin before 2021-05, and the rest begin later (Austria's four
+## business surveys all start 2021-05; its consumer survey starts
+## 2019-06). Every series that does exist is genuinely monthly -- checked
+## across all 170, not one is quarterly-spaced -- so the aggregation below
+## behaves the same way it does for the other survey balances.
+
+## The per-survey sheet names, which are NOT the sheet names used by the
+## sectoral archives ("INDUSTRY" here vs. "INDUSTRY MONTHLY" there), and
+## not derivable from the four-letter survey codes either -- hence a
+## written-down map rather than a format string.
+ec_uncertainty_sheets <- c(
+  INDU = "INDUSTRY",
+  SERV = "SERVICES",
+  CONS = "CONSUMER",
+  RETA = "RETAIL",
+  BUIL = "BUILDING"
+)
+
+#' Which sheet of the uncertainty workbook holds a given survey
+#'
+#' `survey = NULL` means the composite Economic Uncertainty Indicator,
+#' which lives on its own AGGREGATE sheet. An unknown survey code is an
+#' error rather than a silent fall back to the composite, for the same
+#' reason `ec_survey_archive()` errors on an unknown archive name.
+ec_uncertainty_sheet <- function(survey = NULL) {
+  if (is.null(survey)) return(ec_survey_archive("uncertainty")$sheet)
+  if (!survey %in% names(ec_uncertainty_sheets)) {
+    stop(sprintf("Unknown EC uncertainty survey '%s' -- known: %s",
+                 survey, paste(names(ec_uncertainty_sheets), collapse = ", ")),
+         call. = FALSE)
+  }
+  unname(ec_uncertainty_sheets[[survey]])
+}
+
+#' Build the uncertainty column name for one country
+#'
+#' Two different grammars, selected by `survey`: the composite indicator
+#' is "<CC>.UNC" on the AGGREGATE sheet, a single survey's balance is
+#' "<SURVEY>.<CC>.TOT.UNC.B.M" on that survey's own sheet.
+ec_uncertainty_column <- function(ec_country2, survey = NULL) {
+  if (is.null(survey)) return(paste0(ec_country2, ".UNC"))
+  ec_uncertainty_sheet(survey)  # fail fast on a typo'd survey code
+  sprintf("%s.%s.TOT.UNC.B.M", survey, ec_country2)
+}
+
+#' Extract one country's uncertainty series from an uncertainty workbook
+parse_ec_survey_uncertainty <- function(xlsx_path, ec_country2, label, survey = NULL) {
+  parse_ec_survey_column(xlsx_path, sheet = ec_uncertainty_sheet(survey),
+                          col_name = ec_uncertainty_column(ec_country2, survey),
+                          label = label)
+}
+
+#' Fetch uncertainty for an EU country from the EC Business and Consumer
+#' Survey's uncertainty question
+#'
+#' `survey = NULL` (the default) returns the composite Economic
+#' Uncertainty Indicator; one of the codes in `ec_uncertainty_sheets`
+#' ("INDU", "SERV", "CONS", "RETA", "BUIL") returns that survey's own
+#' uncertainty balance. Higher values mean respondents find their
+#' situation HARDER to predict, so this runs in the opposite direction to
+#' every confidence indicator in this module.
+#'
+#' AVERAGED into the target frequency like every other survey balance
+#' here, and for the same reason: this is a balance of respondents, so a
+#' quarter's value is the mean of its months, and a partially-observed
+#' quarter is a noisier estimate rather than a systematically smaller
+#' number. The first partially-observed quarter of a country's sample is a
+#' real case here, not a hypothetical one, because the question entered
+#' the surveys mid-quarter in several countries (Austria's business
+#' surveys begin in 2021-05, the second month of 2021-Q2).
+#'
+#' See this section's header for the n.s.a.-only caveat, which is the one
+#' thing that makes this series different in kind from the rest of the
+#' module's output.
+#'
+#' Returns NULL (with a warning) if the country isn't an EU member, the
+#' uncertainty archive can't be found (cached or fetched) within the
+#' lookback window, or the country's column isn't on the sheet -- the last
+#' of which is a live case: the workbook's INFO sheet records several
+#' national surveys as suspended (Estonia and Malta as of 2026-05, Spain's
+#' consumer survey for part of 2024-25).
+fetch_ec_uncertainty_indicator <- function(country3,
+                                            label = "economic_uncertainty_indicator",
+                                            survey = NULL,
+                                            start_period = "1995-Q1",
+                                            reference_date = Sys.Date(),
+                                            landing_dir = ec_survey_landing_dir,
+                                            frequency = "Q") {
+  if (!country3 %in% eu_member_countries) {
+    warning(sprintf("[%s] EC Business and Consumer Survey only covers EU member states -- '%s' is not one", label, country3))
+    return(NULL)
+  }
+  ec_country2 <- lookup_ec_country2(country3)
+  if (is.na(ec_country2)) return(NULL)
+  ec_uncertainty_sheet(survey)  # fail fast BEFORE spending a download on a typo
+
+  found <- get_ec_survey_xlsx(reference_date, landing_dir = landing_dir, archive = "uncertainty")
+  if (is.null(found)) {
+    warning(sprintf("[%s] Could not find a published EC uncertainty archive (cached or live) within the lookback window", label))
+    return(NULL)
+  }
+
+  monthly_df <- parse_ec_survey_uncertainty(found$path, ec_country2, label, survey = survey)
+  if (is.null(monthly_df)) return(NULL)
+
+  aggregate_to(monthly_df, label, frequency) %>%
+    dplyr::filter(.data$date >= period_to_date(start_period))
 }

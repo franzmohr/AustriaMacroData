@@ -570,3 +570,195 @@ test_that("a quarterly business question is absent from a monthly panel, and non
   expect_error(fetch_ec_business_question("AUT", "industry_confidence_composite"),
                "Unknown EC business survey question")
 })
+
+## ---- Uncertainty archive (the uncertainty question) -------------------
+
+test_that("ec_survey_zip_url and ec_survey_landing_path address the uncertainty archive", {
+  expect_equal(
+    ec_survey_zip_url(2026, 9, archive = "uncertainty"),
+    "https://ec.europa.eu/economy_finance/db_indicators/surveys/documents/series/nace2_ecfin_2609/uncertainty_total_nsa_nace2.zip"
+  )
+  expect_equal(
+    ec_survey_landing_path(2026, 9, "data/landing", archive = "uncertainty"),
+    file.path("data/landing", "ec_bcs_uncertainty_2609.xlsx")
+  )
+})
+
+test_that("every archive caches to its own file, so one cannot be served for another", {
+  ## Several archives share a zip_name (the all-surveys bundle) and are
+  ## told apart only by `member`; their CACHE paths must still differ.
+  paths <- vapply(names(ec_survey_archives),
+                  function(a) ec_survey_landing_path(2026, 9, "data/landing", archive = a),
+                  character(1))
+  expect_equal(length(unique(paths)), length(paths))
+})
+
+test_that("the uncertainty archive is the single-workbook kind", {
+  ## No `member`: one .xlsx inside, several data sheets -- the opposite
+  ## shape from the all-surveys bundle, and what lets the sheet map below
+  ## do the selecting instead of `extract_ec_survey_xlsx()`.
+  expect_null(ec_survey_archives$uncertainty$member)
+})
+
+test_that("ec_uncertainty_sheet maps survey codes to the workbook's own sheet names", {
+  expect_equal(ec_uncertainty_sheet(), "AGGREGATE")   # NULL = the composite
+  expect_equal(ec_uncertainty_sheet("INDU"), "INDUSTRY")
+  expect_equal(ec_uncertainty_sheet("BUIL"), "BUILDING")
+  expect_equal(ec_uncertainty_sheet("CONS"), "CONSUMER")
+  ## Not derivable from the survey code, and not the same as the sectoral
+  ## archives' sheet names either ("RETAIL", not "RETAIL TRADE MONTHLY").
+  expect_equal(ec_uncertainty_sheet("RETA"), "RETAIL")
+  expect_false(ec_uncertainty_sheet("INDU") == ec_survey_archives$industry$sheet)
+})
+
+test_that("an unknown uncertainty survey code is an error, not a silent fall back to the composite", {
+  expect_error(ec_uncertainty_sheet("RETAIL"), "Unknown EC uncertainty survey")
+  expect_error(ec_uncertainty_column("AT", "FINA"), "Unknown EC uncertainty survey")
+})
+
+test_that("ec_uncertainty_column builds both of the workbook's two column grammars", {
+  expect_equal(ec_uncertainty_column("AT"), "AT.UNC")
+  expect_equal(ec_uncertainty_column("EA"), "EA.UNC")
+  expect_equal(ec_uncertainty_column("AT", "INDU"), "INDU.AT.TOT.UNC.B.M")
+  expect_equal(ec_uncertainty_column("DE", "CONS"), "CONS.DE.TOT.UNC.B.M")
+})
+
+build_uncertainty_fixture_zip_bytes <- function() {
+  skip_if_not_installed("writexl")
+  tmp_xlsx <- tempfile(fileext = ".xlsx")
+  on.exit(unlink(tmp_xlsx), add = TRUE)
+
+  ## Two sheets with DIFFERENT column grammars and deliberately different
+  ## values for the same country, so a parser that read the wrong sheet --
+  ## or fell back to the composite for a named survey -- is caught rather
+  ## than returning something plausible. The months straddle two quarters
+  ## with Q1 only partly observed, which is the real shape of Austria's
+  ## own sample (its business surveys start in 2021-05).
+  aggregate_sheet <- data.frame(
+    c1 = c(NA, "2021-03-31", "2021-05-31", "2021-06-30"),
+    c2 = c("AT.UNC", "-6.0", "-3.0", "0.0"),
+    c3 = c("DE.UNC", "5.0", "6.0", "7.0"),
+    stringsAsFactors = FALSE
+  )
+  industry_sheet <- data.frame(
+    c1 = c(NA, "2021-03-31", "2021-05-31", "2021-06-30"),
+    c2 = c("INDU.DE.TOT.UNC.B.M", "30.0", "31.0", "32.0"),
+    c3 = c("INDU.AT.TOT.UNC.B.M", "18.0", "21.0", "24.0"),
+    stringsAsFactors = FALSE
+  )
+  writexl::write_xlsx(
+    list(Index = data.frame(x = 1), INFO = data.frame(x = 1),
+         AGGREGATE = aggregate_sheet, INDUSTRY = industry_sheet),
+    tmp_xlsx, col_names = FALSE
+  )
+
+  tmp_zip <- tempfile(fileext = ".zip")
+  old_wd <- setwd(dirname(tmp_xlsx))
+  on.exit(setwd(old_wd), add = TRUE)
+  utils::zip(tmp_zip, basename(tmp_xlsx), flags = "-q")
+  readBin(tmp_zip, "raw", file.info(tmp_zip)$size)
+}
+
+test_that("parse_ec_survey_uncertainty reads the composite and the per-survey sheets", {
+  zip_bytes <- build_uncertainty_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  xlsx_path <- extract_ec_survey_xlsx(zip_bytes)
+
+  composite <- parse_ec_survey_uncertainty(xlsx_path, "AT", "economic_uncertainty_indicator")
+  expect_equal(names(composite), c("date", "economic_uncertainty_indicator"))
+  expect_equal(composite$economic_uncertainty_indicator, c(-6, -3, 0))
+
+  ## Same country, same months, different sheet and grammar.
+  industry <- parse_ec_survey_uncertainty(xlsx_path, "AT", "industry_uncertainty", survey = "INDU")
+  expect_equal(industry$industry_uncertainty, c(18, 21, 24))
+
+  ## Picked by name, not position: AT is the SECOND data column on the
+  ## AGGREGATE sheet but the THIRD on the INDUSTRY sheet.
+  de <- parse_ec_survey_uncertainty(xlsx_path, "DE", "industry_uncertainty", survey = "INDU")
+  expect_equal(de$industry_uncertainty, c(30, 31, 32))
+})
+
+test_that("parse_ec_survey_uncertainty returns NULL with a warning for a suspended survey", {
+  zip_bytes <- build_uncertainty_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  xlsx_path <- extract_ec_survey_xlsx(zip_bytes)
+
+  ## Not hypothetical: the workbook's INFO sheet records Estonia's and
+  ## Malta's surveys as suspended from 2026-05.
+  expect_warning(
+    out <- parse_ec_survey_uncertainty(xlsx_path, "EE", "economic_uncertainty_indicator"),
+    "not found"
+  )
+  expect_null(out)
+})
+
+test_that("fetch_ec_uncertainty_indicator fetches the right archive and averages to quarters", {
+  zip_bytes <- build_uncertainty_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  landing_dir <- tempfile()
+  on.exit(unlink(landing_dir, recursive = TRUE), add = TRUE)
+
+  urls <- character()
+  with_mock_fetch_binary(function(url, ...) { urls <<- c(urls, url); zip_bytes }, {
+    out <- fetch_ec_uncertainty_indicator(
+      "AUT", start_period = "2021-Q1", reference_date = as.Date("2026-09-30"),
+      landing_dir = landing_dir
+    )
+  })
+  expect_true(grepl("uncertainty_total_nsa_nace2\\.zip", urls[1]))
+  expect_equal(names(out), c("date", "economic_uncertainty_indicator"))
+  expect_equal(out$date, as.Date(c("2021-01-01", "2021-04-01")))
+  ## A balance is averaged over the months present, not summed, so the
+  ## partially-observed quarter is noisier rather than smaller.
+  expect_equal(out$economic_uncertainty_indicator, c(-6, mean(c(-3, 0))))
+})
+
+test_that("fetch_ec_uncertainty_indicator honours frequency = 'M'", {
+  zip_bytes <- build_uncertainty_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  landing_dir <- tempfile()
+  on.exit(unlink(landing_dir, recursive = TRUE), add = TRUE)
+
+  with_mock_fetch_binary(function(url, ...) zip_bytes, {
+    out <- fetch_ec_uncertainty_indicator(
+      "AUT", start_period = "2021-Q1", reference_date = as.Date("2026-09-30"),
+      landing_dir = landing_dir, frequency = "M"
+    )
+  })
+  expect_equal(out$date, as.Date(c("2021-03-01", "2021-05-01", "2021-06-01")))
+  expect_equal(out$economic_uncertainty_indicator, c(-6, -3, 0))
+})
+
+test_that("fetch_ec_uncertainty_indicator reads a named survey's own sheet", {
+  zip_bytes <- build_uncertainty_fixture_zip_bytes()
+  skip_if(is.null(zip_bytes) || length(zip_bytes) == 0, "could not build test fixture (zip/writexl unavailable)")
+  landing_dir <- tempfile()
+  on.exit(unlink(landing_dir, recursive = TRUE), add = TRUE)
+
+  with_mock_fetch_binary(function(url, ...) zip_bytes, {
+    out <- fetch_ec_uncertainty_indicator(
+      "AUT", label = "industry_uncertainty", survey = "INDU",
+      start_period = "2021-Q1", reference_date = as.Date("2026-09-30"),
+      landing_dir = landing_dir
+    )
+  })
+  expect_equal(out$industry_uncertainty, c(18, mean(c(21, 24))))
+})
+
+test_that("fetch_ec_uncertainty_indicator refuses non-EU countries without a network call", {
+  called <- FALSE
+  with_mock_fetch_binary(function(url, ...) { called <<- TRUE; NULL }, {
+    expect_warning(out <- fetch_ec_uncertainty_indicator("USA"), "EU member states")
+  })
+  expect_null(out)
+  expect_false(called)
+})
+
+test_that("fetch_ec_uncertainty_indicator rejects a typo'd survey code before downloading anything", {
+  called <- FALSE
+  with_mock_fetch_binary(function(url, ...) { called <<- TRUE; NULL }, {
+    expect_error(fetch_ec_uncertainty_indicator("AUT", survey = "INDUSTRY"),
+                 "Unknown EC uncertainty survey")
+  })
+  expect_false(called)
+})
