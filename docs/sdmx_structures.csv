@@ -1,0 +1,41 @@
+structure_id,position,component,role,codelist,description
+AMD:FRED(1.0),1,FREQ,dimension,SDMX:CL_FREQ(2.1),"Frequency of the series as FRED publishes it: A, Q, M, W or D"
+AMD:FRED(1.0),2,SERIES_ID,dimension,,"FRED's series identifier, e.g. IRLTLT01ATQ156N; uncoded, the identifier is the code"
+AMD:FRED(1.0),3,TIME_PERIOD,time,,"Period of the observation, as YYYY-Qn, YYYY-Mnn or YYYY-MM-DD"
+AMD:FRED(1.0),4,OBS_VALUE,measure,,Value as FRED publishes it
+AMD:FRED(1.0),5,ORIGINAL_SOURCE,attribute,,"Structure ID and key of the series FRED mirrors, where it mirrors one, e.g. OECD.SDD.STES:DSD_KEI@DF_KEI(4.0)/AUT.M.IRLT.PA._Z._Z._Z"
+AMD:EC_BCS(1.0),1,FREQ,dimension,SDMX:CL_FREQ(2.1),M or Q
+AMD:EC_BCS(1.0),2,REF_AREA,dimension,SDMX:CL_AREA(2.0),"Country as the Commission codes it, e.g. AT; EL for Greece"
+AMD:EC_BCS(1.0),3,SECTOR,dimension,,"Survey sector from the workbook's column name: INDU, SERV, CONS, RETA, BUIL"
+AMD:EC_BCS(1.0),4,INDICATOR,dimension,,"Question or composite indicator from the workbook's column name, e.g. COF for the confidence indicator"
+AMD:EC_BCS(1.0),5,ADJUSTMENT,dimension,SDMX:CL_ADJUSTMENT(1.0),S for seasonally adjusted or N for not
+AMD:EC_BCS(1.0),6,TIME_PERIOD,time,,YYYY-Mnn or YYYY-Qn
+AMD:EC_BCS(1.0),7,OBS_VALUE,measure,,Balance or index as published
+AMD:OENB(1.0),1,FREQ,dimension,SDMX:CL_FREQ(2.1),M
+AMD:OENB(1.0),2,HIERID,dimension,,"OeNB data set (hierarchy) identifier, e.g. 23; uncoded"
+AMD:OENB(1.0),3,POSITION,dimension,,"OeNB position code, e.g. VDBZSBSZN10010; uncoded"
+AMD:OENB(1.0),4,TIME_PERIOD,time,,YYYY-Mnn
+AMD:OENB(1.0),5,OBS_VALUE,measure,,Value in the unit the data set states
+AMD:OENB(1.0),6,UNIT_MULT,attribute,SDMX:CL_UNIT_MULT(1.1),"Power of ten of the unit, the data service's unitMult, e.g. 6 for millions"
+AMD:YAHOO(1.0),1,FREQ,dimension,SDMX:CL_FREQ(2.1),D or M
+AMD:YAHOO(1.0),2,TICKER,dimension,,"Yahoo's symbol, e.g. ^ATX; uncoded"
+AMD:YAHOO(1.0),3,PRICE_TYPE,dimension,,"CLOSE, the only price the fetcher reads"
+AMD:YAHOO(1.0),4,TIME_PERIOD,time,,YYYY-MM-DD or YYYY-Mnn
+AMD:YAHOO(1.0),5,OBS_VALUE,measure,,Index level or price in the instrument's currency
+AMD:OPEN_METEO(1.0),1,FREQ,dimension,SDMX:CL_FREQ(2.1),D
+AMD:OPEN_METEO(1.0),2,LOCATION,dimension,,"City the coordinates stand for, e.g. VIENNA; uncoded"
+AMD:OPEN_METEO(1.0),3,VARIABLE,dimension,,"Open-Meteo's daily variable, e.g. TEMPERATURE_2M_MEAN"
+AMD:OPEN_METEO(1.0),4,TIME_PERIOD,time,,YYYY-MM-DD
+AMD:OPEN_METEO(1.0),5,OBS_VALUE,measure,,Value in the variable's unit
+AMD:OPEN_METEO(1.0),6,LATITUDE,attribute,,Latitude the value was requested for
+AMD:OPEN_METEO(1.0),7,LONGITUDE,attribute,,Longitude the value was requested for
+AMD:GPR(1.0),1,FREQ,dimension,SDMX:CL_FREQ(2.1),M
+AMD:GPR(1.0),2,REF_AREA,dimension,SDMX:CL_AREA(2.0),"Country of a country index, or W1 for the world index"
+AMD:GPR(1.0),3,INDEX,dimension,,"Index as the workbook names it: GPR for the world index, GPRC for a country index"
+AMD:GPR(1.0),4,TIME_PERIOD,time,,YYYY-Mnn
+AMD:GPR(1.0),5,OBS_VALUE,measure,,Index value
+AMD:POLICY_EVENTS(1.0),1,FREQ,dimension,SDMX:CL_FREQ(2.1),M or Q
+AMD:POLICY_EVENTS(1.0),2,REF_AREA,dimension,SDMX:CL_AREA(2.0),Country the measure applies in
+AMD:POLICY_EVENTS(1.0),3,EVENT,dimension,,"The event's name in docs/policy_events.csv, e.g. kimv; one series per event, 1 while a step event is in force or in the month of an impulse event"
+AMD:POLICY_EVENTS(1.0),4,TIME_PERIOD,time,,YYYY-Mnn or YYYY-Qn
+AMD:POLICY_EVENTS(1.0),5,OBS_VALUE,measure,,The dummy as gold uses it: 1 or 0
