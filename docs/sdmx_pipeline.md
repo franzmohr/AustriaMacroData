@@ -427,6 +427,9 @@ commit.
   - `amd.semantic`: the semantic layer and the query API.
   - `amd.exports`: SDMX-CSV, parquet, SDMX-ML and Excel.
   - `amd.run`: the topic runner and the run summary.
+- **Environment.** The package is installed, editable, into the machine's
+  shared Python environment (`pip install -e ".[dev]"`), the one other
+  projects on the machine use too, not into a virtualenv of its own.
 - **Dependencies**, pinned in `pyproject.toml`: pandas, pyarrow, requests,
   openpyxl (for the EC workbooks and the Excel export), oenb and pytest. No
   SDMX client library is needed, since every source is read as CSV.

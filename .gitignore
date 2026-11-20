@@ -19,3 +19,10 @@ data/bronze/
 # output/ IS tracked: .github/workflows/monthly-update.yml commits the
 # monthly <country>_panel.csv / _coverage.json + output/vintages/ archive
 # back to the repo, since GitHub Actions runners are ephemeral.
+
+# Python. The package is installed into the machine's shared environment
+# (pip install -e ".[dev]"), not into a virtualenv inside the repository.
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.venv/
