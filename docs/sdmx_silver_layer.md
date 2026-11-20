@@ -60,22 +60,36 @@ dataflow,ESTAT:NAMQ_10_GDP(1.0),I,Q,CLV10_MEUR,SCA,B1GQ,AT,2026-Q2,...,...
 Every SDMX response already goes through one function,
 `parse_time_value_csv()` in `R/utils.R`. It finds `TIME_PERIOD` and
 `OBS_VALUE` by name and drops the rest. The capture goes there: before the
-reduction, the full rows are handed to `write_silver(df, structure_id)`,
-then reduced as now. No fetcher has to change how it computes its result,
-and the panels come out identical. That is the first test (see below).
+reduction, the full rows are handed to a `write_silver()`, then reduced as
+now, so the panels come out identical.
 
-Two flows need their URL changed first so that the answer is SDMX-CSV with
-its dimensions:
+The function cannot work out the structure from the response alone. The
+four SDMX sources answer the requests this project makes in four different
+layouts (checked live on 20 November 2026 with one small request each):
 
-- **Bundesbank** (`R/gov_yields.R`). The key is already SDMX
-  (`BBSIS.M.I.ZST.ZI.EUR.S1311.B.A604.R05XX.R.A.A._Z._Z.A`), but it is
-  requested in the Bundesbank's own CSV layout, with a metadata header block
-  and `.` for a missing day. The REST service also answers in SDMX-CSV;
-  request that instead.
-- **IMF** (`R/imf.R`) already asks its SDMX 3.0 API for CSV, with an
-  explicit `Accept` header because the query parameter alone is not always
-  honoured. That answer is SDMX-CSV 2.0 and fits as is; the only change is
-  to capture it before it is reduced.
+| Source | Request | Header of the answer | Structure ID in the answer | Dimensions |
+|---|---|---|---|---|
+| Eurostat | `format=SDMX-CSV` | `DATAFLOW,LAST UPDATE,freq,unit,s_adj,na_item,geo,TIME_PERIOD,OBS_VALUE,OBS_FLAG,CONF_STATUS` | yes, `ESTAT:NAMQ_10_GDP(1.0)` in `DATAFLOW` (SDMX-CSV 1.0) | the lower-case columns before `TIME_PERIOD` |
+| OECD | `format=csvfilewithlabels` | `STRUCTURE,STRUCTURE_ID,STRUCTURE_NAME,ACTION,REF_AREA,Reference area,FREQ,...` | yes, `OECD.SDD.STES:DSD_KEI@DF_KEI(4.0)` in `STRUCTURE_ID` (SDMX-CSV 2.0) | every code column is followed by a label column, which silver drops |
+| ECB | `format=csvdata` | `KEY,FREQ,CURRENCY,CURRENCY_DENOM,EXR_TYPE,EXR_SUFFIX,TIME_PERIOD,OBS_VALUE,OBS_STATUS,...` | no; the dataflow is the first segment of `KEY`, the version is not stated | the columns between `KEY` and `TIME_PERIOD` |
+| BIS | `format=csv` | `FREQ,BORROWERS_CTY,...,TC_ADJUST,COLLECTION,DECIMALS,UNIT_MULT,UNIT_MEASURE,TITLE_TS,TIME_PERIOD,OBS_VALUE,...` | no | not separable: series attributes (`COLLECTION`, `DECIMALS`, `UNIT_MULT`, `UNIT_MEASURE`, `TITLE_TS`) stand before `TIME_PERIOD` with the dimensions |
+
+So "the columns before `TIME_PERIOD` are the dimensions" holds for Eurostat
+and the ECB and fails for the BIS, and only Eurostat and the OECD say which
+dataflow and version they answer for. The caller has to say it. Each
+fetcher passes the structure ID and the dimension IDs in DSD order to
+`parse_time_value_csv()`, as `R/eurostat_dimensions.R` already declares the
+dimension order for every Eurostat flow. The capture then checks the
+answer against what was declared, as the Eurostat guard does today, and
+treats every other column as an attribute. Where the answer states a
+structure ID of its own (Eurostat, the OECD), it has to agree with the
+declared one. Label columns (the OECD's) are dropped.
+
+The other way round would be to request standard SDMX-CSV from every
+source through the SDMX media type (`Accept:
+application/vnd.sdmx.data+csv`), which would make the answers uniform. That
+was not tried; it is worth one request per source before step 1, because
+where it works the declarations shrink to a check.
 
 ## Sources that are not SDMX
 
@@ -119,8 +133,10 @@ allowed values the source does not publish.
 
 ## Steps
 
-1. **Capture without changing anything.** Add `write_silver()` and call it
-   from `parse_time_value_csv()`. Test: a full build writes
+1. **Capture without changing anything.** Add `write_silver()`, give
+   `parse_time_value_csv()` the declared structure ID and dimensions, and
+   declare them for every SDMX fetch, starting with Eurostat, whose
+   dimensions are declared already. Test: a full build writes
    `output/silver/` and leaves every gold file byte-identical to a build
    without it.
 2. **Declare the non-SDMX structures** in `docs/sdmx_structures.csv` and
