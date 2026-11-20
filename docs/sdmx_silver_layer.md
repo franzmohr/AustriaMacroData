@@ -31,7 +31,9 @@ so its provenance is a key that can be looked up, not a sentence.
 ## The silver format
 
 One file per dataflow, under `output/silver/<AGENCY>/<DATAFLOW>.csv`, in
-SDMX-CSV 2.0:
+SDMX-CSV 2.0. An answer in SDMX-CSV 1.0, as most sources send it (see below),
+becomes 2.0 by turning its `DATAFLOW` column into `STRUCTURE = dataflow`,
+`STRUCTURE_ID` and `ACTION = I`:
 
 ```
 STRUCTURE,STRUCTURE_ID,ACTION,<dimensions in DSD order>,TIME_PERIOD,OBS_VALUE,<attributes>
@@ -63,7 +65,7 @@ Every SDMX response already goes through one function,
 reduction, the full rows are handed to a `write_silver()`, then reduced as
 now, so the panels come out identical.
 
-The function cannot work out the structure from the response alone. The
+With the formats requested today, the function cannot work out the structure from the response alone. The
 four SDMX sources answer the requests this project makes in four different
 layouts (checked live on 20 November 2026 with one small request each):
 
@@ -74,22 +76,39 @@ layouts (checked live on 20 November 2026 with one small request each):
 | ECB | `format=csvdata` | `KEY,FREQ,CURRENCY,CURRENCY_DENOM,EXR_TYPE,EXR_SUFFIX,TIME_PERIOD,OBS_VALUE,OBS_STATUS,...` | no; the dataflow is the first segment of `KEY`, the version is not stated | the columns between `KEY` and `TIME_PERIOD` |
 | BIS | `format=csv` | `FREQ,BORROWERS_CTY,...,TC_ADJUST,COLLECTION,DECIMALS,UNIT_MULT,UNIT_MEASURE,TITLE_TS,TIME_PERIOD,OBS_VALUE,...` | no | not separable: series attributes (`COLLECTION`, `DECIMALS`, `UNIT_MULT`, `UNIT_MEASURE`, `TITLE_TS`) stand before `TIME_PERIOD` with the dimensions |
 
-So "the columns before `TIME_PERIOD` are the dimensions" holds for Eurostat
-and the ECB and fails for the BIS, and only Eurostat and the OECD say which
-dataflow and version they answer for. The caller has to say it. Each
-fetcher passes the structure ID and the dimension IDs in DSD order to
-`parse_time_value_csv()`, as `R/eurostat_dimensions.R` already declares the
-dimension order for every Eurostat flow. The capture then checks the
-answer against what was declared, as the Eurostat guard does today, and
-treats every other column as an attribute. Where the answer states a
-structure ID of its own (Eurostat, the OECD), it has to agree with the
-declared one. Label columns (the OECD's) are dropped.
+Most of that is the choice of format, not the source. Asked for standard
+SDMX-CSV through the SDMX media type (`Accept:
+application/vnd.sdmx.data+csv;version=1.0.0`, checked live on the same
+day), three of the four answer in one layout:
 
-The other way round would be to request standard SDMX-CSV from every
-source through the SDMX media type (`Accept:
-application/vnd.sdmx.data+csv`), which would make the answers uniform. That
-was not tried; it is worth one request per source before step 1, because
-where it works the declarations shrink to a check.
+| Source | Header with the SDMX media type |
+|---|---|
+| Eurostat | `DATAFLOW,LAST UPDATE,freq,unit,s_adj,na_item,geo,TIME_PERIOD,OBS_VALUE,OBS_FLAG,CONF_STATUS` |
+| OECD | `DATAFLOW,REF_AREA,FREQ,MEASURE,UNIT_MEASURE,ACTIVITY,ADJUSTMENT,TRANSFORMATION,TIME_PERIOD,OBS_VALUE,OBS_STATUS,UNIT_MULT,DECIMALS,BASE_PER` |
+| BIS | `DATAFLOW,FREQ,BORROWERS_CTY,TC_BORROWERS,TC_LENDERS,VALUATION,UNIT_TYPE,TC_ADJUST,TIME_PERIOD,OBS_VALUE,COLLECTION,UNIT_MULT,...` |
+| ECB | refused: the ECB offers only its own CSV (`text/csv` or `application/vnd.ecb.data+csv`, the `csvdata` above) and SDMX-ML |
+
+In SDMX-CSV 1.0 the dataflow and its version are in `DATAFLOW`, the
+dimensions are the columns between it and `TIME_PERIOD`, and the
+attributes follow `OBS_VALUE` (Eurostat adds `LAST UPDATE`, which silver
+keeps as an attribute). The BIS asked this way puts its series attributes
+after `OBS_VALUE` as well. So the capture is:
+
+1. **Request SDMX-CSV from Eurostat, the OECD and the BIS** through the
+   media type. The OECD's `csvfilewithlabels` and the BIS's `format=csv`
+   go; Eurostat's `format=SDMX-CSV` already is this layout. The
+   structure, the dimensions and the attributes are then read from the
+   answer itself.
+2. **Read the ECB's `csvdata` as it is.** The dataflow is the first segment
+   of `KEY`, the dimensions are the columns between `KEY` and
+   `TIME_PERIOD`, and the attributes follow `OBS_VALUE`. The version is not
+   in the answer; every ECB dataflow this project uses is version 1.0
+   (`ECB:EXR(1.0)` and `ECB:MIR(1.0)` checked against the ECB's structure
+   API), which the ECB reader states and checks against that API in a test.
+3. **Check the dimensions against a declaration** where one exists:
+   `R/eurostat_dimensions.R` declares them for every Eurostat flow, and
+   its guard stays. A declaration for the others can follow; it is a check,
+   not what the capture depends on.
 
 ## Sources that are not SDMX
 
@@ -133,10 +152,10 @@ allowed values the source does not publish.
 
 ## Steps
 
-1. **Capture without changing anything.** Add `write_silver()`, give
-   `parse_time_value_csv()` the declared structure ID and dimensions, and
-   declare them for every SDMX fetch, starting with Eurostat, whose
-   dimensions are declared already. Test: a full build writes
+1. **Capture without changing anything.** Request SDMX-CSV from Eurostat,
+   the OECD and the BIS, add `write_silver()` and call it from
+   `parse_time_value_csv()`, with the ECB's `csvdata` read as described
+   above. Test: a full build writes
    `output/silver/` and leaves every gold file byte-identical to a build
    without it.
 2. **Declare the non-SDMX structures** in `docs/sdmx_structures.csv` and
