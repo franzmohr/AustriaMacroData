@@ -73,6 +73,10 @@ fetch_eurostat_series <- function(geo, na_item, label, s_adj = "SCA",
   tryCatch(
     fetch_eurostat_series_impl(geo, na_item, label, s_adj, unit, start_period),
     error = function(e) {
+      ## A key written for the wrong dimension order is NOT an "errored
+      ## unexpectedly, carry on with the next series" case: see
+      ## R/eurostat_dimensions.R.
+      stop_if_eurostat_dimension_mismatch(e)
       warning(sprintf("[%s] Eurostat fetch errored unexpectedly: %s", label, conditionMessage(e)))
       NULL
     }
@@ -86,7 +90,7 @@ fetch_eurostat_series_impl <- function(geo, na_item, label, s_adj, unit, start_p
     eurostat_dataflow, key, start_period
   )
 
-  txt <- fetch_text(url)
+  txt <- fetch_eurostat_text(url, eurostat_dataflow, key, label)
   if (is.null(txt)) {
     warning(sprintf("[%s] Eurostat fetch failed -- URL: %s", label, url))
     return(NULL)
@@ -157,6 +161,7 @@ fetch_eurostat_anchors <- function(country3, start_period = "1995-Q1", labels = 
 ## households alone (S14) are not published quarterly in this dataflow.
 ## ---------------------------------------------------------------
 
+eurostat_disposable_income_dataflow <- "nasq_10_nf_tr"
 eurostat_disposable_income_key <- "Q.CP_MEUR.RECV.S14_S15.B6G.SCA"
 eurostat_consumption_deflator_item <- "P31_S14_S15"
 
@@ -166,11 +171,11 @@ fetch_eurostat_disposable_income <- function(geo, start_period = "1995-Q1") {
   label <- "real_household_disposable_income"
   key <- paste(eurostat_disposable_income_key, geo, sep = ".")
   url <- sprintf(
-    "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/nasq_10_nf_tr/%s?format=SDMX-CSV&startPeriod=%s",
-    key, start_period
+    "https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/data/%s/%s?format=SDMX-CSV&startPeriod=%s",
+    eurostat_disposable_income_dataflow, key, start_period
   )
 
-  txt <- fetch_text(url)
+  txt <- fetch_eurostat_text(url, eurostat_disposable_income_dataflow, key, label)
   if (is.null(txt)) {
     warning(sprintf("[%s] Eurostat fetch failed -- URL: %s", label, url))
     return(NULL)
@@ -298,7 +303,7 @@ fetch_eurostat_hicp <- function(country3, label = "cpi_index",
     eurostat_hicp_dataflow, key, start_month
   )
 
-  txt <- fetch_text(url)
+  txt <- fetch_eurostat_text(url, eurostat_hicp_dataflow, key, label)
   if (is.null(txt)) {
     warning(sprintf("[%s] Eurostat HICP fetch failed -- URL: %s", label, url))
     return(NULL)
@@ -371,7 +376,7 @@ fetch_eurostat_ulc <- function(country3, label = "unit_labor_cost",
     eurostat_ulc_dataflow, key, start_period
   )
 
-  txt <- fetch_text(url)
+  txt <- fetch_eurostat_text(url, eurostat_ulc_dataflow, key, label)
   if (is.null(txt)) {
     warning(sprintf("[%s] Eurostat ULC fetch failed -- URL: %s", label, url))
     return(NULL)
@@ -431,7 +436,7 @@ fetch_eurostat_primary_balance <- function(country3, label = "government_primary
     eurostat_gov_dataflow, key, start_period
   )
 
-  txt <- fetch_text(url)
+  txt <- fetch_eurostat_text(url, eurostat_gov_dataflow, key, label)
   if (is.null(txt)) {
     warning(sprintf("[%s] Eurostat government finance fetch failed -- URL: %s", label, url))
     return(NULL)
@@ -494,7 +499,11 @@ fetch_eurostat_primary_balance <- function(country3, label = "government_primary
 ## (freq.unit.s_adj.na_item.geo). That is why this has its own URL
 ## construction rather than reusing that helper: swapping the two middle
 ## dimensions returns HTTP 400, not an empty result, so it fails loudly
-## -- but only at runtime.
+## -- but only at runtime, and only because those two dimensions happen
+## to use disjoint codelists. Where they do not, a wrong order answers
+## 200 with rows for a different series; `fetch_eurostat_text()`
+## (R/eurostat_dimensions.R) is what catches that case, for this request
+## and every other Eurostat request in this project.
 ## ---------------------------------------------------------------
 
 eurostat_hours_dataflow <- "namq_10_a10_e"
@@ -525,10 +534,14 @@ fetch_eurostat_hours <- function(country3, label = "hours_worked",
     eurostat_hours_dataflow, key, start_period
   )
 
-  txt <- tryCatch(fetch_text(url), error = function(e) {
-    warning(sprintf("[%s] Eurostat hours fetch errored: %s", label, conditionMessage(e)))
-    NULL
-  })
+  txt <- tryCatch(
+    fetch_eurostat_text(url, eurostat_hours_dataflow, key, label),
+    error = function(e) {
+      stop_if_eurostat_dimension_mismatch(e)
+      warning(sprintf("[%s] Eurostat hours fetch errored: %s", label, conditionMessage(e)))
+      NULL
+    }
+  )
   if (is.null(txt)) {
     warning(sprintf("[%s] Eurostat hours fetch failed -- URL: %s", label, url))
     return(NULL)

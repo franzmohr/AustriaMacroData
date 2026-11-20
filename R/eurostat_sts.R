@@ -70,7 +70,7 @@ fetch_eurostat_sts_key <- function(dataflow, key, label, start_period, frequency
   url <- sprintf("%s/%s/%s?format=SDMX-CSV&startPeriod=%s",
                  eurostat_sts_base, dataflow, key, start)
 
-  txt <- fetch_text(url)
+  txt <- fetch_eurostat_text(url, dataflow, key, label)
   if (is.null(txt)) {
     warning(sprintf("[%s] Eurostat fetch failed -- URL: %s", label, url))
     return(NULL)

@@ -63,6 +63,19 @@ that isn't there yet.
   confirm a real non-empty response for at least one other country) for
   any new key you add or change, rather than guessing by analogy.
 
+- [ ] **Declare the dimension order of any new Eurostat dataflow** in
+  `eurostat_key_dimensions`
+  ([R/eurostat_dimensions.R](R/eurostat_dimensions.R)). A Eurostat key is
+  positional, and the orders differ between dataflows in the same family,
+  so a key written for the wrong order does not fail — it filters on a
+  different dimension and answers with plausible-looking rows. Every
+  Eurostat request in this project goes through `fetch_eurostat_text()`,
+  which compares the answer's own header against the declared order and
+  `stop()`s on a mismatch, including for a dataflow that has no declared
+  order yet. Read the order from that dataflow's own SDMX-CSV header (the
+  columns between `LAST UPDATE` and `TIME_PERIOD`), not from a sibling
+  dataflow or a codelist.
+
 - [ ] **Add your country's rows to `docs/data_sources.csv`** if you make
   any country-specific source decision (an override, a fallback, a
   concept that needs a different key shape for your country than the

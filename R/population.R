@@ -79,10 +79,16 @@ fetch_eurostat_namq_10_pe <- function(country3, label, na_item, what,
     eurostat_population_dataflow, key, start_period
   )
 
-  txt <- tryCatch(fetch_text(url), error = function(e) {
-    warning(sprintf("[%s] Eurostat %s fetch errored: %s", label, what, conditionMessage(e)))
-    NULL
-  })
+  txt <- tryCatch(
+    fetch_eurostat_text(url, eurostat_population_dataflow, key, label),
+    error = function(e) {
+      ## A key written for the wrong dimension order must abort, not
+      ## warn: see R/eurostat_dimensions.R.
+      stop_if_eurostat_dimension_mismatch(e)
+      warning(sprintf("[%s] Eurostat %s fetch errored: %s", label, what, conditionMessage(e)))
+      NULL
+    }
+  )
   if (is.null(txt)) {
     warning(sprintf("[%s] Eurostat %s fetch failed -- URL: %s", label, what, url))
     return(NULL)
