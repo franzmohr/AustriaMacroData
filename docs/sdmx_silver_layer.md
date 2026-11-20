@@ -1,6 +1,8 @@
 # An SDMX silver layer
 
-Status: design, not yet implemented. Written 20 November 2026.
+Status: design, not yet implemented. Written 20 November 2026. The whole
+pipeline, from bronze to the exports, and the AMD registry are designed in
+[sdmx_pipeline.md](sdmx_pipeline.md); this document details the silver layer.
 
 ## What changes
 
@@ -19,7 +21,7 @@ the panels:
 |---|---|---|
 | Bronze | each response as the source sent it | the existing landing caches (`gpr_data`, the EC survey zips, the degree-day files), extended to every source |
 | **Silver** | **every observation fetched, under its source's own SDMX structure** | **SDMX-CSV 2.0, one file per dataflow** |
-| Gold | the FRED-QD- and FRED-MD-style panels, metadata, dummies, the semantic layer | as today, unchanged for anyone reading them |
+| Gold | the long indicator table `AMD:INDICATORS(1.0)`, and derived from it the FRED-QD- and FRED-MD-style panels, metadata, dummies, the semantic layer | parquet for the indicator table; the panels as today, unchanged for anyone reading them |
 
 Silver is lossless and source-shaped: it says what Eurostat, the ECB or the
 OECD published, under their own codes, before any choice of this project is
@@ -30,8 +32,8 @@ so its provenance is a key that can be looked up, not a sentence.
 
 ## The silver format
 
-One file per dataflow, under `output/silver/<AGENCY>/<DATAFLOW>.csv`, in
-SDMX-CSV 2.0. An answer in SDMX-CSV 1.0, as most sources send it (see below),
+One file per dataflow and version, under
+`output/silver/<AGENCY>/<DATAFLOW>_<VERSION>.csv`, in SDMX-CSV 2.0. An answer in SDMX-CSV 1.0, as most sources send it (see below),
 becomes 2.0 by turning its `DATAFLOW` column into `STRUCTURE = dataflow`,
 `STRUCTURE_ID` and `ACTION = I`:
 
@@ -50,8 +52,11 @@ dataflow,ESTAT:NAMQ_10_GDP(1.0),I,Q,CLV10_MEUR,SCA,B1GQ,AT,2026-Q2,...,...
   `OBS_FLAG`, `UNIT_MULT`, `DECIMALS`, `TITLE` and the like. A source that
   sends none gets none. Silver does not invent attributes.
 - **`TIME_PERIOD` is written as the source sent it.** The panels already use
-  SDMX's reporting-period forms, `2026-Q2` and `2026-M04`. Daily data
-  (`2026-11-20`) stays daily in silver; frequency conversion is gold's job.
+  SDMX's reporting-period forms, `2026-Q2` and `2026-M04`; silver keeps
+  whichever valid SDMX form the source used (`2026-07`, `2026-07-01`), and
+  gold writes one form per frequency. Whether daily data (`2026-11-20`) stays
+  daily in silver is an open decision (see sdmx_pipeline.md); frequency
+  conversion is gold's job either way.
 - **One file per dataflow, not per country.** A fetch adds or replaces the
   series it asked for (`ACTION = I`), keyed on the full series key. Building
   AUT, DEU and USA writes into the same files, and every series is fetched
@@ -121,34 +126,40 @@ Two more sources speak SDMX and need only their request changed:
   the reader has to allow for.
 - **IMF** (`R/imf.R`) already asks its SDMX 3.0 API (`IMF.STA/QNEA/7.0.0`)
   for CSV, with an explicit `Accept` header because the query parameter
-  alone is not always honoured. Its layout was not checked here; it has to
-  be before the IMF reader is written.
+  alone is not always honoured. Checked live on 20 November 2026: it answers
+  in SDMX-CSV **2.0** (`STRUCTURE[;],STRUCTURE_ID,ACTION,COUNTRY,INDICATOR,...`,
+  `STRUCTURE_ID = IMF.STA:QNEA(7.0.0)`, `ACTION = R`) whether `text/csv` or
+  either SDMX-CSV media type is asked for, while its `Content-Type` echoes the
+  version asked for. The reader goes by the header line. It also ignored
+  `startPeriod` and sent the series from 1995.
 
 ## Sources that are not SDMX
 
 Some sources publish no SDMX at all. For each, silver gets a dataflow of
 this project's own, under the agency `AMD`. Each has a declared data
 structure: the dimensions that identify a series at that source, the
-SDMX cross-domain codelists where one applies (`CL_FREQ`, `CL_AREA`,
-`CL_OBS_STATUS`, `CL_UNIT_MULT`), and the source's own identifiers where
-none does. The structures are declared in one table,
-[`docs/sdmx_structures.csv`](sdmx_structures.csv), the same way
-`R/eurostat_dimensions.R` declares Eurostat's. The writer refuses a row
-that does not fit its declared structure.
+SDMX cross-domain concepts and codelists where one applies (`CL_FREQ`,
+`CL_SEASONAL_ADJUST`, `CL_OBS_STATUS`, `CL_UNIT_MULT`), and AMD codelists of
+the source's own identifiers where none does. The structures, their concepts
+and codelists are declared in [`registry/`](../registry/) (see
+sdmx_pipeline.md). The writer refuses a row that does not fit its declared
+structure.
 
 | Source | Today | Silver dataflow | Series key | Better: an SDMX source for the same data |
 |---|---|---|---|---|
-| FRED graph export (`fred_mirror.R`) | CSV of one series | `AMD:FRED(1.0)` | `FREQ.SERIES_ID`, e.g. `Q.IRLTLT01ATQ156N` | Most FRED-mirrored series are OECD MEI or BIS series under another name. Each mirrored series should name its original, and the fetch should move to the OECD or BIS SDMX API where the original is still published. FRED stays only for what has no SDMX original. |
-| EC Business and Consumer Surveys (`ec_survey.R`) | zipped workbooks | `AMD:EC_BCS(1.0)` | `FREQ.REF_AREA.SECTOR.INDICATOR.ADJUSTMENT`, from the codes in the workbook's column names | Eurostat republishes the surveys as SDMX (`ei_bsin_m_r2`, `ei_bsco_m`, `ei_bsbu_m_r2`, `ei_bsrt_m_r2`, `ei_bsse_m_r2`, `teibs010` and siblings). Check whether every indicator used is there, with the same history, then switch. |
-| OeNB data service (`oenb.R`) | its own XML | `AMD:OENB(1.0)` | `FREQ.HIERID.POSITION`, e.g. `M.23.VDBZSBSZN10010` | The two series are Austrian MFI statistics. The ECB's `MIR` dataflow, which `ecb.R` already uses for `mortgage_rate`, is the harmonised SDMX counterpart. Where it carries the same concept over the same span, switch; where the OeNB series differs in coverage (the new-lending series excludes revolving loans), keep it as a declared source. |
-| Yahoo Finance (`yahoo_finance.R`) | JSON chart API | `AMD:YAHOO(1.0)` | `FREQ.TICKER.PRICE_TYPE`, e.g. `D.^ATX.CLOSE` | None for the ATX itself. The ECB's `FM` dataflow has euro-area equity indices; keep Yahoo for the ATX. |
+| FRED graph export (`fred_mirror.R`) | CSV of one series | `AMD:FRED(1.0)` | `FREQ.FRED_SERIES`, e.g. `Q.IRLTLT01ATQ156N` | Most FRED-mirrored series are OECD MEI or BIS series under another name. Each mirrored series should name its original, and the fetch should move to the OECD or BIS SDMX API where the original is still published. FRED stays only for what has no SDMX original. |
+| EC Business and Consumer Surveys (`ec_survey.R`) | zipped workbooks | `AMD:EC_BCS(1.0)` | `FREQ.REF_AREA.SURVEY.ACTIVITY.QUESTION.ANSWER.ADJUSTMENT`, from the Commission's series code `SURVEY.COUNTRY.ACTIVITY.QUESTION.ANSWER.FREQ`, e.g. `M.AT.CONS._T.2.BS.S` | Eurostat republishes the surveys as SDMX (`ei_bsin_m_r2`, `ei_bsco_m`, `ei_bsbu_m_r2`, `ei_bsrt_m_r2`, `ei_bsse_m_r2`, `teibs010` and siblings). Check whether every indicator used is there, with the same history, then switch. |
+| OeNB data service (`oenb.R`) | its own XML; to be fetched with the `oenb` Python package | `AMD:OENB(1.0)` | `FREQ.OENB_DATASET.OENB_POSITION`, e.g. `M.23.VDBZSBSZN10010` | The two series are Austrian MFI statistics. The ECB's `MIR` dataflow, which `ecb.R` already uses for `mortgage_rate`, is the harmonised SDMX counterpart. Where it carries the same concept over the same span, switch; where the OeNB series differs in coverage (the new-lending series excludes revolving loans), keep it as a declared source. |
+| Yahoo Finance (`yahoo_finance.R`) | JSON chart API | `AMD:YAHOO(1.0)` | `FREQ.TICKER.PRICE_TYPE`, e.g. `D.ATX.CLOSE` (Yahoo's `^ATX`) | None for the ATX itself. The ECB's `FM` dataflow has euro-area equity indices; keep Yahoo for the ATX. |
 | Open-Meteo (`weather.R`) | JSON | `AMD:OPEN_METEO(1.0)` | `FREQ.LOCATION.VARIABLE`, e.g. `D.VIENNA.TEMPERATURE_2M_MEAN` | `weather.R` already takes Eurostat's `nrg_chdd_m` first, which is SDMX and lands in silver under `ESTAT`. Open-Meteo is the second source for the months Eurostat does not yet cover, and needs the declared structure only for those. |
-| Geopolitical Risk Index (`gpr.R`) | workbook | `AMD:GPR(1.0)` | `FREQ.REF_AREA.INDEX`, e.g. `M.DE.GPRC` (`REF_AREA = W1` for the world index; Austria has no country index) | None. |
+| Geopolitical Risk Index (`gpr.R`) | workbook | `AMD:GPR(1.0)` | `FREQ.REF_AREA.GPR_INDEX`, e.g. `M.DE.GPRC` (`REF_AREA = W0` for the world index; Austria has no country index) | None. |
 | Policy events (`dummies.R`, `docs/policy_events.csv`) | hand-kept table | `AMD:POLICY_EVENTS(1.0)` | `FREQ.REF_AREA.EVENT` | None. These are this project's own records and belong in gold, but declaring them this way lets the dummies be read with the rest. |
 
-`LOCATION`, `SERIES_ID`, `TICKER` and `HIERID.POSITION` are left uncoded:
-the source's identifier is the code, and silver does not invent a list of
-allowed values the source does not publish.
+Every dimension is coded. `FRED_SERIES`, `OENB_POSITION`, `LOCATION` and
+`TICKER` have AMD codelists listing the identifiers in use; where the
+source's identifier is not a valid SDMX ID or breaks the AMD conventions
+(`^ATX`, the EC's `TOT`, the hyphens in OeNB positions), the code is the
+valid form and the source's spelling is the code's `source_code`.
 
 ## What gold gains
 
@@ -172,10 +183,10 @@ allowed values the source does not publish.
    above. Test: a full build writes
    `output/silver/` and leaves every gold file byte-identical to a build
    without it.
-2. **Declare the non-SDMX structures** in `docs/sdmx_structures.csv` and
+2. **Declare the non-SDMX structures** in `registry/` and
    capture those sources through the same writer. Each fetcher hands its
    parsed rows over with the key columns its structure declares.
-3. **Switch the Bundesbank request to SDMX-CSV, and check the IMF's layout.**
+3. **Switch the Bundesbank request to SDMX-CSV**, and read the IMF's SDMX-CSV 2.0.
 4. **Name silver keys in gold's metadata**, replacing the free-text `key`.
 5. **Build gold from silver.** The panel builders read `output/silver/`
    instead of the fetchers' return values. After that, a fetch only fills
@@ -189,9 +200,9 @@ recorded in `docs/data_sources.csv` as any change of provider is today.
 
 ## Open questions
 
-- **Size.** Silver holds full source histories for three countries. If it
-  grows too large for the repository, commit only the gold files and keep
-  silver as a build artefact of the monthly job.
+- **Size.** Silver holds full source histories for three countries. Whether
+  it is committed or kept as a build artefact of the monthly job is an open
+  decision (sdmx_pipeline.md).
 - **Daily series.** The Bundesbank yields, Yahoo and Open-Meteo are daily
   at source. Keeping them daily in silver is correct but is most of the
   volume; the alternative is to request the monthly frequency where the

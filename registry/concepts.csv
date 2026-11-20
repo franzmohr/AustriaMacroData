@@ -1,0 +1,20 @@
+concept_scheme,concept,name_en,name_de,core_representation,description
+AMD:AMD_CONCEPTS(1.0),SUBINDICATOR,Subindicator,Unterindikator,AMD:CL_SUBINDICATOR(1.0),"Breakdown of an INDICATOR: a component, a maturity, a survey question, a forecasting institution. _Z where the indicator has no breakdown, _T for the total of one."
+AMD:AMD_CONCEPTS(1.0),SOURCE_KEY,Source key,Quellschlüssel,String,"The silver series an observation is built from, as <structure ID>/<series key>, e.g. ESTAT:NAMQ_10_GDP(1.0)/Q.CLV10_MEUR.SCA.B1GQ.AT. Several inputs are joined by a space and a plus sign, in the order the transformation names them."
+AMD:AMD_CONCEPTS(1.0),EDITION,Edition,Ausgabe,String,"Edition of a forecast publication the observation is taken from, as the publisher names it, e.g. 2026-11 or EO118."
+AMD:AMD_CONCEPTS(1.0),FRED_SERIES,FRED series,FRED-Zeitreihe,AMD:CL_FRED_SERIES(1.0),FRED's series identifier.
+AMD:AMD_CONCEPTS(1.0),ORIGINAL_SOURCE,Original source,Originalquelle,String,"Structure ID and key of the series FRED mirrors, where it mirrors one, e.g. OECD.SDD.STES:DSD_KEI@DF_KEI(4.0)/AUT.M.IRLT.PA._Z._Z._Z."
+AMD:AMD_CONCEPTS(1.0),SURVEY,Survey,Umfrage,AMD:CL_SURVEY(1.0),"Survey of the EC Business and Consumer Surveys programme, or the composite indicator built from several, as the first segment of the Commission's series code."
+AMD:AMD_CONCEPTS(1.0),QUESTION,Survey question,Umfragefrage,AMD:CL_QUESTION(1.0),Question number as the survey's questionnaire numbers it.
+AMD:AMD_CONCEPTS(1.0),ANSWER,Survey answer,Antwortkategorie,AMD:CL_ANSWER(1.0),"Answer category, or the balance of answers (BS), as the Commission's series code has it."
+AMD:AMD_CONCEPTS(1.0),OENB_DATASET,OeNB data set,OeNB-Datensatz,AMD:CL_OENB_DATASET(1.0),"Data set of the OeNB web service, the id argument of oenb.data()."
+AMD:AMD_CONCEPTS(1.0),OENB_POSITION,OeNB position,OeNB-Position,AMD:CL_OENB_POSITION(1.0),"Position code of a series within an OeNB data set, the pos argument of oenb.data(); hyphens become underscores in the code and the OeNB's spelling is kept as the code's source_code."
+AMD:AMD_CONCEPTS(1.0),OENB_ATTRIBUTES,OeNB series attributes,OeNB-Reihenattribute,String,"The attribute dimensions the OeNB reports for a series, as name=value pairs joined by semicolons in the order attr1 to attrN, e.g. PRODUZENT=AT;BANKENSEKTOR=00100SK;REGION=AT;WAEHRUNG=Z0Z."
+AMD:AMD_CONCEPTS(1.0),TICKER,Ticker,Tickersymbol,AMD:CL_TICKER(1.0),"Instrument as Yahoo Finance names it; the code drops characters SDMX does not allow in an ID (^ATX becomes ATX) and keeps Yahoo's symbol as its source_code."
+AMD:AMD_CONCEPTS(1.0),PRICE_TYPE,Price type,Preisart,AMD:CL_PRICE_TYPE(1.0),Which price of the period the value is.
+AMD:AMD_CONCEPTS(1.0),LOCATION,Location,Ort,AMD:CL_LOCATION(1.0),Place a weather series was requested for.
+AMD:AMD_CONCEPTS(1.0),LATITUDE,Latitude,Breitengrad,Double,Latitude in decimal degrees the value was requested for.
+AMD:AMD_CONCEPTS(1.0),LONGITUDE,Longitude,Längengrad,Double,Longitude in decimal degrees the value was requested for.
+AMD:AMD_CONCEPTS(1.0),GPR_INDEX,Geopolitical risk index,Index des geopolitischen Risikos,AMD:CL_GPR_INDEX(1.0),Index of the Caldara-Iacoviello data set as its workbook names it.
+AMD:AMD_CONCEPTS(1.0),EVENT,Policy event,Wirtschaftspolitisches Ereignis,AMD:CL_EVENT(1.0),A measure recorded in docs/policy_events.csv.
+AMD:AMD_CONCEPTS(1.0),EVENT_TYPE,Event type,Ereignistyp,AMD:CL_EVENT_TYPE(1.0),Whether the dummy marks the period a measure is in force (step) or the period it happened (impulse).

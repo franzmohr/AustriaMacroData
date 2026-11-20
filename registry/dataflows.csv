@@ -1,0 +1,9 @@
+dataflow,structure,layer,source_agency,name_en,name_de,description
+AMD:INDICATORS(1.0),AMD:DSD_INDICATORS(1.0),gold,AMD,Macroeconomic indicators,Makroökonomische Indikatoren,"Every indicator this project publishes, long, with its unit and the silver series it is built from. Stored as parquet partitioned by INDICATOR and exported as SDMX-CSV."
+AMD:FRED(1.0),AMD:DSD_FRED(1.0),silver,FRED,FRED series,FRED-Zeitreihen,Series fetched from FRED's graph export.
+AMD:EC_BCS(1.0),AMD:DSD_EC_BCS(1.0),silver,EC,EC Business and Consumer Surveys,EK-Konjunkturumfragen,Series read from the Commission's monthly survey workbooks.
+AMD:OENB(1.0),AMD:DSD_OENB(1.0),silver,OENB,OeNB web service series,Reihen des OeNB-Webservice,Series fetched from the OeNB web service with the oenb Python package.
+AMD:YAHOO(1.0),AMD:DSD_YAHOO(1.0),silver,YAHOO,Yahoo Finance prices,Kurse von Yahoo Finance,Prices from Yahoo Finance's chart API.
+AMD:OPEN_METEO(1.0),AMD:DSD_OPEN_METEO(1.0),silver,OPEN_METEO,Open-Meteo weather,Open-Meteo-Wetterdaten,Daily weather from Open-Meteo's ERA5 archive.
+AMD:GPR(1.0),AMD:DSD_GPR(1.0),silver,GPR,Geopolitical Risk Index,Index des geopolitischen Risikos,Read from the Caldara-Iacoviello workbook.
+AMD:POLICY_EVENTS(1.0),AMD:DSD_POLICY_EVENTS(1.0),gold,AMD,Policy event dummies,Dummies für wirtschaftspolitische Ereignisse,"Dummies built from docs/policy_events.csv; gold, as they are this project's own records."

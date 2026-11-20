@@ -1,0 +1,63 @@
+structure,position,component,role,concept,representation,attachment,assignment,description
+AMD:DSD_INDICATORS(1.0),1,FREQ,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).FREQ,SDMX:CL_FREQ(2.1),,mandatory,"A, Q, M or D"
+AMD:DSD_INDICATORS(1.0),2,REF_AREA,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).REF_AREA,ECB:CL_AREA(1.0),,mandatory,"Country, euro area or EU; codelist pending the decision on aggregate codes (docs/sdmx_pipeline.md)"
+AMD:DSD_INDICATORS(1.0),3,INDICATOR,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).INDICATOR,AMD:CL_INDICATOR(1.0),,mandatory,The economic quantity
+AMD:DSD_INDICATORS(1.0),4,SUBINDICATOR,dimension,AMD:AMD_CONCEPTS(1.0).SUBINDICATOR,AMD:CL_SUBINDICATOR(1.0),,mandatory,"Its breakdown; _Z if none"
+AMD:DSD_INDICATORS(1.0),5,ADJUSTMENT,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).ADJUSTMENT,SDMX:CL_SEASONAL_ADJUST(1.0),,mandatory,"N, S, W or Y"
+AMD:DSD_INDICATORS(1.0),6,TIME_PERIOD,time_dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).TIME_PERIOD,ObservationalTimePeriod,,mandatory,"One form per frequency: 2026 (A), 2026-Q2 (Q), 2026-M04 (M), 2026-11-20 (D)"
+AMD:DSD_INDICATORS(1.0),7,OBS_VALUE,measure,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).OBS_VALUE,Double,,mandatory,
+AMD:DSD_INDICATORS(1.0),8,UNIT_MEASURE,attribute,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).UNIT_MEASURE,AMD:CL_UNIT_MEASURE(1.0),series,mandatory,
+AMD:DSD_INDICATORS(1.0),9,UNIT_MULT,attribute,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).UNIT_MULT,SDMX:CL_UNIT_MULT(1.1),series,mandatory,"Power of ten: 6 for millions, 0 for percentages and indices"
+AMD:DSD_INDICATORS(1.0),10,BASE_PER,attribute,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).BASE_PER,String,series,conditional,"Base period of an index, e.g. 2020; empty otherwise"
+AMD:DSD_INDICATORS(1.0),11,DECIMALS,attribute,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).DECIMALS,SDMX:CL_DECIMALS(1.0),series,conditional,Decimals to show; display only
+AMD:DSD_INDICATORS(1.0),12,DATA_COMP,attribute,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).DATA_COMP,String,series,mandatory,The ID of the transformation in registry/transformations.csv that built the series
+AMD:DSD_INDICATORS(1.0),13,EDITION,attribute,AMD:AMD_CONCEPTS(1.0).EDITION,String,series,conditional,Forecast edition; forecasts only
+AMD:DSD_INDICATORS(1.0),14,OBS_STATUS,attribute,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).OBS_STATUS,SDMX:CL_OBS_STATUS(2.3),observation,mandatory,"A unless the source flags otherwise (mapped from its own flags) or the period is incomplete (P) or forecast (F)"
+AMD:DSD_INDICATORS(1.0),15,SOURCE_AGENCY,attribute,ECB:ECB_CONCEPTS(1.0).SOURCE_AGENCY,AMD:CL_SOURCE_AGENCY(1.0),observation,mandatory,"Observation level, because a spliced series changes publisher at the splice"
+AMD:DSD_INDICATORS(1.0),16,SOURCE_KEY,attribute,AMD:AMD_CONCEPTS(1.0).SOURCE_KEY,String,observation,mandatory,The silver series the value is built from
+AMD:DSD_FRED(1.0),1,FREQ,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).FREQ,SDMX:CL_FREQ(2.1),,mandatory,"Frequency of the series as FRED publishes it: A, Q, M, W or D"
+AMD:DSD_FRED(1.0),2,FRED_SERIES,dimension,AMD:AMD_CONCEPTS(1.0).FRED_SERIES,AMD:CL_FRED_SERIES(1.0),,mandatory,"FRED's identifier, e.g. IRLTLT01ATQ156N"
+AMD:DSD_FRED(1.0),3,TIME_PERIOD,time_dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).TIME_PERIOD,ObservationalTimePeriod,,mandatory,"As FRED dates it, the period's first day (YYYY-MM-DD)"
+AMD:DSD_FRED(1.0),4,OBS_VALUE,measure,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).OBS_VALUE,Double,,mandatory,Value as FRED publishes it
+AMD:DSD_FRED(1.0),5,ORIGINAL_SOURCE,attribute,AMD:AMD_CONCEPTS(1.0).ORIGINAL_SOURCE,String,series,conditional,The series FRED mirrors
+AMD:DSD_EC_BCS(1.0),1,FREQ,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).FREQ,SDMX:CL_FREQ(2.1),,mandatory,M or Q
+AMD:DSD_EC_BCS(1.0),2,REF_AREA,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).REF_AREA,ESTAT:GEO(28.1),,mandatory,"Country or aggregate as the Commission codes it (EL for Greece, EA, EU27_2020); the Commission's codes are Eurostat's"
+AMD:DSD_EC_BCS(1.0),3,SURVEY,dimension,AMD:AMD_CONCEPTS(1.0).SURVEY,AMD:CL_SURVEY(1.0),,mandatory,"INDU, SERV, CONS, RETA, BUIL; ESI or EEI for the composites"
+AMD:DSD_EC_BCS(1.0),4,ACTIVITY,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).ACTIVITY,AMD:CL_ACTIVITY(1.0),,mandatory,_T (the Commission's TOT)
+AMD:DSD_EC_BCS(1.0),5,QUESTION,dimension,AMD:AMD_CONCEPTS(1.0).QUESTION,AMD:CL_QUESTION(1.0),,mandatory,"Question number, COF for a confidence indicator, _Z for ESI and EEI"
+AMD:DSD_EC_BCS(1.0),6,ANSWER,dimension,AMD:AMD_CONCEPTS(1.0).ANSWER,AMD:CL_ANSWER(1.0),,mandatory,"BS for the balance, the answer code otherwise, _Z for ESI and EEI"
+AMD:DSD_EC_BCS(1.0),7,ADJUSTMENT,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).ADJUSTMENT,SDMX:CL_SEASONAL_ADJUST(1.0),,mandatory,S for the seasonally adjusted main archive or N for the unadjusted one
+AMD:DSD_EC_BCS(1.0),8,TIME_PERIOD,time_dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).TIME_PERIOD,ObservationalTimePeriod,,mandatory,"As the workbook dates it: YYYY-MM-DD (first day of the month) or YYYY-Qn"
+AMD:DSD_EC_BCS(1.0),9,OBS_VALUE,measure,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).OBS_VALUE,Double,,mandatory,Balance or index as published
+AMD:DSD_OENB(1.0),1,FREQ,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).FREQ,SDMX:CL_FREQ(2.1),,mandatory,"The freq argument of oenb.data(): A, H, Q or M"
+AMD:DSD_OENB(1.0),2,OENB_DATASET,dimension,AMD:AMD_CONCEPTS(1.0).OENB_DATASET,AMD:CL_OENB_DATASET(1.0),,mandatory,"The id argument of oenb.data(), e.g. 23"
+AMD:DSD_OENB(1.0),3,OENB_POSITION,dimension,AMD:AMD_CONCEPTS(1.0).OENB_POSITION,AMD:CL_OENB_POSITION(1.0),,mandatory,"The pos argument of oenb.data(), e.g. VDBZSBSZN10010"
+AMD:DSD_OENB(1.0),4,TIME_PERIOD,time_dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).TIME_PERIOD,ObservationalTimePeriod,,mandatory,"The period column of oenb.data(), e.g. 2026-07"
+AMD:DSD_OENB(1.0),5,OBS_VALUE,measure,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).OBS_VALUE,Double,,mandatory,The value column of oenb.data(); not rescaled
+AMD:DSD_OENB(1.0),6,UNIT_MULT,attribute,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).UNIT_MULT,SDMX:CL_UNIT_MULT(1.1),series,mandatory,The unitmult column
+AMD:DSD_OENB(1.0),7,UNIT_MEASURE,attribute,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).UNIT_MEASURE,String,series,conditional,"The unittext column as sent, e.g. in Percent; free text at source, so uncoded here"
+AMD:DSD_OENB(1.0),8,TITLE,attribute,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).TITLE,String,series,conditional,The postitle column
+AMD:DSD_OENB(1.0),9,OENB_ATTRIBUTES,attribute,AMD:AMD_CONCEPTS(1.0).OENB_ATTRIBUTES,String,series,conditional,"The attrN and attrNdim columns as name=value pairs. A series that needs an attr selection to be identified needs a new version of this structure, with the selection as a dimension"
+AMD:DSD_YAHOO(1.0),1,FREQ,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).FREQ,SDMX:CL_FREQ(2.1),,mandatory,D or M
+AMD:DSD_YAHOO(1.0),2,TICKER,dimension,AMD:AMD_CONCEPTS(1.0).TICKER,AMD:CL_TICKER(1.0),,mandatory,ATX for ^ATX
+AMD:DSD_YAHOO(1.0),3,PRICE_TYPE,dimension,AMD:AMD_CONCEPTS(1.0).PRICE_TYPE,AMD:CL_PRICE_TYPE(1.0),,mandatory,"CLOSE, the only price the fetcher reads"
+AMD:DSD_YAHOO(1.0),4,TIME_PERIOD,time_dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).TIME_PERIOD,ObservationalTimePeriod,,mandatory,YYYY-MM-DD or YYYY-MM
+AMD:DSD_YAHOO(1.0),5,OBS_VALUE,measure,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).OBS_VALUE,Double,,mandatory,Index level or price in the instrument's currency
+AMD:DSD_OPEN_METEO(1.0),1,FREQ,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).FREQ,SDMX:CL_FREQ(2.1),,mandatory,D
+AMD:DSD_OPEN_METEO(1.0),2,LOCATION,dimension,AMD:AMD_CONCEPTS(1.0).LOCATION,AMD:CL_LOCATION(1.0),,mandatory,"e.g. VIENNA"
+AMD:DSD_OPEN_METEO(1.0),3,VARIABLE,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).VARIABLE,AMD:CL_VARIABLE(1.0),,mandatory,"e.g. TEMPERATURE_2M_MEAN"
+AMD:DSD_OPEN_METEO(1.0),4,TIME_PERIOD,time_dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).TIME_PERIOD,ObservationalTimePeriod,,mandatory,YYYY-MM-DD
+AMD:DSD_OPEN_METEO(1.0),5,OBS_VALUE,measure,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).OBS_VALUE,Double,,mandatory,Value in the variable's unit
+AMD:DSD_OPEN_METEO(1.0),6,LATITUDE,attribute,AMD:AMD_CONCEPTS(1.0).LATITUDE,Double,series,mandatory,Latitude requested
+AMD:DSD_OPEN_METEO(1.0),7,LONGITUDE,attribute,AMD:AMD_CONCEPTS(1.0).LONGITUDE,Double,series,mandatory,Longitude requested
+AMD:DSD_GPR(1.0),1,FREQ,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).FREQ,SDMX:CL_FREQ(2.1),,mandatory,M
+AMD:DSD_GPR(1.0),2,REF_AREA,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).REF_AREA,ECB:CL_AREA(1.0),,mandatory,"Country of a country index (the workbook's GPRC_DEU is DE), W0 for the world index; codelist pending the decision on aggregate codes"
+AMD:DSD_GPR(1.0),3,GPR_INDEX,dimension,AMD:AMD_CONCEPTS(1.0).GPR_INDEX,AMD:CL_GPR_INDEX(1.0),,mandatory,GPR for the world index or GPRC for a country index
+AMD:DSD_GPR(1.0),4,TIME_PERIOD,time_dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).TIME_PERIOD,ObservationalTimePeriod,,mandatory,YYYY-MM
+AMD:DSD_GPR(1.0),5,OBS_VALUE,measure,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).OBS_VALUE,Double,,mandatory,Index value
+AMD:DSD_POLICY_EVENTS(1.0),1,FREQ,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).FREQ,SDMX:CL_FREQ(2.1),,mandatory,M or Q
+AMD:DSD_POLICY_EVENTS(1.0),2,REF_AREA,dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).REF_AREA,ECB:CL_AREA(1.0),,mandatory,Country the measure applies in
+AMD:DSD_POLICY_EVENTS(1.0),3,EVENT,dimension,AMD:AMD_CONCEPTS(1.0).EVENT,AMD:CL_EVENT(1.0),,mandatory,"e.g. KIMV"
+AMD:DSD_POLICY_EVENTS(1.0),4,TIME_PERIOD,time_dimension,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).TIME_PERIOD,ObservationalTimePeriod,,mandatory,YYYY-Mnn or YYYY-Qn
+AMD:DSD_POLICY_EVENTS(1.0),5,OBS_VALUE,measure,SDMX:CROSS_DOMAIN_CONCEPTS(2.0).OBS_VALUE,Double,,mandatory,1 or 0
+AMD:DSD_POLICY_EVENTS(1.0),6,EVENT_TYPE,attribute,AMD:AMD_CONCEPTS(1.0).EVENT_TYPE,AMD:CL_EVENT_TYPE(1.0),series,mandatory,STEP or IMPULSE
