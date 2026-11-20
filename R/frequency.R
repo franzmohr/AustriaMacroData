@@ -41,10 +41,15 @@ supported_frequencies <- c("Q", "M")
 check_frequency <- function(frequency) {
   if (!is.character(frequency) || length(frequency) != 1 ||
       is.na(frequency) || !frequency %in% supported_frequencies) {
+    ## sQuote()'s quoting style follows the locale and the
+    ## `useFancyQuotes` option, so this message -- which
+    ## tests/testthat/test-frequency.R asserts on -- quotes the values
+    ## itself (q = FALSE) rather than coming out as ‘Q’ here and 'Q'
+    ## elsewhere.
     stop(sprintf("`frequency` must be one of %s, not %s.",
-                 paste(sQuote(supported_frequencies), collapse = " or "),
+                 paste(sQuote(supported_frequencies, q = FALSE), collapse = " or "),
                  if (is.character(frequency) && length(frequency) == 1)
-                   sQuote(frequency) else "what was given"),
+                   sQuote(frequency, q = FALSE) else "what was given"),
          call. = FALSE)
   }
   frequency
