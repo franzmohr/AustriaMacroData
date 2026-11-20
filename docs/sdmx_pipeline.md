@@ -489,9 +489,9 @@ Made on 20 November 2026:
 - **`REF_AREA` follows ISO conventions** as far as they go: ISO 3166-1
   alpha-2 for countries, ISO's reserved `EU` and `EZ`, and `XW` for the world.
 - **`TIME_PERIOD` stays in SDMX's forms** (`2026-M04`), not ISO 8601's.
-- **The fundamental house price indicator is dropped**, MDB's
-  "Immo-Fundamentalpreisindikator" included: it is not in the OeNB web
-  service, and the ECB's `RESV` estimates are not taken in its place.
+- **The fundamental house price indicator is dropped.** It is not in the
+  OeNB web service, and the ECB's `RESV` estimates are not taken in its
+  place.
 
 ## Not yet verified
 
