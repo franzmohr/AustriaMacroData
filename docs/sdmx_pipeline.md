@@ -44,7 +44,7 @@ assumptions turned out to be wrong:
 |---|---|---|
 | `SDMX:CL_ADJUSTMENT` | No such codelist under the SDMX agency. The cross-domain concept `ADJUSTMENT` exists but is uncoded, while `SEASONAL_ADJUST` is coded by `SDMX:CL_SEASONAL_ADJUST(1.0)` (N, S, W, Y, T, …). | The dimension is called `ADJUSTMENT` (concept `SDMX:CROSS_DOMAIN_CONCEPTS(2.0).ADJUSTMENT`) and coded by `SDMX:CL_SEASONAL_ADJUST(1.0)`. The ECB's `ECB:CL_ADJUSTMENT(1.0)` uses the same letters for N, S, W and Y. Eurostat's `s_adj` maps as NSA→N, SA→S, CA→W, SCA→Y. |
 | `SOURCE_AGENCY` as a cross-domain concept | Not one of the 229 cross-domain concepts. The ECB declares it, as `ECB:ECB_CONCEPTS(1.0).SOURCE_AGENCY`. | Rule 2 has nothing, so the ECB's concept is reused rather than an AMD one invented. Its codes are in `AMD:CL_SOURCE_AGENCY(1.0)`, and each code is the publisher's SDMX agency ID where it has one. |
-| U2 and B0 in `SDMX:CL_AREA` | `SDMX:CL_AREA(2.0.1)` has ISO alpha-2 countries and numeric M49 groups only: `098` euro area, `097` EU, `001` world. U2 and B0 are the ECB's codes (`ECB:CL_AREA(1.0)`), which also has `I9` (EA20, fixed composition), `B6` (EU27_2020, fixed), `W0` (world) and `W1` (**rest of** the world). | This is a decision for you (see "Decisions" below). Separately, the earlier registry coded the world GPR index `W1`. That is wrong in the ECB's list and is now `W0`. |
+| U2 and B0 in `SDMX:CL_AREA` | `SDMX:CL_AREA(2.0.1)` has ISO alpha-2 countries and numeric M49 groups only: `098` euro area, `097` EU, `001` world. U2 and B0 are the ECB's codes (`ECB:CL_AREA(1.0)`), which also has `I9` (EA20, fixed composition), `B6` (EU27_2020, fixed), `W0` (world) and `W1` (**rest of** the world). The BIS's `BIS:CL_AREA(1.0)` (101 codes) has `XM` euro area and `XW` world, but no EU and no fixed compositions. | This is still open (see "Decisions" below). Separately, the earlier registry coded the world GPR index `W1`. That is wrong in the ECB's list and is now `W0`, pending that decision. |
 
 There is also no SDMX unit codelist, so `UNIT_MEASURE` reuses the
 cross-domain concept with codes in `AMD:CL_UNIT_MEASURE(1.0)`.
@@ -54,7 +54,7 @@ cross-domain concept with codes in `AMD:CL_UNIT_MEASURE(1.0)`.
 | Layer | Holds | Format | Where |
 |---|---|---|---|
 | Bronze | Each answer as the source sent it | The source's bytes, one file per request | `output/bronze/<AGENCY>/<DATAFLOW>/<YYYY-MM-DD>_<hash>.<ext>`, not committed |
-| Silver | Every observation fetched, under its source's structure (rules 1 to 3), with no value changed | SDMX-CSV 2.0, one file per dataflow and version | `output/silver/<AGENCY>/<DATAFLOW>_<VERSION>.csv` |
+| Silver | Every observation fetched, under its source's structure (rules 1 to 3), with no value changed; daily series stay daily | SDMX-CSV 2.0, one file per dataflow and version | `output/silver/<AGENCY>/<DATAFLOW>_<VERSION>.csv`, committed |
 | Gold: indicators | `AMD:INDICATORS(1.0)`: one long table of everything published, with every transformation recorded | Parquet, partitioned by `INDICATOR` | `output/gold/indicators/INDICATOR=<CODE>/part-0.parquet` |
 | Gold: panels | The FRED-QD- and FRED-MD-style panels, metadata, dummies and semantic layer, derived from the indicator table | As today, unchanged | `output/<cc>_*.csv`, `output/semantic/` |
 | Exports | Parquet and SDMX-CSV for analysis; an Excel workbook for users | | `output/exports/` |
@@ -72,10 +72,10 @@ points to. It is not committed. Locally it is a cache, as the landing caches
 (`gpr_data`, the EC zips, the degree-day files) are today. In CI it is
 uploaded as a workflow artifact with the default retention.
 
-One source is different. OeNB data are fetched with the `oenb` Python package
-(next section). The package returns a data frame, not the service's XML, so
-bronze for the OeNB holds that frame written to CSV. The package passes on what
-the service returns without rescaling, so nothing is lost for silver.
+One source is different. OeNB data are fetched with the `oenb` Python package.
+It returns a data frame, not the service's XML, so bronze for the OeNB holds
+that frame written to CSV. The package passes on what the service returns
+without rescaling, so nothing is lost for silver.
 
 ### Silver
 
@@ -101,10 +101,9 @@ additions:
   `Content-Type` says version 1.0. It also ignored `startPeriod`. The reader
   therefore goes by the header line, never by the content type.
 - **The OeNB is fetched with the `oenb` Python package** (version 0.1.0 on
-  PyPI), replacing the XML parsing in `R/oenb.R`. A Python step,
-  `scripts/fetch_oenb.py`, reads the series to fetch from the registry and
-  calls `oenb.data(id=, pos=, freq=)`. It writes each result to bronze. The R
-  side reads that file into `AMD:OENB(1.0)`. `oenb.data()` returns `period`,
+  PyPI), replacing the XML parsing in `R/oenb.R`. The OeNB topic reads the
+  series to fetch from the registry and calls `oenb.data(id=, pos=, freq=)`.
+  It writes each result to bronze, then into `AMD:OENB(1.0)`. `oenb.data()` returns `period`,
   `pos`, `postitle`, `attr1…attrN` with `attrNdim`, `freq`, `unitmult`,
   `unittext` and `value` (checked 20 November 2026 on
   `23/VDBZSBSZN10010`). These map onto the structure's dimensions and its
@@ -249,18 +248,18 @@ column, derived the same way.
 As in MDB, the pipeline is split into topics, and each topic is one function.
 The differences are in validation and in reporting.
 
-- **A topic fetches and returns silver.** `topic_<name>(ctx)` returns a list
-  of tables keyed by structure ID. Each table must match its declared
-  structure. The runner validates them and writes them to silver. A gold
-  builder, `gold_<name>(silver)`, returns rows in the fixed
+- **A topic fetches and returns silver.** `topics.<name>.fetch(ctx)` returns
+  a dict of data frames keyed by structure ID. Each frame must match its
+  declared structure. The runner validates them and writes them to silver. A
+  gold builder, `topics.<name>.build(silver)`, returns rows in the fixed
   `AMD:DSD_INDICATORS` schema, and those are validated too.
 - **A topic declares what it expects:** the silver series keys its
   transformations name. After it runs, the runner compares what was expected
   with what arrived. A series that did not arrive is a failure with a name,
   not an empty column found a month later.
-- **One failing topic does not stop the run.** Each topic runs in
-  `tryCatch()` with `withCallingHandlers()`, which collects its warnings. A
-  failed topic leaves its silver files as they were. Gold is rebuilt from
+- **One failing topic does not stop the run.** Each topic runs inside a
+  `try` block, with `warnings.catch_warnings(record=True)` collecting its
+  warnings. A failed topic leaves its silver files as they were. Gold is rebuilt from
   silver, so its series keep their last good data, and the manifest marks
   them stale.
 - **Every failure is reported.** `output/run_summary.json` and
@@ -396,8 +395,8 @@ what an existing code or component means, or the order of a structure's
 dimensions, gets a new major version. A new version of a dataflow writes a new
 silver file.
 
-**Validation**, to be implemented as `tests/testthat/test-registry.R` and in
-the writers:
+**Validation**, to be implemented as `tests/test_registry.py` and in the
+writers:
 
 - Every code is an upper-case SDMX ID (`[A-Z0-9_]+`) with an English name.
 - Every component's concept and codelist is declared in `concepts.csv` and
@@ -408,56 +407,101 @@ the writers:
 A prototype of these checks already passes on the committed files. The writers
 refuse any row whose dimension values are not in the codelist. For an
 external codelist the check uses a cached copy, `registry/external/<id>.csv`,
-fetched by `scripts/fetch_external_codelists.py` and refreshed deliberately,
-never at build time.
+fetched by `python -m amd registry fetch-external` and refreshed
+deliberately, never at build time.
+
+## Python, not R
+
+The pipeline is ported to Python, which is installed on the Pi, so all of it
+can be run and tested here. The R code stays in place until the Python build
+has been shown to give the same panels. After that it is removed in one
+commit.
+
+- **Package.** `amd/`, run as `python -m amd <command>`, with these modules:
+  - `amd.registry`: loads `registry/` and validates against it.
+  - `amd.bronze`: one `fetch()` for every request, which writes bronze, retries
+    as `safe_get()` does today, and is the single point the tests mock.
+  - `amd.sdmx_csv`: reads the four answer layouts and writes SDMX-CSV 2.0.
+  - `amd.silver`: the writer and the manifest.
+  - `amd.topics.*`: one module per topic.
+  - `amd.gold`: the transformation operations and the indicator table.
+  - `amd.panels`: the pivots, metadata and dummies.
+  - `amd.semantic`: the semantic layer and the query API.
+  - `amd.exports`: SDMX-CSV, parquet, SDMX-ML and Excel.
+  - `amd.run`: the topic runner and the run summary.
+- **Dependencies**, pinned in `pyproject.toml`: pandas, pyarrow, requests,
+  openpyxl (for the EC workbooks and the Excel export), oenb and pytest. No
+  SDMX client library is needed, since every source is read as CSV.
+- **What users see.** The query CLI becomes `python -m amd query search|describe|get|list`,
+  with the same arguments as `scripts/query.R`. `AGENTS.md` and the README are
+  updated in the same commit. Python cannot offer `amd_get()` and its siblings
+  to R users, so R users read the parquet or CSV files directly. Keeping a thin
+  R reader would mean keeping R in CI, which is a choice for later.
+- **Tests.** The `tests/testthat` suite is ported to pytest, test by test.
+  The canned responses in `helper-mocks.R` become fixtures.
+- **CI.** `monthly-update.yml` sets up Python instead of R. During the port, a
+  second workflow runs both builds on the same day and compares them.
+
+**Parity check.** A build fetches live data, so two runs can differ because
+a source revised its figures. The comparison therefore runs on the same
+bytes:
+
+1. The R build in CI records every answer it receives. This is a small change
+   to `fetch_text()`, the one function every R fetcher goes through, and it is
+   the only R change in the plan.
+2. The Python build replays those answers from bronze.
+3. Each panel, metadata and semantic file is compared value by value, to
+   within 1e-9 relative, and column by column.
+
+Byte identity of the CSVs also depends on number formatting, because R writes
+15 significant digits. The Python writer copies that, and the check reports
+both the value differences and the byte differences.
 
 ## Implementation steps
 
-Each step leaves the published panels byte-identical, except step 9, which
-adds topics.
+1. **The `amd` package skeleton, `amd.registry` and its tests.** These run on
+   the Pi.
+2. **Bronze, the runner and the run summary**, with the Bundesbank, the IMF
+   and the OeNB through `oenb` as the first topics.
+3. **The recording hook in R's `fetch_text()`** and the parity workflow in CI.
+4. **The SDMX sources' topics**: Eurostat, the OECD, the BIS and the ECB,
+   written to silver.
+5. **The non-SDMX sources' topics**: FRED, the EC surveys, Yahoo, Open-Meteo,
+   the GPR and the policy events.
+6. **`AMD:INDICATORS` built from silver.** Every transformation the R fetchers
+   do today becomes a declared transformation.
+7. **The panels, metadata, dummies and semantic layer**, then the query CLI.
+   The parity workflow must pass before step 8.
+8. **Switch CI to Python, then remove the R code**, and update `AGENTS.md`,
+   the README and `CONTRIBUTING.md`.
+9. **Exports:** parquet, SDMX-CSV, SDMX-ML structures and the Excel workbook.
+10. **New topics**, one commit each: banks, FDI, current account,
+    insolvencies, government deficit, forecasts, house price valuation, and
+    the aggregates.
 
-1. **Registry tests and the external codelist cache.** These are Python and
-   R. The Python half can be tested on the Pi.
-2. **Bronze and the run summary.** Change `fetch_text()` and the topic runner.
-   The existing fetchers are wrapped as topics without changing their output.
-3. **Silver capture of the SDMX sources.** These are Eurostat, the OECD, the
-   BIS, the ECB, the Bundesbank and the IMF, as in
-   [sdmx_silver_layer.md](sdmx_silver_layer.md).
-4. **OeNB through the `oenb` package.** `scripts/fetch_oenb.py`, with tests
-   on the Pi, replaces the XML parser in `R/oenb.R`.
-5. **Silver capture of the other non-SDMX sources** under their AMD
-   structures.
-6. **`AMD:INDICATORS` built from silver.** Every current fetcher-side
-   transformation moves into `registry/transformations.csv`.
-7. **Panels, metadata and the semantic layer derived from the indicator
-   table.** This is the byte-identity test.
-8. **Exports:** parquet, SDMX-CSV, SDMX-ML structures and the Excel workbook.
-9. **New topics**, one commit each: banks, FDI, current account,
-   insolvencies, government deficit, forecasts, house price valuation, and the
-   U2 and B0 aggregates.
+The steps up to 7 change no published file. Step 10 adds data.
 
 ## Decisions
 
-These are yours to make. I'll ask before implementing:
+Made on 20 November 2026:
 
-1. **Euro-area and EU codes.** The options are:
-   - `ECB:CL_AREA(1.0)`: U2 and B0, plus I9 and B6 for fixed compositions and
-     W0 for the world.
-   - `SDMX:CL_AREA(2.0.1)`: 098, 097 and 001.
-   - EA and EU as MDB used them, which would need an AMD area codelist
-     although two published ones exist.
+- **`output/silver/` is committed.**
+- **Daily series stay daily in silver.**
+- **The pipeline moves to Python.**
 
-   I recommend the ECB's codelist. It is a published SDMX codelist, the ECB
-   sources already answer in it, and it tells changing compositions from fixed
-   ones.
-2. **Whether `output/silver/` is committed** or kept as an output of the
-   monthly job (a workflow artifact plus a cache).
-3. **Whether daily series stay daily in silver**: the Bundesbank yields, the
-   CISS, Yahoo and Open-Meteo.
-4. **R.** It is not installed on the Pi. The options are to install it with
-   `sudo apt`, or to write the R code for CI and your workstation, with
-   everything that runs only there marked as untested.
-5. **The OeNB fundamental house price indicator.** It is not in the OeNB web
+Still open:
+
+1. **Euro-area, EU and world codes for `REF_AREA`.** The options:
+
+   | Codelist | Euro area | EU | World | Notes |
+   |---|---|---|---|---|
+   | `BIS:CL_AREA(1.0)` | `XM` | none | `XW` | The BIS's conventions. 101 codes. `XM` and `XW` are ISO 3166 user-assigned codes. There is no EU code, so the EU needs an AMD extension, for example ISO's exceptionally reserved `EU`. There are no fixed compositions. |
+   | `ECB:CL_AREA(1.0)` | `U2` | `B0` | `W0` | Also `I9` and `B6` for fixed EA20 and EU27_2020. The ECB sources already answer in it. |
+   | `SDMX:CL_AREA(2.0.1)` | `098` | `097` | `001` | Numeric M49 groups next to alpha-2 countries. |
+   | AMD's own | `EA` | `EU` | | What MDB used. It needs an invented codelist although published ones exist. |
+
+   `registry/` uses `ECB:CL_AREA(1.0)` as a placeholder until this is decided.
+2. **The OeNB fundamental house price indicator.** It is not in the OeNB web
    service. The options are to use the ECB's `RESV` estimates only, or to name
    a published file for the OeNB's indicator, which would be a non-SDMX source
    with an AMD structure.

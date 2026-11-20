@@ -3,6 +3,9 @@
 Status: design, not yet implemented. Written 20 November 2026. The whole
 pipeline, from bronze to the exports, and the AMD registry are designed in
 [sdmx_pipeline.md](sdmx_pipeline.md); this document details the silver layer.
+The pipeline is being ported to Python (decided 20 November 2026). Where
+this document names R functions, it describes today's code, which the Python
+port replaces.
 
 ## What changes
 

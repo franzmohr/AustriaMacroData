@@ -9,3 +9,4 @@ SDMX:CL_AREA(2.0.1),codelist,2026-11-20,https://registry.sdmx.org,"ISO alpha-2 c
 ECB:CL_AREA(1.0),codelist,2026-11-20,https://data-api.ecb.europa.eu/service/codelist/ECB/CL_AREA,"ISO alpha-2 countries plus U2 euro area and B0 EU (changing composition), I9 EA20 and B6 EU27_2020 (fixed), W0 world, W1 rest of the world, _Z, _X"
 ECB:ECB_CONCEPTS(1.0),concept_scheme,2026-11-20,https://data-api.ecb.europa.eu/service/conceptscheme/ECB/ECB_CONCEPTS,Source of SOURCE_AGENCY
 ESTAT:GEO(28.1),codelist,2026-11-20,https://ec.europa.eu/eurostat/api/dissemination/sdmx/2.1/codelist/ESTAT/GEO,"Has EL, EA, EA20, EU27_2020"
+BIS:CL_AREA(1.0),codelist,2026-11-20,https://stats.bis.org/api/v2/structure/codelist/BIS/CL_AREA/+,"101 codes: ISO alpha-2 countries, XM euro area, XW world, 5R advanced economies, 4T emerging market economies, _Z; no EU, no fixed compositions. Candidate for REF_AREA"
