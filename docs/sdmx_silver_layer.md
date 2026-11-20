@@ -110,6 +110,20 @@ after `OBS_VALUE` as well. So the capture is:
    its guard stays. A declaration for the others can follow; it is a check,
    not what the capture depends on.
 
+Two more sources speak SDMX and need only their request changed:
+
+- **Bundesbank** (`R/gov_yields.R`). The key is already SDMX
+  (`BBSIS.M.I.ZST.ZI.EUR.S1311.B.A604.R05XX.R.A.A._Z._Z.A`), but it is
+  requested in the Bundesbank's own CSV layout, with a metadata header block
+  and `.` for a missing day. With the SDMX media type the service answers
+  in SDMX-CSV 1.0, `DATAFLOW = BBK:BBSIS(1.0)` (checked live on 20 November
+  2026), separated by semicolons and opening with a byte-order mark, which
+  the reader has to allow for.
+- **IMF** (`R/imf.R`) already asks its SDMX 3.0 API (`IMF.STA/QNEA/7.0.0`)
+  for CSV, with an explicit `Accept` header because the query parameter
+  alone is not always honoured. Its layout was not checked here; it has to
+  be before the IMF reader is written.
+
 ## Sources that are not SDMX
 
 Some sources publish no SDMX at all. For each, silver gets a dataflow of
@@ -161,7 +175,7 @@ allowed values the source does not publish.
 2. **Declare the non-SDMX structures** in `docs/sdmx_structures.csv` and
    capture those sources through the same writer. Each fetcher hands its
    parsed rows over with the key columns its structure declares.
-3. **Switch the Bundesbank and IMF requests to SDMX-CSV.**
+3. **Switch the Bundesbank request to SDMX-CSV, and check the IMF's layout.**
 4. **Name silver keys in gold's metadata**, replacing the free-text `key`.
 5. **Build gold from silver.** The panel builders read `output/silver/`
    instead of the fetchers' return values. After that, a fetch only fills
